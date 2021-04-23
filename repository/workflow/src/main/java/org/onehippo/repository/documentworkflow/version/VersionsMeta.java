@@ -22,6 +22,7 @@ import java.util.Set;
 public class VersionsMeta {
 
     private Set<Campaign> campaigns = new HashSet<>();
+    private Set<VersionLabel> versionLabels = new HashSet<>();
 
     public Set<Campaign> getCampaigns() {
         return campaigns;
@@ -31,22 +32,52 @@ public class VersionsMeta {
         this.campaigns = campaigns;
     }
 
-    public Optional<Campaign> getCampaign(final String campaignId) {
-        return campaigns.stream().filter(campaign -> campaignId.equals(campaign.getUuid())).findFirst();
+    public Set<VersionLabel> getVersionLabels() {
+        return versionLabels;
     }
+
+    public void setVersionLabels(final Set<VersionLabel> versionLabels) {
+        this.versionLabels = versionLabels;
+    }
+
+    public Optional<Campaign> getCampaign(final String uuid) {
+        return campaigns.stream().filter(campaign -> uuid.equals(campaign.getUuid())).findFirst();
+    }
+
+    public Optional<VersionLabel> getVersionLabel(final String uuid) {
+        return versionLabels.stream().filter(label -> uuid.equals(label.getUuid())).findFirst();
+    }
+
     /**
      * <p>
-     *     Adds {@code camppaign} and if the campaign is already present in {@code campaigns} replaces that campaign
+     *     Adds {@code campaign} and if the campaign is already present in {@code campaigns} replaces that campaign
      * </p>
      * @param campaign
      */
     public void setCampaign(final Campaign campaign) {
-        campaigns.remove(campaign);
+        // first remove campaign with the same UUID since that one will be replaced
+        campaigns.removeIf(c -> c.getUuid().equals(campaign.getUuid()));
         campaigns.add(campaign);
     }
 
-    public void removeCampaign(final String campaignId) {
-        campaigns.removeIf(campaign -> campaign.getUuid().equals(campaignId));
+    public void removeCampaign(final String uuid) {
+        campaigns.removeIf(campaign -> campaign.getUuid().equals(uuid));
+    }
+
+    /**
+     * <p>
+     *     Adds {@code versionLabel} and if the versionLabel is already present in {@code versionLabels}
+     *     replaces that versionLabel
+     * </p>
+     * @param versionLabel
+     */
+    public void setVersionLabel(final VersionLabel versionLabel) {
+        versionLabels.removeIf(vl -> vl.getUuid().equals(versionLabel.getUuid()));
+        versionLabels.add(versionLabel);
+    }
+
+    public void removeVersionLabel(final String uuid) {
+        versionLabels.removeIf(versionLabel -> versionLabel.getUuid().equals(uuid));
     }
 
 }

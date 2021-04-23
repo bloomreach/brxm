@@ -129,7 +129,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(true).listVersions()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -140,7 +140,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -163,7 +163,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(true).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -180,7 +180,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(true).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -200,7 +200,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
                 .requestPublication(true).requestDepublication(true).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -220,7 +220,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -242,7 +242,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -262,7 +262,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(true)
                 .saveUnpublished(false)
                 .hints());
@@ -282,7 +282,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .editDraft().obtainEditableInstance(false)
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(true)
                 .saveUnpublished(false)
                 .hints());
@@ -299,7 +299,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .editDraft().obtainEditableInstance(false)
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -321,7 +321,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(true).listVersions()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -342,7 +342,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(true).getBranch(true).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -351,7 +351,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(true).getBranch(true).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -365,7 +365,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -374,7 +374,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -393,7 +393,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -408,7 +408,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(true).checkoutBranch(true).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -423,7 +423,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -438,7 +438,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(true).checkoutBranch(true).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -457,7 +457,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(true)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -489,7 +489,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(true)
                 .saveUnpublished(false)
                 .hints());
@@ -501,7 +501,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).editing().saveDraft()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -513,7 +513,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -527,7 +527,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -539,7 +539,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -551,7 +551,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -563,7 +563,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -579,7 +579,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -591,7 +591,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -603,7 +603,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -628,7 +628,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(true)
                 .saveUnpublished(false)
                 .hints());
@@ -645,7 +645,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -662,7 +662,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser").unlock(true)
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -678,7 +678,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).editing().saveDraft()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -697,7 +697,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(rejectedRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -721,7 +721,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -750,7 +750,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -771,7 +771,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -790,7 +790,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(publishRequest.getIdentifier())
                 .listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -810,7 +810,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -830,7 +830,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .publish(false).depublish(false).publishBranch(false).depublishBranch(false).reintegrateBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -851,7 +851,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(true).checkoutBranch(true).removeBranch(true)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .publish(false).depublish(false).publishBranch(true).depublishBranch(false).reintegrateBranch(true)
                 .saveUnpublished(false)
                 .hints());
@@ -878,7 +878,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -899,7 +899,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -924,7 +924,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(depublishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -946,7 +946,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(depublishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -971,7 +971,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(deleteRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -992,7 +992,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(deleteRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1015,7 +1015,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(rejectedRequest.getIdentifier())
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1034,7 +1034,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(rejectedRequest.getIdentifier())
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1053,7 +1053,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(rejectedRequest.getIdentifier())
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1071,7 +1071,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .infoRequest(rejectedRequest.getIdentifier())
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1093,7 +1093,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(scheduledRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1111,7 +1111,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .infoRequest(scheduledRequest.getIdentifier())
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1143,7 +1143,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1162,7 +1162,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().versionable().terminateable(false).copy()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .reintegrateBranch(false).publishBranch(true).depublishBranch(false)
                 .saveUnpublished(false)
                 .hints());
@@ -1182,7 +1182,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).depublish(true).requestDepublication(true)
                 .listVersions().retrieveVersion().versionable().terminateable(false)
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .saveUnpublished(false)
                 .hints());
@@ -1205,7 +1205,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).publish(true).depublish(true).requestDepublication(true)
                 .listVersions().retrieveVersion().versionable().terminateable(false)
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .reintegrateBranch(false).publishBranch(true).depublishBranch(true)
                 .saveUnpublished(false)
                 .hints());
@@ -1225,7 +1225,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).requestDepublication(true)
                 .listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1245,7 +1245,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(scheduledRequest.getIdentifier())
                 .listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1268,7 +1268,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listVersions().retrieveVersion().versionable().terminateable(false)
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(true).depublishBranch(true)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1289,7 +1289,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listVersions().retrieveVersion().versionable().terminateable(false)
                 .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(false)
                 .reintegrateBranch(true).publishBranch(false).depublishBranch(true)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1309,7 +1309,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).depublish(false).requestDepublication(false)
                 .listVersions().retrieveVersion().versionable().terminateable(false)
                 .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .reintegrateBranch(true).publishBranch(false).depublishBranch(true)
                 .saveUnpublished(false)
                 .hints());
@@ -1326,7 +1326,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listVersions().retrieveVersion().versionable().terminateable(false)
                 .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(true).depublishBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1361,7 +1361,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1381,7 +1381,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).depublish(false).publish(false)
                 .listVersions().retrieveVersion().copy().versionable().terminateable(false)
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .saveUnpublished(false)
                 .hints());
@@ -1401,7 +1401,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listVersions().retrieveVersion().copy().versionable().terminateable(true)
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(true).depublishBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1419,7 +1419,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listVersions().retrieveVersion().copy().versionable().terminateable(false)
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1438,7 +1438,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(true)
                 .listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1458,7 +1458,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(scheduledRequest.getIdentifier())
                 .listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1478,7 +1478,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(scheduledRequest.getIdentifier())
                 .listVersions().retrieveVersion().copy()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(false)
                 .saveUnpublished(false)
                 .hints());
@@ -1506,7 +1506,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(true)
                 .saveUnpublished(false)
                 .hints());
@@ -1525,7 +1525,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(false).removeCampaign(false).labelVersion(true).removeLabelVersion(true)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1544,7 +1544,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listVersions().retrieveVersion().versionable().terminateable(true).copy()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(true).depublishBranch(false)
-                .campaign(true).removeCampaign(true)//.labelVersion(true).removeLabelVersion(true)
+                .campaign(true).removeCampaign(true).labelVersion(true).removeLabelVersion(true)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1577,7 +1577,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1596,7 +1596,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().terminateable(false).copy()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .saveUnpublished(false)
                 .hints());
@@ -1623,7 +1623,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1646,7 +1646,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .infoRequest(scheduledRequest.getIdentifier())
                 .listVersions()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1664,7 +1664,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(true).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1682,7 +1682,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().terminateable(true).copy()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)//.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .saveUnpublished(false)
                 .hints());
@@ -1711,7 +1711,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(true)
                 .listVersions()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .campaign(false).removeCampaign(false)////.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .terminateable(false).copy()
                 .saveUnpublished(false)
                 .hints());
@@ -1730,7 +1730,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .listVersions().terminateable(false).copy()
                 .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
-                .campaign(false).removeCampaign(false)////.labelVersion(false).removeLabelVersion(false)
+                .campaign(false).removeCampaign(false).labelVersion(false).removeLabelVersion(false)
                 .saveUnpublished(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
