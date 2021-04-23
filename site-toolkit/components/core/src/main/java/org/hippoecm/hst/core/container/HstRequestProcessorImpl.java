@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
@@ -80,7 +81,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
        
             pipeline.invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
             
-        } catch (ContainerException e) {
+        } catch (ContainerException | ExperiencePageLoadingException e) {
             throw e;
         } catch (Exception e) {
             throw new ContainerException(e);

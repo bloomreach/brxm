@@ -1664,8 +1664,14 @@
       "locales" : null
     },
     "EXPERIMENT_INFO_PUBLISH_TO_START" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "VARIANT_DELETE" : {
       "status" : "CLEAN",
@@ -1800,8 +1806,14 @@
       "locales" : null
     },
     "EXPERIMENT_PUBLISH_TO_FINISH" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "SEGMENT_ADD" : {
       "status" : "CLEAN",
@@ -1836,10 +1848,6 @@
       "locales" : null
     },
     "EXPRESSION_TARGET_GROUP_TRACKING_SUBJECT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "EXPERIMENT_PUBLISH_TO_START" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -1895,10 +1903,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "CLEAR_SELECTION" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "EXPERIMENT_CANCELED" : {
       "status" : "CLEAN",
       "locales" : null
@@ -1950,6 +1954,16 @@
     "ERROR_FIELD_ADD" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "EXPERIMENT_INFO_START_CREATE_VARIANTS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "CREATE_PAGE_TOOLTIP" : {
       "status" : "ADDED",
