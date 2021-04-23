@@ -128,7 +128,10 @@ public enum Icon {
     TYPE,
     UNLINK,
     UNLOCKED,
-    USER_CIRCLE;
+    USER_CIRCLE,
+    XPAGE_DOCUMENT,
+    XPAGE_FOLDER,
+    XPAGE_FOLDER_OPEN;
 
     private static final Logger log = LoggerFactory.getLogger(Icon.class);
 

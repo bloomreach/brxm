@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ describe('User Drawer Component', () => {
     const clientAppServiceMock = {
       allConnectionsSettled: Promise.resolve(),
     };
-    const authServiceMock = jasmine.createSpyObj('AuthService', ['logout']);
+    const authServiceMock = jasmine.createSpyObj('AuthService', ['activeLogout']);
     const appSettingsMock = new AppSettingsMock({
       navAppBaseURL: 'https://some-domain.com/base/path',
     });
@@ -82,7 +82,7 @@ describe('User Drawer Component', () => {
   it('should logout', () => {
     logoutDe.triggerEventHandler('click', { preventDefault: () => {} });
 
-    expect(authService.logout).toHaveBeenCalledWith('UserLoggedOut');
+    expect(authService.activeLogout).toHaveBeenCalled();
   });
 
   it('should prevent default action if user clicked "logout"', () => {
