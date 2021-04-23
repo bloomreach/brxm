@@ -51,7 +51,6 @@
 [hippo:versionInfo] mixin
 - hippo:versionHistory (string)
 - hippo:branches (string) multiple
-- hippo:branchTypes (string) multiple
 // versionsMeta will be a json string being able to contain all kind of data
 - hippo:versionsMeta (string)
 
