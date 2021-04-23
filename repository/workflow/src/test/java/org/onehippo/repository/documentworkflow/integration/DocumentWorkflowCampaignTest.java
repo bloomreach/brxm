@@ -23,15 +23,15 @@ import java.util.stream.Collectors;
 
 import javax.jcr.version.Version;
 
-import org.apache.commons.logging.impl.Log4JLogger;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.documentworkflow.version.Campaign;
-import org.onehippo.repository.documentworkflow.version.VersionsMeta;
-import org.onehippo.repository.documentworkflow.version.JcrVersionsMetaUtils;
+import org.onehippo.repository.campaign.Campaign;
+import org.onehippo.repository.campaign.VersionLabel;
+import org.onehippo.repository.campaign.VersionsMeta;
+import org.onehippo.repository.documentworkflow.campaign.JcrVersionsMetaUtils;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
