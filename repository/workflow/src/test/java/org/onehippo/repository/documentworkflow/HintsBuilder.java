@@ -244,6 +244,15 @@ public class HintsBuilder {
         return this;
     }
 
+//    public HintsBuilder labelVersion(final boolean canLabelVersion) {
+//        actions.put(ACTION_LABEL_VERSIONS, canLabelVersion);
+//        return this;
+//    }
+//    public HintsBuilder removeLabelVersion(final boolean canRemoveLabelVersion) {
+//        actions.put(ACTION_REMOVE_LABEL_VERSIONS, canRemoveLabelVersion);
+//        return this;
+//    }
+
     public HintsBuilder getBranch(final boolean canGetBranch) {
         actions.put(ACTION_GET_BRANCH, canGetBranch);
         return this;
