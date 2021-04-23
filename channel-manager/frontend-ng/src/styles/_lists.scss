@@ -41,10 +41,19 @@
       min-height: 55px;
     }
 
-    .md-no-style.md-button {
+    div.md-no-style.md-button {
+      background-color: transparent;
+
       &:hover,
       &.md-focused {
-        background-color: $bloomreach-blue-light;
+        background-color: transparent;
+      }
+    }
+
+    button.md-no-style.md-button {
+      &:hover,
+      &.md-focused {
+        background-color: $bloomreach-gray-5-alpha;
       }
     }
   }

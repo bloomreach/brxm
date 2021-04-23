@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { ExperimentState } from '../../models/experiment-state.enum';
 import { Experiment } from '../../models/experiment.model';
@@ -24,9 +24,20 @@ import { Experiment } from '../../models/experiment.model';
   templateUrl: 'experiment-info.component.html',
   styleUrls: ['experiment-info.component.scss'],
 })
-export class ExperimentInfoComponent {
+export class ExperimentInfoComponent implements OnInit {
   @Input()
   experiment!: Experiment;
+
+  @Input()
+  isXPageComponent!: boolean;
+
+  publishType!: { type: string };
+
+  ngOnInit(): void {
+    this.publishType = {
+      type: this.isXPageComponent ? 'page' : 'channel',
+    };
+  }
 
   get isExperimentCreated(): boolean {
     return this.experiment.state === ExperimentState.Created;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2021 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill-rule="evenodd">
+    <path fill="currentColor" d="M16.0192308,9 L27.5,9 L27.5,24.5 C12.1666667,24.5 4.5,24.5 4.5,24.5 C4.5,24.5 4.5,18.3333333 4.5,6 L13.1346154,6 L16.0192308,9 Z M14.2,4 L5,4 C4,4 2.5,5 2.5,6 L2.5,24.5 C2.5,25.5 3.5,26.5 4.5,26.5 L27.5,26.5 C28.5,26.5 29.5,25.5 29.5,24.5 L29.5,9 C29.5,8 28.5,7 27.5,7 L17,7 L14.2,4 Z M24.3,12 C24.65,12 25,12.3125 25,12.625 C25,18.25 25,21.1666667 25,21.375 C25,21.6875 24.65,22 24.3,22 C15.9314082,22 11.7314082,22 11.7,22 C11.35,22 11,21.6875 11,21.375 L11,12.625 C11,12.3125 11.35,12 11.7,12 C18,12 18,12 24.3,12 Z M23.5,13.5 L12.5,13.5 L12.5,20.5 L23.5,20.5 L23.5,13.5 Z M16,13.5 L16,15.5 L23.5,15.5 L23.5,17 C18.5,17 16,17 16,17 C16,17 16,18.1666667 16,20.5 L14.5,20.5 L14.5,13.5 L16,13.5 Z"/>
+  </g>
+</svg>

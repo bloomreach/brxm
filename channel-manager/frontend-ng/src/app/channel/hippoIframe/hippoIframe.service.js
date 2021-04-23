@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,8 +107,8 @@ class HippoIframeService {
     this.pageLoaded = false;
 
     if (targetPath !== this.src) {
-      // setting the src attribute of the iframe makes us go to the desired page.
       this.src = targetPath;
+      this.renderPathInfo = renderPathInfo;
     } else if (this.iframeJQueryElement /* pro-forma check */) {
       // we may have set the src attribute of the iframe to the targetPath before,
       // but then navigated away from that location by following site-internal links.
