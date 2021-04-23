@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-  <g>
-   <path fill="currentColor" d="M14,5v10c0,0.472-0.561,1-1.031,1H2.854C2.383,16,2,15.617,2,15.146V0.913c0-0.472,0.383-0.854,0.854-0.854 h5.97c0.473,0,1.131,0.275,1.461,0.605l3.111,2.877C13.725,3.871,14,4.528,14,5z M13,6H9C8.529,6,8,5.471,8,5V1H3L2.998,15.049 L13,15V6z M5.284,8h5.431C10.875,8,11,8.125,11,8.285v0.431C11,8.875,10.875,9,10.715,9H5.284C5.125,9,5,8.875,5,8.715V8.285 C5,8.125,5.125,8,5.284,8z M5.284,10h5.431C10.875,10,11,10.124,11,10.284v0.431C11,10.875,10.875,11,10.715,11H5.284 C5.125,11,5,10.875,5,10.715v-0.431C5,10.124,5.125,10,5.284,10z M5.284,12h5.431C10.875,12,11,12.124,11,12.284v0.431 C11,12.875,10.875,13,10.715,13H5.284C5.125,13,5,12.875,5,12.715v-0.431C5,12.124,5.125,12,5.284,12z M9,5h4 c-0.053-0.151-0.135-0.302-0.197-0.365L9.365,1.196C9.303,1.134,9.152,1.054,9,1V5z"/>
- </g>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <path fill="currentColor" d="M11.5,26 L24.5,26 L24.5,27.5 L11.5,27.5 L11.5,26 Z M11.5,22.5 L24.5,22.5 L24.5,24 L11.5,24 L11.5,22.5 Z M11.5,19 L24.5,19 L24.5,20.5 L11.5,20.5 L11.5,19 Z M21,3.5 L8.5,3.5 C7.5,3.5 6.5,4.5 6.5,5.5 L6.5,30.3518519 C6.5,31.5 7.5,32.5 8.69047619,32.5 L27.5,32.5 C28.5,32.5 29.5,31.5 29.5,30.5 L29.5,11.5 L21,3.5 Z M27.5,30.5 L8.5,30.5 L8.5,5.5 L20.5,5.5 L20.5,12.5 L27.5,12.5 L27.5,30.5 Z"/>
+  </g>
 </svg>

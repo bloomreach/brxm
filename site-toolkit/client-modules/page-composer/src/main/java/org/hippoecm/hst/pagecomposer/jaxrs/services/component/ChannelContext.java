@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,8 +35,8 @@ public class ChannelContext {
     private boolean crossChannelPageCopySupported;
     private boolean workspaceExists;
     private boolean hasPrototypes;
-    private Set<String> changeBySet;
-    private Set<XPageLayout> xPageLayouts;
+    private Set<String> changeBySet = new HashSet<>();
+    private Set<XPageLayout> xPageLayouts = new HashSet<>();
     private Map<String, String> xPageTemplateQueries;
 
     public String getChannelId() {
