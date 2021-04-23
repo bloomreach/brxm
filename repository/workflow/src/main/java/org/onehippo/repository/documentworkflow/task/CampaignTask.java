@@ -40,8 +40,6 @@ import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 public class CampaignTask extends AbstractDocumentTask {
 
-    final static Logger log = LoggerFactory.getLogger(CampaignTask.class);
-
     private static final long serialVersionUID = 1L;
 
     private String branchId;
@@ -85,9 +83,9 @@ public class CampaignTask extends AbstractDocumentTask {
             if (to == null && from == null) {
                 JcrVersionsMetaUtils.removeCampaign(handle, frozenNodeId);
                 return new DocumentVariant(frozenNode);
-            } else if (to == null || from == null) {
+            } else if (from == null) {
                 // not allowed that one value is null
-                throw new WorkflowException("Both 'from' and 'to' dates must be set when setting a campaign");
+                throw new WorkflowException("'from' date has to be set when setting a campaign");
             }
 
             if (!branchId.equals(getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID))) {
@@ -95,7 +93,7 @@ public class CampaignTask extends AbstractDocumentTask {
                         "campaign for that branch", frozenNodeId, branchId));
             }
 
-            if (to.before(from)) {
+            if (to != null && to.before(from)) {
                 throw new WorkflowException(format("Not allowed to have a 'to' date '%s' being before the 'from' date '%s'",
                         to, from));
             }
@@ -104,7 +102,7 @@ public class CampaignTask extends AbstractDocumentTask {
 
             return new DocumentVariant(frozenNode);
         } catch (ItemNotFoundException e) {
-            throw new WorkflowException(format("No node found for '%'s", frozenNodeId));
+            throw new WorkflowException(format("No node found for '%s'", frozenNodeId));
         }
 
     }

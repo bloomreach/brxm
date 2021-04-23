@@ -29,7 +29,6 @@ import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.action.ArchiveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.BranchAction;
-import org.onehippo.repository.documentworkflow.action.CampaignAction;
 import org.onehippo.repository.documentworkflow.action.CheckoutBranchAction;
 import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
@@ -119,8 +118,6 @@ public class BaseDocumentWorkflowTest {
         getMockNode(scxmlNode, "checkoutBranch", CheckoutBranchAction.class.getName());
         getMockNode(scxmlNode, "setPreReintegrationLabels", SetPreReintegrationLabelsAction.class.getName());
         getMockNode(scxmlNode, "label", LabelAction.class.getName());
-        getMockNode(scxmlNode, "campaign", CampaignAction.class.getName());
-        getMockNode(scxmlNode, "removeCampaign", CampaignAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);

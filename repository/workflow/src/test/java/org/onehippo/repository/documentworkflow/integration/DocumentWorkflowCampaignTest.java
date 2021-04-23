@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import javax.jcr.version.Version;
 
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
@@ -31,6 +32,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.documentworkflow.version.Campaign;
 import org.onehippo.repository.documentworkflow.version.VersionsMeta;
 import org.onehippo.repository.documentworkflow.version.JcrVersionsMetaUtils;
+import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static java.lang.String.format;
@@ -50,12 +52,14 @@ public class DocumentWorkflowCampaignTest extends AbstractDocumentWorkflowIntegr
         Map<String, Serializable> hints = workflow.hints();
 
         assertThat(hints.get("campaign")).isEqualTo(true);
+        assertThat(hints.get("removeCampaign")).isEqualTo(true);
 
         workflow.branch("foo", "Foo");
 
         Map<String, Serializable> hints2 = workflow.hints("foo");
 
         assertThat(hints2.get("campaign")).isEqualTo(true);
+        assertThat(hints2.get("removeCampaign")).isEqualTo(true);
 
     }
 
@@ -64,30 +68,32 @@ public class DocumentWorkflowCampaignTest extends AbstractDocumentWorkflowIntegr
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         // create a version
         final Document version = workflow.version();
-        final Version versionNode = (Version)version.getNode(session);
+        final Version versionNode = (Version) version.getNode(session);
 
         Calendar from = new Calendar.Builder().setDate(2019, 1, 2).build();
         Calendar to = new Calendar.Builder().setDate(2021, 1, 2).build();
 
-        assertThatThrownBy(() -> workflow.campaign("not-a-uuid", MASTER_BRANCH_ID,  from, to))
-                .hasMessage("invalid identifier: not-a-uuid")
-                .isInstanceOf(WorkflowException.class);
+        try (Log4jInterceptor ignore = Log4jInterceptor.onWarn().trap(SCXMLWorkflowExecutor.class).build()) {
+            assertThatThrownBy(() -> workflow.campaign("not-a-uuid", MASTER_BRANCH_ID, from, to))
+                    .hasMessage("invalid identifier: not-a-uuid")
+                    .isInstanceOf(WorkflowException.class);
 
-        assertThatThrownBy(() -> workflow.campaign(handle.getIdentifier(), MASTER_BRANCH_ID,  from, to))
-                .hasMessage(format("Node for '%s' is not a node of type '%s'", handle.getIdentifier(), NT_FROZEN_NODE))
-                .isInstanceOf(WorkflowException.class);
+            assertThatThrownBy(() -> workflow.campaign(handle.getIdentifier(), MASTER_BRANCH_ID, from, to))
+                    .hasMessage(format("Node for '%s' is not a node of type '%s'", handle.getIdentifier(), NT_FROZEN_NODE))
+                    .isInstanceOf(WorkflowException.class);
 
-        assertThatThrownBy(() -> workflow.campaign(versionNode.getFrozenNode().getIdentifier(), "foo",  from, to))
-                .hasMessage(format("Node for '%s' is not for branch '%s' hence not allowed to be a " +
-                        "campaign for that branch", versionNode.getFrozenNode().getIdentifier(), "foo"))
-                .isInstanceOf(WorkflowException.class);
+            assertThatThrownBy(() -> workflow.campaign(versionNode.getFrozenNode().getIdentifier(), "foo", from, to))
+                    .hasMessage(format("Node for '%s' is not for branch '%s' hence not allowed to be a " +
+                            "campaign for that branch", versionNode.getFrozenNode().getIdentifier(), "foo"))
+                    .isInstanceOf(WorkflowException.class);
 
-        Calendar fromAfterTo = new Calendar.Builder().setDate(2022, 1, 2).build();
+            Calendar fromAfterTo = new Calendar.Builder().setDate(2022, 1, 2).build();
 
-        assertThatThrownBy(() -> workflow.campaign(versionNode.getFrozenNode().getIdentifier(), MASTER_BRANCH_ID,  fromAfterTo, to))
-                .hasMessage(format("Not allowed to have a 'to' date '%s' being before the 'from' date '%s'",
-                        to, fromAfterTo))
-                .isInstanceOf(WorkflowException.class);
+            assertThatThrownBy(() -> workflow.campaign(versionNode.getFrozenNode().getIdentifier(), MASTER_BRANCH_ID, fromAfterTo, to))
+                    .hasMessage(format("Not allowed to have a 'to' date '%s' being before the 'from' date '%s'",
+                            to, fromAfterTo))
+                    .isInstanceOf(WorkflowException.class);
+        }
     }
 
     @Test
@@ -96,13 +102,13 @@ public class DocumentWorkflowCampaignTest extends AbstractDocumentWorkflowIntegr
 
         // create a version
         final Document version = workflow.version();
-        final Version versionNode = (Version)version.getNode(session);
+        final Version versionNode = (Version) version.getNode(session);
 
         final Calendar from = new Calendar.Builder().setDate(2019, 1, 2).build();
         final Calendar to = new Calendar.Builder().setDate(2021, 1, 2).build();
 
         final String frozenNodeId = versionNode.getFrozenNode().getIdentifier();
-        workflow.campaign(frozenNodeId, MASTER_BRANCH_ID,  from, to);
+        workflow.campaign(frozenNodeId, MASTER_BRANCH_ID, from, to);
 
         {
             final VersionsMeta versionsMeta = JcrVersionsMetaUtils.getVersionsMeta(handle);
@@ -117,7 +123,7 @@ public class DocumentWorkflowCampaignTest extends AbstractDocumentWorkflowIntegr
         // update the from value
         final Calendar fromNew = new Calendar.Builder().setDate(2018, 1, 2).build();
 
-        workflow.campaign(frozenNodeId, MASTER_BRANCH_ID,  fromNew, to);
+        workflow.campaign(frozenNodeId, MASTER_BRANCH_ID, fromNew, to);
 
         {
             final VersionsMeta versionsMeta = JcrVersionsMetaUtils.getVersionsMeta(handle);
@@ -131,10 +137,10 @@ public class DocumentWorkflowCampaignTest extends AbstractDocumentWorkflowIntegr
 
         // create new version
         final Document version2 = workflow.version();
-        final Version versionNode2 = (Version)version2.getNode(session);
+        final Version versionNode2 = (Version) version2.getNode(session);
 
         String frozenNodeId2 = versionNode2.getFrozenNode().getIdentifier();
-        workflow.campaign(frozenNodeId2, MASTER_BRANCH_ID,  fromNew, to);
+        workflow.campaign(frozenNodeId2, MASTER_BRANCH_ID, fromNew, to);
 
         {
             final VersionsMeta versionsMeta = JcrVersionsMetaUtils.getVersionsMeta(handle);
@@ -159,6 +165,16 @@ public class DocumentWorkflowCampaignTest extends AbstractDocumentWorkflowIntegr
             assertThat(versionsMeta.getCampaign(frozenNodeId2).isPresent()).isFalse();
         }
 
+        // add open-ended campaign, aka, no end-date
+        workflow.campaign(frozenNodeId2, MASTER_BRANCH_ID,  fromNew, null);
+        {
+            final VersionsMeta versionsMeta = JcrVersionsMetaUtils.getVersionsMeta(handle);
+            assertThat(versionsMeta.getCampaigns().size()).isEqualTo(1);
+            final Campaign campaign = versionsMeta.getCampaign(frozenNodeId2).get();
+            assertThat(campaign.getFrom().getTimeInMillis()).isEqualTo(fromNew.getTimeInMillis());
+            assertThat(campaign.getTo()).isNull();
+        }
+
     }
 
     @Test
@@ -172,7 +188,7 @@ public class DocumentWorkflowCampaignTest extends AbstractDocumentWorkflowIntegr
 
         // create a version
         final Document version = workflow.version();
-        final Version versionNode = (Version)version.getNode(session);
+        final Version versionNode = (Version) version.getNode(session);
 
         final Calendar from = new Calendar.Builder().setDate(2019, 1, 2).build();
         final Calendar to = new Calendar.Builder().setDate(2021, 1, 2).build();
