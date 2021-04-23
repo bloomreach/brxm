@@ -23,10 +23,10 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.campaign.VersionLabel;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.version.JcrVersionsMetaUtils;
-import org.onehippo.repository.documentworkflow.version.VersionLabel;
+import org.onehippo.repository.documentworkflow.campaign.JcrVersionsMetaUtils;
 
 import static java.lang.String.format;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
