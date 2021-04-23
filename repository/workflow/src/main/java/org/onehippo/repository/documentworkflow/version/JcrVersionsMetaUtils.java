@@ -36,35 +36,47 @@ public class JcrVersionsMetaUtils {
         }
     }
 
-    public static VersionsMeta setCampaign(final Node handle, final Campaign campaign) throws RepositoryException {
-        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
-            handle.addMixin(NT_HIPPO_VERSION_INFO);
-        }
+    public static void setCampaign(final Node handle, final Campaign campaign) throws RepositoryException {
         final VersionsMeta versionsMeta = getVersionsMeta(handle);
         versionsMeta.setCampaign(campaign);
         try {
-            handle.setProperty(HIPPO_VERSIONS_META, objectMapper.writeValueAsString(versionsMeta));
-        } catch (JsonProcessingException e) {
-            throw new RepositoryException("Cannot add campaign", e);
-        }
-        return versionsMeta;
-    }
-
-    public static VersionsMeta removeCampaign(final Node handle, final String campaignId) throws RepositoryException {
-        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
             handle.addMixin(NT_HIPPO_VERSION_INFO);
-        }
-        final VersionsMeta versionsMeta = getVersionsMeta(handle);
-        versionsMeta.removeCampaign(campaignId);
-        try {
             handle.setProperty(HIPPO_VERSIONS_META, objectMapper.writeValueAsString(versionsMeta));
         } catch (JsonProcessingException e) {
             throw new RepositoryException("Cannot add campaign", e);
         }
-        return versionsMeta;
     }
 
-    public static VersionsMeta removeCampaign(final Node handle, final Campaign campaign) throws RepositoryException {
-        return removeCampaign(handle, campaign.getUuid());
+    public static void removeCampaign(final Node handle, final String frozenNodeId) throws RepositoryException {
+        final VersionsMeta versionsMeta = getVersionsMeta(handle);
+        versionsMeta.removeCampaign(frozenNodeId);
+        try {
+            handle.addMixin(NT_HIPPO_VERSION_INFO);
+            handle.setProperty(HIPPO_VERSIONS_META, objectMapper.writeValueAsString(versionsMeta));
+        } catch (JsonProcessingException e) {
+            throw new RepositoryException("Cannot add campaign", e);
+        }
+    }
+
+    public static void setVersionLabel(final Node handle, final VersionLabel versionLabel) throws RepositoryException {
+        final VersionsMeta versionsMeta = getVersionsMeta(handle);
+        versionsMeta.setVersionLabel(versionLabel);
+        try {
+            handle.addMixin(NT_HIPPO_VERSION_INFO);
+            handle.setProperty(HIPPO_VERSIONS_META, objectMapper.writeValueAsString(versionsMeta));
+        } catch (JsonProcessingException e) {
+            throw new RepositoryException("Cannot add campaign", e);
+        }
+    }
+
+    public static void removeVersionLabel(final Node handle, final String frozenNodeId) throws RepositoryException {
+        final VersionsMeta versionsMeta = getVersionsMeta(handle);
+        versionsMeta.removeVersionLabel(frozenNodeId);
+        try {
+            handle.addMixin(NT_HIPPO_VERSION_INFO);
+            handle.setProperty(HIPPO_VERSIONS_META, objectMapper.writeValueAsString(versionsMeta));
+        } catch (JsonProcessingException e) {
+            throw new RepositoryException("Cannot add campaign", e);
+        }
     }
 }

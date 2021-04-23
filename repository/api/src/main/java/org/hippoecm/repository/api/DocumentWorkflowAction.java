@@ -166,6 +166,14 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return new DocumentWorkflowAction("removeCampaign");
     }
 
+    public static DocumentWorkflowAction labelVersion() {
+        return new DocumentWorkflowAction("labelVersion");
+    }
+
+    public static DocumentWorkflowAction removeLabelVersion() {
+        return new DocumentWorkflowAction("removeLabelVersion");
+    }
+
     private final String action;
     private boolean mutates;
     private String requestIdentifier;
@@ -228,6 +236,7 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         FROZEN_NODE_ID("frozenNodeId"),
         FROM_DATE("fromDate"),
         TO_DATE("toDate"),
+        VERSION_LABEL("versionLabel"),
         STATE("state"),
         ;
 

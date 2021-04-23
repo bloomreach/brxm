@@ -724,4 +724,38 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      */
     Document removeCampaign(String frozenNodeId) throws WorkflowException;
 
+    /**
+     * <p>
+     *     Stores a verion label for {@code frozenNodeId}. Note that this is very different the JCR version labeling :
+     *     this workflow a label for a frozen node on the handle node on the hippo:versionInfo property. The reason is
+     *     that JCR labelling is unsuited for what we need: for example because a label can only be used once in JCR for
+     *     the version history of a node
+     *  </p>
+     *  <p>
+     *     If there does not exist a node for {@code frozenNodeId} a
+     *     {@link WorkflowException} is thrown.
+     * </p>
+     * @param frozenNodeId
+     * @param label
+     * @return
+     * @throws WorkflowException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    Document labelVersion(String frozenNodeId, String label)
+            throws WorkflowException, RepositoryException, RemoteException;
+
+    /**
+     * <p>
+     *     Removes the version label if present for {@code frozeNodeId}
+     * </p>
+     * @param frozenNodeId
+     * @return
+     * @throws WorkflowException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    Document removeLabelVersion(String frozenNodeId)
+            throws WorkflowException, RepositoryException, RemoteException;
+
 }
