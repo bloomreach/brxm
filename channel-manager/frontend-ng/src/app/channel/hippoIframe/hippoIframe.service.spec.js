@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,19 +153,8 @@ describe('HippoIframeService', () => {
     expect(HippoIframeService.isPageLoaded()).toBe(true);
   });
 
-  it('does not reload the iframe when no page has been loaded yet', (done) => {
-    HippoIframeService.initialize(undefined); // undo initialization
-
-    HippoIframeService.reload().then(() => {
-      expect(HippoIframeService.deferredReload).toBeFalsy();
-      done();
-    });
-
-    $rootScope.$digest();
-  });
-
   it('reloads the iframe and waits for the page load to complete', () => {
-    HippoIframeService.pageLoaded = true;
+    delete HippoIframeService._deferredPageLoad;
     spyOn($log, 'warn');
 
     HippoIframeService.reload();
@@ -185,7 +174,7 @@ describe('HippoIframeService', () => {
   });
 
   it('should perform force iframe reload', () => {
-    HippoIframeService.pageLoaded = true;
+    delete HippoIframeService._deferredPageLoad;
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo').and.returnValue('path');
     ChannelService.makePath.and.returnValue('something');
 
@@ -202,7 +191,7 @@ describe('HippoIframeService', () => {
   it('logs a warning upon a reload request when a reload is already ongoing', () => {
     spyOn($log, 'warn');
 
-    HippoIframeService.pageLoaded = true;
+    delete HippoIframeService._deferredPageLoad;
     HippoIframeService.reload();
 
     expect($log.warn).not.toHaveBeenCalled();
