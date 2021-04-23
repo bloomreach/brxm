@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,24 @@ type Transition = Partial<Navigation>;
   providedIn: 'root',
 })
 export class NavigationService implements OnDestroy {
+
+  get navigating$(): Observable<boolean> {
+    return this.navigatingFiltered;
+  }
+
+  private get basePath(): string {
+    return this.appSettings.basePath;
+  }
+
+  private get homeUrl(): string {
+    const homeMenuItem = this.menuStateService.currentHomeMenuItem;
+
+    if (!homeMenuItem) {
+      throw new CriticalError('ERROR_CONFIGURATION', 'Unable to find home item');
+    }
+
+    return this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem);
+  }
   private routes: Route[];
   private locationSubscription: Subscription;
   private readonly transitions = new Subject<Transition | Error>();
@@ -98,24 +116,6 @@ export class NavigationService implements OnDestroy {
     );
 
     this.setupNavigations();
-  }
-
-  get navigating$(): Observable<boolean> {
-    return this.navigatingFiltered;
-  }
-
-  private get basePath(): string {
-    return this.appSettings.basePath;
-  }
-
-  private get homeUrl(): string {
-    const homeMenuItem = this.menuStateService.currentHomeMenuItem;
-
-    if (!homeMenuItem) {
-      throw new CriticalError('ERROR_CONFIGURATION', 'Unable to find home item');
-    }
-
-    return this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem);
   }
 
   init(navItems: NavItem[]): void {
@@ -206,14 +206,14 @@ export class NavigationService implements OnDestroy {
     return this.navigateByUrl(currentUrl, NavigationTrigger.InitialNavigation);
   }
 
-  private isNavigationPossible(url: string): boolean {
-    return !!this.matchRoute(url);
-  }
-
-  private navigateByUrl(url: string, triggeredBy: NavigationTrigger, breadcrumbLabel?: string): Promise<void> {
+  navigateByUrl(url: string, triggeredBy: NavigationTrigger, breadcrumbLabel?: string): Promise<void> {
     this.errorHandlingService.clearError();
 
     return this.scheduleNavigation(url, triggeredBy, { breadcrumbLabel });
+  }
+
+  private isNavigationPossible(url: string): boolean {
+    return !!this.matchRoute(url);
   }
 
   private setUpLocationChangeListener(): void {
