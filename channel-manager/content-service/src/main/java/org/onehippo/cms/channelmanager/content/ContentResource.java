@@ -15,10 +15,13 @@
  */
 package org.onehippo.cms.channelmanager.content;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.function.Function;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
