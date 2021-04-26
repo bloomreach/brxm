@@ -40,7 +40,7 @@ export class ScheduleFormComponent implements OnInit {
   version!: Version;
 
   scheduleForm = this.fb.group({
-    label: ['', Validators.required],
+    label: [''],
     fromDateTime: ['', Validators.required],
     toDateTime: [''],
   });
