@@ -99,8 +99,10 @@
             class="qa-schedule-remove"
             *ngIf="version.campaign"
             (click)="$event.stopPropagation(); removeSchedule()">
-      {{ 'REMOVE_SCHEDULE' | translate }}
+      <span *ngIf="version.active">{{ 'END_NOW' | translate }}</span>
+      <span *ngIf="!version.active">{{ 'REMOVE_SCHEDULE' | translate }}</span>
     </button>
+
     <button mat-stroked-button
             type="button"
             class="qa-schedule-cancel"

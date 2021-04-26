@@ -23,6 +23,8 @@ export interface Version {
   timestamp: number;
   userName: string;
   campaign?: CampaignInfo;
+  published: boolean;
+  active: boolean;
 }
 
 export interface VersionUpdateBody {

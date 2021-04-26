@@ -69,4 +69,20 @@ export class VersionComponent implements OnChanges {
     await this.versionsService.getVersionsInfo(documentId);
     this.actionInProgressChange.emit(false);
   }
+
+  getIcon(version: Version): string {
+    if (version.campaign && version.active && !this.versionsInfo.live) {
+      return 'remove_circle_outline';
+    }
+
+    if (version.campaign) {
+      return 'schedule';
+    }
+
+    if (version.published) {
+      return 'check_circle_outline';
+    }
+
+    return '';
+  }
 }
