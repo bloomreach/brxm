@@ -30,6 +30,7 @@
     <input matInput
            class="qa-schedule-from-date-time"
            formControlName="fromDateTime"
+           required
            [min]="currentDateTime"
            [ngxMatDatetimePicker]="fromPicker">
     <mat-datepicker-toggle matSuffix
