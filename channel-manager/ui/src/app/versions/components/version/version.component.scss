@@ -22,8 +22,8 @@
   @include mat-divider-border($theme);
 
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr;
   min-height: 72px;
   box-sizing: border-box;
   padding: $spacing-half $spacing-full;
@@ -79,6 +79,8 @@
 }
 
 .actions {
+  align-items: center;
+  display: flex;
   flex: auto 0 0;
   padding-left: $spacing-full;
 

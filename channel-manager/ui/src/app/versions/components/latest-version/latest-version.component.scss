@@ -21,26 +21,47 @@
 :host {
   @include mat-divider-border($theme);
 
-  align-items: center;
   cursor: pointer;
-  height: 72px;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 16px;
+  display: grid;
+  grid-template-rows: 1fr;
+  min-height: 72px;
+  box-sizing: border-box;
+  padding: $spacing-half $spacing-full;
 
   &:hover {
     @include mat-hover-background($theme);
   }
+}
 
-  &.selected {
-    background-color: map-get($blue, 50);
+:host.selected {
+  background-color: map-get($blue, 50);
 
-    p:first-child {
-      font-weight: 800;
-    }
+  .description {
+    font-weight: 800;
   }
+}
 
-  p {
-    margin: 0;
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+p {
+  margin-bottom: 0.3em;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding-top: $spacing-half;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    margin-left: $spacing-half;
   }
 }

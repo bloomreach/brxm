@@ -14,21 +14,55 @@
   limitations under the License.
   -->
 
-<div class="description">
-  <p class="qa-latest-version">
+<div class="info"
+     *ngIf="!isCreateFormVisible">
+  <p class="description">
     {{ 'LATEST_VERSION' | translate }}
   </p>
+
+  <div class="actions"
+       *ngIf="isSelected">
+    <button *ngIf="versionsInfo.createEnabled"
+            mat-stroked-button
+            color="primary"
+            class="qa-new-version-action"
+            [disabled]="actionInProgress"
+            (click)="isCreateFormVisible = true; $event.stopPropagation()">
+      <mat-icon svgIcon="plus"></mat-icon>
+      {{ 'VERSION' | translate }}
+    </button>
+  </div>
 </div>
 
-<div class="actions" *ngIf="isSelected">
-  <button *ngIf="versionsInfo.createEnabled"
-          mat-stroked-button
-          color="primary"
-          class="qa-new-version-action"
-          [disabled]="actionInProgress"
-          (click)="createVersion()">
-    <mat-icon svgIcon="plus"></mat-icon>
-    {{ 'VERSION' | translate }}
-  </button>
-</div>
+<div class="create-form"
+     *ngIf="isCreateFormVisible">
+  <p class="description">
+    {{ currentDate | moment:'lll' }} - {{ currentUserName }}
+  </p>
 
+  <form [formGroup]="createForm"
+        (ngSubmit)="createVersion()">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'VERSION_NAME' | translate }}</mat-label>
+      <input matInput
+             class="qa-version-label"
+             formControlName="label">
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-stroked-button
+              type="button"
+              class="qa-create-version-cancel"
+              (click)="$event.stopPropagation(); isCreateFormVisible = false">
+        {{ 'CANCEL' | translate }}
+      </button>
+
+      <button mat-stroked-button
+              class="qa-create-version-submit"
+              type="submit"
+              color="primary">
+        {{ 'CREATE' | translate }}
+      </button>
+    </div>
+  </form>
+</div>
