@@ -22,4 +22,5 @@ export interface VersionsInfo {
   createEnabled: boolean;
   campaignEnabled: boolean;
   labelEnabled: boolean;
+  live: boolean;
 }

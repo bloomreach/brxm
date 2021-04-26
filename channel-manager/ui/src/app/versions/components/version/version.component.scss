@@ -52,14 +52,23 @@
 
 .schedule-info {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 
   .mat-icon {
-    font-size: inherit !important;
-    height: 12px !important;
-    width: 12px !important;
+    font-size: 16px !important;
+    height: 16px !important;
+    width: 16px !important;
     padding-top: 1px;
     padding-right: 3px;
+
+    &.active {
+      color: map-get($functional-colors, green);
+    }
+
+    &.active.offline,
+    &.scheduled.offline {
+      color: map-get($red, 500);
+    }
   }
 }
 
