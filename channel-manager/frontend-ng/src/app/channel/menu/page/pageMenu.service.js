@@ -43,6 +43,7 @@ class PageMenuService extends MenuService {
     this.SiteMapService = SiteMapService;
 
     const menu = this.defineMenu('page', {
+      isEnabled: () => this.HippoIframeService.isPageLoaded(),
       isVisible: () => PageService.hasActions('page'),
       onClick: () => this.onOpenMenu(),
       translationKey: 'TOOLBAR_BUTTON_PAGE',
