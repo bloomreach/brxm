@@ -47,7 +47,6 @@ export class ScheduleFormComponent implements OnInit {
 
   currentDateTime?: Date;
   minFromDateTime?: Date;
-  maxFromDateTime?: Date;
   originalFromDateTime?: moment.Moment;
   minToDateTime?: Date;
   originalToDateTime?: moment.Moment;
