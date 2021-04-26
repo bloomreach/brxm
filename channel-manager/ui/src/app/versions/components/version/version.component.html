@@ -27,22 +27,30 @@
     </p>
 
     <p class="truncate"
-       *ngIf="version.label && !isScheduleFormVisible">
+       *ngIf="version?.label && !isScheduleFormVisible">
       <i>
-        {{ version?.label }}
+        {{ version.label }}
       </i>
     </p>
 
     <p class="schedule-info truncate mat-caption"
-       *ngIf="version.campaign && !isScheduleFormVisible">
-      <mat-icon>schedule</mat-icon>
-      <span>{{ version.campaign!.from | moment }}</span>
+       *ngIf="!isScheduleFormVisible">
+      <mat-icon [class.active]="version.active"
+                [class.offline]="!versionsInfo.live"
+                [class.scheduled]="version.campaign">
+        {{ getIcon(version) }}
+      </mat-icon>
 
-      <ng-container *ngIf="version.campaign!.to">
-        <span> - </span>
-        <span>
-          {{ version.campaign!.to | moment }}
-        </span>
+      <span *ngIf="version.published">{{ 'PUBLISHED' | translate }}</span>
+
+      <ng-container *ngIf="version.campaign">
+        <span>{{ version.campaign.from | moment }}</span>
+        <ng-container *ngIf="version.campaign!.to">
+          <span> - </span>
+          <span>
+            {{ version.campaign.to | moment }}
+          </span>
+        </ng-container>
       </ng-container>
     </p>
   </div>
