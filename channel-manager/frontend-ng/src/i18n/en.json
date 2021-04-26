@@ -315,6 +315,7 @@
   "REJECT_CHANNEL_TITLE": "Reject channel '{{ channelName }}'?",
   "REMOVE": "Remove",
   "REMOVE_VALUE": "Remove value",
+  "REMOVE_SCHEDULE": "Remove schedule",
   "RESTORE": "Restore",
   "RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES": "Properties",
   "SAVE": "Save",

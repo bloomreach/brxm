@@ -96,6 +96,13 @@
   <div class="form-actions">
     <button mat-stroked-button
             type="button"
+            class="qa-schedule-remove"
+            *ngIf="version.campaign"
+            (click)="$event.stopPropagation(); removeSchedule()">
+      {{ 'REMOVE_SCHEDULE' | translate }}
+    </button>
+    <button mat-stroked-button
+            type="button"
             class="qa-schedule-cancel"
             (click)="$event.stopPropagation(); cancelForm.emit()">
       {{ 'CANCEL' | translate }}
