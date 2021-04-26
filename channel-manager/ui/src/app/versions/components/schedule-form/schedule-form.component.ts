@@ -105,4 +105,15 @@ export class ScheduleFormComponent implements OnInit {
     await this.versionsService.updateVersion(documentId, this.version.jcrUUID, body);
     await this.versionsService.getVersionsInfo(documentId);
   }
+
+  async removeSchedule(): Promise<void> {
+    const { documentId } = this.uiRouterGlobals.params;
+    const formValues = this.scheduleForm.value;
+    const body: VersionUpdateBody = {
+      label: formValues.label,
+    };
+
+    await this.versionsService.updateVersion(documentId, this.version.jcrUUID, body);
+    await this.versionsService.getVersionsInfo(documentId);
+  }
 }
