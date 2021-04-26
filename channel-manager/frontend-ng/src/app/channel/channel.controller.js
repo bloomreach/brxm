@@ -88,10 +88,6 @@ class ChannelCtrl {
     this.HippoIframeService.reload();
   }
 
-  isControlsDisabled() {
-    return !this.isChannelLoaded() || !this.isPageLoaded();
-  }
-
   get channel() {
     return this.ChannelService.getChannel();
   }
