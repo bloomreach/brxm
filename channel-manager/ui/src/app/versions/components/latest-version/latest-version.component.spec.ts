@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
+import { UserSettings } from '@bloomreach/navapp-communication';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { DocumentWorkflowService } from '../../../services/document-workflow.service';
+import { Ng1NavappService, NG1_NAVAPP_SERVICE } from '../../../services/ng1/navapp.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
@@ -50,6 +54,13 @@ describe('LatestVersionComponent', () => {
     campaignEnabled: true,
   } as VersionsInfo;
 
+  @Pipe({ name: 'moment' })
+  class MomentMockPipe implements PipeTransform {
+    transform(value: number | string | Date, format?: string): string {
+      return `${value}`;
+    }
+  }
+
   beforeEach(async(() => {
     const documentWorkflowServiceMock = {
       createWorkflowAction: jest.fn(() => { }),
@@ -65,11 +76,17 @@ describe('LatestVersionComponent', () => {
       },
     };
 
+    const navappServiceMock: Partial<Ng1NavappService> = {
+      getUserSettings: jest.fn(() => Promise.resolve({ userName: 'testAdmin' } as UserSettings)),
+    };
+
     TestBed.configureTestingModule({
       declarations: [
         LatestVersionComponent,
+        MomentMockPipe,
       ],
       imports: [
+        ReactiveFormsModule,
         MatIconModule,
         MatIconTestingModule,
         TranslateModule.forRoot(),
@@ -78,6 +95,10 @@ describe('LatestVersionComponent', () => {
         { provide: DocumentWorkflowService, useValue: documentWorkflowServiceMock },
         { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
         { provide: VersionsService, useValue: versionsServiceMock },
+        { provide: NG1_NAVAPP_SERVICE, useValue: navappServiceMock },
+      ],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA,
       ],
     })
       .compileComponents();

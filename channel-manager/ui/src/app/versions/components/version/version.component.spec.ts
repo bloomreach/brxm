@@ -30,7 +30,7 @@ import { VersionsService } from '../../services/versions.service';
 import { VersionComponent } from './version.component';
 
 @Pipe({ name: 'moment' })
-export class MomentMockPipe implements PipeTransform {
+class MomentMockPipe implements PipeTransform {
   transform(value: number | string | Date, format?: string): string {
     return `${value}`;
   }
