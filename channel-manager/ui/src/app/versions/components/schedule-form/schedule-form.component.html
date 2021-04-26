@@ -30,6 +30,7 @@
     <input matInput
            class="qa-schedule-from-date-time"
            formControlName="fromDateTime"
+           [min]="currentDateTime"
            [ngxMatDatetimePicker]="fromPicker">
     <mat-datepicker-toggle matSuffix
                            [for]="fromPicker">
@@ -48,6 +49,14 @@
             (click)="resetFromDate()">
       <mat-icon>sync</mat-icon>
     </button>
+
+    <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerMin')">
+      {{ 'ERROR_INVALID_DATE' | translate }}
+    </mat-error>
+
+    <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerParse')">
+      {{ 'ERROR_INVALID_DATE' | translate }}
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
@@ -55,6 +64,7 @@
     <input matInput
            class="qa-schedule-to-date-time"
            formControlName="toDateTime"
+           [min]="scheduleForm.get('fromDateTime')?.value"
            [ngxMatDatetimePicker]="toPicker">
     <mat-datepicker-toggle matSuffix
                            [for]="toPicker">
@@ -73,6 +83,14 @@
             (click)="resetToDate()">
       <mat-icon>sync</mat-icon>
     </button>
+
+    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerParse')">
+      {{ 'ERROR_INVALID_DATE' | translate }}
+    </mat-error>
+
+    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerMin')">
+      {{ 'ERROR_INVALID_DATE' | translate }}
+    </mat-error>
   </mat-form-field>
 
   <div class="form-actions">
