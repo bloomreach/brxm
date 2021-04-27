@@ -73,7 +73,6 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-pool.version>1.6</commons-pool.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-io.version>2.6</commons-io.version>
     <commons-jexl.version>1.1</commons-jexl.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>

@@ -109,7 +109,6 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-io.version>2.6</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
     <commons-imaging.version>1.0-alpha1</commons-imaging.version>
 
