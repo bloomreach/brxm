@@ -34,7 +34,6 @@
 
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
 
-    <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-csv.version>1.4</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>

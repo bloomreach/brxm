@@ -43,7 +43,6 @@
     <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
     <snakeyaml.version>1.26</snakeyaml.version>
     <commons-lang3.version>3.5</commons-lang3.version>
-    <commons-io.version>2.6</commons-io.version>
     <commons-cli.version>1.4</commons-cli.version>
     <commons-collections4.version>4.1</commons-collections4.version>
     <lib.json.version>20160810</lib.json.version>
