@@ -94,9 +94,9 @@
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-collections4.version>4.2</commons-collections4.version>
-    <tika.version>1.25</tika.version>
+    <tika.version>1.26</tika.version>
     <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
-    <pdfbox.version>2.0.21</pdfbox.version>
+    <pdfbox.version>2.0.23</pdfbox.version>
     <commons-compress.version>1.20</commons-compress.version>
     <quartz.version>2.3.2</quartz.version>
     <json-lib.version>2.4</json-lib.version>
