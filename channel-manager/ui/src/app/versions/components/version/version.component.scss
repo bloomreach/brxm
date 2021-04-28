@@ -21,11 +21,11 @@
 :host {
   @include mat-divider-border($theme);
 
-  cursor: pointer;
-  display: grid;
-  grid-template-rows: 1fr;
-  min-height: 72px;
   box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 72px;
   padding: $spacing-half $spacing-full;
 
   &:hover {
@@ -43,6 +43,8 @@
 
 .info {
   display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
 }
 
 .description {
@@ -51,15 +53,13 @@
 }
 
 .schedule-info {
-  display: flex;
-  align-items: flex-end;
-
   .mat-icon {
     font-size: 16px !important;
     height: 16px !important;
     width: 16px !important;
     padding-top: 1px;
     padding-right: 3px;
+    vertical-align: bottom;
 
     &.active {
       color: map-get($functional-colors, green);
