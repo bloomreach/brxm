@@ -31,6 +31,12 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
     class="mat-divider mat-divider-horizontal"
     role="separator"
   />
-  <em-version-list-filter />
+  <div
+    class="version-list-filter"
+  >
+    <mat-checkbox>
+       VERSION_FILTER_TEXT 
+    </mat-checkbox>
+  </div>
 </div>
 `;
