@@ -18,6 +18,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { DocumentWorkflowService } from '../../../services/document-workflow.service';
@@ -86,6 +87,7 @@ describe('VersionComponent', () => {
         MomentMockPipe,
       ],
       imports: [
+        MatTooltipModule,
         MatIconModule,
         MatIconTestingModule,
         TranslateModule.forRoot(),

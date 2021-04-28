@@ -61,6 +61,7 @@
             mat-stroked-button
             color="primary"
             class="schedule-version-action qa-schedule-version-action"
+            matTooltip="{{ 'SCHEDULE' | translate }}"
             [disabled]="actionInProgress"
             (click)="isScheduleFormVisible = true; $event.stopPropagation()">
       <mat-icon>schedule</mat-icon>
