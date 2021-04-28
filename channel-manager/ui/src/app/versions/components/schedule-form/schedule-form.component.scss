@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/palettes';
-@import 'variables';
+@import "~@bloomreach/frontend-theme/palettes";
+@import "variables";
 
 :host {
   padding-top: $spacing-half;
@@ -34,11 +34,11 @@
   display: flex;
   justify-content: flex-end;
 
-  button:first-of-type {
-    margin-right: auto;
-  }
-
   button:not(:first-of-type) {
     margin-left: $spacing-half;
+  }
+
+  .schedule-remove {
+    margin-right: auto;
   }
 }

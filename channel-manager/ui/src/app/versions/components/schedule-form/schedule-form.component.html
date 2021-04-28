@@ -97,7 +97,7 @@
   <div class="form-actions">
     <button mat-stroked-button
             type="button"
-            class="qa-schedule-remove"
+            class="schedule-remove qa-schedule-remove"
             *ngIf="version.campaign"
             (click)="$event.stopPropagation(); removeSchedule()">
       <span *ngIf="version.active">{{ 'END_NOW' | translate }}</span>
