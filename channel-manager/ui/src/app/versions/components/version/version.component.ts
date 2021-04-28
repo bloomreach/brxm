@@ -16,7 +16,9 @@
 
 import { Component, EventEmitter, HostBinding, Inject, Input, OnChanges, Output } from '@angular/core';
 import { UIRouterGlobals } from '@uirouter/core';
+import moment from 'moment';
 
+import { DateService } from '../../../services/date.service';
 import { DocumentWorkflowService } from '../../../services/document-workflow.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
@@ -50,15 +52,19 @@ export class VersionComponent implements OnChanges {
 
   isScheduleFormVisible = false;
 
+  currentDate?: Date;
+
   constructor(
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
     private readonly documentWorkflowService: DocumentWorkflowService,
     private readonly versionsService: VersionsService,
+    private readonly dateService: DateService,
   ) { }
 
   ngOnChanges(): void {
     this.isScheduleFormVisible = false;
+    this.currentDate = this.dateService.getCurrentDate();
   }
 
   async restoreVersion(versionUUID: string): Promise<void> {
@@ -71,8 +77,13 @@ export class VersionComponent implements OnChanges {
   }
 
   getIcon(version: Version): string {
+
     if (version.campaign && version.active && !this.versionsInfo.live) {
       return 'remove_circle_outline';
+    }
+
+    if (!!version.campaign?.to && moment(version.campaign.to).isBefore(this.currentDate)) {
+      return 'info_outline';
     }
 
     if (version.campaign) {
