@@ -489,6 +489,7 @@
   "VERSIONS": "Versions",
   "VERSION_SELECTION_ERROR": "Failed to load version",
   "VERSION_NAME": "Version Name",
+  "VERSION_FILTER_TEXT": "Show live and scheduled versions only",
   "VIEWPORT_ANY_DEVICE": "Any device",
   "VIEWPORT_DESKTOP": "Desktop",
   "VIEWPORT_PHONE": "Phone",

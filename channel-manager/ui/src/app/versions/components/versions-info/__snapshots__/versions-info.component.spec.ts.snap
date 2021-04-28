@@ -6,7 +6,7 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
 >
   
   <div
-    class="mat-typography qa-version-list"
+    class="mat-typography version-list qa-version-list"
   >
     
     
@@ -26,5 +26,11 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
     />
     
   </div>
+  <mat-divider
+    aria-orientation="horizontal"
+    class="mat-divider mat-divider-horizontal"
+    role="separator"
+  />
+  <em-version-list-filter />
 </div>
 `;
