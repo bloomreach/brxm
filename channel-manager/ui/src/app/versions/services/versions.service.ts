@@ -50,11 +50,9 @@ export class VersionsService {
     return versionInfo;
   }
 
-  async getVersions(documentId: string): Promise<Version[]> {
+  async getVersions(documentId: string, campaignVersionOnly?: boolean): Promise<Version[]> {
     const branchId = this.projectService.getSelectedProjectId();
-
-    const { versions } = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
-
+    const { versions } = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId, { campaignVersionOnly });
     return versions;
   }
 
