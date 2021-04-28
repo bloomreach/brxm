@@ -44,6 +44,12 @@ export class VersionsService {
     this.versionsInfo.next(versionsInfo);
   }
 
+  async getVersionsInfoCampaignsOnly(documentId: string): Promise<VersionsInfo> {
+    const branchId = this.projectService.getSelectedProjectId();
+    const versionInfo = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId, { campaignVersionOnly: true });
+    return versionInfo;
+  }
+
   async getVersions(documentId: string): Promise<Version[]> {
     const branchId = this.projectService.getSelectedProjectId();
 
