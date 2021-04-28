@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.Function;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
@@ -89,6 +90,9 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     private BranchSelectionService branchSelectionService;
     private DocumentVersionServiceImpl documentVersionService;
 
+    private static final String PAGE_CAMPAIGN_SUPPORTED = "page.campaign.supported";
+    private boolean pageCampaignSupported;
+
     public ChannelContentServiceModule() {
         documentsService = new DocumentsServiceImpl();
         workflowsService = new WorkflowServiceImpl();
@@ -106,6 +110,15 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
                 DocumentTypesService.get().invalidateCache();
             }
         });
+    }
+
+    @Override
+    protected void doConfigure(final Node moduleConfig) throws RepositoryException {
+        super.doConfigure(moduleConfig);
+        pageCampaignSupported = JcrUtils.getBooleanProperty(moduleConfig, PAGE_CAMPAIGN_SUPPORTED, false);
+        if (documentVersionService != null) {
+            documentVersionService.setPageCampaignSupported(pageCampaignSupported);
+        }
     }
 
     @Override
@@ -134,6 +147,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         documentsService.setHintsInspector(createHintsInspector(session));
         documentsService.setBranchingService(createBranchingService(session));
         documentsService.setNodeFieldService(createNodeFieldService(session));
+        documentVersionService.setPageCampaignSupported(pageCampaignSupported);
     }
 
     private NodeFieldService createNodeFieldService(final Session session) {
