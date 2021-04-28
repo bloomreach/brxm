@@ -30,10 +30,10 @@
   justify-content: flex-end;
 
   button:first-of-type {
-    justify-self: flex-start;
+    margin-right: auto;
   }
 
-  button {
+  button:not(:first-of-type) {
     margin-left: $spacing-half;
   }
 }
