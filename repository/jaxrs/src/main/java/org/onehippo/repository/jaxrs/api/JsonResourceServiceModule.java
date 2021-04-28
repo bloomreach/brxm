@@ -54,7 +54,7 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
     private final List<JcrEventListener> listeners = new ArrayList<>();
 
     @Override
-    protected final void doConfigure(final Node moduleConfig) throws RepositoryException {
+    protected void doConfigure(final Node moduleConfig) throws RepositoryException {
         endpointAddress = RepositoryJaxrsEndpoint.qualifiedAddress(
                 JcrUtils.getStringProperty(moduleConfig, ENDPOINT_ADDRESS, moduleConfig.getParent().getName()));
         if (jaxrsEndpoint != null) {
