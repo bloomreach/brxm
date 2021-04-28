@@ -85,7 +85,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.21.6-h1</hippo.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.utilities.version>${hippo.release.version}</hippo.utilities.version>
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
