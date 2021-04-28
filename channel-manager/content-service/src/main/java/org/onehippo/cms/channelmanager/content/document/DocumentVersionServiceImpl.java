@@ -73,9 +73,14 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
     private static final Logger log = LoggerFactory.getLogger(DocumentVersionServiceImpl.class);
 
     private final BiFunction<Node, String, Map<String, ?>> documentHintsGetter;
+    private boolean pageCampaignSupported;
 
     public DocumentVersionServiceImpl(final BiFunction<Node, String, Map<String, ?>> documentHintsGetter) {
         this.documentHintsGetter = documentHintsGetter;
+    }
+
+    public void setPageCampaignSupported(final boolean pageCampaignSupported) {
+        this.pageCampaignSupported = pageCampaignSupported;
     }
 
     @Override
@@ -205,11 +210,11 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
             }
 
             // only on master branch we allow setting a campaign
-            final boolean campaignEnabled = MASTER_BRANCH_ID.equals(branchId) &&
+            final boolean campaignEnabled = pageCampaignSupported && MASTER_BRANCH_ID.equals(branchId) &&
                     (TRUE.equals(hints.get("campaign")) || TRUE.equals(hints.get("removeCampaign")));
             final boolean labelEnabled = TRUE.equals(hints.get("labelVersion")) || TRUE.equals(hints.get("removeLabelVersion"));
 
-            return new DocumentVersionInfo(visibleVersions, restoreEnabled, createEnabled, labelEnabled, campaignEnabled, isLive);
+            return new DocumentVersionInfo(visibleVersions, restoreEnabled, createEnabled, pageCampaignSupported, labelEnabled, campaignEnabled, isLive);
 
         } catch (ItemNotFoundException e) {
             log.info("Document for id '{}' does not exist or user '{}' is not allowed to read it",
