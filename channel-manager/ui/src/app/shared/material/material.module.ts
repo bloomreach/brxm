@@ -19,6 +19,7 @@ import { NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angula
 import { CdkColumnDef } from '@angular/cdk/table';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule, MAT_CHECKBOX_DEFAULT_OPTIONS } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -41,6 +42,7 @@ import { registerSvgIcons } from './register-svg-icons';
 @NgModule({
   exports: [
     MatButtonModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatDividerModule,
     MatFormFieldModule,
@@ -78,6 +80,9 @@ import { registerSvgIcons } from './register-svg-icons';
     {
       provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
       useValue: { strict: true },
+    },
+    {
+      provide: MAT_CHECKBOX_DEFAULT_OPTIONS, useValue: { color: 'primary' },
     },
   ],
 })
