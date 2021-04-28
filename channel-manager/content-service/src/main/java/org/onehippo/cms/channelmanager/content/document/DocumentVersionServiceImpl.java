@@ -166,40 +166,42 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
 
             final boolean createEnabled = TRUE.equals(hints.get("version"));
 
+            // now find the 'active' version
+            final DocumentCampaignService documentCampaignService = HippoServiceRegistry.getService(DocumentCampaignService.class);
+            final Optional<Campaign> activeCampaign = documentCampaignService == null ? Optional.empty() : documentCampaignService.findActiveCampaign(handleNode, branchId);
+
+            // in case no activeCampaign, then the Version which has 'published = true' is also the active one
+            versionInfos.stream()
+                    .filter(version -> activeCampaign.isPresent() ? activeCampaign.get().getUuid().equals(version.getJcrUUID()) : version.isPublished())
+                    .findFirst().ifPresent(v -> v.setActive(true));
+
+            // truncate the number of versions to 100 but if there is a published version which is not part of the first
+            // 100, set it as the 100th version to always at least have that one in the response
+            final List<Version> visibleVersions = versionInfos.subList(0, versionInfos.size() > 100 ? 100 : versionInfos.size());
+            if (publishedVersion != null && !visibleVersions.contains(publishedVersion)) {
+                if (campaignVersionOnly) {
+                    // add the published as first version in case filtering on campaigns only since the 'published' should
+                    // always be shown: since unclear 'where' to show it (versions are ordered by campaign date, just
+                    // show it as the first after the working version
+                    visibleVersions.add(0, publishedVersion);
+                } else {
+                    // apparently the published version is not in the first 100 versions, set it as the last version of the
+                    // visible versions
+                    visibleVersions.set(visibleVersions.size() - 1 , publishedVersion);
+                }
+            }
+
             // add workspace as the first version
             final Calendar lastModified = getDateProperty(preview, HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
             final String workspaceBranchId = getStringProperty(preview, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
 
             if (workspaceBranchId.equals(branchId)) {
                 // current workspace is for branchId, insert as the first version
-                if (!campaignVersionOnly) {
-                    // Note only for bootstrapped documents, it can happen that 'publishedFrozenNode' is null : in that
-                    // case, when there are no versions and the document is live, it means that the current unpublished
-                    // is the same as the live (most likely there is not even an unpublished)
-                    versionInfos.add(0, create(lastModified, preview, isLive && versionInfos.size() == 0, branchId, versionsMeta));
-                }
-            }
 
-            // now find the 'active' version
-            final DocumentCampaignService documentCampaignService = HippoServiceRegistry.getService(DocumentCampaignService.class);
-            final Optional<Campaign> activeCampaign = documentCampaignService == null ? Optional.empty() : documentCampaignService.findActiveCampaign(handleNode, branchId);
-
-            // in case no activeCampaign, then the Version which has 'published = true' is also the active one
-            final Optional<Version> activeVersion = versionInfos.stream()
-                    .filter(version -> activeCampaign.isPresent() ? activeCampaign.get().getUuid().equals(version.getJcrUUID()) : version.isPublished())
-                    .findFirst();
-
-            if (activeVersion.isPresent()) {
-                activeVersion.get().setActive(true);
-            }
-
-            // truncate the number of versions to 100 but if there is a published version which is not part of the first
-            // 100, set it as the 100th version to always at least have that one in the response
-            final List<Version> visibleVersions = versionInfos.subList(0, versionInfos.size() > 100 ? 100 : versionInfos.size());
-            if (publishedVersion != null && !visibleVersions.contains(publishedVersion)) {
-                // apparently the published version is not in the first 100 versions, set it as the last version of the
-                // visible versions
-                visibleVersions.set(99, publishedVersion);
+                // Note only for bootstrapped documents, it can happen that 'publishedFrozenNode' is null : in that
+                // case, when there are no versions and the document is live, it means that the current unpublished
+                // is the same as the live (most likely there is not even an unpublished)
+                visibleVersions.add(0, create(lastModified, preview, isLive && versionInfos.size() == 0, branchId, versionsMeta));
             }
 
             // only on master branch we allow setting a campaign
