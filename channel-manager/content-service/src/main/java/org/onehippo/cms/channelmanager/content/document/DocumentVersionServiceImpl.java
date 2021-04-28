@@ -205,7 +205,8 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
             }
 
             // only on master branch we allow setting a campaign
-            final boolean campaignEnabled = MASTER_BRANCH_ID.equals(branchId) && TRUE.equals(hints.get("campaign")) || TRUE.equals(hints.get("removeCampaign"));
+            final boolean campaignEnabled = MASTER_BRANCH_ID.equals(branchId) &&
+                    (TRUE.equals(hints.get("campaign")) || TRUE.equals(hints.get("removeCampaign")));
             final boolean labelEnabled = TRUE.equals(hints.get("labelVersion")) || TRUE.equals(hints.get("removeLabelVersion"));
 
             return new DocumentVersionInfo(visibleVersions, restoreEnabled, createEnabled, labelEnabled, campaignEnabled, isLive);
