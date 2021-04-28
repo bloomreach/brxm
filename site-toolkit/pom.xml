@@ -78,7 +78,7 @@
     <ehcache-core.version>2.10.4</ehcache-core.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
-    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.21.6-h1</hippo.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
