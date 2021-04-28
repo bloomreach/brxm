@@ -72,8 +72,8 @@ describe('PageService', () => {
 
     const versionsServiceMock = {
       getVersions: jest.fn().mockResolvedValue([
-        { jcrUUID: '1', timestamp: 123, userName: 'user1', branchId: 'master' },
-        { jcrUUID: '2', timestamp: 1234, userName: 'user2', branchId: 'master' },
+        { jcrUUID: '1', timestamp: 123, userName: 'user1', branchId: 'master', active: false, published: false },
+        { jcrUUID: '2', timestamp: 1234, userName: 'user2', branchId: 'master', active: false, published: false },
       ]),
       isVersionFromPage: jest.fn(jcrUUID => jcrUUID === '1'),
     };
@@ -409,7 +409,7 @@ describe('PageService', () => {
     [
       'PreviousVersion',
       {
-        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master', active: false, published: false },
       },
       undefined,
       new XPageStatusInfo(
@@ -423,6 +423,8 @@ describe('PageService', () => {
           branchId: 'master',
           timestamp: 1234,
           userName: 'user2',
+          published: false,
+          active: false,
        },
       ),
     ],
@@ -443,7 +445,7 @@ describe('PageService', () => {
     [
       'PreviousVersion if a project is active but XPage is a part of the project',
       {
-        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123' },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123'},
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
@@ -457,6 +459,8 @@ describe('PageService', () => {
           branchId: 'master',
           timestamp: 1234,
           userName: 'user2',
+          published: false,
+          active: false,
         },
       ),
     ],
