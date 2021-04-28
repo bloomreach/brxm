@@ -59,8 +59,7 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
         this.filteredVersions = versionsInfo.versions;
 
         if (this.showFilteredVersions) {
-          const { versions } = await this.versionsService.getVersionsInfoCampaignsOnly(this.documentId);
-          this.filteredVersions = versions;
+          this.filteredVersions = await this.versionsService.getVersions(this.documentId, true);
         }
       });
   }
@@ -104,7 +103,7 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
 
   async filterVersions(change: MatCheckboxChange): Promise<void> {
     this.showFilteredVersions = change.checked;
-    return this.versionsService.getVersionsInfo(this.documentId);
+    this.filteredVersions = await this.versionsService.getVersions(this.documentId, change.checked);
   }
 
   private createVersionPath(selectedVersionUUID: string): string {
