@@ -45,7 +45,7 @@
 
     <button matSuffix
             type="button"
-            class="qa-schedule-reset-from-date-time"
+            class="schedule-reset qa-schedule-reset-from-date-time"
             mat-icon-button
             (click)="resetFromDate()">
       <mat-icon>sync</mat-icon>
@@ -79,7 +79,7 @@
 
     <button matSuffix
             type="button"
-            class="qa-schedule-reset-to-date-time"
+            class="schedule-reset qa-schedule-reset-to-date-time"
             mat-icon-button
             (click)="resetToDate()">
       <mat-icon>sync</mat-icon>
@@ -112,6 +112,7 @@
     </button>
 
     <button mat-stroked-button
+            [disabled]="scheduleForm.errors"
             class="qa-schedule-submit"
             type="submit"
             color="primary">
