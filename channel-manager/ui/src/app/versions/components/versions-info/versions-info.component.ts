@@ -15,6 +15,7 @@
  */
 
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UIRouterGlobals } from '@uirouter/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -23,6 +24,7 @@ import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/ch
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
+import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
 
@@ -36,7 +38,8 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
   private readonly unsubscribe = new Subject();
 
   versionsInfo?: VersionsInfo;
-
+  filteredVersions?: Version[];
+  showFilteredVersions?: boolean;
   actionInProgress = false;
 
   constructor(
@@ -51,8 +54,14 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
     this.versionsService.getVersionsInfo(this.documentId);
     this.versionsService.versionsInfo$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(versionsInfo => {
+      .subscribe(async versionsInfo => {
         this.versionsInfo = versionsInfo;
+        this.filteredVersions = versionsInfo.versions;
+
+        if (this.showFilteredVersions) {
+          const { versions } = await this.versionsService.getVersionsInfoCampaignsOnly(this.documentId);
+          this.filteredVersions = versions;
+        }
       });
   }
 
@@ -91,6 +100,11 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
     const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
     const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
     return this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
+  }
+
+  async filterVersions(change: MatCheckboxChange): Promise<void> {
+    this.showFilteredVersions = change.checked;
+    return this.versionsService.getVersionsInfo(this.documentId);
   }
 
   private createVersionPath(selectedVersionUUID: string): string {

@@ -13,12 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="mat-typography qa-version-list"
+<div class="mat-typography version-list qa-version-list"
      *ngIf="versionsInfo">
-  <ng-container *ngFor="let version of versionsInfo!.versions; first as isFirst">
+  <ng-container *ngFor="let version of filteredVersions; first as isFirst">
     <em-latest-version *ngIf="isFirst"
                        matRipple
                        [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
+                       class="qa-version-item"
                        [class]="'qa-version-' + version.jcrUUID"
                        (click)="selectVersion(version.jcrUUID)"
                        [isSelected]="isVersionSelected(version.jcrUUID)"
@@ -30,6 +31,7 @@
     <em-version *ngIf="!isFirst"
                 matRipple
                 [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
+                class="qa-version-item"
                 [class]="'qa-version-' + version.jcrUUID"
                 (click)="selectVersion(version.jcrUUID)"
                 [isSelected]="isVersionSelected(version.jcrUUID)"
@@ -39,4 +41,12 @@
                 [(actionInProgress)]="actionInProgress">
     </em-version>
   </ng-container>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="version-list-filter">
+  <mat-checkbox (change)="filterVersions($event)">
+    {{ 'VERSION_FILTER_TEXT' | translate }}
+  </mat-checkbox>
 </div>
