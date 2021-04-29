@@ -23,6 +23,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -65,6 +66,7 @@ describe('ScheduleFormComponent', () => {
         MatIconModule,
         MatIconTestingModule,
         MatInputModule,
+        MatTooltipModule,
         MatDatepickerModule,
         NgxMatDatetimePickerModule,
         NgxMomentDateModule,
