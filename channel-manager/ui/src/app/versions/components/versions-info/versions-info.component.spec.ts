@@ -21,14 +21,13 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
-import { StateParams, UIRouterGlobals } from '@uirouter/core';
 import { of } from 'rxjs';
 
-import { IframeService } from '../../../channels/services/iframe.service';
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
+import { ProjectService } from '../../../services/project.service';
 import { VersionsService } from '../../../versions/services/versions.service';
 import { VersionsInfo } from '../../models/versions-info.model';
 
@@ -42,6 +41,7 @@ describe('VersionsInfoComponent', () => {
   let ng1ChannelService: Ng1ChannelService;
   let versionsService: VersionsService;
   let notificationService: NotificationService;
+  let projectService: ProjectService;
 
   const date = Date.parse('11/08/2020 16:03');
   const path = '/some/test/path';
@@ -65,6 +65,8 @@ describe('VersionsInfoComponent', () => {
     restoreEnabled: true,
     createEnabled: true,
   } as VersionsInfo;
+
+  let isBranchMock = false;
 
   beforeEach(() => {
     const channelServiceMock: Partial<Ng1ChannelService> = {
@@ -93,6 +95,10 @@ describe('VersionsInfoComponent', () => {
       showErrorNotification: jest.fn(),
     };
 
+    const projectServiceMock: Partial<ProjectService> = {
+      isBranch: jest.fn(() => isBranchMock),
+    };
+
     TestBed.configureTestingModule({
       declarations: [
         VersionsInfoComponent,
@@ -110,6 +116,7 @@ describe('VersionsInfoComponent', () => {
         { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
         { provide: VersionsService, useValue: versionsServiceMock },
         { provide: NotificationService, useValue: notificationServiceMock },
+        { provide: ProjectService, useValue: projectServiceMock },
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA,
@@ -120,6 +127,7 @@ describe('VersionsInfoComponent', () => {
     ng1ChannelService = TestBed.inject(NG1_CHANNEL_SERVICE);
     versionsService = TestBed.inject(VersionsService);
     notificationService = TestBed.inject(NotificationService);
+    projectService = TestBed.inject(ProjectService);
   });
 
   beforeEach(() => {
@@ -173,6 +181,25 @@ describe('VersionsInfoComponent', () => {
 
       expect(notificationService.showErrorNotification).toHaveBeenCalledWith('VERSION_SELECTION_ERROR');
       expect(component.actionInProgress).toBe(false);
+    });
+  });
+
+  describe('showing filter', () => {
+    it('should show filter for Core of document', () => {
+      isBranchMock = false;
+
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      expect(componentEl).toMatchSnapshot();
+    });
+    it('should not show filter for project branch of document', () => {
+      isBranchMock = true;
+
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      expect(componentEl).toMatchSnapshot();
     });
   });
 });
