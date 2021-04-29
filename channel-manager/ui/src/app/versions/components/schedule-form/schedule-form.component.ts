@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UIRouterGlobals } from '@uirouter/core';
 import moment from 'moment';
-import { Subject } from 'rxjs';
+import { interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { DateService } from '../../../services/date.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
@@ -30,7 +31,7 @@ import { VersionsService } from '../../services/versions.service';
   templateUrl: './schedule-form.component.html',
   styleUrls: ['./schedule-form.component.scss'],
 })
-export class ScheduleFormComponent implements OnInit {
+export class ScheduleFormComponent implements OnInit, OnDestroy {
   private readonly unsubscribe = new Subject();
 
   @Output()
@@ -63,6 +64,12 @@ export class ScheduleFormComponent implements OnInit {
     this.originalFromDateTime = moment(this.version.campaign?.from ?? this.currentDateTime);
     this.originalToDateTime = this.version.campaign?.to && moment(this.version.campaign?.to);
 
+    interval(1000)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(() => {
+        this.currentDateTime = this.dateService.getCurrentDate();
+      });
+
     this.scheduleForm.patchValue({
       label: this.version.label,
       fromDateTime: this.originalFromDateTime,
@@ -70,11 +77,15 @@ export class ScheduleFormComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   resetFromDate(): void {
     this.scheduleForm.patchValue({
       fromDateTime: this.originalFromDateTime,
     });
-    this.scheduleForm.get('fromDateTime')?.markAsPristine();
     this.scheduleForm.get('fromDateTime')?.setErrors(null);
   }
 
@@ -82,8 +93,6 @@ export class ScheduleFormComponent implements OnInit {
     this.scheduleForm.patchValue({
       toDateTime: this.originalToDateTime,
     });
-    this.scheduleForm.get('toDateTime')?.markAsPristine();
-    this.scheduleForm.get('toDateTime')?.setErrors(null);
   }
 
   async scheduleCampaign(): Promise<void> {
