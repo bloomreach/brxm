@@ -24,6 +24,7 @@ import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/ch
 import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
+import { ProjectService } from '../../../services/project.service';
 import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
@@ -48,6 +49,7 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
     private readonly versionsService: VersionsService,
     private readonly notificationService: NotificationService,
+    private readonly projectService: ProjectService,
   ) { }
 
   ngOnInit(): void {
@@ -89,6 +91,10 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
     } finally {
       this.actionInProgress = false;
     }
+  }
+
+  isBranch(): boolean {
+    return this.projectService.isBranch();
   }
 
   isVersionSelected(versionUUID: string): boolean {

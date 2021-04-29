@@ -26,6 +26,81 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
     />
     
   </div>
+  
+  
+  <mat-divider
+    aria-orientation="horizontal"
+    class="mat-divider mat-divider-horizontal"
+    role="separator"
+  />
+  <div
+    class="version-list-filter"
+  >
+    <mat-checkbox>
+       VERSION_FILTER_TEXT 
+    </mat-checkbox>
+  </div>
+</div>
+`;
+
+exports[`VersionsInfoComponent showing filter should not show filter for project branch of document 1`] = `
+<div
+  id="root6"
+>
+  
+  <div
+    class="mat-typography version-list qa-version-list"
+  >
+    
+    
+    
+    <em-latest-version
+      class="qa-version-testId"
+      matripple=""
+    />
+    
+    
+    
+    
+    
+    <em-version
+      class="qa-version-testVariantId"
+      matripple=""
+    />
+    
+  </div>
+  
+</div>
+`;
+
+exports[`VersionsInfoComponent showing filter should show filter for Core of document 1`] = `
+<div
+  id="root5"
+>
+  
+  <div
+    class="mat-typography version-list qa-version-list"
+  >
+    
+    
+    
+    <em-latest-version
+      class="qa-version-testId"
+      matripple=""
+    />
+    
+    
+    
+    
+    
+    <em-version
+      class="qa-version-testVariantId"
+      matripple=""
+    />
+    
+  </div>
+  
+  
   <mat-divider
     aria-orientation="horizontal"
     class="mat-divider mat-divider-horizontal"
