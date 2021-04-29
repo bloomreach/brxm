@@ -74,12 +74,16 @@ export class ScheduleFormComponent implements OnInit {
     this.scheduleForm.patchValue({
       fromDateTime: this.originalFromDateTime,
     });
+    this.scheduleForm.get('fromDateTime')?.markAsPristine();
+    this.scheduleForm.get('fromDateTime')?.setErrors(null);
   }
 
   resetToDate(): void {
     this.scheduleForm.patchValue({
       toDateTime: this.originalToDateTime,
     });
+    this.scheduleForm.get('toDateTime')?.markAsPristine();
+    this.scheduleForm.get('toDateTime')?.setErrors(null);
   }
 
   async scheduleCampaign(): Promise<void> {
