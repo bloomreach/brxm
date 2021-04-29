@@ -114,7 +114,7 @@
     </button>
 
     <button mat-stroked-button
-            [disabled]="scheduleForm.errors"
+            [disabled]="scheduleForm.invalid && !scheduleForm.pristine"
             class="qa-schedule-submit"
             type="submit"
             color="primary">
