@@ -47,6 +47,7 @@
             type="button"
             class="schedule-reset qa-schedule-reset-from-date-time"
             mat-icon-button
+            matTooltip="{{ 'RESET_DATE' | translate }}"
             (click)="resetFromDate()">
       <mat-icon>sync</mat-icon>
     </button>
@@ -81,6 +82,7 @@
             type="button"
             class="schedule-reset qa-schedule-reset-to-date-time"
             mat-icon-button
+            matTooltip="{{ 'RESET_DATE' | translate }}"
             (click)="resetToDate()">
       <mat-icon>sync</mat-icon>
     </button>
