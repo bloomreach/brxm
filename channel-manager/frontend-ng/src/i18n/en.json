@@ -269,6 +269,8 @@
   "NOTIFICATION_BAR_XPAGE_LABEL_NOT_PART_OF_PROJECT": "Page '{{pageName}}': {{status}}, not part of project '{{projectName}}'",
   "NOTIFICATION_BAR_XPAGE_LABEL_OFFLINE": "Page '{{pageName}}': offline",
   "NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION": "Page '{{pageName}}': version {{versionNumber}} (previous version)",
+  "NOTIFICATION_BAR_XPAGE_LABEL_VERSION_LIVE": "Page '{{pageName}}': version {{versionNumber}} (live)",
+  "NOTIFICATION_BAR_XPAGE_LABEL_VERSION_SCHEDULED": "Page '{{pageName}}': version {{versionNumber}} (scheduled)",
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_PROGRESS": "Page '{{pageName}}' for project '{{projectName}}'",
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IN_REVIEW": "Page '{{pageName}}' for project '{{projectName}}': in review",
   "NOTIFICATION_BAR_XPAGE_LABEL_PROJECT_IS_RUNNING": "Page '{{pageName}}' for project '{{projectName}}': live",
