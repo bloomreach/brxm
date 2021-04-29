@@ -37,7 +37,8 @@
        *ngIf="!isScheduleFormVisible">
       <mat-icon [class.active]="version.active"
                 [class.offline]="!versionsInfo.live"
-                [class.scheduled]="version.campaign">
+                [class.scheduled]="version.campaign"
+                [matTooltip]="getTooltip(version)">
         {{ getIcon(version) }}
       </mat-icon>
 

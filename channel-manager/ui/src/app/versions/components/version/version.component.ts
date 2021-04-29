@@ -15,6 +15,7 @@
  */
 
 import { Component, EventEmitter, HostBinding, Inject, Input, OnChanges, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { UIRouterGlobals } from '@uirouter/core';
 import moment from 'moment';
 
@@ -60,6 +61,7 @@ export class VersionComponent implements OnChanges {
     private readonly documentWorkflowService: DocumentWorkflowService,
     private readonly versionsService: VersionsService,
     private readonly dateService: DateService,
+    private readonly translateService: TranslateService,
   ) { }
 
   ngOnChanges(): void {
@@ -76,8 +78,35 @@ export class VersionComponent implements OnChanges {
     this.actionInProgressChange.emit(false);
   }
 
-  getIcon(version: Version): string {
+  getTooltip(version: Version): string {
+    if (version.campaign && version.active && !this.versionsInfo.live) {
+      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_BLOCKED');
+    }
 
+    if (version.campaign && version.active && this.versionsInfo.live) {
+      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_LIVE');
+    }
+
+    if (version.campaign && !this.versionsInfo.live) {
+      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_WONT_RUN');
+    }
+
+    if (!!version.campaign?.to && moment(version.campaign.to).isBefore(this.currentDate)) {
+      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_ENDED');
+    }
+
+    if (version.campaign) {
+      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_SCHEDULED');
+    }
+
+    if (version.published) {
+      return this.translateService.instant('VERSION_TOOLTIP_PUBLISHED_VERSION');
+    }
+
+    return '';
+  }
+
+  getIcon(version: Version): string {
     if (version.campaign && version.active && !this.versionsInfo.live) {
       return 'remove_circle_outline';
     }
