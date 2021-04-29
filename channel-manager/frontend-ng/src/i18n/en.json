@@ -321,6 +321,7 @@
   "REMOVE_VALUE": "Remove value",
   "REMOVE_SCHEDULE": "Remove schedule",
   "RESTORE": "Restore",
+  "RESET_DATE": "Reset date",
   "RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES": "Properties",
   "SAVE": "Save",
   "SAVE_CHANGES_TO_COMPONENT": "Component '{{componentLabel}}' has unsaved changes. Do you want to save or discard these changes?",
