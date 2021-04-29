@@ -15,7 +15,7 @@
  */
 
 import { Inject, Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { DocumentWorkflowService } from '../../services/document-workflow.service';
 import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../services/ng1/content.ng1.service';
@@ -28,8 +28,20 @@ import { VersionsInfo } from '../models/versions-info.model';
   providedIn: 'root',
 })
 export class VersionsService {
-  private readonly versionsInfo = new ReplaySubject<VersionsInfo>(1);
+  private readonly versionsInfo = new BehaviorSubject<VersionsInfo>({
+    campaignEnabled: false,
+    labelEnabled: false,
+    live: false,
+    createEnabled: false,
+    restoreEnabled: false,
+    versions: [],
+  });
   readonly versionsInfo$ = this.versionsInfo.asObservable();
+
+  get versions(): Version[] {
+    const { versions } = this.versionsInfo.value;
+    return versions;
+  }
 
   constructor(
     @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
@@ -42,12 +54,6 @@ export class VersionsService {
     const branchId = this.projectService.getSelectedProjectId();
     const versionsInfo = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
     this.versionsInfo.next(versionsInfo);
-  }
-
-  async getVersionsInfoCampaignsOnly(documentId: string): Promise<VersionsInfo> {
-    const branchId = this.projectService.getSelectedProjectId();
-    const versionInfo = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId, { campaignVersionOnly: true });
-    return versionInfo;
   }
 
   async getVersions(documentId: string, campaignVersionOnly?: boolean): Promise<Version[]> {
@@ -63,5 +69,9 @@ export class VersionsService {
 
   isVersionFromPage(versionUUID: string): boolean {
     return versionUUID === this.pageStructureService.getUnpublishedVariantId();
+  }
+
+  currentVersionFromPage(): Version | undefined {
+    return this.versions.find(v => this.isVersionFromPage(v.jcrUUID));
   }
 }
