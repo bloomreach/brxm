@@ -43,10 +43,12 @@
   </ng-container>
 </div>
 
-<mat-divider></mat-divider>
+<ng-container *ngIf="!isBranch()">
+  <mat-divider></mat-divider>
 
-<div class="version-list-filter">
-  <mat-checkbox (change)="filterVersions($event)">
-    {{ 'VERSION_FILTER_TEXT' | translate }}
-  </mat-checkbox>
-</div>
+  <div class="version-list-filter">
+    <mat-checkbox (change)="filterVersions($event)">
+      {{ 'VERSION_FILTER_TEXT' | translate }}
+    </mat-checkbox>
+  </div>
+</ng-container>
