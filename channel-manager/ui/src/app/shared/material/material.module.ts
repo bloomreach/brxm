@@ -67,7 +67,7 @@ import { registerSvgIcons } from './register-svg-icons';
       provide: NGX_MAT_DATE_FORMATS,
       useValue: {
         parse: {
-          dateInput: ['LT'],
+          dateInput: ['LLL'],
         },
         display: {
           dateInput: 'LLL',
