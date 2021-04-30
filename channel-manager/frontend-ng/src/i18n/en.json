@@ -494,7 +494,7 @@
   "VERSIONS": "Versions",
   "VERSION_SELECTION_ERROR": "Failed to load version",
   "VERSION_NAME": "Version Name",
-  "VERSION_FILTER_TEXT": "Show live and scheduled versions only",
+  "VERSION_FILTER_TEXT": "Show published and scheduled versions only",
   "VERSION_TOOLTIP_CAMPAIGN_BLOCKED": "Campaign is not running because the page is offline",
   "VERSION_TOOLTIP_CAMPAIGN_WONT_RUN": "Campaign will not run because the page is offline",
   "VERSION_TOOLTIP_CAMPAIGN_LIVE": "Campaign is live",
