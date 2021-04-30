@@ -24,8 +24,11 @@ export class DateService {
     return new Date(Date.now());
   }
 
-  getFutureDate(date: Date, days: number): Date {
+  getFutureDate(date: Date, days = 0, hours = 0, minutes = 0): Date {
     const dateCopy = new Date(date);
-    return new Date(dateCopy.setDate(dateCopy.getDate() + days));
+    dateCopy.setDate(dateCopy.getDate() + days);
+    dateCopy.setHours(dateCopy.getHours() + hours);
+    dateCopy.setMinutes(dateCopy.getMinutes() + minutes);
+    return new Date(dateCopy);
   }
 }
