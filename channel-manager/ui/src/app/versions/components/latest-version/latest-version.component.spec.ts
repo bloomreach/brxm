@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { TranslateModule } from '@ngx-translate/core';
@@ -53,7 +53,7 @@ describe('LatestVersionComponent', () => {
     campaignEnabled: true,
   } as VersionsInfo;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async(() => {
     const workflowServiceMock = {
       createWorkflowAction: jest.fn(() => { }),
     };
