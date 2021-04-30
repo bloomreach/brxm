@@ -16,7 +16,7 @@
 
 import { NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { NgxMomentDateModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -46,7 +46,7 @@ describe('ScheduleFormComponent', () => {
     timestamp: date,
   } as Version;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async(() => {
     const uiRouterGlobalsMock = {
       params: {
         documentId: 'testDocumentId',
