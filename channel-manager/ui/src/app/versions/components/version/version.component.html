@@ -27,9 +27,10 @@
     </p>
 
     <p class="truncate"
-       *ngIf="version?.label && !isScheduleFormVisible">
+       *ngIf="!isScheduleFormVisible">
       <i>
-        {{ version.label }}
+        <!-- Do not collapse <p> when no label is present -->
+        {{ version?.label || '&nbsp;' }}
       </i>
     </p>
 
