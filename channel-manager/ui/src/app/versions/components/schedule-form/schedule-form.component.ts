@@ -75,6 +75,8 @@ export class ScheduleFormComponent implements OnInit, OnDestroy {
       fromDateTime: this.originalFromDateTime,
       toDateTime: this.originalToDateTime,
     });
+    // Ensure mat-errors are shown immediately for toDateTime on first change to fromDateTime
+    this.scheduleForm.markAllAsTouched();
   }
 
   ngOnDestroy(): void {
