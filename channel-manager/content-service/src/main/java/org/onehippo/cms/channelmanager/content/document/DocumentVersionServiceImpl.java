@@ -115,11 +115,12 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     final javax.jcr.version.Version jcrPublishedVersion = versionHistory.getVersionByLabel(branchId + "-published");
                     publishedFrozenNode = jcrPublishedVersion.getFrozenNode();
                 } catch (VersionException e ){
-                    log.debug("There is version in history representing the published", e);
+                    log.debug("There is no version in history representing the published", e);
                 }
 
                 // returns the oldest version first
                 final VersionIterator allVersions = versionHistory.getAllVersions();
+                Version lastVersion = null;
                 while (allVersions.hasNext()) {
                     final javax.jcr.version.Version jcrVersion = allVersions.nextVersion();
                     if (JCR_ROOTVERSION.equals(jcrVersion.getName())) {
@@ -141,6 +142,7 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                         } else {
                             versionInfos.add(version);
                         }
+                        lastVersion = version;
                     }
                 }
 
@@ -153,11 +155,23 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     versionInfos.sort(Comparator.comparing(Version::getTimestamp).reversed());
                         }
 
-                if (publishedFrozenNode == null && versionInfos.size() > 0 && isLive) {
+                if (publishedFrozenNode == null && versionInfos.size() > 0 && isLive && lastVersion != null) {
                     // there is no explicit version for the published: this can only happen for bootstrapped live
-                    // documents which get edited but have not yet been re-published. This means, that the older
-                    // version must correspond to the published variant
-                    versionInfos.get(versionInfos.size() - 1).setPublished(true);
+                    // documents which got edited but have not yet been re-published.
+                    // this means that the oldest version from version history reflects the published. If the
+                    // last jcr version is not present in 'versionInfos' it must be added, otherwise the last
+                    // item must be set to published = true
+                    if (versionInfos.contains(lastVersion)) {
+                        versionInfos.get(versionInfos.size() - 1).setPublished(true);
+                    } else {
+                        lastVersion.setPublished(true);
+                        if (campaignVersionOnly) {
+                            versionInfos.add(0, lastVersion);
+                        } else {
+                            versionInfos.add(lastVersion);
+                        }
+                    }
+
                 }
 
             } else {
