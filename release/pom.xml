@@ -36,7 +36,7 @@
   <properties>
     <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
          should NOT be updated with product releases. -->
-    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.21.6-h1</hippo.jackrabbit.version>
     <hippo.cargo-extensions.version>13.0.0</hippo.cargo-extensions.version>
 
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
