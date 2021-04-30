@@ -45,6 +45,7 @@
       <span *ngIf="version.published">{{ 'PUBLISHED' | translate }}</span>
 
       <ng-container *ngIf="version.campaign">
+        <span *ngIf="version.published">,&nbsp;</span>
         <span>{{ version.campaign.from | moment }}</span>
         <ng-container *ngIf="version.campaign!.to">
           <span> - </span>
