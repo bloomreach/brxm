@@ -40,6 +40,8 @@ class NavappService {
 
     const subscriptions = this._apiSubscriptions.get(api);
     subscriptions.add(callback);
+
+    return callback;
   }
 
   unsubscribe(api, callback) {
