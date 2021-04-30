@@ -15,7 +15,7 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { TranslateModule } from '@ngx-translate/core';
@@ -65,7 +65,7 @@ describe('VersionComponent', () => {
     campaignEnabled: true,
   } as VersionsInfo;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async(() => {
     const iframeServiceMock = {
       load: jest.fn(() => Promise.resolve()),
     };
