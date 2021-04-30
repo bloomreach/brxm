@@ -17,7 +17,7 @@
 import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UIRouterGlobals } from '@uirouter/core';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { interval, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -46,11 +46,8 @@ export class ScheduleFormComponent implements OnInit, OnDestroy {
     toDateTime: [''],
   });
 
-  currentDateTime?: Date;
-  minFromDateTime?: Date;
-  originalFromDateTime?: moment.Moment;
-  minToDateTime?: Date;
-  originalToDateTime?: moment.Moment;
+  originalFromDateTime?: Moment;
+  originalToDateTime?: Moment;
 
   constructor(
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly uiRouterGlobals: UIRouterGlobals,
@@ -60,15 +57,8 @@ export class ScheduleFormComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.currentDateTime = this.dateService.getCurrentDate();
-    this.originalFromDateTime = moment(this.version.campaign?.from ?? this.currentDateTime);
+    this.originalFromDateTime = moment(this.version.campaign?.from ?? this.dateService.getCurrentDate());
     this.originalToDateTime = this.version.campaign?.to && moment(this.version.campaign?.to);
-
-    interval(1000)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(() => {
-        this.currentDateTime = this.dateService.getCurrentDate();
-      });
 
     this.scheduleForm.patchValue({
       label: this.version.label,
@@ -76,7 +66,7 @@ export class ScheduleFormComponent implements OnInit, OnDestroy {
       toDateTime: this.originalToDateTime,
     });
     // Ensure mat-errors are shown immediately for toDateTime on first change to fromDateTime
-    this.scheduleForm.markAllAsTouched();
+    this.scheduleForm.get('toDateTime')?.markAsTouched();
   }
 
   ngOnDestroy(): void {
@@ -86,14 +76,13 @@ export class ScheduleFormComponent implements OnInit, OnDestroy {
 
   resetFromDate(): void {
     this.scheduleForm.patchValue({
-      fromDateTime: this.originalFromDateTime,
+      fromDateTime: this.dateService.getCurrentDate(),
     });
-    this.scheduleForm.get('fromDateTime')?.setErrors(null);
   }
 
   resetToDate(): void {
     this.scheduleForm.patchValue({
-      toDateTime: this.originalToDateTime,
+      toDateTime: this.dateService.getCurrentDate(),
     });
   }
 
