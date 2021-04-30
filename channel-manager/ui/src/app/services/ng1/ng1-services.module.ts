@@ -22,6 +22,7 @@ import { NG1_COMPONENT_EDITOR_SERVICE } from './component-editor.ng1.service';
 import { NG1_CONFIG_SERVICE } from './config.ng1.service';
 import { NG1_CONTENT_SERVICE } from './content.ng1.service';
 import { NG1_IFRAME_SERVICE } from './iframe.ng1.service';
+import { NG1_NAVAPP_SERVICE } from './navapp.ng1.service';
 import { NG1_PAGE_STRUCTURE_SERVICE } from './page-structure.ng1.service';
 import { NG1_PAGE_SERVICE } from './page.ng1.service';
 import { NG1_PROJECT_SERVICE } from './project.ng1.service';
@@ -33,6 +34,7 @@ import { NG1_UI_ROUTER_GLOBALS } from './ui-router-globals.ng1.service';
 
 @NgModule({
   providers: [
+    { provide: NG1_NAVAPP_SERVICE, useValue: window.angular.element(document.body).injector().get('NavappService') },
     { provide: NG1_CHANNEL_SERVICE, useValue: window.angular.element(document.body).injector().get('ChannelService') },
     { provide: NG1_CONFIG_SERVICE, useValue: window.angular.element(document.body).injector().get('ConfigService') },
     { provide: NG1_CONTENT_SERVICE, useValue: window.angular.element(document.body).injector().get('ContentService') },
