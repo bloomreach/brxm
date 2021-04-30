@@ -73,7 +73,6 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-pool.version>1.6</commons-pool.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-io.version>2.6</commons-io.version>
     <commons-jexl.version>1.1</commons-jexl.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
@@ -82,7 +81,7 @@
 
     <javadoc.base.version>13.1</javadoc.base.version>
 
-    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.21.6-h1</hippo.jackrabbit.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
