@@ -74,7 +74,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.jackrabbit.version>2.20.2-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.21.6-h1</hippo.jackrabbit.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
@@ -87,14 +87,13 @@
     <hamcrest-core.version>1.3</hamcrest-core.version>
 
     <!-- Project Dependencies -->
-    <commons-io.version>2.6</commons-io.version>
     <commons-text.version>1.6</commons-text.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-collections4.version>4.4</commons-collections4.version>
-    <tika.version>1.25</tika.version>
+    <tika.version>1.26</tika.version>
     <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
-    <pdfbox.version>2.0.21</pdfbox.version>
+    <pdfbox.version>2.0.23</pdfbox.version>
     <quartz.version>2.3.2</quartz.version>
     <json-lib.version>2.4</json-lib.version>
     <easymock.version>4.0.2</easymock.version>
