@@ -72,7 +72,7 @@
     <commons-email.version>1.5</commons-email.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-imaging.version>1.0-alpha1</commons-imaging.version>
-    <commons-io.version>2.6</commons-io.version>
+    <commons-io.version>2.8.0</commons-io.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <!-- commons-logging-api and commons-logging are set to test level -->
     <commons-logging-api.version>1.1</commons-logging-api.version>
@@ -95,7 +95,7 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
-    <cxf.version>3.2.13</cxf.version>
+    <cxf.version>3.3.10</cxf.version>
     <jaxrs.version>2.1.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.5</jackson2.version>
