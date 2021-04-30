@@ -23,11 +23,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
+import { StateService, UIRouterGlobals } from '@uirouter/core';
 
 import { NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.ng1.service';
-import { Ng1StateService, NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
+import { NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
+import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { Variant, VariantCharacteristicData } from '../../models/variant.model';
 import { VariantsService } from '../../services/variants.service';
 
@@ -37,7 +39,8 @@ describe('VariantsComponent', () => {
   let component: VariantsComponent;
   let componentEl: HTMLElement;
   let fixture: ComponentFixture<VariantsComponent>;
-  let stateService: Ng1StateService;
+  let stateService: StateService;
+  let uiRouterGlobals: UIRouterGlobals;
   let variantsService: VariantsService;
   let componentEditorService: Ng1ComponentEditorService;
 
@@ -118,10 +121,12 @@ describe('VariantsComponent', () => {
       setExpressionsVisible: jest.fn(value => mockExpressionsVisible = value),
     };
     const stateServiceMock = {
+      go: jest.fn(() => Promise.resolve()),
+    };
+    const uiRouterGlobalsMock = {
       params: {
         variantId: mockVariants[0].id,
       },
-      go: jest.fn(() => Promise.resolve()),
     };
     const cmsServiceMock = {
       publish: jest.fn(),
@@ -146,11 +151,13 @@ describe('VariantsComponent', () => {
         { provide: NG1_COMPONENT_EDITOR_SERVICE, useValue: componentEditorServiceMock },
         { provide: NG1_ROOT_SCOPE, useValue: $rootScopeMock },
         { provide: NG1_STATE_SERVICE, useValue: stateServiceMock },
+        { provide: NG1_UI_ROUTER_GLOBALS, useValue: uiRouterGlobalsMock },
         { provide: VariantsService, useValue: variantsServiceMock },
       ],
     });
 
     stateService = TestBed.inject(NG1_STATE_SERVICE);
+    uiRouterGlobals = TestBed.inject(NG1_UI_ROUTER_GLOBALS);
     variantsService = TestBed.inject(VariantsService);
     componentEditorService = TestBed.inject(NG1_COMPONENT_EDITOR_SERVICE);
   });
@@ -230,7 +237,7 @@ describe('VariantsComponent', () => {
 
   describe('collapsing of variant expressions', () => {
     async function setNonDefaultVariant(): Promise<void> {
-      stateService.params.variantId = mockVariants[1].id;
+      uiRouterGlobals.params.variantId = mockVariants[1].id;
       await component.ngOnInit();
       fixture.detectChanges();
     }

@@ -15,6 +15,6 @@
  */
 
 import { InjectionToken } from '@angular/core';
-import { StateService } from '@uirouter/angularjs';
+import { UIRouterGlobals } from '@uirouter/angularjs';
 
-export const NG1_STATE_SERVICE = new InjectionToken<StateService>('NG1_STATE_SERVICE');
+export const NG1_UI_ROUTER_GLOBALS = new InjectionToken<UIRouterGlobals>('NG1_UI_ROUTER_GLOBALS');
