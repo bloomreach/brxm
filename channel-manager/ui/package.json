@@ -36,6 +36,7 @@
     "@angular-material-components/datetime-picker": "5.1.0",
     "@angular-material-components/moment-adapter": "5.0.0",
     "@bloomreach/frontend-theme": "1.0.0-12",
+    "@bloomreach/navapp-communication": "2.0.0-4",
     "@ngx-translate/core": "13.0.0",
     "@ngx-translate/http-loader": "6.0.0",
     "@uirouter/angularjs": "1.0.29",
