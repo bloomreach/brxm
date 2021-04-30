@@ -53,7 +53,7 @@
     </button>
 
     <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerMin')">
-      {{ 'ERROR_INVALID_DATE' | translate }}
+      {{ 'ERROR_MIN_DATE_FROM' | translate }}
     </mat-error>
 
     <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerParse')">
@@ -87,11 +87,11 @@
       <mat-icon>sync</mat-icon>
     </button>
 
-    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerParse')">
-      {{ 'ERROR_INVALID_DATE' | translate }}
+    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerMin')">
+      {{ 'ERROR_MIN_DATE_TO' | translate }}
     </mat-error>
 
-    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerMin')">
+    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerParse')">
       {{ 'ERROR_INVALID_DATE' | translate }}
     </mat-error>
   </mat-form-field>
