@@ -36,6 +36,7 @@
     "@bloomreach/frontend-theme": "1.0.0-12",
     "@ngx-translate/core": "13.0.0",
     "@ngx-translate/http-loader": "6.0.0",
+    "@uirouter/angularjs": "1.0.29",
     "c3": "0.7.20",
     "d3": "6.2.0",
     "document-register-element": "1.7.2",
