@@ -17,3 +17,25 @@
 edit-component-main > form {
   overflow: auto;
 }
+
+.md-toolbar-tools {
+  display: flex;
+  flex-wrap: wrap;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 64px;
+
+  .column {
+    display: flex;
+    margin: 8px 0;
+
+    &.left {
+      margin-right: 16px;
+    }
+
+    &.right {
+      flex-grow: 1;
+      justify-content: flex-end;
+    }
+  }
+}
