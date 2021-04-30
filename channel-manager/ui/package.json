@@ -22,6 +22,8 @@
     "lint": "ng lint"
   },
   "dependencies": {
+    "@angular-material-components/datetime-picker": "5.1.0",
+    "@angular-material-components/moment-adapter": "5.0.0",
     "@angular/animations": "10.0.4",
     "@angular/cdk": "10.1.2",
     "@angular/common": "10.0.4",
@@ -33,8 +35,6 @@
     "@angular/platform-browser": "10.0.4",
     "@angular/platform-browser-dynamic": "10.0.4",
     "@angular/router": "10.0.4",
-    "@angular-material-components/datetime-picker": "5.1.0",
-    "@angular-material-components/moment-adapter": "5.0.0",
     "@bloomreach/frontend-theme": "1.0.0-12",
     "@bloomreach/navapp-communication": "2.0.0-4",
     "@ngx-translate/core": "13.0.0",
@@ -45,6 +45,7 @@
     "document-register-element": "1.7.2",
     "moment": "2.27.0",
     "moment-timezone": "0.5.31",
+    "penpal": "4.1.1",
     "rxjs": "6.6.0",
     "tslib": "2.0.0",
     "zone.js": "0.10.3"
