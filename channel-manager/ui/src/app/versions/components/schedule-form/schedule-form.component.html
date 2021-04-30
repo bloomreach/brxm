@@ -31,7 +31,6 @@
            class="qa-schedule-from-date-time"
            formControlName="fromDateTime"
            required
-           [min]="currentDateTime"
            [ngxMatDatetimePicker]="fromPicker">
     <mat-datepicker-toggle matSuffix
                            [for]="fromPicker">
@@ -51,10 +50,6 @@
             (click)="resetFromDate()">
       <mat-icon>sync</mat-icon>
     </button>
-
-    <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerMin')">
-      {{ 'ERROR_MIN_DATE_FROM' | translate }}
-    </mat-error>
 
     <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerParse')">
       {{ 'ERROR_INVALID_DATE' | translate }}
