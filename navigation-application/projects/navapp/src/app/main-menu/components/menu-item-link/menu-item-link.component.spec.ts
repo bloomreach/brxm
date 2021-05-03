@@ -24,6 +24,7 @@ import { NEVER } from 'rxjs';
 import { NavItemMock } from '../../../models/nav-item.mock';
 import { NavItem } from '../../../models/nav-item.model';
 import { NavigationService } from '../../../services/navigation.service';
+import { UrlMapperService } from '../../../services/url-mapper.service';
 
 import { MenuItemLinkComponent } from './menu-item-link.component';
 
@@ -38,11 +39,16 @@ describe('MenuItemLinkComponent', () => {
   beforeEach(async(() => {
     navigationServiceMock = jasmine.createSpyObj('NavigationService', [
       'navigateByNavItem',
+      'navigateByUrl',
     ]);
 
     mouseEventObj = jasmine.createSpyObj('MouseEvent', [
       'preventDefault',
     ]);
+
+    const urlMapperServiceMock = {
+      mapNavItemToBrowserUrl: () => 'test',
+    };
 
     fixture = TestBed.configureTestingModule({
       imports: [
@@ -51,6 +57,7 @@ describe('MenuItemLinkComponent', () => {
       declarations: [MenuItemLinkComponent],
       providers: [
         { provide: NavigationService, useValue: navigationServiceMock },
+        { provide: UrlMapperService, useValue: urlMapperServiceMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(MenuItemLinkComponent);
@@ -154,7 +161,7 @@ describe('MenuItemLinkComponent', () => {
         });
 
         it('should navigate to the nav item', () => {
-          expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(navItemMock, NavigationTrigger.Menu);
+          expect(navigationServiceMock.navigateByUrl).toHaveBeenCalledWith('test', NavigationTrigger.Menu);
         });
       });
     });
