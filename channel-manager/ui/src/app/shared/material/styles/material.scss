@@ -14,41 +14,21 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/sizes';
+@import './mat-variables';
+@import './mat-theme';
 
-.experiment {
-  height: 100%;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    "info"
-    "status"
-    "actions";
+@import './mat-button';
+@import './mat-dialog';
+@import './mat-icon';
+@import './mat-list';
+@import './mat-menu';
+@import './mat-snackbar';
+@import './mat-table';
+@import './mat-toolbar';
+@import './mat-form-field';
+
+// default body text color
+.mat-typography {
+  color: map-get($text-color, dark);
 }
 
-em-experiment-info {
-  grid-area: info;
-}
-
-.experiment-status-wrapper {
-  grid-area: status;
-  padding: $br-size;
-}
-
-.actions-wrapper {
-  grid-area: actions;
-}
-
-.actions {
-  padding: $br-size-m $br-size;
-  text-align: right;
-}
-
-.variants-info {
-  list-style-type: '- ';
-  padding: 0;
-
-  > li {
-    padding-top: $br-size-s;
-  }
-}

@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-button.mat-menu-item {
-  line-height: 24px !important;
+@import 'variables';
+@import './mat-variables';
+
+.mat-header-row {
+  min-height: 48px;
+
+  .mat-header-cell {
+    @include mat-typography-level-to-styles($custom-typography, subheading-1);
+    color: map-get($grey, 600);
+    font-size: 12px;
+  }
 }
 
-a.mat-menu-item > mat-icon {
-  margin-bottom: 14px;
-}
-
-.mat-icon svg {
-  height: 24px;
-  width: 24px;
+.mat-cell,
+.mat-header-cell {
+  box-sizing: border-box;
+  padding: 4px;
 }

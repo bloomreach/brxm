@@ -1,0 +1,53 @@
+/*!
+ * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'variables';
+
+$mat-dialog-spacing: 24px;
+$mat-dialog-border: 1px solid rgba(0, 0, 0, 0.12);
+
+.custom-overlay-panel {
+  position: relative !important;
+  top: -($navapp-breadcrumb-bar-height);
+}
+
+.mat-dialog-title,
+.mat-dialog-content,
+.mat-dialog-actions {
+  margin-left: -($mat-dialog-spacing) !important;
+  margin-right: -($mat-dialog-spacing) !important;
+}
+
+.mat-dialog-title {
+  background: map-get($grey, A100);
+  border-bottom: $mat-dialog-border;
+  margin-top: -($mat-dialog-spacing) !important;
+  margin-bottom: 0 !important;
+  padding: $spacing-full !important;
+  line-height: 1 !important;
+}
+
+.mat-dialog-content {
+  padding: 0 !important;
+}
+
+.mat-dialog-actions {
+  background: map-get($grey, A100);
+  border-top: $mat-dialog-border;
+  justify-content: flex-end;
+  min-height: initial !important;
+  padding: $spacing-half $spacing-full !important;
+}
