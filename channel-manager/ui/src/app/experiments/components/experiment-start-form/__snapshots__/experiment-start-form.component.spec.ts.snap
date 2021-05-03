@@ -59,16 +59,17 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="false"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-variants-select mat-select"
-              role="listbox"
+              role="combobox"
               tabindex="0"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -81,7 +82,9 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
                     class="mat-select-value-text"
                   >
                     
-                    <span>
+                    <span
+                      class="mat-select-min-line"
+                    >
                       Variant (2 variants)
                     </span>
                     
@@ -179,16 +182,17 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="false"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-goal-select mat-select"
-              role="listbox"
+              role="combobox"
               tabindex="0"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -201,7 +205,9 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
                     class="mat-select-value-text"
                   >
                     
-                    <span>
+                    <span
+                      class="mat-select-min-line"
+                    >
                       Goal 1
                     </span>
                     
@@ -272,11 +278,11 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
       >
          DISCARD 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
@@ -290,11 +296,11 @@ exports[`ExperimentStartFormComponent if a goal is selected should be shown 1`] 
       >
          SAVE 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
@@ -361,16 +367,17 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="false"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-variants-select mat-select mat-select-empty"
-              role="listbox"
+              role="combobox"
               tabindex="0"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -379,9 +386,9 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
                 >
                   
                   <span
-                    class="mat-select-placeholder"
+                    class="mat-select-placeholder mat-select-min-line"
                   >
-                     
+                    
                   </span>
                   
                 </div>
@@ -477,16 +484,17 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="false"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-goal-select mat-select mat-select-empty"
-              role="listbox"
+              role="combobox"
               tabindex="0"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -495,9 +503,9 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
                 >
                   
                   <span
-                    class="mat-select-placeholder"
+                    class="mat-select-placeholder mat-select-min-line"
                   >
-                     
+                    
                   </span>
                   
                 </div>
@@ -567,11 +575,11 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
       >
          DISCARD 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
@@ -586,11 +594,11 @@ exports[`ExperimentStartFormComponent should be shown 1`] = `
       >
          SAVE 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
@@ -657,16 +665,17 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="true"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-variants-select mat-select mat-select-disabled"
-              role="listbox"
+              role="combobox"
               tabindex="-1"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -679,7 +688,9 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
                     class="mat-select-value-text"
                   >
                     
-                    <span>
+                    <span
+                      class="mat-select-min-line"
+                    >
                       Variant (2 variants)
                     </span>
                     
@@ -777,16 +788,17 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="true"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-goal-select mat-select mat-select-empty mat-select-disabled"
-              role="listbox"
+              role="combobox"
               tabindex="-1"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -795,9 +807,9 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
                 >
                   
                   <span
-                    class="mat-select-placeholder"
+                    class="mat-select-placeholder mat-select-min-line"
                   >
-                     
+                    
                   </span>
                   
                 </div>
@@ -867,11 +879,11 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
       >
          DISCARD 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
@@ -886,11 +898,11 @@ exports[`ExperimentStartFormComponent should be shown in the disabled mode 1`] =
       >
          SAVE 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
@@ -957,16 +969,17 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="true"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-variants-select mat-select mat-select-disabled"
-              role="listbox"
+              role="combobox"
               tabindex="-1"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -979,7 +992,9 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
                     class="mat-select-value-text"
                   >
                     
-                    <span>
+                    <span
+                      class="mat-select-min-line"
+                    >
                       Variant (2 variants)
                     </span>
                     
@@ -1077,16 +1092,17 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
             class="mat-form-field-infix"
           >
             <mat-select
+              aria-autocomplete="none"
               aria-disabled="true"
+              aria-expanded="false"
+              aria-haspopup="true"
               aria-invalid="false"
-              aria-multiselectable="false"
               aria-required="false"
               class="qa-goal-select mat-select mat-select-empty mat-select-disabled"
-              role="listbox"
+              role="combobox"
               tabindex="-1"
             >
               <div
-                aria-hidden="true"
                 cdk-overlay-origin=""
                 class="mat-select-trigger"
               >
@@ -1095,9 +1111,9 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
                 >
                   
                   <span
-                    class="mat-select-placeholder"
+                    class="mat-select-placeholder mat-select-min-line"
                   >
-                     
+                    
                   </span>
                   
                 </div>
@@ -1167,11 +1183,11 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
       >
          DISCARD 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
@@ -1186,11 +1202,11 @@ exports[`ExperimentStartFormComponent should be shown in the enabled mode 1`] = 
       >
          SAVE 
       </span>
-      <div
+      <span
         class="mat-button-ripple mat-ripple"
         matripple=""
       />
-      <div
+      <span
         class="mat-button-focus-overlay"
       />
     </button>
