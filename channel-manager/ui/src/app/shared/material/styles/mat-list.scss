@@ -14,41 +14,7 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/sizes';
-
-.experiment {
-  height: 100%;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    "info"
-    "status"
-    "actions";
-}
-
-em-experiment-info {
-  grid-area: info;
-}
-
-.experiment-status-wrapper {
-  grid-area: status;
-  padding: $br-size;
-}
-
-.actions-wrapper {
-  grid-area: actions;
-}
-
-.actions {
-  padding: $br-size-m $br-size;
-  text-align: right;
-}
-
-.variants-info {
-  list-style-type: '- ';
-  padding: 0;
-
-  > li {
-    padding-top: $br-size-s;
-  }
+.mat-list-single-selected-option {
+  background-color: map-get($blue, 50) !important;
+  font-weight: 600;
 }
