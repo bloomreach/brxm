@@ -60,7 +60,7 @@
   "TOOLBAR_BUTTON_BACK": "Back",
   "TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES": "Manage changes",
   "CONTINUE": "Continue",
-  "VERSION_NAME": "Version Name",
+  "VERSION_NAME": "Version name",
   "EXPERIMENT_INFO_PUBLISH_TO_START": "Publish the {{ type }} to start the experiment",
   "VARIANT_DELETE": "Delete variant",
   "CANCEL": "Cancel",
