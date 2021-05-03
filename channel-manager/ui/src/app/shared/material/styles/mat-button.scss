@@ -14,41 +14,22 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/sizes';
+@import "~@bloomreach/frontend-theme/palettes";
 
-.experiment {
-  height: 100%;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    "info"
-    "status"
-    "actions";
-}
+.mat-stroked-button:not(.mat-button-disabled) {
+  &.mat-primary {
+    border-color: map-get($blue, 500);
+  }
 
-em-experiment-info {
-  grid-area: info;
-}
+  &.mat-accent {
+    border-color: map-get($orange, 500);
+  }
 
-.experiment-status-wrapper {
-  grid-area: status;
-  padding: $br-size;
-}
+  &.mat-warn {
+    border-color: map-get($red, 500);
+  }
 
-.actions-wrapper {
-  grid-area: actions;
-}
-
-.actions {
-  padding: $br-size-m $br-size;
-  text-align: right;
-}
-
-.variants-info {
-  list-style-type: '- ';
-  padding: 0;
-
-  > li {
-    padding-top: $br-size-s;
+  &:not(.mat-primary, .mat-accent, .mat-warn, .mat-button-disabled) {
+    border-color: map-get($grey, 600);
   }
 }
