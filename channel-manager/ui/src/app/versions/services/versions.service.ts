@@ -35,6 +35,7 @@ export class VersionsService {
     createEnabled: false,
     restoreEnabled: false,
     versions: [],
+    pageCampaignSupported: false,
   });
   readonly versionsInfo$ = this.versionsInfo.asObservable();
 
