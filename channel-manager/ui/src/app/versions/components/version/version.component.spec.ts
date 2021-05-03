@@ -15,7 +15,7 @@
  */
 
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -62,7 +62,7 @@ describe('VersionComponent', () => {
     campaignEnabled: true,
   } as VersionsInfo;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     const iframeServiceMock = {
       load: jest.fn(() => Promise.resolve()),
     };
