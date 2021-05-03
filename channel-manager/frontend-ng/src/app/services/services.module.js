@@ -63,7 +63,7 @@ const servicesModule = angular
   .service('SessionService', SessionService)
   .service('SiteMapItemService', SiteMapItemService)
   .service('SiteMapService', SiteMapService)
-  .service('NavappService', NavappService)
-  .service('SiteMenuService', SiteMenuService);
+  .service('SiteMenuService', SiteMenuService)
+  .service('NavappService', NavappService);
 
 export default servicesModule.name;
