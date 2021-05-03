@@ -43,7 +43,7 @@
   </ng-container>
 </div>
 
-<ng-container *ngIf="!isBranch()">
+<ng-container *ngIf="!isBranch() && versionsInfo?.pageCampaignSupported">
   <mat-divider></mat-divider>
 
   <div class="version-list-filter">
