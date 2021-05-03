@@ -60,7 +60,7 @@ class ChannelService {
 
     this.NavappService.subscribe('navigate', (location, triggeredBy) => this.navigate(location, triggeredBy));
     this.NavappService.subscribe('beforeNavigation', () => this._beforeNavigation());
-    this.NavappService.subscribe('beforeLogout', () => this.this._beforeLogout());
+    this.NavappService.subscribe('beforeLogout', () => this._beforeLogout());
   }
 
   /**
