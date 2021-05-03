@@ -76,13 +76,13 @@ export class ScheduleFormComponent implements OnInit, OnDestroy {
 
   resetFromDate(): void {
     this.scheduleForm.patchValue({
-      fromDateTime: this.dateService.getCurrentDate(),
+      fromDateTime: moment(this.dateService.getCurrentDate()),
     });
   }
 
   resetToDate(): void {
     this.scheduleForm.patchValue({
-      toDateTime: this.dateService.getCurrentDate(),
+      toDateTime: moment(this.dateService.getCurrentDate()),
     });
   }
 
@@ -93,7 +93,7 @@ export class ScheduleFormComponent implements OnInit, OnDestroy {
       label: formValues.label,
     };
 
-    const from = formValues.fromDateTime.utc().format();
+    const from = formValues.fromDateTime?.utc().format();
     const to = formValues.toDateTime?.utc().format() || null;
 
     if (from) {
