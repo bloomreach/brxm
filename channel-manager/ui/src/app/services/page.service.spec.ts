@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { mocked } from 'ts-jest/utils';
 
@@ -45,7 +45,7 @@ describe('PageService', () => {
 
   const xPageState = { branchId: 'testPageState' } as XPageState;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     const ng1PageServiceMock = {
       states: {
         get xpage(): XPageState {
