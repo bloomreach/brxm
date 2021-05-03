@@ -31,7 +31,6 @@
   <packaging>pom</packaging>
 
   <properties>
-    <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-csv.version>1.6</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
