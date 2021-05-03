@@ -155,7 +155,7 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     versionInfos.sort(Comparator.comparing(Version::getTimestamp).reversed());
                         }
 
-                if (publishedFrozenNode == null && versionInfos.size() > 0 && isLive && lastVersion != null) {
+                if (publishedFrozenNode == null && isLive && lastVersion != null) {
                     // there is no explicit version for the published: this can only happen for bootstrapped live
                     // documents which got edited but have not yet been re-published.
                     // this means that the oldest version from version history reflects the published. If the
@@ -171,7 +171,6 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                             versionInfos.add(lastVersion);
                         }
                     }
-
                 }
 
             } else {
@@ -189,11 +188,6 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
             final DocumentCampaignService documentCampaignService = HippoServiceRegistry.getService(DocumentCampaignService.class);
             final Optional<Campaign> activeCampaign = documentCampaignService == null ? Optional.empty() : documentCampaignService.findActiveCampaign(handleNode, branchId);
 
-            // in case no activeCampaign, then the Version which has 'published = true' is also the active one
-            versionInfos.stream()
-                    .filter(version -> activeCampaign.isPresent() ? activeCampaign.get().getUuid().equals(version.getJcrUUID()) : version.isPublished())
-                    .findFirst().ifPresent(v -> v.setActive(true));
-
             // truncate the number of versions to 100 but if there is a published version which is not part of the first
             // 100, set it as the 100th version to always at least have that one in the response
             final List<Version> visibleVersions = versionInfos.subList(0, versionInfos.size() > 100 ? 100 : versionInfos.size());
@@ -209,6 +203,12 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     visibleVersions.set(visibleVersions.size() - 1 , publishedVersion);
                 }
             }
+
+            // in case no activeCampaign, then the Version which has 'published = true' is also the active one
+            versionInfos.stream()
+                    .filter(version -> activeCampaign.isPresent() ? activeCampaign.get().getUuid().equals(version.getJcrUUID()) : version.isPublished())
+                    .findFirst().ifPresent(v -> v.setActive(true));
+
 
             // add workspace as the first version
             final Calendar lastModified = getDateProperty(preview, HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
