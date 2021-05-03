@@ -287,8 +287,8 @@ public class DocumentVersionServiceImplTest {
             assertThat(versionInfo.isRestoreEnabled(), is(false));
             final List<Version> versions = versionInfo.getVersions();
 
-            // no campaigns set
-            assertThat(versions.size(), is(0));
+            // no campaigns set, but the workspace version is still added
+            assertThat(versions.size(), is(1));
         }
 
         // on purpose, we use different timezone as input: this is to show that the final 'versions' contain UTC time
@@ -306,9 +306,9 @@ public class DocumentVersionServiceImplTest {
             assertThat(versionInfo.isRestoreEnabled(), is(true));
             final List<Version> versions = versionInfo.getVersions();
 
-            // 1 campaigns set
-            assertThat(versions.size(), is(1));
-            assertEquals(versions.get(0).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), fromCompare, toCompare));
+            // 1 campaigns set, first version is the workspace version
+            assertThat(versions.size(), is(2));
+            assertEquals(versions.get(1).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), fromCompare, toCompare));
 
         }
     }
@@ -348,10 +348,10 @@ public class DocumentVersionServiceImplTest {
 
             final List<Version> versions = versionInfo.getVersions();
 
-            // 1 campaigns set
-            assertThat(versions.size(), is(1));
-            assertEquals(versions.get(0).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), from, to));
-            assertEquals(versions.get(0).getLabel(), "My Label");
+            // 1 campaigns set, first item is the workspace item
+            assertThat(versions.size(), is(2));
+            assertEquals(versions.get(1).getCampaign(), new Campaign(version.getFrozenNode().getIdentifier(), from, to));
+            assertEquals(versions.get(1).getLabel(), "My Label");
         }
     }
 
@@ -398,12 +398,13 @@ public class DocumentVersionServiceImplTest {
         final DocumentVersionInfo versionInfo = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
         final List<Version> versions = versionInfo.getVersions();
 
-        assertEquals(100, versions.size());
+        // first version is the 'workspace' version
+        assertEquals(101, versions.size());
 
         assertOrderedByDate(versions, version -> version.getTimestamp());
 
-        final Version version98 = versions.get(98);
-        final Version version99 = versions.get(99);
+        final Version version98 = versions.get(99);
+        final Version version99 = versions.get(100);
 
         // add one
         Thread.sleep(1);
@@ -413,14 +414,15 @@ public class DocumentVersionServiceImplTest {
         final DocumentVersionInfo versionInfo2 = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, false);
         final List<Version> versions2 = versionInfo2.getVersions();
 
-        assertEquals(100, versions2.size());
+        // first version is the 'workspace' version
+        assertEquals(101, versions2.size());
 
         assertOrderedByDate(versions2, version -> version.getTimestamp());
 
         assertFalse("Expected version 99 to have dropped off", versions2.stream().anyMatch(version -> version.getJcrUUID().equals(version99.getJcrUUID())));
 
-        assertEquals("Expected version 98 to have moved to position 99",
-                version98.getJcrUUID(), versions2.get(99).getJcrUUID());
+        assertEquals("Expected version 98 to have moved to position 100",
+                version98.getJcrUUID(), versions2.get(100).getJcrUUID());
 
     }
 
@@ -450,10 +452,11 @@ public class DocumentVersionServiceImplTest {
         // only get campaign versions, there are 200 created, but we only expect the first 100 sorted on date
         final DocumentVersionInfo versions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, true);
 
-        assertEquals(100, versions.getVersions().size());
+        // first version is the 'workspace' version
+        assertEquals(101, versions.getVersions().size());
 
-        // all 100 items are campaigns
-        assertTrue(versions.getVersions().stream().anyMatch(version -> version.getCampaign() != null));
+        // all 100 items after the first one are campaigns
+        assertTrue(versions.getVersions().stream().skip(1).anyMatch(version -> version.getCampaign() != null));
 
         assertOrderedByDate(versions.getVersions(), version -> version.getCampaign().getFrom());
     }
