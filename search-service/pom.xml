@@ -48,7 +48,6 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-io.version>2.6</commons-io.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
 
