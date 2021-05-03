@@ -349,7 +349,7 @@ class ChannelService {
     this.isToolbarDisplayed = state;
   }
 
-  async navigate(location) {
+  navigate(location) {
     if (location.path === '') {
       return this.$state.go('hippo-cm')
         .then(() => {
