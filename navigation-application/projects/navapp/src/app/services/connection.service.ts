@@ -27,6 +27,7 @@ import {
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
+import { version } from '../../../../../package.json';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { UserSettings } from '../models/dto/user-settings.dto';
 
@@ -113,6 +114,7 @@ export class ConnectionService {
     return {
       getConfig: async () => ({
         apiVersion: getCommunicationLibraryVersion(),
+        navappVersion: version,
         usageStatisticsEnabled: this.appSettings.usageStatisticsEnabled,
         userSettings: this.userSettings,
       }),
