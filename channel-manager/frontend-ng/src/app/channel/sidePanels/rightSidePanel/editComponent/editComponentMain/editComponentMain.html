@@ -43,7 +43,7 @@
 
 <md-toolbar>
   <div class="md-toolbar-tools">
-    <div class="column left">
+    <div class="column">
       <md-button class="qa-deletecomponent large-label"
                  ng-click="$ctrl.deleteComponent()"
                  ng-disabled="$ctrl.isDeleteDisabled()">
@@ -51,19 +51,17 @@
       </md-button>
     </div>
 
-    <div class="column right">
+    <div class="column">
       <md-button class="qa-discard"
-                ng-click="$ctrl.discard()"
-                ng-disabled="!$ctrl.isDiscardAllowed()">
+                 ng-click="$ctrl.discard()"
+                 ng-disabled="!$ctrl.isDiscardAllowed()">
         {{ ::'DISCARD' | translate }}
       </md-button>
-
       <md-button class="qa-save md-accent"
-                ng-click="$ctrl.save()"
-                ng-disabled="!$ctrl.isSaveAllowed()">
+                 ng-click="$ctrl.save()"
+                 ng-disabled="!$ctrl.isSaveAllowed()">
         {{ ::'SAVE' | translate }}
       </md-button>
     </div>
-
   </div>
 </md-toolbar>
