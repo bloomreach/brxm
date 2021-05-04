@@ -150,7 +150,7 @@ public class MockVersionHistory extends MockNode implements VersionHistory {
 
     @Override
     public Version getVersionByLabel(final String label) throws VersionException, RepositoryException {
-        throw new UnsupportedOperationException();
+        throw new VersionException(String.format("Versions for label '%s' not found", label));
     }
 
     @Override
@@ -234,7 +234,11 @@ public class MockVersionHistory extends MockNode implements VersionHistory {
 
         @Override
         public void skip(final long skipNum) {
-            throw new UnsupportedOperationException();
+            long i = skipNum;
+            while (i > 0) {
+                iterator.next();
+                i--;
+            }
         }
 
         @Override

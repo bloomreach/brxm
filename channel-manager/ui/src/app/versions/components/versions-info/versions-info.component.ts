@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { UIRouterGlobals } from '@uirouter/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
-import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../../services/ng1/content.ng1.service';
-import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1service';
-import { Ng1WorkflowService, NG1_WORKFLOW_SERVICE } from '../../../services/ng1/workflow.ng1.service';
+import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
+import { Ng1IframeService, NG1_IFRAME_SERVICE } from '../../../services/ng1/iframe.ng1.service';
+import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
+import { NotificationService } from '../../../services/notification.service';
+import { ProjectService } from '../../../services/project.service';
+import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
+import { VersionsService } from '../../services/versions.service';
 
 @Component({
   selector: 'em-versions-info',
@@ -28,49 +35,46 @@ import { VersionsInfo } from '../../models/versions-info.model';
   styleUrls: ['versions-info.component.scss'],
 })
 export class VersionsInfoComponent implements OnInit, OnDestroy {
-  @Input()
-  documentId!: string;
-
-  @Input()
-  branchId!: string;
-
-  @Input()
-  unpublishedVariantId!: string;
+  private readonly documentId = this.ng1UiRouterGlobals.params.documentId;
+  private readonly unsubscribe = new Subject();
 
   versionsInfo?: VersionsInfo;
-
+  filteredVersions?: Version[];
+  showFilteredVersions?: boolean;
   actionInProgress = false;
 
   constructor(
-    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
     @Inject(NG1_IFRAME_SERVICE) private readonly ng1IframeService: Ng1IframeService,
     @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
-    @Inject(NG1_WORKFLOW_SERVICE) private readonly ng1WorkflowService: Ng1WorkflowService,
-    private readonly changeDetector: ChangeDetectorRef,
+    @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
+    private readonly versionsService: VersionsService,
+    private readonly notificationService: NotificationService,
+    private readonly projectService: ProjectService,
   ) { }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      // Angular Element inputs are not yet initialized onInit
-      this.getVersionsInfo();
-    });
+    this.versionsService.getVersionsInfo(this.documentId);
+    this.versionsService.versionsInfo$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(async versionsInfo => {
+        this.versionsInfo = versionsInfo;
+        this.filteredVersions = versionsInfo.versions;
+
+        if (this.showFilteredVersions) {
+          this.filteredVersions = await this.versionsService.getVersions(this.documentId, true);
+        }
+      });
   }
 
   ngOnDestroy(): void {
-    const latestVersion = this.versionsInfo?.versions[0];
-    const id = latestVersion?.jcrUUID;
+    const latestVersionId = this.versionsInfo?.versions[0]?.jcrUUID;
 
-    if (id && id !== this.unpublishedVariantId) {
-      this.selectVersion(id);
+    if (latestVersionId) {
+      this.selectVersion(latestVersionId);
     }
-  }
 
-  async getVersionsInfo(): Promise<void> {
-    this.actionInProgress = true;
-    this.versionsInfo = await this.ng1ContentService.getDocumentVersionsInfo(this.documentId, this.branchId);
-
-    this.changeDetector.markForCheck();
-    this.actionInProgress = false;
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   async selectVersion(versionUUID: string): Promise<void> {
@@ -78,34 +82,34 @@ export class VersionsInfoComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.actionInProgress = true;
-    const newPath = this.createVersionPath(versionUUID);
-    await this.ng1IframeService.load(newPath);
-    this.actionInProgress = false;
+    try {
+      this.actionInProgress = true;
+      const newPath = this.createVersionPath(versionUUID);
+      await this.ng1IframeService.load(newPath);
+    } catch (error) {
+      this.notificationService.showErrorNotification('VERSION_SELECTION_ERROR');
+    } finally {
+      this.actionInProgress = false;
+    }
   }
 
-  async createVersion(): Promise<void> {
-    this.actionInProgress = true;
-    await this.ng1WorkflowService.createWorkflowAction(this.documentId, 'version');
-    await this.getVersionsInfo();
-  }
-
-  async restoreVersion(versionUUID: string): Promise<void> {
-    this.actionInProgress = true;
-    await this.ng1WorkflowService.createWorkflowAction(this.documentId, 'restore', versionUUID);
-    const renderPath = this.getRenderPath();
-    await this.ng1IframeService.load(renderPath);
-    await this.getVersionsInfo();
+  isBranch(): boolean {
+    return this.projectService.isBranch();
   }
 
   isVersionSelected(versionUUID: string): boolean {
-    return this.unpublishedVariantId === versionUUID;
+    return this.versionsService.isVersionFromPage(versionUUID);
   }
 
-  private getRenderPath(): string {
+  getRenderPath(): string {
     const currentPath = this.ng1IframeService.getCurrentRenderPathInfo();
     const homePageRenderPath = this.ng1ChannelService.getHomePageRenderPathInfo();
     return this.ng1ChannelService.makeRenderPath(currentPath.replace(homePageRenderPath, ''));
+  }
+
+  async filterVersions(change: MatCheckboxChange): Promise<void> {
+    this.showFilteredVersions = change.checked;
+    this.filteredVersions = await this.versionsService.getVersions(this.documentId, change.checked);
   }
 
   private createVersionPath(selectedVersionUUID: string): string {

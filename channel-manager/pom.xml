@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.6.0-SNAPSHOT</version>
+    <version>14.6.0-page-campaigns-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>14.6.0-SNAPSHOT</version>
+  <version>14.6.0-page-campaigns-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -324,7 +324,7 @@
 
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
-                <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>**/coverage/**/*</exclude>
                 <exclude>frontend-ng/.cache/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>ui/dist/**</exclude>

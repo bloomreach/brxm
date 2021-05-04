@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,16 @@ import { createCustomElement } from '@angular/elements';
 import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
+import { ScheduleFormComponent } from './components/schedule-form/schedule-form.component';
+import { VersionComponent } from './components/version/version.component';
 import { VersionsInfoComponent } from './components/versions-info/versions-info.component';
+import { LatestVersionComponent } from './components/working-version/working-version.component';
 
 @NgModule({
   declarations: [
+    LatestVersionComponent,
+    ScheduleFormComponent,
+    VersionComponent,
     VersionsInfoComponent,
   ],
   imports: [

@@ -111,24 +111,6 @@ describe('ChannelController', () => {
     expect($ctrl.isPageLoaded()).toBe(true);
   });
 
-  it('checks whether controls are disabled', () => {
-    ChannelService.hasChannel.and.returnValue(false);
-    HippoIframeService.isPageLoaded.and.returnValue(false);
-    expect($ctrl.isControlsDisabled()).toBe(true);
-
-    ChannelService.hasChannel.and.returnValue(false);
-    HippoIframeService.isPageLoaded.and.returnValue(true);
-    expect($ctrl.isControlsDisabled()).toBe(true);
-
-    ChannelService.hasChannel.and.returnValue(true);
-    HippoIframeService.isPageLoaded.and.returnValue(false);
-    expect($ctrl.isControlsDisabled()).toBe(true);
-
-    ChannelService.hasChannel.and.returnValue(true);
-    HippoIframeService.isPageLoaded.and.returnValue(true);
-    expect($ctrl.isControlsDisabled()).toBe(false);
-  });
-
   it('gets the render variant from the page meta', () => {
     const page = jasmine.createSpyObj('page', ['getMeta']);
     const pageMeta = jasmine.createSpyObj('pageMeta', ['getRenderVariant']);

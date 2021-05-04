@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+import { NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
+import { CdkColumnDef } from '@angular/cdk/table';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule, MAT_CHECKBOX_DEFAULT_OPTIONS } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,6 +32,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
@@ -37,6 +44,7 @@ import { registerSvgIcons } from './register-svg-icons';
 @NgModule({
   exports: [
     MatButtonModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatDividerModule,
     MatFormFieldModule,
@@ -48,15 +56,42 @@ import { registerSvgIcons } from './register-svg-icons';
     MatRippleModule,
     MatSelectModule,
     MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    MatDatepickerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+  ],
+  providers: [
+    CdkColumnDef,
+    {
+      provide: NGX_MAT_DATE_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: ['LLL'],
+        },
+        display: {
+          dateInput: 'LLL',
+          dateA11yLabel: 'LLL',
+          monthYearLabel: 'MMM YYYY',
+          monthYearA11yLabel: 'MMMM YYYY',
+        },
+      },
+    },
+    {
+      provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+      useValue: { strict: true },
+    },
+    {
+      provide: MAT_CHECKBOX_DEFAULT_OPTIONS, useValue: { color: 'primary' },
+    },
   ],
 })
 export class MaterialModule {
   constructor(private readonly iconRegistry: MatIconRegistry, private readonly domSanitizer: DomSanitizer) {
-    this.iconRegistry.registerFontClassAlias('materialdesignicons', 'mdi');
-    this.iconRegistry.setDefaultFontSetClass('mdi');
     this.registerCustomIcons();
   }
 

@@ -80,6 +80,8 @@ export class NotificationBarStatusTextComponent {
       [XPageStatus.EditingSharedContainers]: 'NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS',
       [XPageStatus.PreviousVersion]: 'NOTIFICATION_BAR_XPAGE_LABEL_PREVIOUS_VERSION',
       [XPageStatus.Locked]: 'NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER',
+      [XPageStatus.Live]: 'NOTIFICATION_BAR_XPAGE_LABEL_VERSION_LIVE',
+      [XPageStatus.ScheduledCampaign]: 'NOTIFICATION_BAR_XPAGE_LABEL_VERSION_SCHEDULED',
     };
 
     return statusTextMap[pageStatus];

@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+/*!
+ * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
-versions-info-wrapper {
-  overflow: auto;
+@import 'variables';
+@import './mat-variables';
+
+.mat-header-row {
+  min-height: 48px;
+
+  .mat-header-cell {
+    @include mat-typography-level-to-styles($custom-typography, subheading-1);
+    color: map-get($grey, 600);
+    font-size: 12px;
+  }
+}
+
+.mat-cell,
+.mat-header-cell {
+  box-sizing: border-box;
+  padding: 4px;
 }

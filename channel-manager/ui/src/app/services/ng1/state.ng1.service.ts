@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,6 @@
  */
 
 import { InjectionToken } from '@angular/core';
+import { StateService } from '@uirouter/angularjs';
 
-export interface Ng1StateService {
-  params: { [paramName: string]: any };
-  go(to: string, params?: { [paramName: string]: any }): Promise<void>;
-}
-
-export const NG1_STATE_SERVICE = new InjectionToken<Ng1StateService>('NG1_STATE_SERVICE');
+export const NG1_STATE_SERVICE = new InjectionToken<StateService>('NG1_STATE_SERVICE');

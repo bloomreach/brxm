@@ -15,7 +15,7 @@
  */
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { DocumentState } from '../../../models/document-state.enum';
@@ -87,7 +87,7 @@ describe('NotificationBarComponent', () => {
       'username',
     ), 'NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER'],
   ])('if xpage status is %s', (statusName, statusInfo, expectedText) => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       pageStatusInfo$.next(statusInfo);
 
       fixture.detectChanges();
