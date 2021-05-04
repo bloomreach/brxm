@@ -710,7 +710,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *             workspace version
      * @param to optional parameter for the date until which on this version must be served instead of published
      *           workspace version. If the parameter is missing, it is typically for an open-ended campaign document
-     * @return the Document for {@code frozenNodeUUID}
+     * @return the Document for the unpublished variant
      */
     Document campaign(String frozenNodeId, String branchId, Calendar from, Calendar to) throws WorkflowException;
 
@@ -719,7 +719,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *     Removes the campaign if present for {@code frozeNodeId}
      * </p>
      * @param frozenNodeId
-     * @return
+     * @return the Document for the unpublished variant
      * @throws WorkflowException
      */
     Document removeCampaign(String frozenNodeId) throws WorkflowException;
@@ -737,7 +737,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * </p>
      * @param frozenNodeId
      * @param label
-     * @return
+     * @return the Document for the unpublished variant
      * @throws WorkflowException
      * @throws RepositoryException
      * @throws RemoteException
@@ -750,7 +750,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *     Removes the version label if present for {@code frozeNodeId}
      * </p>
      * @param frozenNodeId
-     * @return
+     * @return the Document for the unpublished variant
      * @throws WorkflowException
      * @throws RepositoryException
      * @throws RemoteException
