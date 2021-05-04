@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-cms-google-analytics</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>14.6.0-SNAPSHOT</version>
+    <version>14.6.0-page-campaigns-SNAPSHOT</version>
   </parent>
 
   <name>CMS Google Analytics Frontend</name>

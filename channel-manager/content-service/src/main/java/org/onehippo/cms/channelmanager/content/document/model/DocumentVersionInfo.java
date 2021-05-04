@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,17 +27,30 @@ public class DocumentVersionInfo {
     private final List<Version> versions;
     private final boolean restoreEnabled;
     private boolean createEnabled;
+    private boolean pageCampaignSupported;
+    private boolean campaignEnabled;
+    private boolean labelEnabled;
+    private boolean isLive;
 
     @JsonCreator
     public DocumentVersionInfo(
             @JsonProperty("versions") List<Version> versions,
             @JsonProperty("restoreEnabled") boolean restoreEnabled,
-            @JsonProperty("createEnabled") boolean createEnabled
+            @JsonProperty("createEnabled") boolean createEnabled,
+            @JsonProperty("pageCampaignSupported") boolean pageCampaignSupported,
+            @JsonProperty("labelEnabled") boolean labelEnabled,
+            @JsonProperty("campaignEnabled") boolean campaignEnabled,
+            @JsonProperty("isLive") boolean isLive
+
     ) {
         Objects.requireNonNull(versions);
         this.versions = versions;
         this.restoreEnabled = restoreEnabled;
         this.createEnabled = createEnabled;
+        this.pageCampaignSupported = pageCampaignSupported;
+        this.labelEnabled = labelEnabled;
+        this.campaignEnabled = campaignEnabled;
+        this.isLive = isLive;
     }
 
     public List<Version> getVersions() {
@@ -50,5 +63,21 @@ public class DocumentVersionInfo {
 
     public boolean isCreateEnabled() {
         return createEnabled;
+    }
+
+    public boolean isPageCampaignSupported() {
+        return pageCampaignSupported;
+    }
+
+    public boolean isCampaignEnabled() {
+        return campaignEnabled;
+    }
+
+    public boolean isLabelEnabled() {
+        return labelEnabled;
+    }
+
+    public boolean isLive() {
+        return isLive;
     }
 }

@@ -18,6 +18,7 @@
   <md-menu ng-repeat="menu in $ctrl.items track by menu.name" ng-if="menu.isVisible()">
     <md-button aria-label="{{ ::menu.translationKey | translate }}"
                class="qa-{{ ::menu.name }}-menu-button {{ ::menu.name }}-menu-button"
+               ng-disabled="!menu.isEnabled()"
                ng-click="menu.onClick(); $mdMenu.open()">
       {{ ::menu.translationKey | translate }}
       <md-icon ng-if="menu.hasIconName() && menu.isIconVisible()" md-font-icon="{{::menu.iconName}}"></md-icon>

@@ -7,3 +7,4 @@ definitions:
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
         jaxrs.endpoint.address: /content
+        page.campaign.supported: false

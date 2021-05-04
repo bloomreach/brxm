@@ -26,6 +26,7 @@
     <% for (let css of uiCss) { %>
       <link href="<%= css %>" rel="stylesheet">
     <% } %>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
   </head>
 
   <body ng-app="hippo-cm" ng-strict-di iframe-asset="<%= htmlWebpackPlugin.files.chunks.iframe.entry %>">
