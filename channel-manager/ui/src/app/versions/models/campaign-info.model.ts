@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-button.mat-menu-item {
-  line-height: 24px !important;
-}
-
-a.mat-menu-item > mat-icon {
-  margin-bottom: 14px;
-}
-
-.mat-icon svg {
-  height: 24px;
-  width: 24px;
+export interface CampaignInfo {
+  from: Date;
+  to?: Date;
 }

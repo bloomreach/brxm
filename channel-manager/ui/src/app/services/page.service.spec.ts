@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { mocked } from 'ts-jest/utils';
 
@@ -31,7 +31,7 @@ import { XPageStatus } from '../models/xpage-status.enum';
 import { VersionsService } from '../versions/services/versions.service';
 
 import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
-import { NG1_ROOT_SCOPE } from './ng1/root-scope.service';
+import { NG1_ROOT_SCOPE } from './ng1/root-scope.ng1.service';
 import { PageService } from './page.service';
 import { ProjectService } from './project.service';
 
@@ -45,7 +45,7 @@ describe('PageService', () => {
 
   const xPageState = { branchId: 'testPageState' } as XPageState;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     const ng1PageServiceMock = {
       states: {
         get xpage(): XPageState {
@@ -72,10 +72,10 @@ describe('PageService', () => {
 
     const versionsServiceMock = {
       getVersions: jest.fn().mockResolvedValue([
-        { jcrUUID: '1', timestamp: 123, userName: 'user1' },
-        { jcrUUID: '2', timestamp: 1234, userName: 'user2' },
+        { jcrUUID: '1', timestamp: 123, userName: 'user1', branchId: 'master', active: false, published: false },
+        { jcrUUID: '2', timestamp: 1234, userName: 'user2', branchId: 'master', active: false, published: false },
       ]),
-      isCurrentVersion: jest.fn(v => v.jcrUUID === '1'),
+      isVersionFromPage: jest.fn(jcrUUID => jcrUUID === '1'),
     };
 
     TestBed.configureTestingModule({
@@ -287,18 +287,6 @@ describe('PageService', () => {
       ),
     ],
     [
-      'ProjectRunning but it is not set explicitly',
-      { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123'  } },
-      { id: '123', name: 'some project name' },
-      new XPageStatusInfo(
-        XPageStatus.ProjectRunning,
-        DocumentState.Live,
-        'page name',
-        undefined,
-        'some project name',
-      ),
-    ],
-    [
       'ProjectInProgress',
       { xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123'  } },
       { id: '123', name: 'some project name', state: ProjectState.Unapproved },
@@ -421,7 +409,7 @@ describe('PageService', () => {
     [
       'PreviousVersion',
       {
-        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master', active: false, published: false },
       },
       undefined,
       new XPageStatusInfo(
@@ -432,8 +420,11 @@ describe('PageService', () => {
         undefined,
         {
           jcrUUID: '2',
+          branchId: 'master',
           timestamp: 1234,
           userName: 'user2',
+          published: false,
+          active: false,
        },
       ),
     ],
@@ -454,7 +445,7 @@ describe('PageService', () => {
     [
       'PreviousVersion if a project is active but XPage is a part of the project',
       {
-        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123' },
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'ABC123'},
       },
       { id: '123', name: 'some project name', state: ProjectState.InReview },
       new XPageStatusInfo(
@@ -465,8 +456,11 @@ describe('PageService', () => {
         undefined,
         {
           jcrUUID: '2',
+          branchId: 'master',
           timestamp: 1234,
           userName: 'user2',
+          published: false,
+          active: false,
         },
       ),
     ],
@@ -496,7 +490,7 @@ describe('PageService', () => {
       }
 
       if (expectedStatusName.startsWith('PreviousVersion')) {
-        mocked(versionsService.isCurrentVersion).mockImplementation(v => v.jcrUUID === '2');
+        mocked(versionsService.isVersionFromPage).mockImplementation(jcrUUID => jcrUUID === '2');
       }
 
       const actual = await service.getPageStatusInfo();

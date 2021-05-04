@@ -18,7 +18,7 @@ import { TestBed } from '@angular/core/testing';
 import { mocked } from 'ts-jest/utils';
 
 import { TargetingApiResponse } from '../../models/targeting-api-response.model';
-import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
+import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1.service';
 import { ExperimentStatus } from '../models/experiment-status.model';
 
 import { ExperimentsService } from './experiments.service';

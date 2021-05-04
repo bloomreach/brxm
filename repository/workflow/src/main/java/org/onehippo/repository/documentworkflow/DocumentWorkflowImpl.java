@@ -42,9 +42,12 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.cms7.services.lock.LockManagerUtils;
 import org.onehippo.cms7.services.lock.LockResource;
+import org.onehippo.repository.documentworkflow.task.CampaignTask;
+import org.onehippo.repository.documentworkflow.task.LabelVersionTask;
 import org.onehippo.repository.documentworkflow.task.VersionVariantTask;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
+import org.onehippo.repository.security.StandardPermissionNames;
 
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
@@ -202,8 +205,11 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         hints.putAll(workflowExecutor.getContext().getFeedback());
         hints.putAll(workflowExecutor.getContext().getActions());
 
-        // Because documentworkflow.scxml can't be modified in a minor release this hint is added programmatically
+        // Because documentworkflow.scxml can't be modified in a minor release these hints are added programmatically
         addSaveUnpublishedHint(hints);
+        addCampaignHints(hints);
+        addLabelVersionHints(hints);
+
 
         for (Map.Entry<String, Serializable> entry : hints.entrySet()) {
             if (entry.getValue() instanceof Collection) {
@@ -470,6 +476,27 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
+    public Document campaign(final String frozenNodeId, final String branchId, final Calendar from, final Calendar to) throws WorkflowException {
+        // Because documentworkflow.scxml can't be modified in a minor release this action is implemented in code only
+        return triggerCampaign(frozenNodeId, branchId, from, to);
+    }
+
+    @Override
+    public Document removeCampaign(final String frozenNodeId) throws WorkflowException {
+        return triggerCampaign(frozenNodeId, null, null, null);
+    }
+
+    @Override
+    public Document labelVersion(final String frozenNodeId, final String label) throws WorkflowException {
+        return triggerLabel(frozenNodeId, label);
+    }
+
+    @Override
+    public Document removeLabelVersion(final String frozenNodeId) throws WorkflowException {
+        return triggerLabel(frozenNodeId, null);
+    }
+
+    @Override
     public Object triggerAction(final WorkflowAction action) throws WorkflowException {
         if (!(action instanceof DocumentWorkflowAction)) {
             throw new IllegalArgumentException(String.format("action class must be of type '%s' for document workflow but " +
@@ -525,6 +552,34 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         }
     }
 
+    private void addCampaignHints(final Map<String, Serializable> hints)  {
+
+        final DocumentHandle documentHandle = workflowExecutor.getData();
+        if (documentHandle.getDocuments().isEmpty()) {
+            return;
+        }
+        final DocumentVariant unpublished = documentHandle.getDocuments().get(UNPUBLISHED);
+        if (unpublished == null) {
+            hints.put(DocumentWorkflowAction.campaign().getAction(), false);
+            hints.put(DocumentWorkflowAction.removeCampaign().getAction(), false);
+            return;
+        }
+        final boolean granted = workflowExecutor.getContext().isGranted(unpublished.getNode(), StandardPermissionNames.HIPPO_EDITOR);
+        hints.put(DocumentWorkflowAction.campaign().getAction(), granted);
+        hints.put(DocumentWorkflowAction.removeCampaign().getAction(), granted);
+    }
+
+    private void addLabelVersionHints(final Map<String, Serializable> hints)  {
+
+        final DocumentHandle documentHandle = workflowExecutor.getData();
+        if (documentHandle.getDocuments().isEmpty()) {
+            return;
+        }
+        final DocumentVariant unpublished = documentHandle.getDocuments().get(UNPUBLISHED);
+        hints.put(DocumentWorkflowAction.labelVersion().getAction(), unpublished != null);
+        hints.put(DocumentWorkflowAction.removeLabelVersion().getAction(), unpublished != null);
+    }
+
     private void triggerSaveUnpublishedAction() throws WorkflowException {
         try {
             final DocumentHandle documentHandle = workflowExecutor.getData();
@@ -574,5 +629,35 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return draft.isTransferable() && !documentHandle.isRequestPending();
 
     }
+
+    private Document triggerCampaign(final String frozenNodeId, final String branchId,
+                                     final Calendar from, final Calendar to) throws WorkflowException {
+
+        final CampaignTask campaignTask = new CampaignTask();
+
+        campaignTask.setWorkflowContext(getWorkflowContext());
+        campaignTask.setDocumentHandle(workflowExecutor.getData());
+        campaignTask.setBranchId(branchId);
+        campaignTask.setFrozenNodeId(frozenNodeId);
+        campaignTask.setFrom(from);
+        campaignTask.setTo(to);
+
+        return (Document)campaignTask.execute();
+
+    }
+
+    private Document triggerLabel(final String frozenNodeId, final String label) throws WorkflowException {
+
+        final LabelVersionTask labelTask = new LabelVersionTask();
+
+        labelTask.setWorkflowContext(getWorkflowContext());
+        labelTask.setDocumentHandle(workflowExecutor.getData());
+        labelTask.setFrozenNodeId(frozenNodeId);
+        labelTask.setVersionLabel(label);
+
+        return (Document)labelTask.execute();
+
+    }
+
 
 }

@@ -15,7 +15,7 @@
  */
 
 import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -68,7 +68,7 @@ describe('SiteMapComponent', () => {
     }),
   ];
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     const iframeServiceMock = {
       load: jest.fn(() => Promise.resolve()),
     };

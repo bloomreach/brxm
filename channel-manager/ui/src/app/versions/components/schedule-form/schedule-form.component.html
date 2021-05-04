@@ -1,0 +1,119 @@
+<!--
+  Copyright 2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<form class="schedule-form qa-schedule-form"
+      [formGroup]="scheduleForm"
+      (ngSubmit)="scheduleCampaign()"
+      (click)="$event.stopPropagation()">
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'VERSION_NAME' | translate }}</mat-label>
+    <input matInput
+           class="qa-version-label"
+           formControlName="label">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'START_DATE_TIME' | translate }}</mat-label>
+    <input matInput
+           class="qa-schedule-from-date-time"
+           formControlName="fromDateTime"
+           required
+           [ngxMatDatetimePicker]="fromPicker">
+    <mat-datepicker-toggle matSuffix
+                           [for]="fromPicker">
+    </mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #fromPicker
+                             color="primary">
+      <ng-template>
+        {{ 'OK' | translate }}
+      </ng-template>
+    </ngx-mat-datetime-picker>
+
+    <button matSuffix
+            type="button"
+            class="schedule-reset qa-schedule-reset-from-date-time"
+            mat-icon-button
+            matTooltip="{{ 'RESET_DATE' | translate }}"
+            (click)="resetFromDate()">
+      <mat-icon>sync</mat-icon>
+    </button>
+
+    <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerParse')">
+      {{ 'ERROR_INVALID_DATE' | translate }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'END_DATE_TIME' | translate }}</mat-label>
+    <input matInput
+           class="qa-schedule-to-date-time"
+           formControlName="toDateTime"
+           [min]="scheduleForm.get('fromDateTime')?.value"
+           [ngxMatDatetimePicker]="toPicker">
+    <mat-datepicker-toggle matSuffix
+                           [for]="toPicker">
+    </mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #toPicker
+                             color="primary">
+      <ng-template>
+        {{ 'OK' | translate }}
+      </ng-template>
+    </ngx-mat-datetime-picker>
+
+    <button matSuffix
+            type="button"
+            class="schedule-reset qa-schedule-reset-to-date-time"
+            mat-icon-button
+            matTooltip="{{ 'RESET_DATE' | translate }}"
+            (click)="resetToDate()">
+      <mat-icon>sync</mat-icon>
+    </button>
+
+    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerMin')">
+      {{ 'ERROR_MIN_DATE_TO' | translate }}
+    </mat-error>
+
+    <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerParse')">
+      {{ 'ERROR_INVALID_DATE' | translate }}
+    </mat-error>
+  </mat-form-field>
+
+  <div class="form-actions">
+    <button mat-stroked-button
+            type="button"
+            class="schedule-remove qa-schedule-remove"
+            *ngIf="version.campaign"
+            (click)="$event.stopPropagation(); removeSchedule()">
+      <span *ngIf="version.active">{{ 'END_NOW' | translate }}</span>
+      <span *ngIf="!version.active">{{ 'REMOVE_SCHEDULE' | translate }}</span>
+    </button>
+
+    <button mat-stroked-button
+            type="button"
+            class="qa-schedule-cancel"
+            (click)="$event.stopPropagation(); cancelForm.emit()">
+      {{ 'CANCEL' | translate }}
+    </button>
+
+    <button mat-stroked-button
+            [disabled]="scheduleForm.invalid && !scheduleForm.pristine"
+            class="qa-schedule-submit"
+            type="submit"
+            color="primary">
+      {{ 'SCHEDULE' | translate }}
+    </button>
+  </div>
+</form>
