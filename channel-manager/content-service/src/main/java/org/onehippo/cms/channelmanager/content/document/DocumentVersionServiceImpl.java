@@ -101,7 +101,6 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
 
             final List<Version> versionInfos = new ArrayList<>();
 
-            Node publishedFrozenNode = null;
             Version publishedVersion = null;
 
             final Map<String, ?> hints = documentHintsGetter.apply(handleNode, branchId);
@@ -111,16 +110,28 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                 final VersionHistory versionHistory = userSession.getWorkspace()
                         .getVersionManager().getVersionHistory(preview.getPath());
 
+                javax.jcr.version.Version jcrPublishedVersion = null;
                 try {
-                    final javax.jcr.version.Version jcrPublishedVersion = versionHistory.getVersionByLabel(branchId + "-published");
-                    publishedFrozenNode = jcrPublishedVersion.getFrozenNode();
-                } catch (VersionException e ){
+                    jcrPublishedVersion = versionHistory.getVersionByLabel(branchId + "-published");
+                } catch (VersionException e){
                     log.debug("There is no version in history representing the published", e);
+                    // take the very last version from version history as the one that represents the published: this
+                    // happens for live bootstrapped documents which never get really published through workflow
+                    try {
+
+                        final VersionIterator allVersions = versionHistory.getAllVersions();
+                        if (allVersions.getSize() > 1) {
+                            // skipt the root version
+                            allVersions.skip(1);
+                            jcrPublishedVersion = allVersions.nextVersion();
+                        }
+                    } catch (VersionException e1) {
+                        log.debug("There is no version in history representing the published", e1);
+                    }
                 }
 
                 // returns the oldest version first
                 final VersionIterator allVersions = versionHistory.getAllVersions();
-                Version lastVersion = null;
                 while (allVersions.hasNext()) {
                     final javax.jcr.version.Version jcrVersion = allVersions.nextVersion();
                     if (JCR_ROOTVERSION.equals(jcrVersion.getName())) {
@@ -130,7 +141,7 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     final Node frozenNode = jcrVersion.getFrozenNode();
                     final String versionBranchId = getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
                     if (versionBranchId.equals(branchId)) {
-                        final boolean isPublishedVersion = publishedFrozenNode != null && frozenNode.isSame(publishedFrozenNode);
+                        final boolean isPublishedVersion = jcrPublishedVersion != null && jcrVersion.isSame(jcrPublishedVersion);
                         final Version version = create(jcrVersion.getCreated(), frozenNode, isPublishedVersion, branchId, versionsMeta);
                         if (isPublishedVersion) {
                             publishedVersion = version;
@@ -142,35 +153,23 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                         } else {
                             versionInfos.add(version);
                         }
-                        lastVersion = version;
                     }
                 }
 
                 // sort versions to have the newest one on top in case all versions are shown, but in case of
                 // campaigns only, sort them by 'start date' of the campaign
-                        if (campaignVersionOnly) {
+                if (campaignVersionOnly) {
                     // campaign never null in case of campaignVersionOnly
                     versionInfos.sort(Comparator.comparing(Version::getCampaign, Comparator.comparing(Campaign::getFrom)).reversed());
-                        } else {
-                    versionInfos.sort(Comparator.comparing(Version::getTimestamp).reversed());
-                        }
 
-                if (publishedFrozenNode == null && isLive && lastVersion != null) {
-                    // there is no explicit version for the published: this can only happen for bootstrapped live
-                    // documents which got edited but have not yet been re-published.
-                    // this means that the oldest version from version history reflects the published. If the
-                    // last jcr version is not present in 'versionInfos' it must be added, otherwise the last
-                    // item must be set to published = true
-                    if (versionInfos.contains(lastVersion)) {
-                        versionInfos.get(versionInfos.size() - 1).setPublished(true);
-                    } else {
-                        lastVersion.setPublished(true);
-                        if (campaignVersionOnly) {
-                            versionInfos.add(0, lastVersion);
-                        } else {
-                            versionInfos.add(lastVersion);
+                    if (publishedVersion != null) {
+                        // add the published version as the first one if not present as campaign
+                        if (!versionInfos.contains(publishedVersion)) {
+                            versionInfos.add(0, publishedVersion);
                         }
                     }
+                } else {
+                    versionInfos.sort(Comparator.comparing(Version::getTimestamp).reversed());
                 }
 
             } else {
@@ -192,16 +191,9 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
             // 100, set it as the 100th version to always at least have that one in the response
             final List<Version> visibleVersions = versionInfos.subList(0, versionInfos.size() > 100 ? 100 : versionInfos.size());
             if (publishedVersion != null && !visibleVersions.contains(publishedVersion)) {
-                if (campaignVersionOnly) {
-                    // add the published as first version in case filtering on campaigns only since the 'published' should
-                    // always be shown: since unclear 'where' to show it (versions are ordered by campaign date, just
-                    // show it as the first after the working version
-                    visibleVersions.add(0, publishedVersion);
-                } else {
-                    // apparently the published version is not in the first 100 versions, set it as the last version of the
-                    // visible versions
-                    visibleVersions.set(visibleVersions.size() - 1 , publishedVersion);
-                }
+                // apparently the published version is not in the first 100 versions, set it as the last version of the
+                // visible versions
+                visibleVersions.set(visibleVersions.size() - 1 , publishedVersion);
             }
 
             // in case no activeCampaign, then the Version which has 'published = true' is also the active one
