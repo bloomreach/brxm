@@ -53,7 +53,7 @@ public class LabelVersionTask extends AbstractDocumentTask {
         final DocumentHandle documentHandle = getDocumentHandle();
 
         if (frozenNodeId == null) {
-            throw new WorkflowException("branchId and frozenNodeId are not allowed to be null");
+            throw new WorkflowException("frozenNodeId is not allowed to be null");
         }
 
         try {
