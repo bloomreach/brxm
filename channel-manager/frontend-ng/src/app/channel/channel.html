@@ -21,7 +21,7 @@
   <md-toolbar class="hippo-toolbar qa-toolbar"
               ng-show="$ctrl.isToolbarDisplayed()">
     <div class="md-toolbar-tools"
-         ng-if="!$ctrl.isControlsDisabled()">
+         ng-if="$ctrl.isChannelLoaded()">
       <div flex="30"
            layout
            layout-align="start center">
@@ -81,7 +81,7 @@
     </div>
 
     <md-progress-linear md-mode="indeterminate"
-                        ng-disabled="!$ctrl.isControlsDisabled()">
+                        ng-disabled="$ctrl.isChannelLoaded() && $ctrl.isPageLoaded()">
     </md-progress-linear>
   </md-toolbar>
 

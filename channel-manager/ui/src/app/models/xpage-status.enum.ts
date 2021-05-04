@@ -34,4 +34,6 @@ export enum XPageStatus {
   EditingSharedContainers,
   PreviousVersion,
   Locked,
+  Live,
+  ScheduledCampaign,
 }

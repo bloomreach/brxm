@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -693,4 +693,69 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws WorkflowException if this action is not allowed based on the hints or if saving the changes fails
      */
     void saveUnpublished() throws WorkflowException;
+
+    /**
+     * <p>
+     *     Marks a specific version from version history to be the live version between the dates {@code from} and
+     *     {@code to}. If there is no frozen node for {@code uuid}, {@link WorkflowException} will be thrown.
+     *     If the version to set as live campaign does not match the {@code branchId}, a WorkflowException will be thrown
+     * </p>
+     * <p>
+     *     This method won't publish an unpublished document: for that, normal {@link #publishBranch(String)} must be
+     *     invoked
+     * </p>
+     * @param frozenNodeId the uuid of the versioned JCR Node
+     * @param branchId the branchId the versioned JCR Node must be for
+     * @param from mandatory parameter for the date from which on this version must be served instead of published
+     *             workspace version
+     * @param to optional parameter for the date until which on this version must be served instead of published
+     *           workspace version. If the parameter is missing, it is typically for an open-ended campaign document
+     * @return the Document for the unpublished variant
+     */
+    Document campaign(String frozenNodeId, String branchId, Calendar from, Calendar to) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Removes the campaign if present for {@code frozeNodeId}
+     * </p>
+     * @param frozenNodeId
+     * @return the Document for the unpublished variant
+     * @throws WorkflowException
+     */
+    Document removeCampaign(String frozenNodeId) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Stores a verion label for {@code frozenNodeId}. Note that this is very different the JCR version labeling :
+     *     this workflow a label for a frozen node on the handle node on the hippo:versionInfo property. The reason is
+     *     that JCR labelling is unsuited for what we need: for example because a label can only be used once in JCR for
+     *     the version history of a node
+     *  </p>
+     *  <p>
+     *     If there does not exist a node for {@code frozenNodeId} a
+     *     {@link WorkflowException} is thrown.
+     * </p>
+     * @param frozenNodeId
+     * @param label
+     * @return the Document for the unpublished variant
+     * @throws WorkflowException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    Document labelVersion(String frozenNodeId, String label)
+            throws WorkflowException, RepositoryException, RemoteException;
+
+    /**
+     * <p>
+     *     Removes the version label if present for {@code frozeNodeId}
+     * </p>
+     * @param frozenNodeId
+     * @return the Document for the unpublished variant
+     * @throws WorkflowException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    Document removeLabelVersion(String frozenNodeId)
+            throws WorkflowException, RepositoryException, RemoteException;
+
 }

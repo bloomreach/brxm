@@ -52,6 +52,8 @@ export class NotificationBarStatusIconComponent {
       [XPageStatus.EditingSharedContainers]: 'alert-circle-outline',
       [XPageStatus.PreviousVersion]: 'alert-circle-outline',
       [XPageStatus.Locked]: 'lock-outline',
+      [XPageStatus.Live]: 'comment-check-outline',
+      [XPageStatus.ScheduledCampaign]: 'calendar-clock',
     };
 
     return statusIconMap[status];
