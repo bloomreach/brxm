@@ -98,6 +98,7 @@ class PageMenuService extends MenuService {
         isVisible: () => isVisible('new'),
         onClick: () => this.showSubPage('page-new'),
         translationKey: 'TOOLBAR_MENU_PAGE_NEW',
+        tooltipTranslationKey: 'CREATE_PAGE_TOOLTIP_HST',
       });
   }
 
