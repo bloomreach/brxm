@@ -16,6 +16,7 @@
 
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { NotificationService } from './notification.service';
 
@@ -29,6 +30,9 @@ describe('NotificationService', () => {
     } as unknown as typeof matSnackBarMock;
 
     TestBed.configureTestingModule({
+      imports: [
+        TranslateModule.forRoot(),
+      ],
       providers: [
         NotificationService,
         { provide: MatSnackBar, useValue: matSnackBarMock },
@@ -39,12 +43,10 @@ describe('NotificationService', () => {
   });
 
   describe('simple notification', () => {
-    beforeEach(() => {
+    it('should show a snack bar with passed string message', () => {
       service.showNotification('Some message');
-    });
 
-    it('should show a snack bar', () => {
-      expect(matSnackBarMock.open).toHaveBeenCalledWith('Some message', undefined, {
+      expect(matSnackBarMock.open).toHaveBeenCalledWith('Some message', 'DISMISS', {
         duration: 5000,
         horizontalPosition: 'end',
         verticalPosition: 'top',
@@ -58,7 +60,7 @@ describe('NotificationService', () => {
     });
 
     it('should show a snack bar', () => {
-      expect(matSnackBarMock.open).toHaveBeenCalledWith('Some error message', 'Dismiss', {
+      expect(matSnackBarMock.open).toHaveBeenCalledWith('Some error message', 'DISMISS', {
         horizontalPosition: 'end',
         verticalPosition: 'top',
       });

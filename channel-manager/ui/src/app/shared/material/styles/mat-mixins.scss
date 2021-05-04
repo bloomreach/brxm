@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+/*!
+ * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import './versionsInfoWrapper.scss';
-import controller from './versionsInfoWrapper.controller';
-import template from './versionsInfoWrapper.html';
+@import './mat-variables';
 
-const versionsInfoWrapperComponent = {
-  controller,
-  template,
-};
+@mixin mat-divider-border() {
+  $config: mat-get-color-config($theme);
+  $foreground: map-get($config, foreground);
 
-export default versionsInfoWrapperComponent;
+  border-bottom: 1px solid mat-color($foreground, divider);
+}
+

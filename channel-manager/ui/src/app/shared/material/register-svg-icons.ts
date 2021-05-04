@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,12 @@
 // tslint:disable:match-default-export-name
 import accountCircleOutline from '!!raw-loader!./icons/account-circle-outline.svg';
 import alertCircleOutline from '!!raw-loader!./icons/alert-circle-outline.svg';
+import alertFilled from '!!raw-loader!./icons/alert-filled.svg';
 import alertOutline from '!!raw-loader!./icons/alert-outline.svg';
 import calendarClock from '!!raw-loader!./icons/calendar-clock.svg';
 import calendarToday from '!!raw-loader!./icons/calendar-today.svg';
+import cellphoneLink from '!!raw-loader!./icons/cellphone-link.svg';
+import cellphone from '!!raw-loader!./icons/cellphone.svg';
 import chartPie from '!!raw-loader!./icons/chart-pie.svg';
 import chevronRight from '!!raw-loader!./icons/chevron-right.svg';
 import close from '!!raw-loader!./icons/close.svg';
@@ -31,26 +34,35 @@ import copy from '!!raw-loader!./icons/copy.svg';
 import exitToApp from '!!raw-loader!./icons/exit-to-app.svg';
 import faceOutline from '!!raw-loader!./icons/face-outline.svg';
 import homeOutline from '!!raw-loader!./icons/home-outline.svg';
+import iconView from '!!raw-loader!./icons/icon-view.svg';
+import listView from '!!raw-loader!./icons/list-view.svg';
 import lockOutline from '!!raw-loader!./icons/lock-outline.svg';
 import minusCircleOutline from '!!raw-loader!./icons/minus-circle-outline.svg';
+import monitor from '!!raw-loader!./icons/monitor.svg';
 import plus from '!!raw-loader!./icons/plus.svg';
+import sync from '!!raw-loader!./icons/sync.svg';
+import tablet from '!!raw-loader!./icons/tablet.svg';
 import trash from '!!raw-loader!./icons/trash.svg';
 import web from '!!raw-loader!./icons/web.svg';
 import xpage from '!!raw-loader!./icons/xpage.svg';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
-export function registerSvgIcons(iconRegistry: MatIconRegistry, donSanitizer: DomSanitizer): void {
+export function registerSvgIcons(iconRegistry: MatIconRegistry, domSanitizer: DomSanitizer): void {
   const registerIcon = (name: string, svg: string) => {
-    iconRegistry.addSvgIconLiteral(name, donSanitizer.bypassSecurityTrustHtml(svg));
+    iconRegistry.addSvgIconLiteral(name, domSanitizer.bypassSecurityTrustHtml(svg));
   };
 
   registerIcon('account-circle-outline', accountCircleOutline);
   registerIcon('alert-circle-outline', alertCircleOutline);
+  registerIcon('alert-filled', alertFilled);
   registerIcon('alert-outline', alertOutline);
   registerIcon('calendar-clock', calendarClock);
   registerIcon('calendar-today', calendarToday);
+  registerIcon('cellphone-link', cellphoneLink);
+  registerIcon('cellphone', cellphone);
   registerIcon('chart-pie', chartPie);
+  registerIcon('chevron-right', chevronRight);
   registerIcon('close', close);
   registerIcon('comment-check-outline', commentCheckOutline);
   registerIcon('comment-processing-outline', commentProcessingOutline);
@@ -60,11 +72,15 @@ export function registerSvgIcons(iconRegistry: MatIconRegistry, donSanitizer: Do
   registerIcon('exit-to-app', exitToApp);
   registerIcon('face-outline', faceOutline);
   registerIcon('home-outline', homeOutline);
+  registerIcon('icon-view', iconView);
+  registerIcon('list-view', listView);
   registerIcon('lock-outline', lockOutline);
   registerIcon('minus-circle-outline', minusCircleOutline);
+  registerIcon('monitor', monitor);
   registerIcon('plus', plus);
+  registerIcon('tablet', tablet);
   registerIcon('trash', trash);
   registerIcon('web', web);
   registerIcon('xpage', xpage);
-  registerIcon('chevron-right', chevronRight);
+  registerIcon('sync', sync);
 }

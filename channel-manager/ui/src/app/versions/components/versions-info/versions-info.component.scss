@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,82 +14,23 @@
  * limitations under the License.
  */
 
-@import '~@bloomreach/frontend-theme/angular-theme';
-@import 'mixins';
-@import 'material-theme';
-@import 'variables';
+@import "variables";
 
-.mat-line {
-  font-size: 14px !important;
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.mat-line.version-actions {
-  display: none;
+.version-list {
+  overflow: auto;
+  flex-grow: 1;
 }
 
-.mat-list-single-selected-option {
-  background-color: map-get($blue, 50);
-
-  .mat-line:first-child {
-    font-weight: bold !important;
-  }
-
-  .version-actions {
-    display: flex;
-    justify-content: flex-end;
-
-    button:not(:first-child) {
-      margin-left: 8px;
-    }
-  }
-}
-
-.mat-subheader {
-  position: relative;
-}
-
-.mat-progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-.no-versions {
-  height: 72px;
-  padding: 0 16px;
+.version-list-filter {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  font-size: 16px;
-}
-
-.version {
-  @include mat-divider-border($theme);
-
-  height: 88px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  cursor: pointer;
-
-  &:first-child {
-    height: 72px;
-  }
-
-  &:hover {
-    @include mat-hover-background($theme);
-  }
-
-  &.selected {
-    background-color: #e7f1f9;
-
-    .timestamp {
-      font-weight: 800;
-    }
-  }
-
-  p {
-    margin: 0;
-  }
+  padding: $spacing-half $spacing-full;
+  min-height: 40px; // height of ripple effect
 }

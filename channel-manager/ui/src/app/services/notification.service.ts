@@ -16,15 +16,20 @@
 
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private readonly snackBar: MatSnackBar) {}
+  constructor(
+    private readonly snackBar: MatSnackBar,
+    private readonly translateService: TranslateService,
+  ) { }
 
   showNotification(message: string): void {
-    this.snackBar.open(message, undefined, {
+    const translatedMessage = this.translateService.instant(message);
+    this.snackBar.open(translatedMessage, this.translateService.instant('DISMISS'), {
       duration: 5000,
       horizontalPosition: 'end',
       verticalPosition: 'top',
@@ -32,7 +37,8 @@ export class NotificationService {
   }
 
   showErrorNotification(message: string): void {
-    this.snackBar.open(message, 'Dismiss', {
+    const translatedMessage = this.translateService.instant(message);
+    this.snackBar.open(translatedMessage, this.translateService.instant('DISMISS'), {
       horizontalPosition: 'end',
       verticalPosition: 'top',
     });
