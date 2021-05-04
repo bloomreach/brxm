@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
-    <version>14.6.0-page-campaigns-SNAPSHOT</version>
+    <version>14.6.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>components</artifactId>
