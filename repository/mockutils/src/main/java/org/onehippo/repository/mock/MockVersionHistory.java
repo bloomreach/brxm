@@ -234,7 +234,11 @@ public class MockVersionHistory extends MockNode implements VersionHistory {
 
         @Override
         public void skip(final long skipNum) {
-            throw new UnsupportedOperationException();
+            long i = skipNum;
+            while (i > 0) {
+                iterator.next();
+                i--;
+            }
         }
 
         @Override
