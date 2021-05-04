@@ -21,10 +21,10 @@ import { createCustomElement } from '@angular/elements';
 import { SharedModule } from '../shared/shared.module';
 import { TranslationsModule } from '../translations/translations.module';
 
-import { LatestVersionComponent } from './components/latest-version/latest-version.component';
 import { ScheduleFormComponent } from './components/schedule-form/schedule-form.component';
 import { VersionComponent } from './components/version/version.component';
 import { VersionsInfoComponent } from './components/versions-info/versions-info.component';
+import { LatestVersionComponent } from './components/working-version/working-version.component';
 
 @NgModule({
   declarations: [
