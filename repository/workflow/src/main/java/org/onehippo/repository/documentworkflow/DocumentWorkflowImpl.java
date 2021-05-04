@@ -483,7 +483,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Document removeCampaign(final String frozenNodeId) throws WorkflowException {
-        return triggerCampaign(frozenNodeId, workflowExecutor.getData().getBranchId(), null, null);
+        return triggerCampaign(frozenNodeId, null, null, null);
     }
 
     @Override
