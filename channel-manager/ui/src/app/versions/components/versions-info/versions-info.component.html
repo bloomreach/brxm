@@ -16,7 +16,7 @@
 <div class="mat-typography version-list qa-version-list"
      *ngIf="versionsInfo">
   <ng-container *ngFor="let version of filteredVersions; first as isFirst">
-    <em-latest-version *ngIf="isFirst"
+    <em-working-version *ngIf="isFirst"
                        matRipple
                        [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
                        class="qa-version-item"
@@ -26,7 +26,7 @@
                        [version]="version"
                        [versionsInfo]="versionsInfo"
                        [(actionInProgress)]="actionInProgress">
-    </em-latest-version>
+    </em-working-version>
 
     <em-version *ngIf="!isFirst"
                 matRipple
