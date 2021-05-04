@@ -1292,8 +1292,14 @@
       "locales" : null
     },
     "LATEST_VERSION" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "NOTIFICATION_BAR_XPAGE_LABEL_LOCKED_BY_USER" : {
       "status" : "CLEAN",
@@ -2086,7 +2092,7 @@
       }
     },
     "RESET_DATE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",

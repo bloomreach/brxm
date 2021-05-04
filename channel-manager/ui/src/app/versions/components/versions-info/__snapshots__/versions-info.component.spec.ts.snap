@@ -11,7 +11,7 @@ exports[`VersionsInfoComponent initial rendering should show list of versions 1`
     
     
     
-    <em-latest-version
+    <em-working-version
       class="qa-version-testId"
       matripple=""
     />
@@ -41,7 +41,7 @@ exports[`VersionsInfoComponent showing filter should not show filter for project
     
     
     
-    <em-latest-version
+    <em-working-version
       class="qa-version-testId"
       matripple=""
     />
@@ -71,7 +71,7 @@ exports[`VersionsInfoComponent showing filter should show filter for Core of doc
     
     
     
-    <em-latest-version
+    <em-working-version
       class="qa-version-testId"
       matripple=""
     />
