@@ -66,8 +66,8 @@ public class CampaignTask extends AbstractDocumentTask {
 
         final DocumentHandle documentHandle = getDocumentHandle();
 
-        if (branchId == null || frozenNodeId == null) {
-            throw new WorkflowException("branchId and frozenNodeId are not allowed to be null");
+        if (frozenNodeId == null) {
+            throw new WorkflowException("frozenNodeId is not allowed to be null");
         }
 
         try {
@@ -86,7 +86,7 @@ public class CampaignTask extends AbstractDocumentTask {
                 throw new WorkflowException("'from' date has to be set when setting a campaign");
             }
 
-            if (!branchId.equals(getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID))) {
+            if (!getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID).equals(branchId)) {
                 throw new WorkflowException(format("Node for '%s' is not for branch '%s' hence not allowed to be a " +
                         "campaign for that branch", frozenNodeId, branchId));
             }
