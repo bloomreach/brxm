@@ -27,6 +27,8 @@ class MenuItem {
     this.iconSvg = config.iconSvg || undefined;
     this.iconName = config.iconName || undefined;
     this.isIconVisible = config.isIconVisible || this.isIconVisible;
+
+    this.tooltipTranslationKey = config.tooltipTranslationKey || undefined;
   }
 
   get translationKey() {
@@ -44,6 +46,10 @@ class MenuItem {
   }
 
   onClick() {}
+
+  hasTooltip() {
+    return this.tooltipTranslationKey !== undefined && this.tooltipTranslationKey !== null;
+  }
 
   hasIconName() {
     return this.iconName !== undefined && this.iconName !== null;
