@@ -22,6 +22,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
@@ -80,7 +81,8 @@ public class CampaignTask extends AbstractDocumentTask {
 
             if (to == null && from == null) {
                 JcrVersionsMetaUtils.removeCampaign(handle, frozenNodeId);
-                return new DocumentVariant(frozenNode);
+                // return the unpublished document variant for the right workflow events
+                return documentHandle.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
             } else if (from == null) {
                 // not allowed that one value is null
                 throw new WorkflowException("'from' date has to be set when setting a campaign");
@@ -98,7 +100,8 @@ public class CampaignTask extends AbstractDocumentTask {
 
             JcrVersionsMetaUtils.setCampaign(handle, new Campaign(frozenNodeId, from, to));
 
-            return new DocumentVariant(frozenNode);
+            // return the unpublished document variant for the right workflow events
+            return documentHandle.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
         } catch (ItemNotFoundException e) {
             throw new WorkflowException(format("No node found for '%s'", frozenNodeId));
         }
