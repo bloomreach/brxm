@@ -60,6 +60,10 @@ $font-medium: 16px;
 $font-normal: 14px;
 $font-small: 12px;
 
+// Spacing
+$spacing-half: 8px;
+$spacing-full: $spacing-half * 2;
+
 // $font-family-material2 has to be a string for it to be passed to @include angular-material-typography()
 // without node-sass throwing warnings
 $font-family-material2: 'Open Sans, Roboto, Helvetica Neue, sans-serif';
