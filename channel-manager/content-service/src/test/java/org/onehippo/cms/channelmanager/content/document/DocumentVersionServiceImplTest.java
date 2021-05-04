@@ -264,7 +264,8 @@ public class DocumentVersionServiceImplTest {
     private void assertOrderedByDate(final List<Version> masterVersions, final Function<Version, Calendar> getDate) {
         Version prev = null;
         // the newest versions must be on top (except potentially the first one since that is the workspace version
-        for (Version version : masterVersions.stream().skip(1).collect(Collectors.toList())) {
+        // and the second the published version
+        for (Version version : masterVersions.stream().skip(2).collect(Collectors.toList())) {
             if (prev == null) {
                 prev = version;
                 continue;
@@ -452,11 +453,11 @@ public class DocumentVersionServiceImplTest {
         // only get campaign versions, there are 200 created, but we only expect the first 100 sorted on date
         final DocumentVersionInfo versions = sut.getVersionInfo(mockHandle.getIdentifier(), MASTER_BRANCH_ID, userContext, true);
 
-        // first version is the 'workspace' version
+        // first version is the 'workspace' version, second the published
         assertEquals(101, versions.getVersions().size());
 
         // all 100 items after the first one are campaigns
-        assertTrue(versions.getVersions().stream().skip(1).anyMatch(version -> version.getCampaign() != null));
+        assertTrue(versions.getVersions().stream().skip(2).anyMatch(version -> version.getCampaign() != null));
 
         assertOrderedByDate(versions.getVersions(), version -> version.getCampaign().getFrom());
     }
