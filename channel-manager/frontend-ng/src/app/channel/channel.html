@@ -73,6 +73,9 @@
           ng-click="$ctrl.add()"
           ng-if="$ctrl.canAddXPage()">
           <md-icon md-font-icon="mdi-plus"></md-icon>{{ 'TOOLBAR_BUTTON_ADD' | translate }}
+          <md-tooltip class="mat-tooltip" md-direction="bottom">
+            {{ 'CREATE_PAGE_TOOLTIP' | translate }}
+          </md-tooltip>
         </md-button>
       </div>
     </div>
