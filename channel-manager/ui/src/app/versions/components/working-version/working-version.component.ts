@@ -29,9 +29,9 @@ import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
 
 @Component({
-  selector: 'em-latest-version',
-  templateUrl: './latest-version.component.html',
-  styleUrls: ['./latest-version.component.scss'],
+  selector: 'em-working-version',
+  templateUrl: './working-version.component.html',
+  styleUrls: ['./working-version.component.scss'],
 })
 export class LatestVersionComponent implements OnChanges, OnInit, OnDestroy {
   private readonly unsubscribe = new Subject();
