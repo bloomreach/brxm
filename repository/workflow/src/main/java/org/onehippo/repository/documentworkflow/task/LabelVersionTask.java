@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.campaign.VersionLabel;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
@@ -66,12 +67,13 @@ public class LabelVersionTask extends AbstractDocumentTask {
 
             if (StringUtils.isEmpty(versionLabel)) {
                 JcrVersionsMetaUtils.removeVersionLabel(handle, frozenNodeId);
-                return new DocumentVariant(frozenNode);
+                // return the unpublished document variant for the right workflow events
+                return documentHandle.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
             }
 
             JcrVersionsMetaUtils.setVersionLabel(handle, new VersionLabel(frozenNodeId, versionLabel));
-
-            return new DocumentVariant(frozenNode);
+            // return the unpublished document variant for the right workflow events
+            return documentHandle.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
         } catch (ItemNotFoundException e) {
             throw new WorkflowException(format("No node found for '%'s", frozenNodeId));
         }
