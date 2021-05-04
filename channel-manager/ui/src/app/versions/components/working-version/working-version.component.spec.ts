@@ -29,7 +29,7 @@ import { Version } from '../../models/version.model';
 import { VersionsInfo } from '../../models/versions-info.model';
 import { VersionsService } from '../../services/versions.service';
 
-import { LatestVersionComponent } from './latest-version.component';
+import { LatestVersionComponent } from './working-version.component';
 
 describe('LatestVersionComponent', () => {
   let component: LatestVersionComponent;
