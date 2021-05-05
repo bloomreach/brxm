@@ -65,6 +65,12 @@ class EditContentService {
       () => $rootScope.$emit('page:check-changes'),
     );
 
+    $transitions.onExit({ exiting: '**.edit-page.versions' }, () => {
+      this.ContentEditor
+        .discardChanges()
+        .finally(() => this.ContentEditor.close());
+    });
+
     CmsService.subscribe('kill-editor', (documentId) => {
       this._stopEditingDocument(documentId);
     });
