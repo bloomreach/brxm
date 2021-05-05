@@ -16,7 +16,7 @@
 
 import { Inject, Injectable } from '@angular/core';
 
-import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
+import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1.service';
 import { ExperimentGoal } from '../models/experiment-goal.model';
 import { ExperimentStatusWithVisits } from '../models/experiment-status-with-visits.model';
 import { ExperimentStatusAtTimestamp } from '../models/experiment-status.model';

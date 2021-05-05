@@ -43,6 +43,7 @@ class PageMenuService extends MenuService {
     this.SiteMapService = SiteMapService;
 
     const menu = this.defineMenu('page', {
+      isEnabled: () => this.HippoIframeService.isPageLoaded(),
       isVisible: () => PageService.hasActions('page'),
       onClick: () => this.onOpenMenu(),
       translationKey: 'TOOLBAR_BUTTON_PAGE',
@@ -97,6 +98,7 @@ class PageMenuService extends MenuService {
         isVisible: () => isVisible('new'),
         onClick: () => this.showSubPage('page-new'),
         translationKey: 'TOOLBAR_MENU_PAGE_NEW',
+        tooltipTranslationKey: 'CREATE_PAGE_TOOLTIP_HST',
       });
   }
 

@@ -55,7 +55,7 @@ class HippoIframeService {
   initialize(hippoIframeJQueryElement, iframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
     this.iframeJQueryElement = iframeJQueryElement;
-    this.pageLoaded = false;
+    this._deferredPageLoad = this.$q.defer();
 
     // Reloads the current page when the project changes so new data will be shown.
     // When another project became active the page reload will trigger a channel switch.
@@ -98,13 +98,13 @@ class HippoIframeService {
   }
 
   isPageLoaded() {
-    return this.pageLoaded;
+    return this._deferredPageLoad === undefined;
   }
 
   load(renderPathInfo) {
     const targetPath = this.ChannelService.makePath(renderPathInfo);
 
-    this.pageLoaded = false;
+    this._deferredPageLoad = this.$q.defer();
 
     if (targetPath !== this.src) {
       this.src = targetPath;
@@ -116,7 +116,7 @@ class HippoIframeService {
       // value, we use jQuery's attr() method, which triggers a load of the specified src.
       this.iframeJQueryElement.attr('src', this.src);
     }
-    return this.$q.resolve();
+    return this._deferredPageLoad.promise;
   }
 
   getSrc() {
@@ -129,17 +129,11 @@ class HippoIframeService {
 
   async reload(force = false) {
     if (!this.isPageLoaded()) {
-      return;
+      this.$log.warn('Trying to reload when a page load is already ongoing. Taking no action.');
+      return this._deferredPageLoad.promise;
     }
 
-    if (this._deferredReload) {
-      this.$log.warn('Trying to reload when a reload is already ongoing. Taking no action.');
-
-      // eslint-disable-next-line consistent-return
-      return this._deferredReload.promise;
-    }
-
-    this._deferredReload = this.$q.defer();
+    this._deferredPageLoad = this.$q.defer();
 
     await this.ScrollService.savePosition();
     if (force) {
@@ -148,8 +142,7 @@ class HippoIframeService {
       await this.CommunicationService.reload();
     }
 
-    // eslint-disable-next-line consistent-return
-    return this._deferredReload.promise;
+    return this._deferredPageLoad.promise;
   }
 
   async _onPageChange(event, data) {
@@ -157,19 +150,17 @@ class HippoIframeService {
       return;
     }
 
-    this.$rootScope.$apply(() => {
-      this.pageLoaded = true;
-    });
-
     this.ScrollService.restorePosition();
     this.PageToolsService.updatePageTools();
 
-    const deferred = this._deferredReload;
-    if (deferred) {
+    this.$rootScope.$apply(() => {
       // delete the "state" before resolving the promise.
-      delete this._deferredReload;
-      deferred.resolve();
-    }
+      const deferred = this._deferredPageLoad;
+      if (deferred) {
+        delete this._deferredPageLoad;
+        deferred.resolve();
+      }
+    });
 
     this.CmsService.publish('user-activity');
 

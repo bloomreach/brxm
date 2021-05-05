@@ -29,3 +29,8 @@
   background: mat-color($background, hover);
 }
 
+@mixin truncate() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

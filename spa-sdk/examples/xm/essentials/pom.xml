@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.bloomreach</groupId>
     <artifactId>xm-spa-example</artifactId>
-    <version>14.4.0</version>
+    <version>14.6.0-SNAPSHOT</version>
   </parent>
   <artifactId>xm-spa-example-essentials</artifactId>
   <packaging>war</packaging>

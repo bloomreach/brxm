@@ -19,7 +19,7 @@ import { InjectionToken } from '@angular/core';
 import { VersionsInfo } from '../../versions/models/versions-info.model';
 
 export interface Ng1ContentService {
-  getDocumentVersionsInfo(documentId: string, branchId: string): Promise<VersionsInfo>;
+  getDocumentVersionsInfo(documentId: string, branchId: string, params?: object): Promise<VersionsInfo>;
 }
 
 export const NG1_CONTENT_SERVICE = new InjectionToken<Ng1ContentService>('NG1_CONTENT_SERVICE');

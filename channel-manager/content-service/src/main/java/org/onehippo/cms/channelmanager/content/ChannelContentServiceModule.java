@@ -16,11 +16,14 @@
 package org.onehippo.cms.channelmanager.content;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.function.Function;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
@@ -29,10 +32,10 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.document.NodeFieldService;
-import org.onehippo.cms.channelmanager.content.document.NodeFieldServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentVersionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
+import org.onehippo.cms.channelmanager.content.document.NodeFieldService;
+import org.onehippo.cms.channelmanager.content.document.NodeFieldServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImpl;
@@ -40,15 +43,19 @@ import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.serialization.CampaignSerializationMixin;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowServiceImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.repository.campaign.Campaign;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 import org.onehippo.repository.jaxrs.event.JcrEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
 
@@ -83,6 +90,9 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     private BranchSelectionService branchSelectionService;
     private DocumentVersionServiceImpl documentVersionService;
 
+    private static final String PAGE_CAMPAIGN_SUPPORTED = "page.campaign.supported";
+    private boolean pageCampaignSupported;
+
     public ChannelContentServiceModule() {
         documentsService = new DocumentsServiceImpl();
         workflowsService = new WorkflowServiceImpl();
@@ -103,6 +113,24 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     }
 
     @Override
+    protected void doConfigure(final Node moduleConfig) throws RepositoryException {
+        super.doConfigure(moduleConfig);
+        pageCampaignSupported = JcrUtils.getBooleanProperty(moduleConfig, PAGE_CAMPAIGN_SUPPORTED, false);
+        if (documentVersionService != null) {
+            documentVersionService.setPageCampaignSupported(pageCampaignSupported);
+        }
+    }
+
+    @Override
+    protected ObjectMapper createObjectMapper() {
+        final ObjectMapper objectMapper = super.createObjectMapper();
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        objectMapper.setTimeZone(TimeZone.getTimeZone("UTC"));
+        objectMapper.addMixIn(Campaign.class, CampaignSerializationMixin.class);
+        return objectMapper;
+    }
+
+    @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         branchSelectionService = createBranchSelectionService(session);
 
@@ -119,6 +147,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         documentsService.setHintsInspector(createHintsInspector(session));
         documentsService.setBranchingService(createBranchingService(session));
         documentsService.setNodeFieldService(createNodeFieldService(session));
+        documentVersionService.setPageCampaignSupported(pageCampaignSupported);
     }
 
     private NodeFieldService createNodeFieldService(final Session session) {

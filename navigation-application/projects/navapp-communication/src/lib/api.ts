@@ -54,10 +54,14 @@ export interface ParentConnectConfig {
 
 export interface ParentConfig {
   /**
-   * The API version the nav-app implements.
+   * The Navapp-Communication API version the nav-app implements.
    * The version is formatted following the semantic versioning specification https://semver.org/
    */
   apiVersion: string;
+  /**
+   * The Navapp version
+   */
+  navappVersion: string;
   /**
    * Flag indicating whether usage-statistics is enabled
    */

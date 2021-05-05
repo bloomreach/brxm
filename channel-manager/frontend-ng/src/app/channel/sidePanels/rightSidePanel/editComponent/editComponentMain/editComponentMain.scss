@@ -14,6 +14,42 @@
  * limitations under the License.
  */
 
-edit-component-main > form {
-  overflow: auto;
+@import "variables";
+
+edit-component-main {
+  > form {
+    overflow: auto;
+  }
+
+  .md-toolbar-tools {
+    $toolbar-default-height: 64px;
+    $toolbar-inner-margin: 14px;
+
+    align-items: center;
+    flex-wrap: wrap-reverse;
+    gap: $spacing-full;
+    // Below is overriding and adjusting the normal toolbar styling
+    // to allow for variable height while maintaining correct margins
+    height: auto;
+    max-height: none;
+    min-height: $toolbar-default-height;
+    padding-bottom: $toolbar-inner-margin;
+    padding-top: $toolbar-inner-margin;
+
+    .column {
+      flex-grow: 1;
+
+      &:last-child {
+        display: flex;
+        flex-grow: 1;
+        flex-wrap: wrap-reverse;
+        gap: $spacing-full;
+        justify-content: flex-end;
+
+        button {
+          margin: 0;
+        }
+      }
+    }
+  }
 }

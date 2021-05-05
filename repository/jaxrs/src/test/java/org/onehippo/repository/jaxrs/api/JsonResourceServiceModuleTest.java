@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,26 +27,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class JsonResourceServiceModuleTest {
 
-    private JacksonJsonProvider jacksonJsonProvider;
     private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
-        jacksonJsonProvider = JsonResourceServiceModule.createJacksonJsonProvider();
-        objectMapper = jacksonJsonProvider.locateMapper(Object.class, MediaType.WILDCARD_TYPE);
+        objectMapper = new JsonResourceServiceModule() {
+            @Override
+            protected Object getRestResource(final SessionRequestContextProvider sessionRequestContextProvider) {
+                return null;
+            }
+        }.createObjectMapper();
     }
 
     @Test
@@ -57,7 +57,7 @@ public class JsonResourceServiceModuleTest {
         final Calendar converted = objectMapper.readValue(jsonStringRepresentation, Calendar.class);
         assertThat(converted.getTimeInMillis(), is(timestamp.getTimeInMillis()));
 
-        // object mapper produces quoted strings in UTF timezone
+        // object mapper produces quoted strings in UTC timezone
         final SimpleDateFormat df = new SimpleDateFormat("\"yyyy-MM-dd'T'HH:mm:ss.SSSZ\"");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         assertThat(jsonStringRepresentation, is(df.format(Date.from(timestamp.toInstant()))));

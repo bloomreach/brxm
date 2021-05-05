@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import { XPageStatus } from '../models/xpage-status.enum';
 import { VersionsService } from '../versions/services/versions.service';
 
 import { Ng1PageService, NG1_PAGE_SERVICE } from './ng1/page.ng1.service';
-import { NG1_ROOT_SCOPE } from './ng1/root-scope.service';
+import { NG1_ROOT_SCOPE } from './ng1/root-scope.ng1.service';
 import { ProjectService } from './project.service';
 
 type StatusMatcher = (pageStates: PageStates) => Promise<XPageStatusInfo | undefined> | XPageStatusInfo | undefined;
@@ -206,7 +206,7 @@ export class PageService implements OnDestroy {
         return XPageStatus.NotPartOfProject;
       }
 
-      switch (project.state) {
+      switch (projectState) {
         case ProjectState.InReview:
           switch (pageAcceptanceState) {
             case AcceptanceState.InReview: return XPageStatus.ProjectInReview;
@@ -220,8 +220,6 @@ export class PageService implements OnDestroy {
         case ProjectState.Approved: return XPageStatus.ProjectPageApproved;
         case ProjectState.Running: return XPageStatus.ProjectRunning;
       }
-
-      return XPageStatus.ProjectRunning;
     };
 
     const pageStatus = getPageStatus(project.state, xPageState.acceptanceState);
@@ -271,14 +269,17 @@ export class PageService implements OnDestroy {
 
     if (!pageVersions ||
       pageVersions.length === 0 ||
-      this.versionsService.isCurrentVersion(pageVersions[0])) {
+      this.versionsService.isVersionFromPage(pageVersions[0].jcrUUID)) {
       return;
     }
 
-    const currentVersion = pageVersions.find(v => this.versionsService.isCurrentVersion(v));
+    const currentVersion = pageVersions.find(v => this.versionsService.isVersionFromPage(v.jcrUUID));
+    const status = (currentVersion?.active && XPageStatus.Live) ||
+      (currentVersion?.campaign && XPageStatus.ScheduledCampaign) ||
+      XPageStatus.PreviousVersion;
 
     return new XPageStatusInfo(
-      XPageStatus.PreviousVersion,
+      status,
       xPageState.state,
       xPageState.name,
       undefined,
