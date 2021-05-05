@@ -103,8 +103,8 @@ class ContentService {
     });
   }
 
-  getDocumentVersionsInfo(id, branchId) {
-    return this._send(REST_API_CONTENT_PATH, 'GET', ['documents', id, branchId, 'versions']);
+  getDocumentVersionsInfo(id, branchId, params) {
+    return this._send(REST_API_CONTENT_PATH, 'GET', ['documents', id, branchId, 'versions'], null, false, params);
   }
 
   _send(restPath, method, pathElements, data = null, async = false, params = {}) {

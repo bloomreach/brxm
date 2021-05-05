@@ -19,7 +19,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { TranslateService } from '@ngx-translate/core';
 import { mocked } from 'ts-jest/utils';
 
-import { NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1service';
+import { NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NotificationService } from '../../../services/notification.service';
 import { VariantsService } from '../../../variants/services/variants.service';

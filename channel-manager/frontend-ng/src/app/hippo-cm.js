@@ -28,6 +28,7 @@ import channelModule from './channel/channel';
 import servicesModule from './services/services.module';
 
 import config from './hippo-cm.config';
+import run from './hippo-cm.run';
 import hippoCmComponent from './hippo-cm.component';
 
 const hippoCmModule = angular
@@ -49,9 +50,6 @@ const hippoCmModule = angular
     return $rootElement.attr('iframe-asset');
   })
   .config(config)
-  .run(() => {
-    const event = new Event('angularjsInjectorReady');
-    document.body.dispatchEvent(event);
-  });
+  .run(run);
 
 export default hippoCmModule;

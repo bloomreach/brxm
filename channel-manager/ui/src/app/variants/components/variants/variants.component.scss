@@ -55,7 +55,6 @@
 }
 
 .variant-select {
-  align-items: center;
   display: grid;
   gap: $spacing-half;
   grid-template-columns: 1fr auto auto;
@@ -132,6 +131,6 @@
       .mat-icon {
         transform: rotate(-90deg);
       }
-    } 
+    }
   }
 }

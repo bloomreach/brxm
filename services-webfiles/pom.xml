@@ -35,7 +35,6 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - webfiles</notice.project.name>
 
-    <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
