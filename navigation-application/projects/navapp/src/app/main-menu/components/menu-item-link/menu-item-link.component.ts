@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 
 import { NavItem } from '../../../models/nav-item.model';
 import { NavigationService } from '../../../services/navigation.service';
+import { UrlMapperService } from '../../../services/url-mapper.service';
 
 @Component({
   selector: 'brna-menu-item-link',
   templateUrl: 'menu-item-link.component.html',
   styleUrls: ['menu-item-link.component.scss'],
 })
-export class MenuItemLinkComponent {
+export class MenuItemLinkComponent implements OnInit {
   @Input()
   caption: string;
 
@@ -37,7 +38,16 @@ export class MenuItemLinkComponent {
   @HostBinding('class.qa-highlighted')
   highlighted = false;
 
-  constructor(private readonly navigationService: NavigationService) { }
+  navItemUrl: string;
+
+  constructor(
+    private readonly navigationService: NavigationService,
+    private readonly urlMapperService: UrlMapperService,
+  ) { }
+
+  ngOnInit(): void {
+    this.navItemUrl = this.urlMapperService.mapNavItemToBrowserUrl(this.navItem);
+  }
 
   @HostBinding('class.disabled')
   @HostBinding('class.qa-disabled')
@@ -52,6 +62,6 @@ export class MenuItemLinkComponent {
       return;
     }
 
-    this.navigationService.navigateByNavItem(this.navItem, NavigationTrigger.Menu);
+    this.navigationService.navigateByUrl(this.navItemUrl, NavigationTrigger.Menu);
   }
 }

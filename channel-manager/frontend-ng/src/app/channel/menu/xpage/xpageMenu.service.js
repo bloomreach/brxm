@@ -58,6 +58,7 @@ export default class XPageMenuService extends MenuService {
   _initialize() {
     this._menu = this
       .defineMenu('xpage', {
+        isEnabled: () => this.HippoIframeService.isPageLoaded(),
         isVisible: () => this.PageService.hasActions('xpage'),
         translationKey: 'TOOLBAR_BUTTON_XPAGE',
       })

@@ -53,16 +53,17 @@ exports[`VariantsComponent collapsing of variant expressions should hide express
               class="mat-form-field-infix"
             >
               <mat-select
+                aria-autocomplete="none"
                 aria-disabled="false"
+                aria-expanded="false"
+                aria-haspopup="true"
                 aria-invalid="false"
-                aria-multiselectable="false"
                 aria-required="false"
                 class="qa-variant-select mat-select ng-untouched ng-pristine ng-valid"
-                role="listbox"
+                role="combobox"
                 tabindex="0"
               >
                 <div
-                  aria-hidden="true"
                   cdk-overlay-origin=""
                   class="mat-select-trigger"
                 >
@@ -75,7 +76,9 @@ exports[`VariantsComponent collapsing of variant expressions should hide express
                       class="mat-select-value-text"
                     >
                       
-                      <span>
+                      <span
+                        class="mat-select-min-line"
+                      >
                         Dutch
                       </span>
                       
@@ -229,16 +232,17 @@ exports[`VariantsComponent collapsing of variant expressions should not show exp
               class="mat-form-field-infix"
             >
               <mat-select
+                aria-autocomplete="none"
                 aria-disabled="false"
+                aria-expanded="false"
+                aria-haspopup="true"
                 aria-invalid="false"
-                aria-multiselectable="false"
                 aria-required="false"
                 class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
-                role="listbox"
+                role="combobox"
                 tabindex="0"
               >
                 <div
-                  aria-hidden="true"
                   cdk-overlay-origin=""
                   class="mat-select-trigger"
                 >
@@ -247,9 +251,9 @@ exports[`VariantsComponent collapsing of variant expressions should not show exp
                   >
                     
                     <span
-                      class="mat-select-placeholder"
+                      class="mat-select-placeholder mat-select-min-line"
                     >
-                       
+                      
                     </span>
                     
                   </div>
@@ -446,16 +450,17 @@ exports[`VariantsComponent collapsing of variant expressions should show express
               class="mat-form-field-infix"
             >
               <mat-select
+                aria-autocomplete="none"
                 aria-disabled="false"
+                aria-expanded="false"
+                aria-haspopup="true"
                 aria-invalid="false"
-                aria-multiselectable="false"
                 aria-required="false"
                 class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
-                role="listbox"
+                role="combobox"
                 tabindex="0"
               >
                 <div
-                  aria-hidden="true"
                   cdk-overlay-origin=""
                   class="mat-select-trigger"
                 >
@@ -464,9 +469,9 @@ exports[`VariantsComponent collapsing of variant expressions should show express
                   >
                     
                     <span
-                      class="mat-select-placeholder"
+                      class="mat-select-placeholder mat-select-min-line"
                     >
-                       
+                      
                     </span>
                     
                   </div>
@@ -721,16 +726,17 @@ exports[`VariantsComponent collapsing of variant expressions should show express
               class="mat-form-field-infix"
             >
               <mat-select
+                aria-autocomplete="none"
                 aria-disabled="false"
+                aria-expanded="false"
+                aria-haspopup="true"
                 aria-invalid="false"
-                aria-multiselectable="false"
                 aria-required="false"
                 class="qa-variant-select mat-select ng-untouched ng-pristine ng-valid"
-                role="listbox"
+                role="combobox"
                 tabindex="0"
               >
                 <div
-                  aria-hidden="true"
                   cdk-overlay-origin=""
                   class="mat-select-trigger"
                 >
@@ -743,7 +749,9 @@ exports[`VariantsComponent collapsing of variant expressions should show express
                       class="mat-select-value-text"
                     >
                       
-                      <span>
+                      <span
+                        class="mat-select-min-line"
+                      >
                         Dutch
                       </span>
                       
@@ -990,16 +998,17 @@ exports[`VariantsComponent should create 1`] = `
               class="mat-form-field-infix"
             >
               <mat-select
+                aria-autocomplete="none"
                 aria-disabled="false"
+                aria-expanded="false"
+                aria-haspopup="true"
                 aria-invalid="false"
-                aria-multiselectable="false"
                 aria-required="false"
                 class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
-                role="listbox"
+                role="combobox"
                 tabindex="0"
               >
                 <div
-                  aria-hidden="true"
                   cdk-overlay-origin=""
                   class="mat-select-trigger"
                 >
@@ -1008,9 +1017,9 @@ exports[`VariantsComponent should create 1`] = `
                   >
                     
                     <span
-                      class="mat-select-placeholder"
+                      class="mat-select-placeholder mat-select-min-line"
                     >
-                       
+                      
                     </span>
                     
                   </div>
@@ -1207,16 +1216,17 @@ exports[`VariantsComponent when the component editor is readonly should disable 
               class="mat-form-field-infix"
             >
               <mat-select
+                aria-autocomplete="none"
                 aria-disabled="false"
+                aria-expanded="false"
+                aria-haspopup="true"
                 aria-invalid="false"
-                aria-multiselectable="false"
                 aria-required="false"
                 class="qa-variant-select mat-select mat-select-empty ng-untouched ng-pristine ng-valid"
-                role="listbox"
+                role="combobox"
                 tabindex="0"
               >
                 <div
-                  aria-hidden="true"
                   cdk-overlay-origin=""
                   class="mat-select-trigger"
                 >
@@ -1225,9 +1235,9 @@ exports[`VariantsComponent when the component editor is readonly should disable 
                   >
                     
                     <span
-                      class="mat-select-placeholder"
+                      class="mat-select-placeholder mat-select-min-line"
                     >
-                       
+                      
                     </span>
                     
                   </div>

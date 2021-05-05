@@ -54,7 +54,7 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
     private final List<JcrEventListener> listeners = new ArrayList<>();
 
     @Override
-    protected final void doConfigure(final Node moduleConfig) throws RepositoryException {
+    protected void doConfigure(final Node moduleConfig) throws RepositoryException {
         endpointAddress = RepositoryJaxrsEndpoint.qualifiedAddress(
                 JcrUtils.getStringProperty(moduleConfig, ENDPOINT_ADDRESS, moduleConfig.getParent().getName()));
         if (jaxrsEndpoint != null) {
@@ -104,10 +104,13 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
         listeners.add(listener);
     }
 
-    static JacksonJsonProvider createJacksonJsonProvider() {
-        return new JacksonJsonProvider(
-                new ObjectMapper()
-                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                        .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS));
+    private JacksonJsonProvider createJacksonJsonProvider() {
+        return new JacksonJsonProvider(createObjectMapper());
+    }
+
+    protected ObjectMapper createObjectMapper() {
+       return new ObjectMapper()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
     }
 }

@@ -20,7 +20,7 @@
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  grid-template-areas: 
+  grid-template-areas:
     "info"
     "status"
     "actions";
@@ -33,10 +33,6 @@ em-experiment-info {
 .experiment-status-wrapper {
   grid-area: status;
   padding: $br-size;
-
-  em-experiment-status-chart {
-    margin-top: $br-size;
-  }
 }
 
 .actions-wrapper {

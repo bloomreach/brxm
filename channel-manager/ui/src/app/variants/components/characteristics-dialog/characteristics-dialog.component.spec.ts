@@ -21,7 +21,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
+import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
 
 import { CharacteristicsDialogComponent } from './characteristics-dialog.component';
 

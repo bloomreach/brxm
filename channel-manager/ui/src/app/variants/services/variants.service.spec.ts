@@ -16,7 +16,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
+import { NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1.service';
 import { Variant } from '../models/variant.model';
 
 import { VariantsService } from './variants.service';
