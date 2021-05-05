@@ -1,0 +1,68 @@
+<!--
+  Copyright 2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="info"
+     *ngIf="!isCreateFormVisible">
+  <p class="description">
+    {{ 'LATEST_VERSION' | translate }}
+  </p>
+
+  <div class="actions"
+       *ngIf="isSelected">
+    <button *ngIf="versionsInfo.createEnabled"
+            mat-stroked-button
+            color="primary"
+            class="qa-new-version-action"
+            [disabled]="actionInProgress"
+            (click)="isCreateFormVisible = true; $event.stopPropagation()">
+      <mat-icon svgIcon="plus"></mat-icon>
+      {{ 'VERSION' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="create-form"
+     *ngIf="isCreateFormVisible">
+  <p class="description">
+    {{ currentDate | moment:'lll' }} - {{ currentUserName }}
+  </p>
+
+  <form [formGroup]="createForm"
+        (ngSubmit)="createVersion()">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'VERSION_NAME' | translate }}</mat-label>
+      <input matInput
+             class="qa-version-label"
+             formControlName="label">
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-stroked-button
+              type="button"
+              class="qa-create-version-cancel"
+              (click)="$event.stopPropagation(); isCreateFormVisible = false">
+        {{ 'CANCEL' | translate }}
+      </button>
+
+      <button mat-stroked-button
+              class="qa-create-version-submit"
+              type="submit"
+              color="primary">
+        {{ 'CREATE' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

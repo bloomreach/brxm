@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 import Penpal from 'penpal';
-import * as NavappCommunication from '@bloomreach/navapp-communication';
 
 // TODO: Move some of these toplevel modules into functional specific folders/modules
 import BrowserService from './browser.service';
@@ -39,12 +38,11 @@ import SessionService from './session.service';
 import SiteMapItemService from './siteMapItem.service';
 import SiteMapService from './siteMap.service';
 import SiteMenuService from './siteMenu.service';
-import WorkflowService from './workflow.service';
+import NavappService from './navapp.service';
 
 const servicesModule = angular
   .module('hippo-cm.services', [])
   .constant('Penpal', Penpal)
-  .constant('NavappCommunication', NavappCommunication)
   .service('BrowserService', BrowserService)
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)
@@ -66,6 +64,6 @@ const servicesModule = angular
   .service('SiteMapItemService', SiteMapItemService)
   .service('SiteMapService', SiteMapService)
   .service('SiteMenuService', SiteMenuService)
-  .service('WorkflowService', WorkflowService);
+  .service('NavappService', NavappService);
 
 export default servicesModule.name;

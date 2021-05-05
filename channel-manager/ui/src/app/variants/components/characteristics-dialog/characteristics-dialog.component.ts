@@ -18,7 +18,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 
-import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1service';
+import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
 import { Characteristic, TargetGroup, TargetGroupProperty } from '../../models/characteristic.model';
 
 function defaultTargetGroupSort(a: TargetGroup, b: TargetGroup): number {

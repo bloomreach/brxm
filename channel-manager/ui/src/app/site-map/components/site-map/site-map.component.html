@@ -25,14 +25,12 @@
   <button mat-icon-button
           matPrefix
           disabled>
-    <mat-icon matPrefix
-              fontIcon="mdi-magnify"></mat-icon>
+    <mat-icon matPrefix>search</mat-icon>
   </button>
   <button *ngIf="search$ | async"
           mat-icon-button
           matSuffix>
-    <mat-icon fontIcon="mdi-close"
-              (click)="search$.next('')"></mat-icon>
+    <mat-icon (click)="search$.next('')">close</mat-icon>
   </button>
 </mat-form-field>
 

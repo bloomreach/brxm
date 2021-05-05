@@ -324,7 +324,7 @@
 
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
-                <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>**/coverage/**/*</exclude>
                 <exclude>frontend-ng/.cache/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>ui/dist/**</exclude>
