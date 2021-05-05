@@ -23,9 +23,9 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "extractCss": true,
             "allowedCommonJsDependencies": [
-              "moment-timezone"
+              "moment-timezone",
+              "c3"
             ],
             "assets": [
               "src/favicon.ico",
@@ -51,7 +51,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": true,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,

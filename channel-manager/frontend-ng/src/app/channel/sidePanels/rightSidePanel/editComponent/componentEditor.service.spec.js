@@ -864,6 +864,7 @@ describe('ComponentEditorService', () => {
     });
 
     it('emits event "component:reset-current-variant" to discard variant changes', () => {
+      spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
       spyOn($rootScope, '$emit');
 
       ComponentEditor.discardChanges();

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -13,59 +13,42 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="mat-typography" *ngIf="versionsInfo">
-  <ng-container *ngIf="versionsInfo?.versions.length === 0">
-    <div class="no-versions qa-version-list-header">
-      {{ 'NO_VERSIONS_AVAILABLE' | translate }}
-    </div>
-    <mat-divider></mat-divider>
+<div class="mat-typography version-list qa-version-list"
+     *ngIf="versionsInfo">
+  <ng-container *ngFor="let version of filteredVersions; first as isFirst">
+    <em-working-version *ngIf="isFirst"
+                       matRipple
+                       [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
+                       class="qa-version-item"
+                       [class]="'qa-version-' + version.jcrUUID"
+                       (click)="selectVersion(version.jcrUUID)"
+                       [isSelected]="isVersionSelected(version.jcrUUID)"
+                       [version]="version"
+                       [versionsInfo]="versionsInfo"
+                       [(actionInProgress)]="actionInProgress">
+    </em-working-version>
+
+    <em-version *ngIf="!isFirst"
+                matRipple
+                [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
+                class="qa-version-item"
+                [class]="'qa-version-' + version.jcrUUID"
+                (click)="selectVersion(version.jcrUUID)"
+                [isSelected]="isVersionSelected(version.jcrUUID)"
+                [renderPath]="getRenderPath()"
+                [version]="version"
+                [versionsInfo]="versionsInfo"
+                [(actionInProgress)]="actionInProgress">
+    </em-version>
   </ng-container>
-
-  <div *ngIf="versionsInfo?.versions.length > 0" class="versions-list qa-version-list">
-    <div *ngFor="let version of versionsInfo?.versions; first as isFirst"
-         matRipple
-         (click)="selectVersion(version.jcrUUID)"
-         [class]="'qa-version-' + version.jcrUUID"
-         [class.selected]="isVersionSelected(version.jcrUUID)"
-         class="version">
-
-      <div class="description">
-        <p *ngIf="isFirst"
-           class="timestamp qa-latest-version">
-          {{ 'LATEST_VERSION' | translate }}
-        </p>
-
-        <p *ngIf="!isFirst"
-           class="timestamp qa-version-timestamp">
-          {{ version.timestamp | moment }}
-        </p>
-
-        <p *ngIf="!isFirst"
-           class="qa-version-username">
-          {{ version.userName || ('SYSTEM' | translate) }}
-        </p>
-      </div>
-
-      <div class="actions">
-        <button *ngIf="versionsInfo.createEnabled && unpublishedVariantId === version.jcrUUID && isFirst"
-                mat-stroked-button
-                color="primary"
-                [disabled]="actionInProgress"
-                class="qa-new-version-action"
-                (click)="createVersion()">
-          <mat-icon svgIcon="plus"></mat-icon>
-          {{ 'VERSION' | translate }}
-        </button>
-
-        <button *ngIf="versionsInfo.restoreEnabled && unpublishedVariantId === version.jcrUUID && !isFirst"
-                mat-stroked-button
-                color="primary"
-                [disabled]="actionInProgress"
-                class="qa-restore-version-action"
-                (click)="restoreVersion(version.jcrUUID)">
-          {{ 'RESTORE' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
+
+<ng-container *ngIf="!isBranch() && versionsInfo?.pageCampaignSupported">
+  <mat-divider></mat-divider>
+
+  <div class="version-list-filter">
+    <mat-checkbox (change)="filterVersions($event)">
+      {{ 'VERSION_FILTER_TEXT' | translate }}
+    </mat-checkbox>
+  </div>
+</ng-container>

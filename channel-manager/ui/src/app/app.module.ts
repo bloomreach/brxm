@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
+import { NgxMatDateAdapter } from '@angular-material-components/datetime-picker';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
+import { initializer } from './app.initializers';
 import { ExperimentsModule } from './experiments/experiments.module';
 import { NotificationBarModule } from './notification-bar/notification-bar.module';
+import { NG1_NAVAPP_SERVICE } from './services/ng1/navapp.ng1.service';
 import { Ng1ServicesModule } from './services/ng1/ng1-services.module';
 import { SharedModule } from './shared/shared.module';
 import { SiteMapModule } from './site-map/site-map.module';
@@ -35,6 +38,12 @@ import { VersionsModule } from './versions/versions.module';
     SiteMapModule,
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializer,
+      deps: [NG1_NAVAPP_SERVICE, NgxMatDateAdapter],
+      multi: true,
+    },
   ],
 })
 export class AppModule {

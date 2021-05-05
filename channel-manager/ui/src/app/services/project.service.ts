@@ -45,4 +45,8 @@ export class ProjectService {
   isCore(project: Project): boolean {
     return project.id === this.coreBranchId;
   }
+
+  isBranch(): boolean {
+    return this.ng1ProjectService.isBranch();
+  }
 }

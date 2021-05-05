@@ -1,0 +1,87 @@
+<!--
+  Copyright 2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="info">
+  <div class="description">
+    <p class="truncate first-line">
+      <span class="qa-version-timestamp">
+        {{ version?.timestamp | moment }}
+      </span>
+      <span> - </span>
+      <span class="qa-version-username">
+        {{ version?.userName || ('SYSTEM' | translate) }}
+      </span>
+    </p>
+
+    <p class="truncate"
+       *ngIf="!isScheduleFormVisible">
+      <i>
+        <!-- Do not collapse <p> when no label is present -->
+        {{ version?.label || '&nbsp;' }}
+      </i>
+    </p>
+
+    <p class="schedule-info truncate mat-caption"
+       *ngIf="!isScheduleFormVisible">
+      <mat-icon [class.active]="version.active"
+                [class.offline]="!versionsInfo.live"
+                [class.scheduled]="version.campaign"
+                [matTooltip]="getTooltip(version)">
+        {{ getIcon(version) }}
+      </mat-icon>
+
+      <span *ngIf="version.published">{{ 'PUBLISHED' | translate }}</span>
+
+      <ng-container *ngIf="version.campaign">
+        <span *ngIf="version.published">,&nbsp;</span>
+        <span>{{ version.campaign.from | moment }}</span>
+        <ng-container *ngIf="version.campaign!.to">
+          <span> - </span>
+          <span>
+            {{ version.campaign.to | moment }}
+          </span>
+        </ng-container>
+      </ng-container>
+    </p>
+  </div>
+
+  <div class="actions"
+       *ngIf="isSelected && !isScheduleFormVisible">
+    <button *ngIf="versionsInfo.campaignEnabled && versionsInfo.pageCampaignSupported"
+            mat-stroked-button
+            color="primary"
+            class="schedule-version-action qa-schedule-version-action"
+            matTooltip="{{ 'SCHEDULE' | translate }}"
+            [disabled]="actionInProgress"
+            (click)="isScheduleFormVisible = true; $event.stopPropagation()">
+      <mat-icon>schedule</mat-icon>
+    </button>
+
+    <button *ngIf="versionsInfo.restoreEnabled"
+            mat-stroked-button
+            color="primary"
+            class="qa-restore-version-action"
+            [disabled]="actionInProgress"
+            (click)="restoreVersion(version?.jcrUUID); $event.stopPropagation()">
+      {{ 'RESTORE' | translate }}
+    </button>
+  </div>
+</div>
+
+<em-schedule-form *ngIf="isSelected && isScheduleFormVisible"
+                  [version]="version"
+                  (cancelForm)="isScheduleFormVisible = false">
+</em-schedule-form>

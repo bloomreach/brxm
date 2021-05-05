@@ -21,6 +21,7 @@ import { Project } from '../../models/project.model';
 export interface Ng1ProjectService {
   projects: Project[];
   getSelectedProjectId(): string;
+  isBranch(): boolean;
   afterChange(id: string, callback: () => void): void;
 }
 

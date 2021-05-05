@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,52 +14,65 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
+import { DocumentWorkflowService } from '../../services/document-workflow.service';
 import { Ng1ContentService, NG1_CONTENT_SERVICE } from '../../services/ng1/content.ng1.service';
-import { NG1_ROOT_SCOPE } from '../../services/ng1/root-scope.service';
 import { PageStructureService } from '../../services/page-structure.service';
 import { ProjectService } from '../../services/project.service';
-import { Version } from '../models/version.model';
+import { Version, VersionUpdateBody } from '../models/version.model';
+import { VersionsInfo } from '../models/versions-info.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class VersionsService implements OnDestroy {
-  private unpublishedVariantId: string | undefined = undefined;
-  private readonly onPageChangeUnsubscribe: () => void;
-  private readonly onPageCheckChangesUnsubscribe: () => void;
+export class VersionsService {
+  private readonly versionsInfo = new BehaviorSubject<VersionsInfo>({
+    campaignEnabled: false,
+    labelEnabled: false,
+    live: false,
+    createEnabled: false,
+    restoreEnabled: false,
+    versions: [],
+    pageCampaignSupported: false,
+  });
+  readonly versionsInfo$ = this.versionsInfo.asObservable();
 
-  constructor(
-    @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
-    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
-    private readonly pageStructureService: PageStructureService,
-    private readonly projectService: ProjectService,
-  ) {
-    this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
-
-    this.onPageChangeUnsubscribe = this.$rootScope.$on('page:change', () => {
-      this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
-    });
-    this.onPageCheckChangesUnsubscribe = this.$rootScope.$on('page:check-changes', () => {
-      this.unpublishedVariantId = this.pageStructureService.getUnpublishedVariantId();
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.onPageChangeUnsubscribe();
-    this.onPageCheckChangesUnsubscribe();
-  }
-
-  async getVersions(documentId: string): Promise<Version[]> {
-    const branchId = this.projectService.getSelectedProjectId();
-
-    const { versions } = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
-
+  get versions(): Version[] {
+    const { versions } = this.versionsInfo.value;
     return versions;
   }
 
-  isCurrentVersion(version: Version): boolean {
-    return version.jcrUUID === this.unpublishedVariantId;
+  constructor(
+    @Inject(NG1_CONTENT_SERVICE) private readonly ng1ContentService: Ng1ContentService,
+    private readonly pageStructureService: PageStructureService,
+    private readonly projectService: ProjectService,
+    private readonly documentWorkflowService: DocumentWorkflowService,
+  ) { }
+
+  async getVersionsInfo(documentId: string): Promise<void> {
+    const branchId = this.projectService.getSelectedProjectId();
+    const versionsInfo = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId);
+    this.versionsInfo.next(versionsInfo);
+  }
+
+  async getVersions(documentId: string, campaignVersionOnly?: boolean): Promise<Version[]> {
+    const branchId = this.projectService.getSelectedProjectId();
+    const { versions } = await this.ng1ContentService.getDocumentVersionsInfo(documentId, branchId, { campaignVersionOnly });
+    return versions;
+  }
+
+  async updateVersion(documentId: string, versionUUID: string, body: VersionUpdateBody): Promise<void> {
+    const branchId = this.projectService.getSelectedProjectId();
+    return this.documentWorkflowService.putAction(documentId, [branchId, 'versions', versionUUID], body);
+  }
+
+  isVersionFromPage(versionUUID: string): boolean {
+    return versionUUID === this.pageStructureService.getUnpublishedVariantId();
+  }
+
+  currentVersionFromPage(): Version | undefined {
+    return this.versions.find(v => this.isVersionFromPage(v.jcrUUID));
   }
 }

@@ -17,7 +17,7 @@
 import { Inject, Injectable } from '@angular/core';
 
 import { ComponentProperties } from '../../models/component-properties.model';
-import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1service';
+import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../services/ng1/targeting.ng1.service';
 import { GroupedVariant } from '../models/grouped-variant.model';
 import { Variant, VariantCharacteristicData, VariantExpressions, VariantExpressionType } from '../models/variant.model';
 
