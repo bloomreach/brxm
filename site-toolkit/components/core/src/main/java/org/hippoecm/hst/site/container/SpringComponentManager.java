@@ -108,7 +108,6 @@ public class SpringComponentManager implements ComponentManager {
     
     public void initialize() {
         applicationContext = new DefaultComponentManagerApplicationContext(this, containerConfiguration);
-
         fallbackRootApplicationContextLookup = containerConfiguration.getBoolean(FALLBACK_ROOT_WEBAPP_CONTEXT_PROPERTY, false);
         if (fallbackRootApplicationContextLookup) {
             log.info("Component fallback to root webapplication context if available is enabled.");
