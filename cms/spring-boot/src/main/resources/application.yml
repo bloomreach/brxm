@@ -1,0 +1,5 @@
+spring:
+  main:
+    banner-mode: "off"
+logging:
+  config: ${log4j.configurationFile}

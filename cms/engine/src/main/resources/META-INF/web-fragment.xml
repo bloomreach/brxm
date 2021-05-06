@@ -44,6 +44,10 @@
   <filter>
     <filter-name>NavAppRedirectFilter</filter-name>
     <filter-class>org.hippoecm.frontend.filter.NavAppRedirectFilter</filter-class>
+    <init-param>
+      <param-name>customAcceptedPathPrefixes</param-name>
+      <param-value>actuator</param-value>
+    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>NavAppRedirectFilter</filter-name>
