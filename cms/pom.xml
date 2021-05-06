@@ -77,6 +77,8 @@
     <module>platform-dependencies</module>
     <module>dependencies</module>
 
+    <module>spring-boot</module>
+
   </modules>
 
   <properties>
@@ -474,6 +476,8 @@
                 <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/rubyblue.css</exclude>
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
                 <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
+                <!-- spring boot -->
+                <exclude>spring-boot/src/main/resources/application.yml</exclude>
                 <!-- code templates -->
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterTemplate.groovy</exclude>
                 <!-- files in which no comments are possible -->
