@@ -70,7 +70,7 @@ class PageMenuService extends MenuService {
         translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
       })
       .addDivider({
-        isVisible: () => isVisible('properties') || this._hasPageExtensions(),
+        isVisible: () => (isVisible('properties') || PageToolsService.hasExtensions()) && (isVisible('copy') || isVisible('move') || isVisible('delete')),
       })
       .addAction('copy', {
         isEnabled: () => isEnabled('copy'),
@@ -91,7 +91,7 @@ class PageMenuService extends MenuService {
         translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
       })
       .addDivider({
-        isVisible: () => isVisible('copy') || isVisible('move') || isVisible('delete'),
+        isVisible: () => isVisible('new') && (isVisible('copy') || isVisible('move') || isVisible('delete')),
       })
       .addAction('new', {
         isEnabled: () => isEnabled('new'),
