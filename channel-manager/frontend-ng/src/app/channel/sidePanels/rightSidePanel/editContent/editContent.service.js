@@ -60,16 +60,19 @@ class EditContentService {
       () => this._onCloseChannel(),
     );
 
+    // order of registration of hooks is important
+    // We need the content editor to close the editable instance of the document
+    // before we fire the page:check-changes event so the page actions represent
+    // the document state
+    $transitions.onExit(
+      { exiting: '**.edit-page.versions' },
+      () => this.ContentEditor.discardChanges().finally(() => this.ContentEditor.close()),
+    );
+
     $transitions.onExit(
       { exiting: '**.edit-page.*' },
       () => $rootScope.$emit('page:check-changes'),
     );
-
-    $transitions.onExit({ exiting: '**.edit-page.versions' }, () => {
-      this.ContentEditor
-        .discardChanges()
-        .finally(() => this.ContentEditor.close());
-    });
 
     CmsService.subscribe('kill-editor', (documentId) => {
       this._stopEditingDocument(documentId);
