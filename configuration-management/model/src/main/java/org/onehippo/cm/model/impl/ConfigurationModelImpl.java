@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -605,15 +605,15 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      */
     public static ConfigurationModelImpl mergeWithSourceModules(final Collection<ModuleImpl> sourceModules,
                                                                 final ConfigurationModelImpl model) {
-        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
+        try (ConfigurationModelImpl mergedModel = new ConfigurationModelImpl()) {
+            // start with the source modules
+            sourceModules.forEach(mergedModel::addReplacementModule);
 
-        // start with the source modules
-        sourceModules.forEach(mergedModel::addReplacementModule);
+            // then layer on top all of the other modules
+            model.getSortedGroups().forEach(mergedModel::addGroup);
 
-        // then layer on top all of the other modules
-        model.getSortedGroups().forEach(mergedModel::addGroup);
-
-        return mergedModel.build();
+            return mergedModel.build();
+        }
     }
 
     /**
@@ -624,19 +624,20 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      */
     public static ConfigurationModelImpl mergeWithSourceModules(final ConfigurationModelImpl existingModel,
                                                                 final ConfigurationModelImpl newModel) {
-        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
-
-        // preserve the source modules
-        for (ModuleImpl module : existingModel.getModules()) {
-            if (module.getMvnPath() != null) {
-                log.debug("Merging module: {}", module);
-                mergedModel.addReplacementModule(module);
+        try (ConfigurationModelImpl mergedModel = new ConfigurationModelImpl()) {
+            // preserve the source modules
+            for (ModuleImpl module : existingModel.getModules()) {
+                if (module.getMvnPath() != null) {
+                    log.debug("Merging module: {}", module);
+                    mergedModel.addReplacementModule(module);
+                }
             }
+
+            // layer on top all of the other modules
+            newModel.getSortedGroups().forEach(mergedModel::addGroup);
+
+            return mergedModel.build();
+
         }
-
-        // layer on top all of the other modules
-        newModel.getSortedGroups().forEach(mergedModel::addGroup);
-
-        return mergedModel.build();
     }
 }
