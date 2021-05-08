@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * Utility methods to help with the correct indentation of added pieces of XML.
@@ -66,13 +67,15 @@ public class Dom4JUtils {
      */
     public static boolean update(final File xmlFile, final Modifier modifier) {
         try (FileInputStream xmlStream = new FileInputStream(xmlFile)){
-            final Document doc = new SAXReader().read(xmlStream);
+            SAXReader xmlReader = new SAXReader();
+            xmlReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            final Document doc = xmlReader.read(xmlStream);
             modifier.run(doc);
             final FileWriter writer = new FileWriter(xmlFile);
             doc.write(writer);
             writer.close();
             return true;
-        } catch (ModifierException e) {
+        } catch (ModifierException | SAXException e) {
             LOG.error(e.getMessage());
         } catch (DocumentException | IOException e) {
             LOG.error("Failed to update XML file '{}'.", xmlFile, e);
