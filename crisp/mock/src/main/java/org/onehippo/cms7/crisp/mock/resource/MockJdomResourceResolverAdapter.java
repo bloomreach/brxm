@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.onehippo.cms7.crisp.core.resource.jdom.JdomResource;
 import org.onehippo.cms7.crisp.core.resource.jdom.JdomResourceBeanMapper;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+
+import javax.xml.XMLConstants;
 
 /**
  * Adapter class for XML / JDOM based resource data, to be used in unit tests by mocking.
@@ -66,6 +68,8 @@ public class MockJdomResourceResolverAdapter extends AbstractMockResourceResolve
     protected Resource inputToResource(final InputStream inputStream) throws IOException {
         try {
             SAXBuilder jdomBuilder = new SAXBuilder();
+            jdomBuilder.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            jdomBuilder.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             Document document = jdomBuilder.build(inputStream);
             final Element elem = document.getRootElement();
             return new JdomResource(elem);
