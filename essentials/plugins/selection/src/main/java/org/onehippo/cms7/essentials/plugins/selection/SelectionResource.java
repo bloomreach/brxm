@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
@@ -404,10 +405,11 @@ public class SelectionResource {
                 factory.setXPathNamespaceURIs(namespaceUris);
 
                 SAXReader reader = new SAXReader();
+                reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
                 reader.setDocumentFactory(factory);
                 return reader.read(is);
             }
-        } catch (DocumentException | IOException e) {
+        } catch (DocumentException | IOException | SAXException e) {
             log.error("Problem parsing Spring configuration file.", e);
         }
         return null;
