@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientResponseException;
+
+import javax.xml.XMLConstants;
 
 public abstract class AbstractJdomRestTemplateResourceResolver extends AbstractRestTemplateResourceResolver {
 
@@ -166,6 +168,8 @@ public abstract class AbstractJdomRestTemplateResourceResolver extends AbstractR
 
     protected Element inputStreamToElement(final InputStream input) throws JDOMException, IOException {
         SAXBuilder jdomBuilder = new SAXBuilder();
+        jdomBuilder.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        jdomBuilder.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         final Document document = jdomBuilder.build(input);
         final Element elem = document.getRootElement();
         return elem;
