@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -213,7 +213,7 @@ public class ConfigurationBaselineService {
 
             session.save();
             stopWatch.stop();
-            log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch.toString());
+            log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch);
         } catch (RepositoryException | IOException e) {
             log.error("Failed to store baseline configuration", e);
             throw e;
@@ -351,7 +351,7 @@ public class ConfigurationBaselineService {
 
             session.save();
             stopWatch.stop();
-            log.info("Updated module in baseline configuration in {}", stopWatch.toString());
+            log.info("Updated module in baseline configuration in {}", stopWatch);
 
             return newBaseline;
         }
@@ -727,11 +727,12 @@ public class ConfigurationBaselineService {
                 parseSources(modules);
 
                 // build the final merged model
-                final ConfigurationModelImpl model = new ConfigurationModelImpl();
-                modules.forEach(model::addModule);
-                result = model.build();
-                stopWatch.stop();
-                log.info("ConfigurationModel loaded from baseline configuration in {}", stopWatch.toString());
+                try (ConfigurationModelImpl model = new ConfigurationModelImpl()) {
+                    modules.forEach(model::addModule);
+                    result = model.build();
+                    stopWatch.stop();
+                }
+                log.info("ConfigurationModel loaded from baseline configuration in {}", stopWatch);
             }
             catch (RepositoryException|ParserException|IOException e) {
                 log.error("Failed to load baseline configuration", e);
