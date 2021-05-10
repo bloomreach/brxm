@@ -9,8 +9,8 @@
     "start": "grunt watch"
   },
   "engines": {
-    "node": ">=12",
-    "npm": ">=6"
+    "node": "14",
+    "npm": "7"
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "3.7.0",
