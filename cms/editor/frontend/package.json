@@ -3,8 +3,8 @@
   "license": "Apache-2.0",
   "private": true,
   "engines": {
-    "node": "8",
-    "npm": "6"
+    "node": "14",
+    "npm": "7"
   },
   "dependencies": {
     "penpal": "4.0.0"
