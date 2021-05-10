@@ -15,8 +15,8 @@
     "last 1 Edge versions"
   ],
   "engines": {
-    "node": ">=12",
-    "npm": ">=6"
+    "node": "14",
+    "npm": "7"
   },
   "config": {
     "dist": "target/classes/angular/hippo-cm/",

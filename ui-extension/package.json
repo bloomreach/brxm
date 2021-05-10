@@ -20,6 +20,10 @@
   "files": [
     "dist/"
   ],
+  "engines": {
+    "node": "14",
+    "npm": "7"
+  },
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "bump": "$npm_execpath version --no-git-tag-version --allow-same-version",
