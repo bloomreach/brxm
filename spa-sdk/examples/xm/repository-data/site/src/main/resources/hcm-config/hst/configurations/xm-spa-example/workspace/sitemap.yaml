@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/xmspaexample/hst:workspace/hst:sitemap:
-      .meta:residual-child-node-category: content
-      jcr:primaryType: hst:sitemap

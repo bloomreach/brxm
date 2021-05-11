@@ -94,17 +94,6 @@
       </modules>
     </profile>
     <profile>
-      <id>spa.sdk</id>
-      <activation>
-        <property>
-          <name>!no-spa-sdk</name>
-        </property>
-      </activation>
-      <modules>
-        <module>spa-sdk</module>
-      </modules>
-    </profile>
-    <profile>
       <id>pedantic</id>
       <build>
         <plugins>

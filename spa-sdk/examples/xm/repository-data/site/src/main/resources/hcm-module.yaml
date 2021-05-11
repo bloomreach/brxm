@@ -1,6 +1,0 @@
-group: 
-  name: xm-spa-example
-  after: hippo-cms
-project: xm-spa-example
-module:
-  name: xm-spa-example-repository-data-site

@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`BrContainerItemUndefined render should render an undefined container item 1`] = `"Component \\"Some Component\\" is not defined."`;
