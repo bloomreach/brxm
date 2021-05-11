@@ -114,16 +114,18 @@ const webpackConfig = merge.strategy({ plugins: 'replace' })(config, {
       'window.dragula': 'dragula',
     }),
 
-    env !== 'test' && new CopyWebpackPlugin([
-      {
-        from: root('./node_modules/@bloomreach/dragula/dist/dragula.min.css'),
-        to: dist('styles'),
-      },
-      {
-        from: root('./node_modules/@bloomreach/dragula/dist/dragula.min.js'),
-        to: dist('scripts'),
-      },
-    ]),
+    env !== 'test' && new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: root('./node_modules/@bloomreach/dragula/dist/dragula.min.css'),
+          to: dist('styles'),
+        },
+        {
+          from: root('./node_modules/@bloomreach/dragula/dist/dragula.min.js'),
+          to: dist('scripts'),
+        },
+      ],
+    }),
 
     env !== 'test' && new HtmlWebpackPlugin({
       template: src('index.ejs'),
@@ -147,9 +149,11 @@ const webpackConfig = merge.strategy({ plugins: 'replace' })(config, {
       },
     }),
 
-    new CopyWebpackPlugin([
-      { from: uiProjectBasePath, to: uiProjectOutputFolder },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: uiProjectBasePath, to: uiProjectOutputFolder },
+      ],
+    }),
   ].filter(Boolean),
 });
 
