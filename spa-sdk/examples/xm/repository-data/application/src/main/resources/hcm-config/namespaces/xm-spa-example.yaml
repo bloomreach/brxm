@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hippo:namespaces/xmspaexample:
-      jcr:primaryType: hipposysedit:namespace
-      jcr:mixinTypes: ['mix:referenceable']
-      jcr:uuid: 3368bd33-46dc-4621-af37-0730c647a68c

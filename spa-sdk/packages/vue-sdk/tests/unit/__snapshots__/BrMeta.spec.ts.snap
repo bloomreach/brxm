@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`BrMeta render should render a single slot 1`] = `<div></div>`;
-
-exports[`BrMeta render should surround multiple slots with fragment 1`] = `
-<div id="slot1"></div>
-<div id="slot2"></div>
-`;
