@@ -1,6 +1,0 @@
-site: xm-spa-example
-group: xm-spa-example
-project: xm-spa-example
-module:
-  name: xm-spa-example-repository-data-site-development
-  after: xm-spa-example-repository-data-site
