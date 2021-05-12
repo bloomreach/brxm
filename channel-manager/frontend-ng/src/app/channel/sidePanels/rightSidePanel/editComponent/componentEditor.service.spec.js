@@ -639,7 +639,7 @@ describe('ComponentEditorService', () => {
     it('extracts the link picker config if property type is "linkpicker"', () => {
       openComponentEditor([
         linkPickerProperty,
-        Object.assign({}, linkPickerProperty, { type: 'imagepicker' }),
+        { ...linkPickerProperty, type: 'imagepicker'},
       ]);
 
       const group = ComponentEditor.getPropertyGroups()[0];

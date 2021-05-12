@@ -6,6 +6,10 @@
     "navappBridgePath": "./src/main/java/org/hippoecm/frontend/navapp-bridge.js",
     "targetPath": "./target/classes/org/hippoecm/frontend/"
   },
+  "engines": {
+    "node": "14",
+    "npm": "7"
+  },
   "scripts": {
     "lint": "eslint $npm_package_config_navappBridgePath",
     "watch": "chokidar $npm_package_config_navappBridgePath -c \"cp $npm_package_config_navappBridgePath $npm_package_config_targetPath\"",
