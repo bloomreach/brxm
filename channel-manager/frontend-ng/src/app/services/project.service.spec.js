@@ -99,9 +99,7 @@ describe('ProjectService', () => {
 
   it('accepts a channel', () => {
     const channelId = 'testChannel';
-    const acceptedProject = Object.assign({}, currentProject, {
-      id: 'acceptedProject',
-    });
+    const acceptedProject = { ...currentProject, id: 'acceptedProject',};
 
     $httpBackend
       .expectPOST(`/test/ws/projects/${currentProject.id}/channel/approve/${channelId}`)
@@ -115,9 +113,7 @@ describe('ProjectService', () => {
   it('rejects a channel while providing a message', () => {
     const channelId = 'testChannel';
     const message = 'testMessage';
-    const rejectedProject = Object.assign({}, currentProject, {
-      id: 'rejectedProject',
-    });
+    const rejectedProject = { ...currentProject, id: 'rejectedProject',};
 
     $httpBackend
       .expectPOST(`/test/ws/projects/${currentProject.id}/channel/reject/${channelId}`)

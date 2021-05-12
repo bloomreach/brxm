@@ -1,3 +1,6 @@
 {
-  "extends": "./node_modules/@bloomreach/frontend-build/.stylelintrc"
+  "extends": "./node_modules/@bloomreach/frontend-build/.stylelintrc",
+  "rules": {
+    "value-keyword-case": ["lower", { ignoreKeywords: ['A100', 'A200', 'A400', 'A700'] }]
+  }
 }
