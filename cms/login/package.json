@@ -9,8 +9,8 @@
     "last 1 Safari versions"
   ],
   "engines": {
-    "node": ">=12",
-    "npm": ">=6"
+    "node": "14",
+    "npm": "7"
   },
   "scripts": {
     "build": "grunt build",
@@ -37,7 +37,7 @@
     "grunt-sass": "3.1.0",
     "grunt-stylelint": "0.11.1",
     "load-grunt-tasks": "5.1.0",
-    "node-sass": "4.12.0",
+    "node-sass": "4.14.1",
     "stylelint": "10.1.0",
     "stylelint-config-recommended-scss": "3.3.0",
     "stylelint-config-standard": "18.3.0",

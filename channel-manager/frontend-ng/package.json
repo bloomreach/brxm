@@ -15,8 +15,8 @@
     "last 1 Edge versions"
   ],
   "engines": {
-    "node": ">=12",
-    "npm": ">=6"
+    "node": "14",
+    "npm": "7"
   },
   "config": {
     "dist": "target/classes/angular/hippo-cm/",
@@ -86,7 +86,7 @@
   },
   "devDependencies": {
     "@abogaart/blc": "0.1.2",
-    "@bloomreach/frontend-build": "11.1.0",
+    "@bloomreach/frontend-build": "11.2.0-beta-2",
     "angular-mocks": "1.8.0",
     "babel-plugin-transform-async-to-promises": "0.8.15",
     "string-replace-loader": "2.2.0"
