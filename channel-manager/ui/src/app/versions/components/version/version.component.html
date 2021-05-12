@@ -37,7 +37,7 @@
     <p class="schedule-info truncate mat-caption"
        *ngIf="!isScheduleFormVisible">
       <mat-icon [class.active]="version.active"
-                [class.offline]="!versionsInfo.live"
+                [class.offline]="!versionsInfo.live && !hasCampaignEnded(version)"
                 [class.scheduled]="version.campaign"
                 [matTooltip]="getTooltip(version)">
         {{ getIcon(version) }}
