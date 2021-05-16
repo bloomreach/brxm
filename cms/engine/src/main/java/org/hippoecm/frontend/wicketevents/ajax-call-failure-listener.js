@@ -20,7 +20,7 @@
     const errorType = (errorElement && errorElement.getAttribute('type'));
     const message = (errorElement && errorElement.textContent) || 'The server did not respond';
     Hippo.navapp.onError({
-      errorCode: window.bloomreach['navapp-communication'].ClientErrorCodes.InternalError,
+      errorCode: window.brNavappCommunication.ClientErrorCodes.InternalError,
       errorType,
       message,
     })
