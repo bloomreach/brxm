@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import 'zone.js/dist/zone';
-import 'zone.js/dist/zone-testing';
+module.exports = {
+  "presets": [
+    "@babel/preset-env",
+  ],
+}
 
-// This file is required by karma.conf.js and loads recursively all the .spec and framework files
-
-// We find all the tests.
-const context = (require as any).context('./lib', true, /\.ts$/);
-// And load the modules.
-context.keys().map(context);

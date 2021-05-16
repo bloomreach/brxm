@@ -43,7 +43,7 @@ describe('CommunicationService', () => {
       onUserActivity: undefined,
     });
 
-    spyOnProperty(navCommLib, 'connectToParent', 'get').and.returnValue(() => Promise.resolve(parentApiMock));
+    spyOn(navCommLib, 'connectToParent').and.callFake(() => Promise.resolve(parentApiMock));
 
     TestBed.configureTestingModule({
       providers: [
