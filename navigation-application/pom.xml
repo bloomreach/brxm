@@ -34,9 +34,9 @@
 
   <properties>
     <sonar.sources>.</sonar.sources>
-    <sonar.inclusions>projects/navapp/**/*.ts,projects/navapp-communication/**/*.ts</sonar.inclusions>
+    <sonar.inclusions>projects/navapp/**/*.ts,</sonar.inclusions>
     <sonar.exclusions>projects/**/*.spec.ts</sonar.exclusions>
-    <sonar.typescript.lcov.reportPaths>coverage/navapp-communication/lcov.info,coverage/navapp/lcov.info</sonar.typescript.lcov.reportPaths>
+    <sonar.typescript.lcov.reportPaths>coverage/navapp/lcov.info</sonar.typescript.lcov.reportPaths>
   </properties>
 
   <scm>
