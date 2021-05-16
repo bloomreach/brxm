@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,33 @@
  * limitations under the License.
  */
 
-import { fakeAsync, tick } from '@angular/core/testing';
-import { NavItemDtoMock } from 'projects/navapp/src/app/models/dto/nav-item-dto.mock';
-
 import { ChildApi, NavigationTrigger, NavItem } from '../lib/api';
 
 import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 import { wrapWithTimeout } from './wrap-with-timeout';
 
+export class NavItemDtoMock implements NavItem {
+  id = 'testNavItemId';
+  displayName = 'testDisplayName';
+  appIframeUrl = 'https://test.url';
+  appPath = 'testPath';
+
+  constructor(initObject = {}) {
+    Object.keys(initObject).forEach(key => {
+      this[key] = initObject[key];
+    });
+  }
+}
+
+const navItemsMock: NavItem[] = [
+  new NavItemDtoMock(),
+  new NavItemDtoMock(),
+];
+
 describe('wrapWithTimeout', () => {
-  const navItemsMock: NavItem[] = [
-    new NavItemDtoMock(),
-    new NavItemDtoMock(),
-  ];
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
 
   it('should wrap provided api', async () => {
     const api: ChildApi = {
@@ -38,7 +52,7 @@ describe('wrapWithTimeout', () => {
     expect(navItems).toEqual(navItemsMock);
   });
 
-  it('should wrap provided api in promises with default timeout', fakeAsync(() => {
+  it('should wrap provided api in promises with default timeout', () => {
     const api: ChildApi = {
       getNavItems: () => new Promise(() => {}),
     };
@@ -49,8 +63,8 @@ describe('wrapWithTimeout', () => {
       expect(e).toBe('getNavItems call timed out');
     });
 
-    tick(DEFAULT_COMMUNICATION_TIMEOUT);
-  }));
+    jest.advanceTimersByTime(DEFAULT_COMMUNICATION_TIMEOUT)
+  });
 
   it('should not wrap the provided api if the timeout is not set', () => {
     const api: ChildApi = {
@@ -72,7 +86,7 @@ describe('wrapWithTimeout', () => {
     expect(promisedApi).toEqual(api);
   });
 
-  it('should reject after timeout', fakeAsync(() => {
+  it('should reject after timeout', () => {
     const api: ChildApi = {
       navigate: (): Promise<void> => new Promise(resolve => {
         setTimeout(resolve, 101);
@@ -85,8 +99,8 @@ describe('wrapWithTimeout', () => {
       expect(e).toBe('navigate call timed out');
     });
 
-    tick(101);
-  }));
+    jest.advanceTimersByTime(101)
+  });
 
   it('should be able to get rejected', async () => {
     const errorMessage = 'Throwing error from method';

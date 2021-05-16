@@ -126,43 +126,6 @@
         }
       }
     },
-    "navapp-communication": {
-      "projectType": "library",
-      "root": "projects/navapp-communication",
-      "sourceRoot": "projects/navapp-communication/src",
-      "prefix": "brnc",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/navapp-communication/tsconfig.lib.json",
-            "project": "projects/navapp-communication/ng-package.json"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/navapp-communication/src/test.ts",
-            "tsConfig": "projects/navapp-communication/tsconfig.spec.json",
-            "karmaConfig": "projects/navapp-communication/karma.conf.js",
-            "codeCoverage": true
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/navapp-communication/tsconfig.lib.json",
-              "projects/navapp-communication/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "./package.json"
-            ]
-          }
-        }
-      }
-    },
     "iframe-app-example": {
       "projectType": "application",
       "schematics": {},
