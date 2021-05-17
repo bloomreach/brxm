@@ -47,7 +47,7 @@ public class DefaultContentBeansTool implements ContentBeansTool {
      * the very small chance that it gets created 2 or 3 times in the very beginning after start up of the application.
      * Thus, on purpose not a correct double checked locking in favor of less expensive access later
      */
-    private ObjectConverter objectConverter;
+    private volatile ObjectConverter objectConverter;
 
     private String annotatedClassesResourcePath;
 
