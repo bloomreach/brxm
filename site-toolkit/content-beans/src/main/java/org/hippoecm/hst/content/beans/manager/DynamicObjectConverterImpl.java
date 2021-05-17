@@ -43,8 +43,6 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicObjectConverterImpl.class);
 
-    private final Object lock = new Object();
-
     private final Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs;
     private final DynamicBeanService dynamicBeanService;
     private final WeakReference<ContentTypes> contentTypesRef;
@@ -107,7 +105,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
 
             if (delegateeClass == null) {
-                synchronized(lock) {
+                synchronized(this) {
                     //Check if other threads have already added the required type after the lock was released
                     delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
                     if (delegateeClass == null) {
