@@ -111,8 +111,8 @@
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.5.14</groovy.version>
     <freemarker.version>2.3.28</freemarker.version>
-    <nodejs.version>v12.22.1</nodejs.version>
-    <npm.version>6.14.12</npm.version>
+    <nodejs.version>v14.16.1</nodejs.version>
+    <npm.version>7.11.2</npm.version>
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
 
