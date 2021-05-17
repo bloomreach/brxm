@@ -118,12 +118,13 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     // take the very last version from version history as the one that represents the published: this
                     // happens for live bootstrapped documents which never get really published through workflow
                     try {
-
-                        final VersionIterator allVersions = versionHistory.getAllVersions();
-                        if (allVersions.getSize() > 1) {
-                            // skipt the root version
-                            allVersions.skip(1);
-                            jcrPublishedVersion = allVersions.nextVersion();
+                        if (isLive) {
+                            final VersionIterator allVersions = versionHistory.getAllVersions();
+                            if (allVersions.getSize() > 1) {
+                                // skipt the root version
+                                allVersions.skip(1);
+                                jcrPublishedVersion = allVersions.nextVersion();
+                            }
                         }
                     } catch (VersionException e1) {
                         log.debug("There is no version in history representing the published", e1);
@@ -141,7 +142,7 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                     final Node frozenNode = jcrVersion.getFrozenNode();
                     final String versionBranchId = getStringProperty(frozenNode, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
                     if (versionBranchId.equals(branchId)) {
-                        final boolean isPublishedVersion = jcrPublishedVersion != null && jcrVersion.isSame(jcrPublishedVersion);
+                        final boolean isPublishedVersion = isLive && jcrPublishedVersion != null && jcrVersion.isSame(jcrPublishedVersion);
                         final Version version = create(jcrVersion.getCreated(), frozenNode, isPublishedVersion, branchId, versionsMeta);
                         if (isPublishedVersion) {
                             publishedVersion = version;
