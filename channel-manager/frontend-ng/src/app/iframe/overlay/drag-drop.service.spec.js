@@ -67,14 +67,12 @@ describe('DragDropService', () => {
   function createContainer(number, xtype = 'HST.NoMarkup') {
     const iframeStartContainerComment = $document.find(`#iframeStartContainerComment${number}`);
     const iframeEndContainerComment = $document.contents().find(`#iframeEndContainerComment${number}`);
-    const startCommentData = Object.assign(
-      {
-        uuid: `container${number}`,
+    const startCommentData = {
+      uuid: `container${number}`,
         'HST-Type': 'CONTAINER_COMPONENT',
         'HST-XType': xtype,
-      },
-      mockCommentData[`container${number}`],
-    );
+      ...mockCommentData[`container${number}`],
+    };
     const endCommentData = {
       uuid: `container${number}`,
       'HST-End': 'true',
@@ -93,14 +91,12 @@ describe('DragDropService', () => {
 
   function createComponent(number) {
     const iframeComponentComment = $document.find(`#iframeComponentComment${number}`)[0];
-    const commentData = Object.assign(
-      {
-        uuid: `component${number}`,
+    const commentData = {
+      uuid: `component${number}`,
         'HST-Type': 'CONTAINER_ITEM_COMPONENT',
         'HST-Label': `Component ${number}`,
-      },
-      mockCommentData[`component${number}`],
-    );
+      ...mockCommentData[`component${number}`],
+    };
     // TODO: temporary workaround
     iframeComponentComment.replaceWith($(`<!-- ${JSON.stringify(commentData)} -->`)[0]);
   }
