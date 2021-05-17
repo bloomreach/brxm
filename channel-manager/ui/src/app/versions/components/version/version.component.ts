@@ -79,24 +79,29 @@ export class VersionComponent implements OnChanges {
   }
 
   getTooltip(version: Version): string {
-    if (version.campaign && version.active && !this.versionsInfo.live) {
-      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_BLOCKED');
-    }
-
-    if (version.campaign && version.active && this.versionsInfo.live) {
-      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_LIVE');
-    }
-
-    if (version.campaign && !this.versionsInfo.live) {
-      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_WONT_RUN');
-    }
-
-    if (!!version.campaign?.to && moment(version.campaign.to).isBefore(this.currentDate)) {
+    if (!!version.campaign?.to && this.hasCampaignEnded(version)) {
       return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_ENDED');
     }
 
-    if (version.campaign) {
-      return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_SCHEDULED');
+    if (this.versionsInfo.live) {
+      if (version.campaign && version.active) {
+        return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_LIVE');
+      }
+
+      if (version.campaign) {
+        return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_SCHEDULED');
+      }
+
+    }
+
+    if (!this.versionsInfo.live) {
+      if (version.campaign && version.active) {
+        return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_BLOCKED');
+      }
+
+      if (version.campaign) {
+        return this.translateService.instant('VERSION_TOOLTIP_CAMPAIGN_WONT_RUN');
+      }
     }
 
     if (version.published) {
@@ -107,12 +112,12 @@ export class VersionComponent implements OnChanges {
   }
 
   getIcon(version: Version): string {
-    if (version.campaign && version.active && !this.versionsInfo.live) {
-      return 'remove_circle_outline';
+    if (!!version.campaign?.to && this.hasCampaignEnded(version)) {
+      return 'info_outline';
     }
 
-    if (!!version.campaign?.to && moment(version.campaign.to).isBefore(this.currentDate)) {
-      return 'info_outline';
+    if (version.campaign && version.active && !this.versionsInfo.live) {
+      return 'remove_circle_outline';
     }
 
     if (version.campaign) {
@@ -124,5 +129,9 @@ export class VersionComponent implements OnChanges {
     }
 
     return '';
+  }
+
+  hasCampaignEnded(version: Version): boolean {
+    return moment(version.campaign?.to).isBefore(this.currentDate);
   }
 }
