@@ -55,7 +55,7 @@ public class PageModelAPIConcurrencyIT extends AbstractPageModelApiITCases {
                 if (random.nextInt(100) < 10) {
                     synchronized (session) {
                         // touch namespace to trigger reload of dynamic beans
-                        session.getNode("/hippo:namespaces/pagemodelapitest/dynamiccontent/dynamiccontent")
+                        session.getNode("/hippo:namespaces/pagemodelapitest/dynamiccontent/hipposysedit:prototypes/hipposysedit:prototype")
                                 .setProperty("hippostdpubwf:createdBy", "admin");
                         session.save();
                     }
