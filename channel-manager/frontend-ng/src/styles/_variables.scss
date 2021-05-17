@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ $text-disabled: map-get($text-color, disabled);
 $icon-button-default: $text-dim;
 
 // Typography
-$font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+$font-family: 'Open Sans', 'Roboto', 'Helvetica Neue', sans-serif;
 $font-family-semi-bold: 'Open Sans Semibold', $font-family;
 $font-large: 20px;
 $font-medium: 16px;
