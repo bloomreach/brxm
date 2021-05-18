@@ -78,6 +78,7 @@ public class DocumentParamsScannerTest {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(componentConfiguration.getComponentClassName()).andReturn("NonExistingclass");
         expect(componentConfiguration.getParametersInfoClassName()).andReturn(null);
+        expect(componentConfiguration.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         replay(componentConfiguration);
         
@@ -89,6 +90,7 @@ public class DocumentParamsScannerTest {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(componentConfiguration.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
         expect(componentConfiguration.getParametersInfoClassName()).andReturn(null);
+        expect(componentConfiguration.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
         
         replay(componentConfiguration);
 
@@ -110,6 +112,7 @@ public class DocumentParamsScannerTest {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(componentConfiguration.getComponentClassName()).andReturn(JcrPathComponent.class.getName());
         expect(componentConfiguration.getParametersInfoClassName()).andReturn(JcrPathParametersInfo.class.getName());
+        expect(componentConfiguration.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         replay(componentConfiguration);
 
@@ -147,7 +150,7 @@ public class DocumentParamsScannerTest {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(componentConfiguration.getComponentClassName()).andReturn(TwoJcrPathsComponent.class.getName());
         expect(componentConfiguration.getParametersInfoClassName()).andReturn(TwoJcrPathParametersInfo.class.getName());
-
+        expect(componentConfiguration.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
         replay(componentConfiguration);
 
         final Set<String> names = DocumentParamsScanner.getNames(componentConfiguration, classLoader);
@@ -168,6 +171,7 @@ public class DocumentParamsScannerTest {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(componentConfiguration.getComponentClassName()).andReturn(InheritanceComponent.class.getName());
         expect(componentConfiguration.getParametersInfoClassName()).andReturn(InheritanceParametersInfo.class.getName());
+        expect(componentConfiguration.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         replay(componentConfiguration);
 
@@ -182,10 +186,12 @@ public class DocumentParamsScannerTest {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(componentConfiguration.getComponentClassName()).andReturn(JcrPathComponent.class.getName()).times(2);
         expect(componentConfiguration.getParametersInfoClassName()).andReturn(JcrPathParametersInfo.class.getName()).times(2);
+        expect(componentConfiguration.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         HstComponentConfiguration componentConfiguration2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(componentConfiguration2.getComponentClassName()).andReturn(JcrPathComponent2.class.getName()).times(2);
         expect(componentConfiguration2.getParametersInfoClassName()).andReturn(JcrPathParametersInfo2.class.getName()).times(2);
+        expect(componentConfiguration2.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         replay(componentConfiguration, componentConfiguration2);
 
@@ -205,6 +211,7 @@ public class DocumentParamsScannerTest {
         expect(componentConfiguration.getParameter(eq("news-jcrPath-2"))).andReturn("/jcrPathTwoNews");
         expect(componentConfiguration.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
         expect(componentConfiguration.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
+        expect(componentConfiguration.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
         replay(componentConfiguration);
 
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(componentConfiguration, classLoader);
@@ -217,18 +224,21 @@ public class DocumentParamsScannerTest {
     public void two_jcrPaths_from_ComponentConfiguration_tree() {
         HstComponentConfiguration root = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(root.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
+        expect(root.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         HstComponentConfiguration child1 = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(child1.getComponentClassName()).andReturn(JcrPathComponent.class.getName());
         expect(child1.getParameter(eq("news-jcrPath"))).andReturn("/jcrPathNews");
         expect(child1.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
         expect(child1.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
+        expect(child1.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         HstComponentConfiguration child2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(child2.getComponentClassName()).andReturn(JcrPathComponent2.class.getName());
         expect(child2.getParameter(eq("news-jcrPath-2"))).andReturn("/jcrPathTwoNews");
         expect(child2.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
         expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
+        expect(child2.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         expect(root.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
         Map<String, HstComponentConfiguration> expectedChildren = new HashMap<>();
@@ -259,6 +269,7 @@ public class DocumentParamsScannerTest {
     private HstComponentConfiguration setUpHstConfiguration() {
         HstComponentConfiguration root = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(root.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
+        expect(root.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         HstComponentConfiguration child1 = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(child1.getComponentClassName()).andReturn(JcrPathComponent.class.getName());
@@ -270,6 +281,7 @@ public class DocumentParamsScannerTest {
         expectedParameterPrefixes.add("professional");
         expect(child1.getParameterPrefixes()).andReturn(expectedParameterPrefixes).anyTimes();
         expect(child1.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
+        expect(child1.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         HstComponentConfiguration child2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(child2.getComponentClassName()).andReturn(JcrPathComponent2.class.getName());
@@ -279,6 +291,7 @@ public class DocumentParamsScannerTest {
                 .andReturn("/jcrPathTwoNewsProfessional");
         expect(child2.getParameterPrefixes()).andReturn(expectedParameterPrefixes).anyTimes();
         expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
+        expect(child2.getDynamicComponentParameters()).andStubReturn(Collections.emptyList());
 
         expect(root.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
         Map<String, HstComponentConfiguration> expectedChildren = new HashMap<>();

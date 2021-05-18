@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.hippoecm.hst.configuration.ConfigurationUtils;
+import org.hippoecm.hst.configuration.components.DynamicParameterConfig;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -118,11 +120,21 @@ public class DocumentParamsScanner {
                                        final ClassLoader classLoader) {
         final String componentClassName = config.getComponentClassName();
         final String parametersInfoClassName = config.getParametersInfoClassName();
-        return getParameterNames(componentClassName, parametersInfoClassName, classLoader);
+        Set<String> parameterNames = getAnnotationBasedParameterNames(componentClassName, parametersInfoClassName, classLoader);
+        parameterNames.addAll(getDynamicJcrPathParameterNames(config));
+        return parameterNames;
     }
 
-    private static Set<String> getParameterNames(final String componentClassName, final String parametersInfoClassName,
-            final ClassLoader classLoader) {
+    private static Set<String> getDynamicJcrPathParameterNames(final HstComponentConfiguration config) {
+        return config.getDynamicComponentParameters().stream()
+                .filter(param -> param.getComponentParameterConfig() != null)
+                .filter(param -> param.getComponentParameterConfig().getType() == DynamicParameterConfig.Type.JCR_PATH)
+                .map(param -> param.getName())
+                .collect(Collectors.toSet());
+    }
+
+    private static Set<String> getAnnotationBasedParameterNames(final String componentClassName, final String parametersInfoClassName,
+                                                                final ClassLoader classLoader) {
 
         if (isEmpty(componentClassName) && isEmpty(parametersInfoClassName)) {
             return Collections.emptySet();
