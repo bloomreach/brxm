@@ -22,6 +22,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.PageModelApiCleanupValve;
 import org.hippoecm.hst.core.container.PageModelApiInitializationValve;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
+import org.hippoecm.hst.pagemodelapi.v10.DeterministicJsonPointerFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Test;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -37,6 +38,7 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
 
     @Test
     public void assert_no_http_session_created_homepage() throws Exception {
+        DeterministicJsonPointerFactory.reset();
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/spa/resourceapi", null);
@@ -51,6 +53,7 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
 
     @Test
     public void assertions_http_session_creation_not_allowed_for_page_model_api_request() throws Exception {
+        DeterministicJsonPointerFactory.reset();
 
         // since in 14.2 it is allowed by default, we need to switch the default to not allowed
         PageModelApiInitializationValve component = HstServices.getComponentManager().getComponent(PageModelApiInitializationValve.class.getName());
@@ -82,6 +85,7 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
 
     @Test
     public void assertions_http_session_creation_allowed_for_page_model_api_request_if_configured_to_be_allowed() throws Exception {
+        DeterministicJsonPointerFactory.reset();
         PageModelApiInitializationValve component = HstServices.getComponentManager().getComponent(PageModelApiInitializationValve.class.getName());
 
         // don't report on http session creation

@@ -95,22 +95,29 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             }
 
             jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
+            if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
+                log.info("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
+                         "removed from all content including from prototypes.");
+                return null;
+            }
+
+
             Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
 
             if (delegateeClass == null) {
-                if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
-                    log.info("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
-                            "removed from all content including from prototypes.");
-                    return null;
-                }
+                synchronized(this) {
+                    //Check if other threads have already added the required type after the lock was released
+                    delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
+                    if (delegateeClass == null) {
+                        if (isDocumentType(useNode) || isCompoundType(useNode)) {
+                            delegateeClass = createDynamicBeanDefinition(useNode);
+                        }
 
-                if (isDocumentType(useNode) || isCompoundType(useNode)) {
-                    delegateeClass = createDynamicBeanDefinition(useNode);
-                }
-
-                if (delegateeClass == null) {
-                    // no exact match, try a fallback type
-                    delegateeClass = getFallbackClass(jcrPrimaryNodeType, useNode);
+                        if (delegateeClass == null) {
+                            // no exact match, try a fallback type
+                            delegateeClass = getFallbackClass(jcrPrimaryNodeType, useNode);
+                        }
+                    }
                 }
             }
 
