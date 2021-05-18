@@ -22,17 +22,20 @@ import org.hippoecm.hst.pagemodelapi.v10.core.container.JsonPointerFactoryImpl;
  */
 public class DeterministicJsonPointerFactory extends JsonPointerFactoryImpl {
 
-    private static final String CONTENT_ID_JSON_NAME_PREFIX = "u";
+    private static final ThreadLocal<DeterministicJsonPointerFactory> tlDeterministicJsonPointerFactoryHolder = new ThreadLocal<>();
 
-    static long id = 0;
+    public static DeterministicJsonPointerFactory get() {
+        return tlDeterministicJsonPointerFactoryHolder.get();
+    }
 
+    private long id = 0;
     public static void reset() {
-        id = 0;
+        tlDeterministicJsonPointerFactoryHolder.set(new DeterministicJsonPointerFactory());
     }
 
     @Override
     public String createJsonPointerId() {
-        return createJsonPointerIdForString("id" + String.valueOf(id++));
+        return createJsonPointerIdForString("id" + get().id++);
     }
 
 }

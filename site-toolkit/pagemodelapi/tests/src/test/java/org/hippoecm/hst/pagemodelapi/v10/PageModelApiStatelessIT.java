@@ -39,7 +39,7 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
 
     @Test
     public void assert_no_http_session_created_homepage() throws Exception {
-
+        DeterministicJsonPointerFactory.reset();
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/spa/resourceapi", null);
 
@@ -53,7 +53,7 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
 
     @Test
     public void assertions_http_session_creation_not_allowed_for_page_model_api_request() throws Exception {
-
+        DeterministicJsonPointerFactory.reset();
         // since in 14.2 it is allowed by default, we need to switch the default to not allowed
         PageModelApiInitializationValve component = HstServices.getComponentManager().getComponent(PageModelApiInitializationValve.class.getName());
         component.setStatelessRequestValidation(true);
@@ -84,6 +84,7 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
 
     @Test
     public void assertions_http_session_creation_allowed_for_page_model_api_request_if_configured_to_be_allowed() throws Exception {
+        DeterministicJsonPointerFactory.reset();
         PageModelApiInitializationValve component = HstServices.getComponentManager().getComponent(PageModelApiInitializationValve.class.getName());
 
         try {
@@ -105,7 +106,7 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
 
     @Test
     public void assertions_existing_http_session_allowed_for_page_model_api_request() throws Exception {
-
+        DeterministicJsonPointerFactory.reset();
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/spa/resourceapi/httpsessionpage", null);
 
