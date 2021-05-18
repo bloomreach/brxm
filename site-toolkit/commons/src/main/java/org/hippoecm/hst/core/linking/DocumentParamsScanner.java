@@ -126,7 +126,9 @@ public class DocumentParamsScanner {
     }
 
     private static Set<String> getDynamicJcrPathParameterNames(final HstComponentConfiguration config) {
-        return config.getDynamicComponentParameters().stream().filter(param -> param.getComponentParameterConfig().getType() == DynamicParameterConfig.Type.JCR_PATH)
+        return config.getDynamicComponentParameters().stream()
+                .filter(param -> param.getComponentParameterConfig() != null)
+                .filter(param -> param.getComponentParameterConfig().getType() == DynamicParameterConfig.Type.JCR_PATH)
                 .map(param -> param.getName())
                 .collect(Collectors.toSet());
     }
