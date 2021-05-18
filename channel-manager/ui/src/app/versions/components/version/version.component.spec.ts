@@ -114,8 +114,6 @@ describe('VersionComponent', () => {
     component.version = mockVersion;
     component.renderPath = renderPath;
     component.isSelected = false;
-
-    fixture.detectChanges();
   });
 
   it('should create', () => {
