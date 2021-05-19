@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -305,8 +305,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     private List<WebFileBundleDefinitionImpl> getWebFileBundleDefsForSite(final ConfigurationModelImpl model, final String siteName) {
         return model.getModulesStream()
-                    .filter(m -> siteName.equals(m.getSiteName()))
-                    .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
+                .filter(m -> siteName.equals(m.getSiteName()))
+                .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
     }
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
@@ -658,7 +658,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             log.info("ConfigurationService: verify config");
             // Ensure/force cluster synchronization in case another instance just modified the baseline
             session.refresh(true);
-            return applyConfig(new ConfigurationModelImpl().build(), loadBootstrapModel(), true, false, true, false, true);
+            try (ConfigurationModelImpl configurationModelImpl = new ConfigurationModelImpl()) {
+                return applyConfig(configurationModelImpl.build(), loadBootstrapModel(), true, false, true, false, true);
+            }
         } finally {
             lockManager.unlock();
         }
@@ -723,19 +725,19 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     public void importZippedContent(final File zipFile, final Node parentNode) throws RepositoryException, IOException {
 
-        final FileSystem zipFileSystem = ZipCompressor.createZipFileSystem(zipFile.getAbsolutePath(), false);
-        final Path zipRootPath = zipFileSystem.getPath("/");
+        try (FileSystem zipFileSystem = ZipCompressor.createZipFileSystem(zipFile.getAbsolutePath(), false)) {
+            final Path zipRootPath = zipFileSystem.getPath("/");
+            final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));
+            final ModuleContext moduleContext = new ImportModuleContext(module, zipRootPath);
+            try {
+                new ModuleReader().readModule(module, moduleContext, false);
 
-        final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));
-        final ModuleContext moduleContext = new ImportModuleContext(module, zipRootPath);
-        try {
-            new ModuleReader().readModule(module, moduleContext, false);
-
-            // todo: check for missing content source
-            final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
-            contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
-        } catch (Exception e) {
-            throw new RepositoryException("Import failed", e);
+                // todo: check for missing content source
+                final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
+                contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
+            } catch (Exception e) {
+                throw new RepositoryException("Import failed", e);
+            }
         }
 
     }
@@ -916,7 +918,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         try {
             ConfigurationModelImpl model = baselineService.loadBaseline(session, hcmSiteNames);
             if (model == null) {
-                model = new ConfigurationModelImpl().build();
+                try (ConfigurationModelImpl configurationModelImpl = new ConfigurationModelImpl()) {
+                    model = configurationModelImpl.build();
+                }
             }
             return model;
         } catch (Exception e) {

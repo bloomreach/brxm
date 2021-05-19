@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,40 +41,38 @@ public class ExcelImportFileReader implements ImportFileReader {
 
     @Override
     public List<String[]> read(final File file) throws IOException {
-        final Workbook workbook;
-        try {
-            workbook = WorkbookFactory.create(new FileInputStream(file));
+
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(file))) {
+            final List<String[]> data = new ArrayList<>();
+            final Sheet sheet = workbook.getSheetAt(0);
+            final Iterator<Row> rowIterator = sheet.rowIterator();
+            while (rowIterator.hasNext()) {
+                final Row row = rowIterator.next();
+                final List<String> rowData = new ArrayList<>();
+                boolean add = true;
+                for (int c = 0; c < row.getLastCellNum(); c++) {
+                    Cell cell = row.getCell(c);
+                    if (cell == null) {
+                        log.warn("Skipping translation on row " + row.getRowNum() + ": cell " + c + " is empty");
+                        add = false;
+                        break;
+                    }
+                    if (cell.getCellType() != CellType.STRING) {
+                        log.warn("Skipping translation on row " + row.getRowNum() + ": cell " + c + " does not contain a string");
+                        add = false;
+                        break;
+                    }
+                    rowData.add(cell.getStringCellValue());
+                }
+                if (add) {
+                    data.add(rowData.toArray(new String[0]));
+                }
+            }
+
+            return data;
         } catch (EncryptedDocumentException e) {
             throw new IOException("Could not read file", e);
         }
-
-        final List<String[]> data = new ArrayList<>();
-        final Sheet sheet = workbook.getSheetAt(0);
-        final Iterator<Row> rowIterator = sheet.rowIterator();
-        while (rowIterator.hasNext()) {
-            final Row row = rowIterator.next();
-            final List<String> rowData = new ArrayList<>();
-            boolean add = true;
-            for (int c = 0; c < row.getLastCellNum(); c++) {
-                Cell cell = row.getCell(c);
-                if (cell == null) {
-                    log.warn("Skipping translation on row " + row.getRowNum() + ": cell " + c + " is empty");
-                    add = false;
-                    break;
-                }
-                if (cell.getCellType() != CellType.STRING) {
-                    log.warn("Skipping translation on row " + row.getRowNum() + ": cell " + c + " does not contain a string");
-                    add = false;
-                    break;
-                }
-                rowData.add(cell.getStringCellValue());
-            }
-            if (add) {
-                data.add(rowData.toArray(new String[0]));
-            }
-        }
-
-        return data;
     }
 
 }
