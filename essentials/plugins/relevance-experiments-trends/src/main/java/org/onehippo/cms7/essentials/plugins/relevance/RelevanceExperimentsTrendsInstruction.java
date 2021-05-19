@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -69,6 +70,7 @@ public class RelevanceExperimentsTrendsInstruction implements Instruction {
         return Status.SUCCESS;
     }
 
+    @Override
     public void populateChangeMessages(BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(Type.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
         changeMessageQueue.accept(Type.EXECUTE, "Add ElasticSearch related configuration to Maven cargo plugin configuration.");
@@ -78,9 +80,12 @@ public class RelevanceExperimentsTrendsInstruction implements Instruction {
 
     private void removePlatformProperty(String property) throws IOException
     {
-        List<String> out = Files.lines(projectService.getPlatformHstConfigPropertiesPath())
-                .filter(line -> !line.startsWith(property))
-                .collect(Collectors.toList());
-        Files.write(projectService.getPlatformHstConfigPropertiesPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        try (Stream<String> lines = Files.lines(projectService.getPlatformHstConfigPropertiesPath())) {
+            List<String> out = lines
+                    .filter(line -> !line.startsWith(property))
+                    .collect(Collectors.toList());
+            Files.write(projectService.getPlatformHstConfigPropertiesPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+
+        }
     }
 }
