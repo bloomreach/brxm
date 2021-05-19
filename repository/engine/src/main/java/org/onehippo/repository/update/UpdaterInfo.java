@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ class UpdaterInfo {
      * @throws ClassNotFoundException if the the updater class could not be found.
      * @throws RepositoryException if something went wrong while reading the node.
      */
-    UpdaterInfo(Node node) throws Exception {
+    UpdaterInfo(Node node) throws RepositoryException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         if (!node.isNodeType("hipposys:updaterinfo")) {
             throw new IllegalArgumentException("Node must be of type hipposys:updaterinfo");
         }
@@ -101,9 +101,10 @@ class UpdaterInfo {
         if (klass != null && !klass.isEmpty()) {
             updaterClass = (Class<? extends NodeUpdateVisitor>) Class.forName(klass);
         } else {
-            final GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
-            final GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
-            updaterClass = gcl.parseClass(gcs, false);
+            try (GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader()) {
+                final GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
+                updaterClass = gcl.parseClass(gcs, false);
+            }
         }
         if (!NodeUpdateVisitor.class.isAssignableFrom(updaterClass)) {
             throw new IllegalArgumentException("Class must implement " + NodeUpdateVisitor.class.getName());

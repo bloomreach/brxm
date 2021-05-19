@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class DigestUtils {
 
             // digest the InputStream by copying it and discarding the output
             try (InputStream dis = new DigestInputStream(is, md)) {
-                IOUtils.copyLarge(dis, new NullOutputStream());
+                IOUtils.copyLarge(dis, NullOutputStream.NULL_OUTPUT_STREAM);
             }
 
             // prepend algorithm using same style as used in Hippo CMS password hashing

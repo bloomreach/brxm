@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -80,8 +80,8 @@ public class ResourceResolverProfiler {
 
         Object retValue = null;
 
-        try {
-            task = (hdcStarted) ? HDC.getCurrentTask().startSubtask(TASK_NAME) : new IsolatedTaskImpl(TASK_NAME);
+        try(IsolatedTaskImpl taskImpl = new IsolatedTaskImpl(TASK_NAME)) {
+            task = (hdcStarted) ? HDC.getCurrentTask().startSubtask(TASK_NAME) : taskImpl;
             retValue = call.proceed();
         } finally {
             if (task != null) {
