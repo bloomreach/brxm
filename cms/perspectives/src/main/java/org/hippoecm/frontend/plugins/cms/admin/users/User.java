@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.Session;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.session.UserSession;
@@ -55,6 +54,7 @@ import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.bloomreach.xm.repository.security.ChangePasswordManager.ONEDAYMS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 
 /**
@@ -62,6 +62,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
  */
 public class User implements Comparable<User>, IClusterable {
 
+    private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     private static final Logger log = LoggerFactory.getLogger(User.class);
 
     private static final class SerializableEntry<K, V> implements Entry<K, V>, Serializable {
@@ -402,8 +403,16 @@ public class User implements Comparable<User>, IClusterable {
         }
 
         if (!external) {
-            passwordMaxAge = SecurityManagerHelper.getChangePasswordManager().getPasswordMaxAgeMs();
+            passwordMaxAge = getPasswordMaxAge(node.getSession());
         }
+    }
+
+    private long getPasswordMaxAge(final javax.jcr.Session session) throws RepositoryException {
+        final Node securityNode = session.getRootNode().getNode(SECURITY_PATH);
+        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
+            return (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
+        }
+        return -1l;
     }
 
     public List<String> getUserRoles() {
