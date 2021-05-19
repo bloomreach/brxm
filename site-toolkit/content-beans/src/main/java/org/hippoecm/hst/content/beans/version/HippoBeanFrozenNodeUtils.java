@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -137,9 +138,12 @@ public class HippoBeanFrozenNodeUtils {
                     // just return the proxy object itself since that is the canonical we are looking for
                     return wrapper.getHippoNode();
                 case "getDisplayName":
-                    // Possibly a different name is stored on the handle with hippo:name *but* never on a frozenNode.
-                    // hence just return the name (HippoBean#getDisplayName()) also always returns just the node name
-                    return name;
+                    try {
+                        // the workspace might not have a node for the absolute workspace path
+                        return ((HippoNode) frozenNode.getSession().getNode(absWorkspacePath)).getDisplayName();
+                    } catch (PathNotFoundException e) {
+                        return name;
+                    }
                 case "pendingChanges":
                     return new EmptyNodeIterator();
                 case "isVirtual":
