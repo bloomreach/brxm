@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class NodeMoveGetPathIssueTest extends RepositoryTestCase {
                             .containsExactlyInAnyOrder("Skipping facet rule in not-supported location",
                                     "Exception while fetching path for facet rule. Most likely the result of a node move which " +
                                             "has not been processed by other (session) listeners. Ignore this exception");
-                } catch (Exception e) {
+                } catch (AssertionError e) {
                     // sometimes the #getPath succeeds (concurrency?). Hence the test also passes if only the warning below
                     // is logged
                     assertThat(interceptor.messages().collect(Collectors.toSet()))
