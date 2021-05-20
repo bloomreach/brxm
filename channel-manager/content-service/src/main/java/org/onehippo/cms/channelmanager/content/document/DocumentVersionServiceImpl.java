@@ -310,7 +310,7 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
                 return true;
             }
             // only when different it requires an update
-            return !stored.get().equals(update);
+            return !update.equals(stored.get().getVersionLabel());
         } else {
             // stored is absent, if inpout not null, update required
             return update != null;
