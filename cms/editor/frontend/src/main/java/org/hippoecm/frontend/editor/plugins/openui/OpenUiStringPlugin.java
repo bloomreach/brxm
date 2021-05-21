@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.openui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -39,12 +41,14 @@ import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.viewer.ComparePlugin;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionPoint;
@@ -213,13 +217,14 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
     private class DocumentFieldsBehavior extends AbstractDefaultAjaxBehavior {
         private static final String QUERY_PARAM_PATH = "fieldpath";
         private static final String QUERY_PARAM_COMPARE = "compare";
+        private static final String CURRENT_CONTAINER_COMPOUND = ".";
 
         @Override
         protected void respond(final AjaxRequestTarget target) {
             final RequestCycle requestCycle = RequestCycle.get();
             final Request request = requestCycle.getRequest();
             final IRequestParameters queryParameters = request.getQueryParameters();
-            final List<StringValue> path = queryParameters.getParameterValues(QUERY_PARAM_PATH);
+            final List<StringValue> path = convertCurrentContainerCompoundPathSegment(queryParameters.getParameterValues(QUERY_PARAM_PATH));
             final StringValue compare = queryParameters.getParameterValue(QUERY_PARAM_COMPARE);
             final JSONObject result = new JSONObject();
 
@@ -243,6 +248,28 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
                     .map(StringValue::toString)
                     .toArray(String[]::new));
         }
-    }
 
+        private List<StringValue> convertCurrentContainerCompoundPathSegment(final List<StringValue> sourcePath) {
+            final String compoundPath = (sourcePath != null && !sourcePath.isEmpty()) ? sourcePath.get(0).toString() : null;
+
+            if (CURRENT_CONTAINER_COMPOUND.equals(compoundPath)) {
+                try {
+                    final Node compoundNode =
+                        ((JcrPropertyValueModel) getModel()).getJcrPropertymodel().getProperty().getParent();
+                    if (compoundNode.isNodeType(HippoNodeType.NT_COMPOUND)) {
+                        final List<StringValue> convertedPath = new ArrayList<>(sourcePath);
+                        convertedPath.set(0, StringValue.valueOf(compoundNode.getName()));
+                        if (sourcePath.size() > 2 && NumberUtils.isDigits(sourcePath.get(1).toString())) {
+                            convertedPath.set(1, StringValue.valueOf(compoundNode.getIndex() - 1));
+                        }
+                        return convertedPath;
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Failed to resolve the container compound node.", e);
+                }
+            }
+
+            return sourcePath;
+        }
+    }
 }
