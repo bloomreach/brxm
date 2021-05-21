@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms</groupId>
     <artifactId>hippo-configuration-management</artifactId>
-    <version>12.6.16-SNAPSHOT</version>
+    <version>12.6.17-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Configuration Management Model</name>
