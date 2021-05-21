@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>13.4.9-SNAPSHOT</version>
+    <version>13.4.10-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Plugin Robots.txt Generator</name>
   <description>Hippo Plugin Robots.txt Generator</description>
   <artifactId>hippo-plugin-robotstxt</artifactId>
-  <version>13.4.9-SNAPSHOT</version>
+  <version>13.4.10-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
