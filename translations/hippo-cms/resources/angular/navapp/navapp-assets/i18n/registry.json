@@ -658,14 +658,8 @@
       "locales" : null
     },
     "MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_NO_SEARCH_KEYWORDS" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "MENU_CONTAINER_ACCOUNT_ANALYTICS" : {
       "status" : "CLEAN",
