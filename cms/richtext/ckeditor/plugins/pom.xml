@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-richtext-ckeditor</artifactId>
-    <version>13.4.9-SNAPSHOT</version>
+    <version>13.4.10-SNAPSHOT</version>
   </parent>
 
   <name>CMS Rich Text CKEditor Plugins</name>
