@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.bloomreach</groupId>
     <artifactId>xm-spa-example-site</artifactId>
-    <version>14.6.0-SNAPSHOT</version>
+    <version>14.7.0-SNAPSHOT</version>
   </parent>
   <artifactId>xm-spa-example-components</artifactId>
   <packaging>jar</packaging>
