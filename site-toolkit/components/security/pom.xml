@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>components</artifactId>
-    <version>14.6.0-SNAPSHOT</version>
+    <version>14.6.0</version>
   </parent>
 
   <name>Hippo Site Toolkit Security Component</name>

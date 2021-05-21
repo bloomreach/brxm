@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.6.0-SNAPSHOT</version>
+    <version>14.6.0</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -31,7 +31,7 @@
 
   <groupId>org.onehippo.cms</groupId>
   <artifactId>hippo-configuration-management</artifactId>
-  <version>14.6.0-SNAPSHOT</version>
+  <version>14.6.0</version>
   
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
