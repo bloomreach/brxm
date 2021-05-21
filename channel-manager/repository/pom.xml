@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>13.4.9-SNAPSHOT</version>
+    <version>13.4.9</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager-repository</artifactId>

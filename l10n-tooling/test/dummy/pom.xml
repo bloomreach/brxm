@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms.l10n</groupId>
     <artifactId>hippo-cms-l10n-tooling-tests</artifactId>
-    <version>13.4.9-SNAPSHOT</version>
+    <version>13.4.9</version>
   </parent>
   
   <name>Hippo CMS Translations Tooling Test Dummy</name>
