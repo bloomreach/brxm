@@ -48,10 +48,11 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionPoint;
+import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -224,14 +225,16 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
             final RequestCycle requestCycle = RequestCycle.get();
             final Request request = requestCycle.getRequest();
             final IRequestParameters queryParameters = request.getQueryParameters();
-            final List<StringValue> path = convertCurrentContainerCompoundPathSegment(queryParameters.getParameterValues(QUERY_PARAM_PATH));
             final StringValue compare = queryParameters.getParameterValue(QUERY_PARAM_COMPARE);
+            final Optional<Node> nodeOption = getNode(compare);
+            final List<StringValue> path = convertCurrentContainerCompoundPathSegment(
+                    queryParameters.getParameterValues(QUERY_PARAM_PATH), nodeOption);
             final JSONObject result = new JSONObject();
 
             result.put("data", JSONObject.NULL);
 
             if (!Objects.isNull(path) && !path.isEmpty()) {
-                getNode(compare).ifPresent(node -> result.put("data", getValue(path, node)));
+                nodeOption.ifPresent(node -> result.put("data", getValue(path, node)));
             }
 
             requestCycle.replaceAllRequestHandlers(new TextRequestHandler("application/json", "UTF-8", result.toString()));
@@ -249,19 +252,39 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
                     .toArray(String[]::new));
         }
 
-        private List<StringValue> convertCurrentContainerCompoundPathSegment(final List<StringValue> sourcePath) {
-            final String compoundPath = (sourcePath != null && !sourcePath.isEmpty()) ? sourcePath.get(0).toString() : null;
+        private List<StringValue> convertCurrentContainerCompoundPathSegment(final List<StringValue> sourcePath,
+                final Optional<Node> nodeOption) {
+            final String compoundPath = (sourcePath != null && !sourcePath.isEmpty()) ? sourcePath.get(0).toString()
+                    : null;
 
             if (CURRENT_CONTAINER_COMPOUND.equals(compoundPath)) {
                 try {
-                    final Node compoundNode =
-                        ((JcrPropertyValueModel) getModel()).getJcrPropertymodel().getProperty().getParent();
+                    final JcrPropertyValueModel<?> propValueModel = (JcrPropertyValueModel<?>) getModel();
+                    final Node compoundNode = propValueModel.getJcrPropertymodel().getProperty().getParent();
+
                     if (compoundNode.isNodeType(HippoNodeType.NT_COMPOUND)) {
+                        final String compoundName = compoundNode.getName();
                         final List<StringValue> convertedPath = new ArrayList<>(sourcePath);
-                        convertedPath.set(0, StringValue.valueOf(compoundNode.getName()));
-                        if (sourcePath.size() > 2 && NumberUtils.isDigits(sourcePath.get(1).toString())) {
-                            convertedPath.set(1, StringValue.valueOf(compoundNode.getIndex() - 1));
+
+                        // replace the current compound reference, '.', by the real compound field name.
+                        convertedPath.set(0, StringValue.valueOf(compoundName));
+
+                        if (nodeOption.isPresent()) {
+                            final Node node = nodeOption.get();
+                            final ContentType contentType = fieldLookupService.getContentTypeForNode(node);
+                            final ContentTypeChild compoundType = contentType != null
+                                    ? fieldLookupService.getContentTypeChildByKey(contentType, compoundName)
+                                    : null;
+
+                            if (compoundType != null && compoundType.isMultiple()) {
+                                // if the compound type is multiple, but if the second path param is not in digits,
+                                // let's insert the compound index number for convenience.
+                                if (convertedPath.size() > 1 && !NumberUtils.isDigits(convertedPath.get(1).toString())) {
+                                    convertedPath.add(1, StringValue.valueOf(compoundNode.getIndex() - 1));
+                                }
+                            }
                         }
+
                         return convertedPath;
                     }
                 } catch (RepositoryException e) {
