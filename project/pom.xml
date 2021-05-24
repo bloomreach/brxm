@@ -53,7 +53,7 @@
     <javax.activation.version>1.1.1</javax.activation.version>
     <servlet-api.version>3.1.0</servlet-api.version>
     <javax.jcr.version>2.0</javax.jcr.version>
-    <xml-apis.version>1.0.b2</xml-apis.version>
+    <xml-apis.version>1.4.01</xml-apis.version>
     <jta.version>1.1.1</jta.version>
     <mail.version>1.4.7</mail.version>
     <slf4j.version>1.7.30</slf4j.version>
