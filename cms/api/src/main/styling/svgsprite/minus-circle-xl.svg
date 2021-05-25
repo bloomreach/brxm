@@ -16,9 +16,9 @@
 -->
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-  <g>
-    <path d="M7.346,16C3.248,16,0,12.597,0,8.5c0-4.098,3.248-7.345,7.346-7.345c4.099,0,7.5,3.247,7.5,7.345 C14.846,12.597,11.444,16,7.346,16z"/>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <path fill="#D40022" d="M7.92220127,15.5 C3.78169204,15.5 0.5,12.0614685 0.5,7.9216908 C0.5,3.78090266 3.78169204,0.5 7.92220127,0.5 C12.0637209,0.5 15.5,3.78090266 15.5,7.9216908 C15.5,12.0614685 12.0627105,15.5 7.92220127,15.5 Z"/>
+    <polygon fill="currentColor" points="3.5 7.25 13 7.25 13 8.75 3.5 8.75"/>
   </g>
-  <rect x="3" y="8" fill="currentColor" width="9" height="1"/>
 </svg>
