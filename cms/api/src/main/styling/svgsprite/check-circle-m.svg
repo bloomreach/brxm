@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 -->
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-  <g>
-    <path d="M7.46,16c-4.118,0-7.461-3.343-7.461-7.461c0-4.12,3.343-7.461,7.461-7.461c4.12,0,7.462,3.342,7.462,7.461 C14.922,12.657,11.58,16,7.46,16z"/>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 32 32" xml:space="preserve">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <path fill="#3DCC3D" d="M7.99949742,15.5 C3.86024928,15.5 0.5,12.1395255 0.5,8 C0.5,3.85846401 3.86024928,0.5 7.99949742,0.5 C12.1407559,0.5 15.5,3.85946924 15.5,8 C15.5,12.1395255 12.1407559,15.5 7.99949742,15.5 Z"/>
+    <polygon fill="currentColor" points="11.9932065 4.94713439 13.0067935 6.05286561 6.42719158 12.0841673 3.42383404 8.4801383 4.57616596 7.5198617 6.573 9.915"/>
   </g>
-  <polygon fill="currentColor" points="11.291,5.161 10.42,4.67 6.658,11.343 4.287,8.003 3.472,8.582 6.734,13.203 "/>
 </svg>

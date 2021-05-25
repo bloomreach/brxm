@@ -16,10 +16,9 @@
 -->
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-  <g>
-    <path d="M14.457,11.538C15.415,13.471,14.65,15,13.148,15H1.818c-1.502,0-2.522-1.188-1.226-3.334l4.31-7.619 C5.62,2.611,6.12,1,7.622,1l0,0c1.502,0,2.002,1.611,2.72,3.047L14.457,11.538z"/>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <path fill="#FFA733" d="M14.957,11.538 C15.915,13.471 15.15,15 13.648,15 L2.318,15 C0.816,15 -0.204,13.812 1.092,11.666 L5.402,4.047 C6.12,2.611 6.62,1 8.122,1 C9.624,1 10.124,2.611 10.842,4.047 L14.957,11.538 Z"/>
+    <path fill="currentColor" d="M8.75,11.5 L8.75,13 L7.25,13 L7.25,11.5 L8.75,11.5 Z M8.75,4.5 L8.75,10.5 L7.25,10.5 L7.25,4.5 L8.75,4.5 Z"/>
   </g>
-  <rect x="7" y="6" fill="currentColor" width="1" height="5"/>
-  <rect x="7" y="12" fill="currentColor" width="1" height="1"/>
 </svg>
