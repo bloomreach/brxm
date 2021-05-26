@@ -26,6 +26,7 @@ class ChoiceFieldCtrl {
     this.$timeout = $timeout;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
+    this.prevForm = {};
   }
 
   $onInit() {
@@ -94,12 +95,7 @@ class ChoiceFieldCtrl {
     return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
   }
 
-  onDrag({
-    clone,
-    from,
-    item,
-    oldIndex,
-  }) {
+  onDrag({ clone, from, item, oldIndex, }) {
     this._nextNode = from === item.parentNode ? item.nextSibling : clone.nextSibling;
     this.$scope.$apply(() => {
       this.dragging = oldIndex;
@@ -149,10 +145,16 @@ class ChoiceFieldCtrl {
     this.fieldValues.splice(newIndex, 0, this.fieldValues.splice(oldIndex, 1)[0]);
   }
 
-  _focus(index, reset = false) {
+  _focus(index, reset = false, isCKEditor) {
     this.$timeout(() => {
-      const name = this.getFieldName(index);
-      const field = Object.keys(this.form).find(key => key.startsWith(name));
+      let field;
+
+      if (isCKEditor) {
+        field = Object.keys(this.form).find(key => !this.prevForm.hasOwnProperty(key));
+      } else {
+        const name = this.getFieldName(index);
+        field = Object.keys(this.form).find(key => key.startsWith(name));
+      }
 
       if (!field) {
         return;
@@ -164,9 +166,20 @@ class ChoiceFieldCtrl {
 
       const element = this.form[field].$$element;
 
-      element[0].focus();
-      this.$timeout(() => element[0].scrollIntoView(), 500);
+      if (field.includes('html')) {
+        this.$timeout(() => {
+          const cke = element[0].nextSibling.querySelector('.cke_editable');
+          this._focusAndScrollIntoView(cke);
+        });
+      } else {
+        this._focusAndScrollIntoView(element[0]);
+      }
     });
+  }
+
+  _focusAndScrollIntoView(element) {
+    element.focus();
+    this.$timeout(() => element.scrollIntoView({behavior: 'smooth', block: 'center'}), 500);
   }
 
   _focusAddButton() {
@@ -175,6 +188,7 @@ class ChoiceFieldCtrl {
 
   async onAdd(chosenId, index = 0) {
     try {
+      this.prevForm = { ...this.form };
       const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${chosenId}` });
       const chosenValue = this.fieldType.choices[chosenId].type === 'COMPOUND' ? { fields } : fields[chosenId][0];
 
@@ -184,7 +198,7 @@ class ChoiceFieldCtrl {
 
       this.fieldValues.splice(index, 0, { chosenId, chosenValue });
       this.form.$setDirty();
-      this._focus(index, true);
+      this._focus(index, true, chosenId.includes('html'));
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_ADD');
     }
