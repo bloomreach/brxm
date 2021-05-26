@@ -179,7 +179,7 @@ class ChoiceFieldCtrl {
 
   _focusAndScrollIntoView(element) {
     element.focus();
-    this.$timeout(() => element.scrollIntoView({behavior: 'smooth', block: 'center'}), 500);
+    this.$timeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
   }
 
   _focusAddButton() {
