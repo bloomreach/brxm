@@ -524,18 +524,16 @@ public class LocationMapResolver {
                                                                  final String[] elements,
                                                                  final Map<String,String> propertyPlaceHolderMap) {
 
+         if (locationMapTreeItem == null) {
+             return null;
+         }
          checkedLocationMapTreeItems.add(locationMapTreeItem);
          if (position == elements.length) {
              // we are ready if this locationMapTreeItem contains at least one HstSiteMapItem
              if (locationMapTreeItem.getHstSiteMapItems().size() > 0) {
                  return locationMapTreeItem;
              }
-             // there was a matched locationMapTreeItem, but it did not have sitemap items attached to it. Continue searching after
-             // a move up: if the current locationMapTreeItem is a wildcard, we need to remove the param wrt to wildcard again
-             if (((LocationMapTreeItemImpl) locationMapTreeItem).isWildCard()) {
-                 propertyPlaceHolderMap.remove(KEY_TO_PROPERTY_PREFIX + (propertyPlaceHolderMap.size()));
-             }
-             return traverseUp(locationMapTreeItem.getParentItem(), position, elements, propertyPlaceHolderMap);
+             return traverseUp(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
          }
          if (locationMapTreeItem.getChild(elements[position]) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(elements[position]))) {
              return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(elements[position]), ++position, elements, propertyPlaceHolderMap);
@@ -544,12 +542,14 @@ public class LocationMapResolver {
              return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD), ++position, elements, propertyPlaceHolderMap);
          } else if (locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))) {
              checkedLocationMapTreeItems.add(locationMapTreeItem.getChild(HstNodeTypes.ANY));
-             return getANYMatchingLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
-         } else {
-             // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
-             return traverseUp(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
+             final LocationMapTreeItem anyMatchingLocationMapTreeItem = getANYMatchingLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
+             if (anyMatchingLocationMapTreeItem.getHstSiteMapItems().size() > 0) {
+                 return anyMatchingLocationMapTreeItem;
+             }
+
          }
-        
+         // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
+         return traverseUp(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
      }
 
 
@@ -560,23 +560,14 @@ public class LocationMapResolver {
         if(locationMapTreeItem == null) {
             return null;
         }
-        if(((LocationMapTreeItemImpl)locationMapTreeItem).isWildCard()) {
-            if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
-                return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
-            } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))){
-                return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements, propertyPlaceHolderMap);
-            }
-            // as this tree path did not result in a match, remove some params again
+         final LocationMapTreeItemImpl itemImpl = (LocationMapTreeItemImpl) locationMapTreeItem;
+         if (itemImpl.isWildCard() || itemImpl.isAny()) {
+            // as this tree path did not result in a match with a sitemap item, remove some params again
             propertyPlaceHolderMap.remove(KEY_TO_PROPERTY_PREFIX+(propertyPlaceHolderMap.size()));
-            return traverseUp(locationMapTreeItem.getParentItem(), --position, elements, propertyPlaceHolderMap);
-        } else if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
-            return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements, propertyPlaceHolderMap);
-        } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))){
-            return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements, propertyPlaceHolderMap);
-        } else {    
-            return traverseUp(locationMapTreeItem.getParentItem(), --position, elements, propertyPlaceHolderMap);
-        }
-        
+         }
+         // try a different path
+         return traverseInToLocationMapTreeItem(locationMapTreeItem.getParentItem(), --position, elements, propertyPlaceHolderMap);
+
      }
      
      private LocationMapTreeItem getANYMatchingLocationMapTreeItem(final LocationMapTreeItem locationMapTreeItem,
