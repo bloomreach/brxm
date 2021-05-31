@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
@@ -775,12 +776,23 @@ public class HstRequestUtils {
             throw new IllegalStateException(String.format("Could not match cms host '%s' in platform hst model", farthestRequestHost));
         }
 
+        final ResolvedMount resolvedMount = resolvedCmsHost.matchMount(cmsHostServletRequest.getPathInfo());
+
         final String cmsLocation;
-        final VirtualHost cmsVHost = resolvedCmsHost.getVirtualHost();
-        if (cmsVHost.isContextPathInUrl() && isNotEmpty(cmsVHost.getContextPath())) {
-            cmsLocation = farthestRequestScheme + "://" + farthestRequestHost + cmsVHost.getContextPath();
+        if (resolvedMount == null) {
+            final VirtualHost cmsVHost = resolvedCmsHost.getVirtualHost();
+            if (cmsVHost.isContextPathInUrl() && isNotEmpty(cmsVHost.getContextPath())) {
+                cmsLocation = farthestRequestScheme + "://" + farthestRequestHost + cmsVHost.getContextPath();
+            } else {
+                cmsLocation = farthestRequestScheme + "://" + farthestRequestHost;
+            }
         } else {
-            cmsLocation =  farthestRequestScheme + "://" + farthestRequestHost;
+            final Mount cmsMount = resolvedMount.getMount();
+            if (cmsMount.isContextPathInUrl() && isNotEmpty(cmsMount.getContextPath())) {
+                cmsLocation = farthestRequestScheme + "://" + farthestRequestHost + cmsMount.getContextPath();
+            } else {
+                cmsLocation = farthestRequestScheme + "://" + farthestRequestHost;
+            }
         }
         return cmsLocation;
     }
