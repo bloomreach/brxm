@@ -213,7 +213,7 @@ class ChoiceFieldCtrl {
 
       if (this.fieldValues.length) {
         const prevIndex = Math.max(index - 1, 0);
-        const chosenId = this.fieldValues[prevIndex].chosenId;
+        const { chosenId } = this.fieldValues[prevIndex];
         const chosenType = this.fieldType.choices[chosenId].type;
         this._focus(prevIndex, false, chosenType === 'HTML');
       } else {
