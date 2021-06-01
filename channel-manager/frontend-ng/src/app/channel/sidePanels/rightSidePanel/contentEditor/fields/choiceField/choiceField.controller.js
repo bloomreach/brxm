@@ -149,7 +149,7 @@ class ChoiceFieldCtrl {
     this.$timeout(() => {
       let field;
 
-      if (isCKEditor) {
+      if (isCKEditor && reset) {
         field = Object.keys(this.form).find(key => !this.prevForm.hasOwnProperty(key));
       } else {
         const name = this.getFieldName(index);
@@ -166,7 +166,7 @@ class ChoiceFieldCtrl {
 
       const element = this.form[field].$$element;
 
-      if (field.includes('html')) {
+      if (isCKEditor) {
         this.$timeout(() => {
           const cke = element[0].nextSibling.querySelector('.cke_editable');
           this._focusAndScrollIntoView(cke);
@@ -190,7 +190,8 @@ class ChoiceFieldCtrl {
     try {
       this.prevForm = { ...this.form };
       const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${chosenId}` });
-      const chosenValue = this.fieldType.choices[chosenId].type === 'COMPOUND' ? { fields } : fields[chosenId][0];
+      const chosenType = this.fieldType.choices[chosenId].type;
+      const chosenValue = chosenType === 'COMPOUND' ? { fields } : fields[chosenId][0];
 
       if (!this.fieldValues) {
         this.fieldValues = [];
@@ -198,7 +199,7 @@ class ChoiceFieldCtrl {
 
       this.fieldValues.splice(index, 0, { chosenId, chosenValue });
       this.form.$setDirty();
-      this._focus(index, true, chosenId.includes('html'));
+      this._focus(index, true, chosenType === 'HTML');
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_ADD');
     }
@@ -211,7 +212,10 @@ class ChoiceFieldCtrl {
       this.form.$setDirty();
 
       if (this.fieldValues.length) {
-        this._focus(Math.max(index - 1, 0));
+        const prevIndex = Math.max(index - 1, 0);
+        const chosenId = this.fieldValues[prevIndex].chosenId;
+        const chosenType = this.fieldType.choices[chosenId].type;
+        this._focus(prevIndex, false, chosenType === 'HTML');
       } else {
         this._focusAddButton();
       }
