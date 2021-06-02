@@ -16,6 +16,14 @@
 
 package org.hippoecm.frontend.editor.plugins.openui;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -25,13 +33,6 @@ import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
 
 class FieldLookupService {
     private final ContentTypeService contentTypeService;
@@ -50,6 +51,26 @@ class FieldLookupService {
         this.logger = logger.orElse(LoggerFactory.getLogger(FieldLookupService.class));
     }
 
+    ContentType getContentTypeForNode(final Node node) throws RepositoryException {
+        return contentTypeService.getContentTypes().getContentTypeForNode(node);
+    }
+
+    ContentTypeProperty getContentTypePropertyByKey(final ContentType contentType, final String key) {
+        final Map<String, ContentTypeProperty> properties = contentType.getProperties();
+        if (properties.containsKey(key)) {
+            return properties.get(key);
+        }
+        return null;
+    }
+
+    ContentTypeChild getContentTypeChildByKey(final ContentType contentType, final String key) {
+        final Map<String, ContentTypeChild> children = contentType.getChildren();
+        if (children.containsKey(key)) {
+            return children.get(key);
+        }
+        return null;
+    }
+
     Object lookup(Node root, String[] path) {
         if (path.length == 0) {
             return fieldSerializerService.serialize(root);
@@ -59,20 +80,20 @@ class FieldLookupService {
         final String[] tail = Arrays.copyOfRange(path, 1, path.length);
 
         try {
-            final ContentType contentType = contentTypeService.getContentTypes().getContentTypeForNode(root);
+            final ContentType contentType = getContentTypeForNode(root);
 
             if (FieldSerializerService.isPrimitiveType(contentType)) {
                 return fieldSerializerService.serialize(root);
             }
 
-            final Map<String, ContentTypeProperty> properties = contentType.getProperties();
-            if (properties.containsKey(key)) {
-                return lookup(properties.get(key), root.getProperty(key), tail);
+            final ContentTypeProperty contentTypeProperty = getContentTypePropertyByKey(contentType, key);
+            if (contentTypeProperty != null) {
+                return lookup(contentTypeProperty, root.getProperty(key), tail);
             }
 
-            final Map<String, ContentTypeChild> children = contentType.getChildren();
-            if (children.containsKey(key)) {
-                return lookup(children.get(key), IteratorUtils.toArray(root.getNodes(key), Node.class), tail);
+            final ContentTypeChild contentTypeChild = getContentTypeChildByKey(contentType, key);
+            if (contentTypeChild != null) {
+                return lookup(contentTypeChild, IteratorUtils.toArray(root.getNodes(key), Node.class), tail);
             }
         } catch (RepositoryException e) {}
 
