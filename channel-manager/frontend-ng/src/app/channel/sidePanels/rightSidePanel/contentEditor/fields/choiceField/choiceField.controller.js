@@ -118,12 +118,12 @@ class ChoiceFieldCtrl {
 
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
+      this._focus(newIndex, false, this._getChosenType(newIndex) === 'HTML');
       this.form.$setDirty();
-      this._focus(newIndex);
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_REORDER');
       this._move(newIndex, oldIndex);
-      this._focus(oldIndex);
+      this._focus(oldIndex, false, this._getChosenType(oldIndex) === 'HTML');
     } finally {
       this.$scope.$broadcast('field:drop', this);
     }
@@ -133,7 +133,7 @@ class ChoiceFieldCtrl {
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
       this._move(oldIndex, newIndex);
-      this._focus(newIndex);
+      this._focus(newIndex, false, this._getChosenType(newIndex) === 'HTML');
       this.form.$setDirty();
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_REORDER');
@@ -147,7 +147,14 @@ class ChoiceFieldCtrl {
   _focus(index, reset = false, isCKEditor) {
     this.$timeout(() => {
       const name = this.getFieldName(index);
-      const field = Object.keys(this.form).sort().find(key => key.startsWith(name));
+      const fields = Object.keys(this.form);
+      let field;
+
+      if (name.includes("[")) {
+        field = fields.find(key => key.startsWith(name));
+      } else {
+        field = fields.find(key => key.startsWith(name) && !key.includes("["));
+      }
 
       if (!field) {
         return;
@@ -179,6 +186,11 @@ class ChoiceFieldCtrl {
     this.$timeout(() => this.$element.find('.field__title-buttons button').focus());
   }
 
+  _getChosenType(index) {
+    const { chosenId } = this.fieldValues[index];
+    return this.fieldType.choices[chosenId].type;
+  }
+
   async onAdd(chosenId, index = 0) {
     try {
       const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${chosenId}` });
@@ -205,9 +217,7 @@ class ChoiceFieldCtrl {
 
       if (this.fieldValues.length) {
         const prevIndex = Math.max(index - 1, 0);
-        const { chosenId } = this.fieldValues[prevIndex];
-        const chosenType = this.fieldType.choices[chosenId].type;
-        this._focus(prevIndex, false, chosenType === 'HTML');
+        this._focus(prevIndex, false, this._getChosenType(prevIndex) === 'HTML');
       } else {
         this._focusAddButton();
       }
