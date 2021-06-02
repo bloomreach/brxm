@@ -257,39 +257,47 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
             final String compoundPath = (sourcePath != null && !sourcePath.isEmpty()) ? sourcePath.get(0).toString()
                     : null;
 
-            if (CURRENT_CONTAINER_COMPOUND.equals(compoundPath)) {
-                try {
-                    final JcrPropertyValueModel<?> propValueModel = (JcrPropertyValueModel<?>) getModel();
-                    final Node compoundNode = propValueModel.getJcrPropertymodel().getProperty().getParent();
+            if (!CURRENT_CONTAINER_COMPOUND.equals(compoundPath)) {
+                return sourcePath;
+            }
 
-                    if (compoundNode.isNodeType(HippoNodeType.NT_COMPOUND)) {
-                        final String compoundName = compoundNode.getName();
-                        final List<StringValue> convertedPath = new ArrayList<>(sourcePath);
+            try {
+                final JcrPropertyValueModel<?> propValueModel = (JcrPropertyValueModel<?>) getModel();
+                final Node compoundNode = propValueModel.getJcrPropertymodel().getProperty().getParent();
 
-                        // replace the current compound reference, '.', by the real compound field name.
-                        convertedPath.set(0, StringValue.valueOf(compoundName));
-
-                        if (nodeOption.isPresent()) {
-                            final Node node = nodeOption.get();
-                            final ContentType contentType = fieldLookupService.getContentTypeForNode(node);
-                            final ContentTypeChild compoundType = contentType != null
-                                    ? fieldLookupService.getContentTypeChildByKey(contentType, compoundName)
-                                    : null;
-
-                            if (compoundType != null && compoundType.isMultiple()) {
-                                // if the compound type is multiple, but if the second path param is not in digits,
-                                // let's insert the compound index number for convenience.
-                                if (convertedPath.size() > 1 && !NumberUtils.isDigits(convertedPath.get(1).toString())) {
-                                    convertedPath.add(1, StringValue.valueOf(compoundNode.getIndex() - 1));
-                                }
-                            }
-                        }
-
-                        return convertedPath;
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Failed to resolve the container compound node.", e);
+                if (!compoundNode.isNodeType(HippoNodeType.NT_COMPOUND)) {
+                    return sourcePath;
                 }
+
+                final List<StringValue> convertedPath = new ArrayList<>(sourcePath);
+
+                // replace the current compound reference, '.', by the real compound field name.
+                final String compoundName = compoundNode.getName();
+                convertedPath.set(0, StringValue.valueOf(compoundName));
+
+                if (!nodeOption.isPresent()) {
+                    return convertedPath;
+                }
+
+                final Node node = nodeOption.get();
+                final ContentType contentType = fieldLookupService.getContentTypeForNode(node);
+                final ContentTypeChild compoundType = contentType != null
+                        ? fieldLookupService.getContentTypeChildByKey(contentType, compoundName)
+                        : null;
+
+                if (compoundType == null || !compoundType.isMultiple()) {
+                    return convertedPath;
+                }
+
+                // if the compound type is multiple, but if the second path param is not in digits,
+                // let's insert the compound index number for convenience.
+                if (convertedPath.size() > 1 && !NumberUtils.isDigits(convertedPath.get(1).toString())) {
+                    convertedPath.add(1, StringValue.valueOf(compoundNode.getIndex() - 1));
+                }
+
+                return convertedPath;
+            } catch (RepositoryException e) {
+                log.error("Failed to resolve the container compound node.", e);
             }
 
             return sourcePath;
