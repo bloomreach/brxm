@@ -26,7 +26,6 @@ class ChoiceFieldCtrl {
     this.$timeout = $timeout;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
-    this.prevForm = {};
   }
 
   $onInit() {
@@ -147,14 +146,8 @@ class ChoiceFieldCtrl {
 
   _focus(index, reset = false, isCKEditor) {
     this.$timeout(() => {
-      let field;
-
-      if (isCKEditor && reset) {
-        field = Object.keys(this.form).find(key => !this.prevForm.hasOwnProperty(key));
-      } else {
-        const name = this.getFieldName(index);
-        field = Object.keys(this.form).find(key => key.startsWith(name));
-      }
+      const name = this.getFieldName(index);
+      const field = Object.keys(this.form).sort().find(key => key.startsWith(name));
 
       if (!field) {
         return;
@@ -179,7 +172,7 @@ class ChoiceFieldCtrl {
 
   _focusAndScrollIntoView(element) {
     element.focus();
-    this.$timeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+    this.$timeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
   }
 
   _focusAddButton() {
@@ -188,7 +181,6 @@ class ChoiceFieldCtrl {
 
   async onAdd(chosenId, index = 0) {
     try {
-      this.prevForm = { ...this.form };
       const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${chosenId}` });
       const chosenType = this.fieldType.choices[chosenId].type;
       const chosenValue = chosenType === 'COMPOUND' ? { fields } : fields[chosenId][0];
