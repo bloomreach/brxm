@@ -118,12 +118,12 @@ class ChoiceFieldCtrl {
 
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
-      this._focus(newIndex, false, this._getChosenType(newIndex) === 'HTML');
       this.form.$setDirty();
+      this._focus(newIndex, false, this._isCKEditorField(newIndex));
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_REORDER');
       this._move(newIndex, oldIndex);
-      this._focus(oldIndex, false, this._getChosenType(oldIndex) === 'HTML');
+      this._focus(oldIndex, false, this._isCKEditorField(oldIndex));
     } finally {
       this.$scope.$broadcast('field:drop', this);
     }
@@ -133,8 +133,8 @@ class ChoiceFieldCtrl {
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
       this._move(oldIndex, newIndex);
-      this._focus(newIndex, false, this._getChosenType(newIndex) === 'HTML');
       this.form.$setDirty();
+      this._focus(newIndex, false, this._isCKEditorField(newIndex));
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_REORDER');
     }
@@ -186,9 +186,9 @@ class ChoiceFieldCtrl {
     this.$timeout(() => this.$element.find('.field__title-buttons button').focus());
   }
 
-  _getChosenType(index) {
+  _isCKEditorField(index) {
     const { chosenId } = this.fieldValues[index];
-    return this.fieldType.choices[chosenId].type;
+    return this.fieldType.choices[chosenId].type === 'HTML';
   }
 
   async onAdd(chosenId, index = 0) {
@@ -217,7 +217,7 @@ class ChoiceFieldCtrl {
 
       if (this.fieldValues.length) {
         const prevIndex = Math.max(index - 1, 0);
-        this._focus(prevIndex, false, this._getChosenType(prevIndex) === 'HTML');
+        this._focus(prevIndex, false, this._isCKEditorField(prevIndex));
       } else {
         this._focusAddButton();
       }
