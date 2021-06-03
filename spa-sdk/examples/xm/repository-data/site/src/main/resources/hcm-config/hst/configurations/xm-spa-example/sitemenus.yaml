@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/xmspaexample/hst:sitemenus:
-      jcr:primaryType: hst:sitemenus

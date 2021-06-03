@@ -1,5 +1,0 @@
-definitions:
-  namespace:
-    xmspaexample:
-      uri: http://www.xmspaexample.com/xmspaexample/nt/1.0
-      cnd: namespaces/xm-spa-example.cnd
