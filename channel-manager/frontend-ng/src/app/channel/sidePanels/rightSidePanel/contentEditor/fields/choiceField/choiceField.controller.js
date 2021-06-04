@@ -150,6 +150,23 @@ class ChoiceFieldCtrl {
       const fields = Object.keys(this.form);
       let field;
 
+      /*
+       * This check is needed because "this.form" not always has the same order as the fields in the page.
+       * So, if the field selected happens to be in the first index, the name will match the first key that
+       * starts with that string, which might be one with a higher index since the ordering isn't reliable.
+       * 
+       * Example:
+       * 
+       * const name = hst:employee/hst:interview;
+       *
+       * this.form = {
+       *     hst:employee/hst:interview[3]/hst:name: { ... },
+       *     hst:employee/hst:interview/hst:surname: { ... },
+       *     hst:employee/hst:interview[2]/hst:address: { ... },
+       * };
+       *
+       * hst:employee/hst:interview[3]/hst:name will be matched, which is the wrong field selected.
+       */
       if (name.includes("[")) {
         field = fields.find(key => key.startsWith(name));
       } else {
