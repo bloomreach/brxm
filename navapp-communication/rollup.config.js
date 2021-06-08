@@ -31,7 +31,8 @@ export default [
         format: 'umd',
         name: 'brNavappCommunication',
         sourcemap: true,
-        globals: { 
+        globals: {
+          tslib: 'tslib',
           penpal: 'Penpal'
         }
       },
@@ -41,7 +42,7 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      typescript(),
+      typescript({ target: 'es5'}),
       json({ compact: true }),
       babel({ babelHelpers: 'bundled', extensions: ['.ts'] }),
       terser(),
