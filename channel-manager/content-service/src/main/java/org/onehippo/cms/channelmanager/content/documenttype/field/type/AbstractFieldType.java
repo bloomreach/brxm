@@ -149,6 +149,11 @@ public abstract class AbstractFieldType implements BaseFieldType {
     }
 
     @Override
+    public boolean isOptional() {
+        return validatorNames.contains(FieldValidators.OPTIONAL);
+    }
+
+    @Override
     public boolean isSupported() {
         return !this.hasUnsupportedValidator();
     }
