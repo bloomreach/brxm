@@ -23,10 +23,15 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
 
+/**
+ * Represents a validator for optional values.
+ * At the moment it does not validate anything.
+ */
 public class OptionalValidator implements Validator<Object> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final Object value) {
+        // TODO (meggermont): what to do if value is not null?
         return Optional.empty();
     }
 }
