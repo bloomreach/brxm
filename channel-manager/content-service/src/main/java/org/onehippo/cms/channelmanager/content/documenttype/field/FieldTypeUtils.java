@@ -97,7 +97,6 @@ public class FieldTypeUtils {
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
-        IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
 
         FIELD_TYPE_MAP = new HashMap<>();
