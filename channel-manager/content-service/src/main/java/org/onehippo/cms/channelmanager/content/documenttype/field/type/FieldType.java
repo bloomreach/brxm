@@ -94,6 +94,13 @@ public interface FieldType {
     boolean isRequired();
 
     /**
+     * Represents the "optional" validator, which indicates that a field has multiplicity zero or one.
+     *
+     * @return if the field is optional
+     */
+    boolean isOptional();
+
+    /**
      * Checks if an initialized field is supported, i.e. should be present in a document type.
      *
      * @return true or false
