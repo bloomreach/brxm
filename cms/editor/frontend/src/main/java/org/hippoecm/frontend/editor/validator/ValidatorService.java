@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
 
 public class ValidatorService extends Plugin {
 
@@ -58,10 +56,6 @@ public class ValidatorService extends Plugin {
 
     public ICmsValidator getValidator(final String name) {
         if (StringUtils.isEmpty(name)) {
-            return null;
-        }
-
-        if (OPTIONAL_VALIDATOR.equals(name)) {
             return null;
         }
 
