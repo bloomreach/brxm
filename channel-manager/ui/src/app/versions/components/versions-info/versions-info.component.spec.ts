@@ -64,6 +64,7 @@ describe('VersionsInfoComponent', () => {
     ],
     restoreEnabled: true,
     createEnabled: true,
+    pageCampaignSupported: true,
   } as VersionsInfo;
 
   let isBranchMock = false;
