@@ -15,23 +15,13 @@
  */
 package org.onehippo.cms7.openui.extensions;
 
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.onehippo.repository.mock.MockNode;
-
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_CONFIG;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_DISPLAY_NAME;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_EXTENSION_POINT;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_URL;
@@ -42,17 +32,67 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.commons.collections4.MapUtils;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.mock.core.container.MockComponentManager;
+import org.hippoecm.hst.mock.core.container.MockContainerConfiguration;
+import org.hippoecm.hst.site.HstServices;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
+
 public class JcrUiExtensionLoaderTest {
 
     private static final String CHANNEL_PAGE_TOOLS_CONFIG_VALUE = "channel.page.tools";
 
+    private static final Map<String, String> PLATFORM_PROPS = Collections
+            .unmodifiableMap(MapUtils.putAll(new LinkedHashMap<String, String>(),
+                    new String[] {
+                            "public.brx.smEndpoint", "https://core.dxpapi.com/api/v1/core/",
+                            "public.brx.smAccountId", "1234"
+                            }));
+
     private JcrUiExtensionLoader loader;
     private MockNode root;
 
+    private ComponentManager oldComponentManager;
+
     @Before
-    public void setUp() throws RepositoryException {
+    public void setUp() throws Exception {
         root = MockNode.root();
         loader = new JcrUiExtensionLoader(root.getSession());
+
+        final MockContainerConfiguration containerConfiguration = new MockContainerConfiguration();
+        PLATFORM_PROPS.forEach((key, value) -> {
+            containerConfiguration.setProperty(String.class, key, value);
+        });
+
+        final MockComponentManager componentManager = new MockComponentManager() {
+            @Override
+            public ContainerConfiguration getContainerConfiguration() {
+                return containerConfiguration;
+            }
+        };
+
+        this.oldComponentManager = HstServices.getComponentManager();
+        HstServices.setComponentManager(componentManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        HstServices.setComponentManager(oldComponentManager);
     }
 
     private MockNode createConfigNode() throws RepositoryException {
@@ -103,6 +143,8 @@ public class JcrUiExtensionLoaderTest {
         extensionNode.setProperty(FRONTEND_EXTENSION_POINT, CHANNEL_PAGE_TOOLS_CONFIG_VALUE);
         extensionNode.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
         extensionNode.setProperty(FRONTEND_URL, "/extensions/extension-one");
+        extensionNode.setProperty(FRONTEND_CONFIG,
+                "{ \"url\": \"${public.brx.smEndpoint}?account_id=${public.brx.smAccountId}\" }");
 
         final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertThat(extensions.size(), equalTo(1));
@@ -112,6 +154,8 @@ public class JcrUiExtensionLoaderTest {
         assertThat(extension.getExtensionPoint(), equalTo(UiExtensionPoint.CHANNEL_PAGE_TOOL));
         assertThat(extension.getDisplayName(), equalTo("Extension One"));
         assertThat(extension.getUrl(), equalTo("/extensions/extension-one"));
+        assertThat(extension.getConfig(),
+                equalTo("{ \"url\": \"https://core.dxpapi.com/api/v1/core/?account_id=1234\" }"));
     }
 
     @Test
