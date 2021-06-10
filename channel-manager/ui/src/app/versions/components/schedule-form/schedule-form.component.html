@@ -33,6 +33,7 @@
            required
            [ngxMatDatetimePicker]="fromPicker">
     <mat-datepicker-toggle matSuffix
+                           class="qa-from-datepicker-toggle"
                            [for]="fromPicker">
     </mat-datepicker-toggle>
     <ngx-mat-datetime-picker #fromPicker
@@ -64,6 +65,7 @@
            [min]="scheduleForm.get('fromDateTime')?.value"
            [ngxMatDatetimePicker]="toPicker">
     <mat-datepicker-toggle matSuffix
+                           class="qa-to-datepicker-toggle"
                            [for]="toPicker">
     </mat-datepicker-toggle>
     <ngx-mat-datetime-picker #toPicker
