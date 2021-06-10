@@ -30,6 +30,14 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-json</artifactId>
       <version>${project.version}</version>
@@ -109,6 +117,10 @@
       <artifactId>commons-beanutils</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.imgscalr</groupId>
       <artifactId>imgscalr-lib</artifactId>
       <version>${imgscalr-lib.version}</version>
@@ -166,6 +178,13 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-mock</artifactId>
+      <version>${hippo.hst.version}</version>
       <scope>test</scope>
     </dependency>
 

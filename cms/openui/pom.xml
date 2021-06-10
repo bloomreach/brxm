@@ -55,6 +55,13 @@
       <artifactId>hippo-repository-testutils</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-mock</artifactId>
+      <version>${hippo.hst.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>
