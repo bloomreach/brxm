@@ -1,7 +1,6 @@
 {
   "hooks": {
-    "before:init": "npm run lint && npm run test:single-run",
-    "after:bump": "npm run build:prod && npx auto-changelog"
+    "after:bump": "npm run build"
   },
   "git": {
     "requireCleanWorkingDir": true,
