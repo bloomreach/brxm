@@ -236,7 +236,6 @@
                 <exclude>.*</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>projects/navapp/**/*.svg</exclude>
-                <exclude>**/.auto-changelog</exclude>\n
                 <exclude>**/browserslist</exclude>\n
                 <exclude>projects/target/surefire-reports/TEST-karma.xml</exclude>
                 <!-- Generated or pulled-in files which are not cleaned up -->
@@ -253,4 +252,3 @@
     </profile>
   </profiles>
 </project>
-
