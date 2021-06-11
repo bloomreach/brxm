@@ -12,8 +12,7 @@
     "test:single-run": "ng test --no-watch --browsers ChromeHeadless",
     "lint": "npm run lint:styles && ng lint",
     "lint:styles": "stylelint \"projects/**/*.scss\"",
-    "build:prod": "ng build navapp --prod",
-    "release:navapp": "release-it",
+    "release": "release-it",
     "docs": "typedoc --tsconfig ./projects/navapp/tsconfig.app.json"
   },
   "browser": "dist/navapp/main.js",
@@ -61,7 +60,6 @@
     "@types/jasmine": "3.5.0",
     "@types/node": "12.12.14",
     "@types/pendo-io-browser": "2.16.1",
-    "auto-changelog": "1.16.2",
     "codelyzer": "5.2.0",
     "copy-webpack-plugin": "5.0.5",
     "jasmine-core": "3.5.0",
