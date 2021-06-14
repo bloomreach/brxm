@@ -75,7 +75,12 @@ export default class CompoundFieldCtrl {
   }
 
   isRemovable() {
-    return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
+    return (this.fieldType.optional || this.fieldType.multiple) &&
+      (!this.fieldType.required || this.fieldValues.length > 1);
+  }
+
+  isAddable() {
+    return (this.fieldType.multiple || this.fieldType.optional) && (!this.fieldValues || !this.fieldValues.length);
   }
 
   onDrag({
