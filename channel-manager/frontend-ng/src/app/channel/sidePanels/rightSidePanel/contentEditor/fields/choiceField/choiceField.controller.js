@@ -91,7 +91,12 @@ class ChoiceFieldCtrl {
   }
 
   isRemovable() {
-    return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
+    return (this.fieldType.optional || this.fieldType.multiple) &&
+      (!this.fieldType.required || this.fieldValues.length > 1);
+  }
+
+  isAddable() {
+    return this.fieldType.multiple || (this.fieldType.optional && !this.fieldValues.length);
   }
 
   onDrag({ clone, from, item, oldIndex, }) {
