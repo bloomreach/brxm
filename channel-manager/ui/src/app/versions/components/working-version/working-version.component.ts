@@ -95,6 +95,10 @@ export class LatestVersionComponent implements OnChanges, OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
+  toggleCreateForm(state: boolean): void {
+    this.isCreateFormVisible = state;
+  }
+
   async createVersion(): Promise<void> {
     this.actionInProgressChange.emit(true);
 

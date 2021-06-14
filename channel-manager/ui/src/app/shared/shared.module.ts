@@ -23,12 +23,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TranslationsModule } from '../translations/translations.module';
 
+import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { MaterialModule } from './material/material.module';
 import { MomentPipe } from './pipes/moment.pipe';
 
 @NgModule({
   declarations: [
     MomentPipe,
+    AutoFocusDirective,
   ],
   providers: [
     MomentPipe,
@@ -44,6 +46,7 @@ import { MomentPipe } from './pipes/moment.pipe';
     HttpClientModule,
     MomentPipe,
     ReactiveFormsModule,
+    AutoFocusDirective,
   ],
 })
 export class SharedModule {}
