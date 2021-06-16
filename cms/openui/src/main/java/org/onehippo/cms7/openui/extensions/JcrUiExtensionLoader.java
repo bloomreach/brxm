@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.frontend.util.InterpolationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +100,9 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         extension.setDisplayName(displayName);
 
         readStringProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrl);
-        readStringProperty(extensionNode, FRONTEND_CONFIG).ifPresent(extension::setConfig);
+        readStringProperty(extensionNode, FRONTEND_CONFIG).ifPresent((value) -> {
+            extension.setConfig(InterpolationUtils.interpolate(value));
+        });
         readIntProperty(extensionNode, FRONTEND_INITIAL_HEIGHT_IN_PIXELS).ifPresent(extension::setInitialHeightInPixels);
 
         final UiExtensionValidator validator = new UiExtensionValidator();
