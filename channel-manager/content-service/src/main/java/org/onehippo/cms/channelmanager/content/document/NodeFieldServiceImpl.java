@@ -243,7 +243,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
             throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "fieldType", fieldPath.toString()));
         }
 
-        if (!fieldType.isMultiple()) {
+        if (!(fieldType.isMultiple() || fieldType.isOptional())) {
             log.warn("The field '{}' does not support multiple values", fieldPath);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "fieldType", "not-multiple"));
         }
