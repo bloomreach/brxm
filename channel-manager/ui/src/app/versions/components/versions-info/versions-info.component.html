@@ -17,15 +17,15 @@
      *ngIf="versionsInfo">
   <ng-container *ngFor="let version of filteredVersions; first as isFirst">
     <em-working-version *ngIf="isFirst"
-                       matRipple
-                       [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
-                       class="qa-version-item"
-                       [class]="'qa-version-' + version.jcrUUID"
-                       (click)="selectVersion(version.jcrUUID)"
-                       [isSelected]="isVersionSelected(version.jcrUUID)"
-                       [version]="version"
-                       [versionsInfo]="versionsInfo"
-                       [(actionInProgress)]="actionInProgress">
+                        matRipple
+                        [matRippleDisabled]="isVersionSelected(version.jcrUUID)"
+                        class="qa-version-item"
+                        [class]="'qa-version-' + version.jcrUUID"
+                        (click)="selectVersion(version.jcrUUID)"
+                        [isSelected]="isVersionSelected(version.jcrUUID)"
+                        [version]="version"
+                        [versionsInfo]="versionsInfo"
+                        [(actionInProgress)]="actionInProgress">
     </em-working-version>
 
     <em-version *ngIf="!isFirst"
@@ -47,7 +47,8 @@
   <mat-divider></mat-divider>
 
   <div class="version-list-filter">
-    <mat-checkbox (change)="filterVersions($event)">
+    <mat-checkbox class="qa-version-list-filter-checkbox"
+                  (change)="filterVersions($event)">
       {{ 'VERSION_FILTER_TEXT' | translate }}
     </mat-checkbox>
   </div>
