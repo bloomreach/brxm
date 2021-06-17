@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.easymock.EasyMock;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,11 +116,14 @@ public class FieldTypeUtilsTest {
         final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-
+        final ValidatorInstance optionalValidator = createMock(ValidatorInstance.class);
+        expect(validationService.getValidator(FieldValidators.OPTIONAL)).andReturn(optionalValidator);
+        fieldType.addValidatorName(FieldValidators.OPTIONAL);
+        EasyMock.expectLastCall();
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
         replayAll();
 
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("optional"));
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList(FieldValidators.OPTIONAL));
         verifyAll();
     }
 
