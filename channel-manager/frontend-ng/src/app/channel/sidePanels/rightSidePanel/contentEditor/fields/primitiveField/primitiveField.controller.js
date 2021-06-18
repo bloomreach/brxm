@@ -17,7 +17,7 @@
 const COMPOUND_TYPES = ['hippogallerypicker:imagelink', 'hippo:mirror', 'hippostd:html'];
 
 class PrimitiveFieldCtrl {
-  constructor($element, $rootScope, $scope, $timeout, FeedbackService, FieldService, SharedSpaceToolbarService) {
+  constructor($element, $rootScope, $scope, $timeout, FeedbackService, FieldService) {
     'ngInject';
 
     this.$element = $element;
@@ -26,7 +26,6 @@ class PrimitiveFieldCtrl {
     this.$timeout = $timeout;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
-    this.SharedSpaceToolbarService = SharedSpaceToolbarService;
 
     this.ngSortable = {
       animation: 300,
@@ -183,7 +182,12 @@ class PrimitiveFieldCtrl {
   }
 
   isRemovable() {
-    return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
+    return (this.fieldType.optional || this.fieldType.multiple) &&
+      (!this.fieldType.required || this.fieldValues.length > 1);
+  }
+
+  isAddable() {
+    return this.fieldType.multiple || (this.fieldType.optional && !this.fieldValues.length);
   }
 
   // eslint-disable-next-line consistent-return
