@@ -1,9 +1,0 @@
-{
-  "ecma": 6,
-  "mangle": false,
-  "compress": false,
-  "output": {
-    "beautify": true,
-    "comments": "/^\\*/"
-  }
-}

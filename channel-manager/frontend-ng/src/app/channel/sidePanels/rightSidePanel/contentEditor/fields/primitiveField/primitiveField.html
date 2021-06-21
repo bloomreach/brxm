@@ -17,7 +17,7 @@
      layout="column"
      ng-class="{
       'has-invalid-field': !$ctrl.isValid(),
-      'field--multiple': $ctrl.fieldType.multiple,
+      'field--multiple': $ctrl.fieldType.multiple
      }">
   <div ng-sortable="$ctrl.ngSortable">
     <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
@@ -301,7 +301,7 @@
     </div>
   </div>
 
-  <div ng-if="$ctrl.fieldType.multiple" layout layout-align="space-between center" class="field__tools">
+  <div ng-if="$ctrl.isAddable()" layout layout-align="space-between center" class="field__tools">
     <div ng-if="!$ctrl.fieldValues.length" md-colors="{ color: 'grey' }">{{ $ctrl.fieldType.displayName }}</div>
 
     <div class="field__button-add" flex="auto">

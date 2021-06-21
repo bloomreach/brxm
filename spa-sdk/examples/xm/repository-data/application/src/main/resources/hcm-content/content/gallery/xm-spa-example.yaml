@@ -1,7 +1,0 @@
-/content/gallery/xmspaexample:
-  jcr:primaryType: hippogallery:stdImageGallery
-  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
-  jcr:uuid: e0cf0d5a-f66d-41c7-8ef4-85eccba45b47
-  hippo:name: XM SPA Example
-  hippostd:foldertype: [new-image-folder]
-  hippostd:gallerytype: ['hippogallery:imageset']
