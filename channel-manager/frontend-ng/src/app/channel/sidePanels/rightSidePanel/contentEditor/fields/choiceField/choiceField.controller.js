@@ -91,15 +91,15 @@ class ChoiceFieldCtrl {
   }
 
   isRemovable() {
-    return this.fieldType.multiple && (!this.fieldType.required || this.fieldValues.length > 1);
+    return (this.fieldType.optional || this.fieldType.multiple) &&
+      (!this.fieldType.required || this.fieldValues.length > 1);
   }
 
-  onDrag({
-    clone,
-    from,
-    item,
-    oldIndex,
-  }) {
+  isAddable() {
+    return this.fieldType.multiple || (this.fieldType.optional && !this.fieldValues.length);
+  }
+
+  onDrag({ clone, from, item, oldIndex, }) {
     this._nextNode = from === item.parentNode ? item.nextSibling : clone.nextSibling;
     this.$scope.$apply(() => {
       this.dragging = oldIndex;
@@ -124,11 +124,11 @@ class ChoiceFieldCtrl {
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
       this.form.$setDirty();
-      this._focus(newIndex);
+      this._focus(newIndex, false, this._isCKEditorField(newIndex));
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_REORDER');
       this._move(newIndex, oldIndex);
-      this._focus(oldIndex);
+      this._focus(oldIndex, false, this._isCKEditorField(oldIndex));
     } finally {
       this.$scope.$broadcast('field:drop', this);
     }
@@ -138,8 +138,8 @@ class ChoiceFieldCtrl {
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
       this._move(oldIndex, newIndex);
-      this._focus(newIndex);
       this.form.$setDirty();
+      this._focus(newIndex, false, this._isCKEditorField(newIndex));
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_REORDER');
     }
@@ -149,10 +149,34 @@ class ChoiceFieldCtrl {
     this.fieldValues.splice(newIndex, 0, this.fieldValues.splice(oldIndex, 1)[0]);
   }
 
-  _focus(index, reset = false) {
+  _focus(index, reset = false, isCKEditor) {
     this.$timeout(() => {
       const name = this.getFieldName(index);
-      const field = Object.keys(this.form).find(key => key.startsWith(name));
+      const fields = Object.keys(this.form);
+      let field;
+
+      /*
+       * This check is needed because "this.form" not always has the same order as the fields in the page.
+       * So, if the field selected happens to be in the first index, the name will match the first key that
+       * starts with that string, which might be one with a higher index since the ordering isn't reliable.
+       * 
+       * Example:
+       * 
+       * const name = hst:employee/hst:interview;
+       *
+       * this.form = {
+       *     hst:employee/hst:interview[3]/hst:name: { ... },
+       *     hst:employee/hst:interview/hst:surname: { ... },
+       *     hst:employee/hst:interview[2]/hst:address: { ... },
+       * };
+       *
+       * hst:employee/hst:interview[3]/hst:name will be matched, which is the wrong field selected.
+       */
+      if (name.includes("[")) {
+        field = fields.find(key => key.startsWith(name));
+      } else {
+        field = fields.find(key => key.startsWith(name) && !key.includes("["));
+      }
 
       if (!field) {
         return;
@@ -164,19 +188,36 @@ class ChoiceFieldCtrl {
 
       const element = this.form[field].$$element;
 
-      element[0].focus();
-      this.$timeout(() => element[0].scrollIntoView(), 500);
+      if (isCKEditor) {
+        this.$timeout(() => {
+          const cke = element[0].nextSibling.querySelector('.cke_editable');
+          this._focusAndScrollIntoView(cke);
+        });
+      } else {
+        this._focusAndScrollIntoView(element[0]);
+      }
     });
+  }
+
+  _focusAndScrollIntoView(element) {
+    element.focus();
+    this.$timeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
   }
 
   _focusAddButton() {
     this.$timeout(() => this.$element.find('.field__title-buttons button').focus());
   }
 
+  _isCKEditorField(index) {
+    const { chosenId } = this.fieldValues[index];
+    return this.fieldType.choices[chosenId].type === 'HTML';
+  }
+
   async onAdd(chosenId, index = 0) {
     try {
       const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${chosenId}` });
-      const chosenValue = this.fieldType.choices[chosenId].type === 'COMPOUND' ? { fields } : fields[chosenId][0];
+      const chosenType = this.fieldType.choices[chosenId].type;
+      const chosenValue = chosenType === 'COMPOUND' ? { fields } : fields[chosenId][0];
 
       if (!this.fieldValues) {
         this.fieldValues = [];
@@ -184,7 +225,7 @@ class ChoiceFieldCtrl {
 
       this.fieldValues.splice(index, 0, { chosenId, chosenValue });
       this.form.$setDirty();
-      this._focus(index, true);
+      this._focus(index, true, chosenType === 'HTML');
     } catch (error) {
       this.FeedbackService.showError('ERROR_FIELD_ADD');
     }
@@ -197,7 +238,8 @@ class ChoiceFieldCtrl {
       this.form.$setDirty();
 
       if (this.fieldValues.length) {
-        this._focus(Math.max(index - 1, 0));
+        const prevIndex = Math.max(index - 1, 0);
+        this._focus(prevIndex, false, this._isCKEditorField(prevIndex));
       } else {
         this._focusAddButton();
       }

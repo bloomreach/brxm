@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`BrComponent render should render a single component 1`] = `<brnodecomponent-stub component="[object Object]"></brnodecomponent-stub>`;
-
-exports[`BrComponent render should render children if the component prop is omitted 1`] = `
-<brnodecomponent-stub component="[object Object]"></brnodecomponent-stub>
-<brnodecomponent-stub component="[object Object]"></brnodecomponent-stub>
-`;

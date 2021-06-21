@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`BrMeta should render meta-data surrounding children 1`] = `<a />`;
-
-exports[`BrMeta should render meta-data surrounding children 2`] = `<b />`;
-
-exports[`BrMeta should render only children if there is no meta 1`] = `"<div><a></a><b></b></div>"`;

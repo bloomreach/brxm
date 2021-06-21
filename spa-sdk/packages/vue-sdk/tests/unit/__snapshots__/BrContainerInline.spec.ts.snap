@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`BrContainerInline render should render container's children 1`] = `<div class=""><span class=""><span id="child1"></span></span><span class=""><span id="child2"></span></span></div>`;
-
-exports[`BrContainerInline render should render preview classes 1`] = `<div class="hst-container"><span class="hst-container-item"><span id="child1"></span></span><span class="hst-container-item"><span id="child2"></span></span></div>`;

@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/xmspaexample/hst:abstractpages:
-      jcr:primaryType: hst:pages
