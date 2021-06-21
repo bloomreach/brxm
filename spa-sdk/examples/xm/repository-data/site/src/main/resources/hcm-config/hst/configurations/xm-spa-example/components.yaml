@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/xmspaexample/hst:components:
-      jcr:primaryType: hst:components
