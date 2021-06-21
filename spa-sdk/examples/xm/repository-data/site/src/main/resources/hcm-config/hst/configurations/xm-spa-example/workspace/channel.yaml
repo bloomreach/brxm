@@ -1,7 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/xmspaexample/hst:workspace/hst:channel:
-      .meta:residual-child-node-category: content
-      jcr:primaryType: hst:channel
-      hst:name: XM SPA Example
-      hst:type: website

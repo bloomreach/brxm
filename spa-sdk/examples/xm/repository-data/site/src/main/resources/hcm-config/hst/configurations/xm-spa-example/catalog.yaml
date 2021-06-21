@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/xmspaexample/hst:catalog:
-      jcr:primaryType: hst:catalog
-      /xmspaexample-catalog:
-        jcr:primaryType: hst:containeritempackage

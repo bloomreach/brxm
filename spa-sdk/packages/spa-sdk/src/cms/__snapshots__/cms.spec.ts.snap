@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`CmsImpl inject should put a script element 1`] = `
-<script
-  src="url1"
-  type="text/javascript"
-/>
-`;
