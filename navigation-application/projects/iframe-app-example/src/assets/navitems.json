@@ -1,77 +1,77 @@
 [
   {
     "id": "xm-home",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "home"
   },
   {
     "id": "xm-experience-manager",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "experience-manager"
   },
   {
     "id": "xm-projects",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "projects"
   },
   {
     "id": "xm-api-token-management",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "api-token-management"
   },
   {
     "id": "xm-content",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "content"
   },
   {
     "id": "xm-content-reports",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "content-reports"
   },
   {
     "id": "xm-document-search",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "documents-search"
   },
   {
     "id": "xm-content-audiences",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "content-audiences"
   },
   {
     "id": "xm-usermanagement",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "xm-usermanagement"
   },
   {
     "id": "xm-form-data",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "xm-form-data"
   },
   {
     "id": "xm-systeminfo",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "xm-systeminfo"
   },
   {
     "id": "xm-systemproperties",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "xm-systemproperties"
   },
   {
     "id": "xm-systemupdater",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "xm-systemupdater"
   },
   {
     "id": "xm-content-feed",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "xm-content-feed"
   },
   {
     "id": "xm-replication",
-    "appIframeUrl": "http://localhost:4201",
+    "appIframeUrl": "http://localhost:5000",
     "appPath": "xm-replication"
   }
 ]
