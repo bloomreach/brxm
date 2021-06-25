@@ -23,6 +23,7 @@ import { ClientAppService } from '../client-app/services/client-app.service';
 import { WindowRef } from '../shared/services/window-ref.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
+import { ConnectionService } from './connection.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,7 @@ export class SiteService {
     private readonly clientAppService: ClientAppService,
     private readonly windowRef: WindowRef,
     private readonly logger: NGXLogger,
+    private readonly connectionService: ConnectionService,
   ) { }
 
   get selectedSite$(): Observable<Site> {
@@ -49,9 +51,8 @@ export class SiteService {
 
   init(sites: Site[], selectedSiteId: SiteId): void {
     this.currentSites = sites;
-
-    const selectedSite = this.findSite(this.currentSites, selectedSiteId);
-    this.selectedSite.next(selectedSite);
+    this.connectionService.updateSelectedSite$.subscribe((siteId: SiteId) => this.selectSite(siteId));
+    this.selectSite(selectedSiteId);
   }
 
   async updateSelectedSite(site: Site): Promise<void> {
@@ -69,6 +70,11 @@ export class SiteService {
     this.selectedSite.next(site);
 
     this.busyIndicatorService.hide();
+  }
+
+  private selectSite(siteId: SiteId): void {
+    const selectedSite = this.findSite(this.currentSites, siteId);
+    this.selectedSite.next(selectedSite);
   }
 
   private findSite(sites: Site[], siteId: SiteId): Site {

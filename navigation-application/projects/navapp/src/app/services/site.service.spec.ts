@@ -17,6 +17,7 @@
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
+import { Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
@@ -24,6 +25,7 @@ import { ClientAppService } from '../client-app/services/client-app.service';
 import { WindowRef } from '../shared/services/window-ref.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
+import { ConnectionService } from './connection.service';
 import { SiteService } from './site.service';
 
 describe('SiteService', () => {
@@ -33,6 +35,8 @@ describe('SiteService', () => {
   let app3UpdateSelectedSite: jasmine.Spy;
   let clientAppMocks: ClientAppMock[];
   let windowRefMock: WindowRef;
+
+  const updateSelectedSite$ = new Subject();
 
   const loggerMock = jasmine.createSpyObj('NGXLogger', [
     'debug',
@@ -117,6 +121,10 @@ describe('SiteService', () => {
       } as any,
     };
 
+    const connectionServiceMock = {
+      updateSelectedSite$: updateSelectedSite$.asObservable(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         SiteService,
@@ -124,6 +132,7 @@ describe('SiteService', () => {
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: WindowRef, useValue: windowRefMock },
         { provide: NGXLogger, useValue: loggerMock },
+        { provide: ConnectionService, useValue: connectionServiceMock },
       ],
     });
 
@@ -147,6 +156,20 @@ describe('SiteService', () => {
   describe('when the service is initialized', () => {
     beforeEach(() => {
       service.init(sitesMock, selectedSiteIdMock);
+    });
+
+    it('should subscribe to child updateSelectedSite events', () => {
+      const siteId: SiteId = {
+        siteId: 2,
+        accountId: 123,
+      };
+      const site: Site = sitesMock[0].subGroups[0];
+
+      service.selectedSite$.subscribe(updatedSite => {
+        expect(updatedSite).toEqual(site);
+      });
+
+      updateSelectedSite$.next(siteId);
     });
 
     it('should update the selected site for the active app', () => {
