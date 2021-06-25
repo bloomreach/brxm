@@ -80,9 +80,11 @@
 
 <h4>Actions</h4>
 <ul>
-  <li><button (click)="onButtonClicked()" class="simple-button">Simple button</button></li>
+  <li><button (click)="onButtonClicked()"
+            class="simple-button">Simple button</button></li>
   <li>
-    <button (click)="toggleOverlay()" class="toggle-overlay-button">
+    <button (click)="toggleOverlay()"
+            class="toggle-overlay-button">
       {{ state.overlaid ? 'Unmask Navapp' : 'Mask Navapp' }}
     </button>
   </li>
@@ -91,11 +93,18 @@
 <h4>Navigation</h4>
 <ul>
   <li>
-    <button (click)="navigateTo(internalPathInput.value, breadcrumbName.value)" class="navigate-button">
+    <button (click)="navigateTo(internalPathInput.value, breadcrumbName.value)"
+            class="navigate-button">
       Navigate to a path in the first input with a breadcrumb in the second input
     </button>
-    <input #internalPathInput type="text" value="seo" class="internal-path-input">
-    <input #breadcrumbName type="text" value="some breadcrumb" class="breadcrumb-name-input">
+    <input #internalPathInput
+           type="text"
+           value="seo"
+           class="internal-path-input">
+    <input #breadcrumbName
+           type="text"
+           value="some breadcrumb"
+           class="breadcrumb-name-input">
     <br>
     <span>Alternative input: 'experience-manager/channel1' and 'Channel1'</span>
   </li>
@@ -103,21 +112,32 @@
   <li><button (click)="navigateInternally()">history.pushState() navigation</button></li>
   <li><button (click)="navigateInternallyWithReplaceState()">history.replaceState() navigation</button></li>
   <li><button (click)="reloadPage()">Reload</button></li>
+  <li>
+    <button (click)="updateSelectedSite({ siteId: 4, accountId: 1})">
+      Update selected site to the www.company.com Europe site
+    </button>
+  </li>
 </ul>
 
 <h4>Trigger an error</h4>
 <ul>
   <li>
-    <button (click)="showError(errorMessage.value)" class="show-error-button">Show Error Page</button>
-    <input #errorMessage type="text" value="Error from the iframe app example" class="error-message-input">
+    <button (click)="showError(errorMessage.value)"
+            class="show-error-button">Show Error Page</button>
+    <input #errorMessage
+           type="text"
+           value="Error from the iframe app example"
+           class="error-message-input">
   </li>
   <li>
-    <button (click)="sendNotAuthenticatedError()" class="send-not-authenticated-error-button">
+    <button (click)="sendNotAuthenticatedError()"
+            class="send-not-authenticated-error-button">
       Send authentication error
     </button>
   </li>
   <li>
-    <button (click)="toggleLogoutErrorState()" class="toggle-logout-error-state-button">
+    <button (click)="toggleLogoutErrorState()"
+            class="toggle-logout-error-state-button">
       Toggle logout error state
     </button>
   </li>
@@ -125,7 +145,8 @@
 
 <hr>
 
-<textarea cols="30" rows="10">
+<textarea cols="30"
+          rows="10">
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti eum culpa voluptates laudantium cupiditate
   nesciunt non aperiam deserunt, optio rem? Labore fugit repellat id suscipit aspernatur obcaecati, vitae soluta!
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti eum culpa voluptates laudantium cupiditate
