@@ -23,6 +23,7 @@ import {
   getVersion as getCommunicationLibraryVersion,
   NavLocation,
   ParentApi,
+  SiteId,
 } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
@@ -54,6 +55,7 @@ export class ConnectionService {
   onError$ = new Subject<ClientError>();
   onUserActivity$ = new Subject<void>();
   onSessionExpired$ = new Subject<void>();
+  updateSelectedSite$ = new Subject<SiteId>();
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
@@ -141,6 +143,9 @@ export class ConnectionService {
       updateNavLocation: async (location: NavLocation) => {
         this.logger.debug(`app '${appUrl}' called updateNavLocation()`, location);
         this.updateNavLocation$.next(location);
+      },
+      updateSelectedSite: async (siteId: SiteId) => {
+        this.updateSelectedSite$.next(siteId);
       },
       onError: async (clientError: ClientError) => {
         this.logger.debug(`app '${appUrl}' called onError()`, clientError);
