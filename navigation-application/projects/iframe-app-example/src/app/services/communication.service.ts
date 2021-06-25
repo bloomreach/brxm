@@ -23,6 +23,7 @@ import {
   ParentApi,
   ParentConfig,
   ParentConnectConfig,
+  SiteId,
 } from '@bloomreach/navapp-communication';
 
 import { AppState } from './app-state';
@@ -76,6 +77,10 @@ export class CommunicationService {
         this.state.overlaid = true;
       });
     }
+  }
+
+  updateSelectedSite(siteId: SiteId): void {
+    this.parentApi.updateSelectedSite(siteId);
   }
 
   sendError(errorCode: ClientErrorCodes, message?: string): void {
