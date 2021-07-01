@@ -89,6 +89,10 @@
     ng-required="::componentField.required"
   >
     <md-option
+      ng-if="::!componentField.required"
+      md-option-empty
+      value="">{{ ::'NONE_OPTION' | translate }}</md-option>
+    <md-option
       ng-repeat="dropDownValue in componentField.dropDownListValues"
       value="{{ dropDownValue }}"
     >
