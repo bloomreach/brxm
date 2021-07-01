@@ -116,7 +116,7 @@
 
     <mortbay-jetty.version>6.1.26</mortbay-jetty.version>
 
-    <wicket.version>7.17.0</wicket.version>
+    <wicket.version>7.18.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>7.1.0</wicket15-tree.version>
 
