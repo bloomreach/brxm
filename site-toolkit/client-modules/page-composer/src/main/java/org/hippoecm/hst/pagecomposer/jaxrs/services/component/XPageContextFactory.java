@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 final class XPageContextFactory {
 
-    private final static Logger log = LoggerFactory.getLogger(XPageContextFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(XPageContextFactory.class);
 
     public static final String DOCUMENT_STATE_UNKNOWN = "unknown";
 
@@ -135,22 +135,20 @@ final class XPageContextFactory {
 
         if (scheduledRequest == null) {
             final boolean pageIsUnlocked = StringUtils.isBlank(xPageContext.getLockedBy());
-            if (pageIsUnlocked) {
-                if (hints.containsKey("publishBranch")) {
-                    xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")));
-                }
+            if (hints.containsKey("publishBranch")) {
+                xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")) && pageIsUnlocked);
+            }
 
-                if (hints.containsKey("requestPublication")) {
-                    xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
-                }
+            if (hints.containsKey("requestPublication")) {
+                xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
+            }
 
-                if (hints.containsKey("depublishBranch")) {
-                    xPageContext.setUnpublishable(TRUE.equals(hints.get("depublishBranch")));
-                }
+            if (hints.containsKey("depublishBranch")) {
+                xPageContext.setUnpublishable(TRUE.equals(hints.get("depublishBranch")) && pageIsUnlocked);
+            }
 
-                if (hints.containsKey("requestDepublication")) {
-                    xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
-                }
+            if (hints.containsKey("requestDepublication")) {
+                xPageContext.setRequestDepublication(TRUE.equals(hints.get("requestDepublication")));
             }
         } else {
             final Boolean cancelRequest = (Boolean) requestsHints
