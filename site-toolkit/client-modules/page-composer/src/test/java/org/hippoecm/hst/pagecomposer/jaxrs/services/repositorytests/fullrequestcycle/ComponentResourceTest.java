@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,10 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.X
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_MOVE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_PUBLISH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_RENAME;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_REQUEST_PUBLICATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_REQUEST_SCHEDULE_PUBLICATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_REQUEST_SCHEDULE_UNPUBLICATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_REQUEST_UNPUBLICATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_PUBLICATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_SCHEDULE_UNPUBLICATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction.XPAGE_UNPUBLISH;
@@ -190,7 +194,11 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(XPAGE, XPAGE_PUBLISH), false)
                 .put(key(XPAGE, XPAGE_RENAME), false)
                 .put(key(XPAGE, XPAGE_SCHEDULE_PUBLICATION), false)
+                .put(key(XPAGE, XPAGE_REQUEST_PUBLICATION), false)
+                .put(key(XPAGE, XPAGE_REQUEST_SCHEDULE_PUBLICATION), false)
                 .put(key(XPAGE, XPAGE_SCHEDULE_UNPUBLICATION), true)
+                .put(key(XPAGE, XPAGE_REQUEST_UNPUBLICATION), true)
+                .put(key(XPAGE, XPAGE_REQUEST_SCHEDULE_UNPUBLICATION), true)
                 .put(key(XPAGE, XPAGE_UNPUBLISH), true)
                 .build();
         Assertions.assertThat(actions)
