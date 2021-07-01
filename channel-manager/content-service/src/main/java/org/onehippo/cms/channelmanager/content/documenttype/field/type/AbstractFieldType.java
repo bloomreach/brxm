@@ -57,11 +57,9 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private String jcrType;
     private String effectiveType;
     private boolean orderable;
-
-    @JsonIgnore
     private int minValues = 1;
-    @JsonIgnore
     private int maxValues = 1;
+
     @JsonIgnore
     private boolean isMultiple;
 
