@@ -19,6 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -51,6 +53,9 @@ public abstract class AbstractJdomRestTemplateResourceResolver extends AbstractR
     private Class<?>[] jaxbClassesToBeBound;
     private String[] jaxbPackagesToScan;
     private ResourceBeanMapper resourceBeanMapper;
+
+    private boolean expandEntities;
+
 
     public String getJaxbContextPath() {
         return jaxbContextPath;
@@ -98,6 +103,25 @@ public abstract class AbstractJdomRestTemplateResourceResolver extends AbstractR
 
     public void setUnmarshaller(Unmarshaller unmarshaller) {
         this.unmarshaller = unmarshaller;
+    }
+
+    /**
+     * Return whether or not to expand entities when parsing the XML data, {@code false} by default.
+     * @return whether entity expansion should occur when parsing the XML data
+     */
+    public boolean isExpandEntities() {
+        return expandEntities;
+    }
+
+    /**
+     * Set whether or not to expand entities when parsing the XML data.
+     * <P>
+     * <EM>Note:</EM> when setting this to {@code true} manually, please note that there could be a vulnerability issue
+     * if the XML data contains an external entity references, depending on the availability of the external entity resources.
+     * @param expandEntities whether entity expansion should occur
+     */
+    public void setExpandEntities(boolean expandEntities) {
+        this.expandEntities = expandEntities;
     }
 
     @Override
@@ -166,6 +190,7 @@ public abstract class AbstractJdomRestTemplateResourceResolver extends AbstractR
 
     protected Element inputStreamToElement(final InputStream input) throws JDOMException, IOException {
         SAXBuilder jdomBuilder = new SAXBuilder();
+        jdomBuilder.setExpandEntities(isExpandEntities());
         final Document document = jdomBuilder.build(input);
         final Element elem = document.getRootElement();
         return elem;
