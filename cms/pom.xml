@@ -109,7 +109,7 @@
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
 
-    <wicket.version>7.17.0</wicket.version>
+    <wicket.version>7.18.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>7.1.0</wicket15-tree.version>
 
