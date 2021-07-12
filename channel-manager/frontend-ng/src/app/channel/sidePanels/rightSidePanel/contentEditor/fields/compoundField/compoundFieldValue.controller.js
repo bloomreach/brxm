@@ -15,12 +15,13 @@
  */
 
 export default class CompoundFieldValueCtrl {
-  constructor($element, $scope) {
+  constructor($element, $scope, $timeout) {
     'ngInject';
 
     this.children = new Set();
     this.$element = $element;
     this.$scope = $scope;
+    this.$timeout = $timeout;
 
     this.onDrag = this.onDrag.bind(this);
     this.onDrop = this.onDrop.bind(this);
@@ -33,7 +34,8 @@ export default class CompoundFieldValueCtrl {
 
     this.$scope.$on('field:drag', this.onDrag);
     this.$scope.$on('field:drop', this.onDrop);
-    this.$scope.$watch(() => this.hasFocus, value => value && this.collapse.isCollapsed && this.collapse.open());
+    this.$scope.$watch(() => this.hasFocus,
+            value => this.$timeout(() => value && this.collapse.isCollapsed && this.collapse.open()));
   }
 
   $onChanges({ fieldValue }) {

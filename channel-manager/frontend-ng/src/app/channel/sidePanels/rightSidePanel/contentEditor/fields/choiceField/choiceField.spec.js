@@ -186,11 +186,13 @@ describe('ChoiceField', () => {
 
     it('should move a value', () => {
       spyOn(FieldService, 'reorder');
+      spyOn($ctrl, '_focus');
 
       $ctrl.onDrop({ oldIndex: 1, newIndex: 2 });
       $scope.$digest();
 
       expect(FieldService.reorder).toHaveBeenCalledWith({ name: 'test-name[2]', order: 3 });
+      expect($ctrl._focus).toHaveBeenCalledWith(2, false, $ctrl._isCKEditorField(2));
       expect($ctrl.fieldValues).toEqual([
         jasmine.objectContaining({ chosenId: 'choice2' }),
         jasmine.objectContaining({ chosenId: 'choice2' }),
