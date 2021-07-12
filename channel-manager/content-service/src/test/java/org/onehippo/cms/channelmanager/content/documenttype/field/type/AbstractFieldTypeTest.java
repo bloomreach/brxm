@@ -320,6 +320,24 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getType(), equalTo(FieldType.Type.MULTILINE_STRING));
     }
 
+    @Test
+    public void hasMaxValues() {
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .displayName("Field Display Name")
+                .hint("Hint")
+                .multiple(true)
+                .maxValues(3)
+                .build();
+
+        replayAll();
+
+        fieldType.init(fieldContext);
+
+        assertTrue(fieldType.getHasMaxValues());
+
+        verifyAll();
+    }
+
     static void assertZeroViolations(int violationCount) {
         assertViolations(violationCount, 0);
     }
