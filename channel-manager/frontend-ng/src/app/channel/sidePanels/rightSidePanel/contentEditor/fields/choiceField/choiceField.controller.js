@@ -47,6 +47,7 @@ class ChoiceFieldCtrl {
           onStart: this.onDrag.bind(this),
           onUpdate: this.onDragging.bind(this),
           onEnd: this.onDrop.bind(this),
+          fallbackTolerance: 10,
         });
       }
     }));
@@ -149,7 +150,7 @@ class ChoiceFieldCtrl {
     this.fieldValues.splice(newIndex, 0, this.fieldValues.splice(oldIndex, 1)[0]);
   }
 
-  _focus(index, reset = false, isCKEditor) {
+  _focus(index, reset = false, isCKEditor = false) {
     this.$timeout(() => {
       const name = this.getFieldName(index);
       const fields = Object.keys(this.form);
@@ -201,7 +202,7 @@ class ChoiceFieldCtrl {
 
   _focusAndScrollIntoView(element) {
     element.focus();
-    this.$timeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    this.$timeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
   }
 
   _focusAddButton() {
