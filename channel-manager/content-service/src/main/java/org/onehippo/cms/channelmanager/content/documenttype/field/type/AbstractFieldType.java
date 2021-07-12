@@ -59,6 +59,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private boolean orderable;
     private int minValues = 1;
     private int maxValues = 1;
+    private boolean hasMaxValues;
 
     @JsonIgnore
     private boolean isMultiple;
@@ -197,6 +198,10 @@ public abstract class AbstractFieldType implements BaseFieldType {
         return validatorNames;
     }
 
+    public final boolean getHasMaxValues() {
+        return hasMaxValues;
+    }
+
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         final ContentTypeContext parentContext = fieldContext.getParentContext();
@@ -222,7 +227,14 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
         if (fieldContext.isMultiple()) {
             setMinValues(0);
-            setMaxValues(loadMaxValues(fieldContext));
+
+            final int customMaxValues = loadMaxValues(fieldContext);
+            if (customMaxValues == -1) {
+                setMaxValues(Integer.MAX_VALUE);
+            } else {
+                setMaxValues(customMaxValues);
+                hasMaxValues = true;
+            }
         }
 
         setMultiple(fieldContext.isMultiple());
@@ -237,7 +249,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private int loadMaxValues(final FieldTypeContext fieldContext) {
         return fieldContext.getStringConfig(PROPERTY_MAX_ITEMS)
                 .map(Integer::parseInt)
-                .orElse(Integer.MAX_VALUE);
+                .orElse(-1);
     }
 
     @Override
