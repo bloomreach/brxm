@@ -74,6 +74,10 @@ export default class CompoundFieldCtrl {
     return this.fieldType.multiple && this.fieldType.orderable && this.fieldValues && this.fieldValues.length > 1;
   }
 
+  isEmpty() {
+    return !this.fieldValues || !this.fieldValues.length;
+  }
+
   isRemovable() {
     return (this.fieldType.optional || this.fieldType.multiple) &&
       (!this.fieldType.required || this.fieldValues.length > 1);
@@ -81,6 +85,25 @@ export default class CompoundFieldCtrl {
 
   isAddable() {
     return (this.fieldType.multiple || this.fieldType.optional) && (!this.fieldValues || !this.fieldValues.length);
+  }
+
+  hasMaxValues() {
+    return this.fieldType.hasMaxValues;
+  }
+
+  hasReachedMaxValues() {
+    return this._getNumberOfValues() === this.fieldType.maxValues;
+  }
+
+  getMaxValuesStatus() {
+    return {
+      current: this._getNumberOfValues(),
+      max: this.fieldType.maxValues,
+    };
+  }
+
+  _getNumberOfValues() {
+    return this.fieldValues ? this.fieldValues.length : 0;
   }
 
   onDrag({
