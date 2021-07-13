@@ -16,6 +16,7 @@
 
 import template from './primitiveField.html';
 import PrimitiveFieldCtrl from './primitiveField.controller';
+import './primitiveField.scss';
 
 const primitiveFieldComponent = {
   bindings: {
