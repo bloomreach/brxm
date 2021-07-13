@@ -257,6 +257,7 @@
   "LEFT_SIDE_PANEL_TAB_SITEMAP": "Sitemap",
   "LINK_REQUIRED": "Link is required",
   "LIVE": "live",
+  "MAX_VALUES_HINT": "{{current}} of maximum {{max}}",
   "MINUTES": "Minutes",
   "MOVE": "Move",
   "MOVE_DOWN": "Move down",

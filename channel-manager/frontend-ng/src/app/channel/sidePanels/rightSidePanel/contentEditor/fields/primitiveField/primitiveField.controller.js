@@ -190,6 +190,25 @@ class PrimitiveFieldCtrl {
     return this.fieldType.multiple || (this.fieldType.optional && !this.fieldValues.length);
   }
 
+  isDragging() {
+    return this.dragging && this.dragging >= 0;
+  }
+
+  hasMaxValues() {
+    return this.fieldType.hasMaxValues;
+  }
+
+  hasReachedMaxValues() {
+    return this.fieldValues.length === this.fieldType.maxValues;
+  }
+
+  getMaxValuesStatus() {
+    return {
+      current: this.fieldValues.length,
+      max: this.fieldType.maxValues,
+    };
+  }
+
   // eslint-disable-next-line consistent-return
   async onMove(oldIndex, newIndex) {
     const [value] = this.fieldValues.splice(oldIndex, 1);
