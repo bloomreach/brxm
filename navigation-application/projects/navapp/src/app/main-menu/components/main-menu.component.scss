@@ -31,6 +31,8 @@
     color: $menu-text-color-light;
     display: grid;
     grid-template-columns: $menu-collapsed-width 1fr;
+    height: 28px;
+    width: 28px;
   }
 }
 
