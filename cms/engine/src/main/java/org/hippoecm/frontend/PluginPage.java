@@ -62,7 +62,7 @@ import org.hippoecm.hst.diagnosis.Task;
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
     private static final long serialVersionUID = 1L;
-    private static final String RELATIVE_FAVICON_PATH = "navapp-assets/favicon.ico";
+    private static final String RELATIVE_FAVICON_PATH = "navapp-assets/favicon.ico?v=1";
 
     private final int pageId;
 
