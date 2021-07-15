@@ -358,6 +358,7 @@
   "TOOLBAR_MENU_XPAGE_VERSIONS": "Versions",
   "SEARCH_COMPONENTS_NAME": "components",
   "TOOLBAR_MENU_XPAGE_RENAME": "Rename",
+  "NEXT": "Next",
   "EXPRESSION_TARGET_GROUP_DOCUMENTTYPES_SUBJECT": "(content type)",
   "ERROR_DELETE_COMPONENT": "Cannot delete '{{component}}'",
   "NORMAL_SIZE": "Normal size",
