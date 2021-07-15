@@ -504,5 +504,6 @@
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Geplante Anfrage einer Offlinenahme abbrechen",
   "CREATE_DOCUMENT_LOCKED": "Kann Dokument nicht erstellen (Komponente ist gesperrt)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Veröffentlichung angefragt für '{{documentName}}'",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Kein Seiteninhalt oder Versionsverlauf für diese Seite verfügbar."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Kein Seiteninhalt oder Versionsverlauf für diese Seite verfügbar.",
+  "NEXT": "Weiter..."
 }

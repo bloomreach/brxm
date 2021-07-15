@@ -505,5 +505,6 @@
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Geplande aanvraag 'Publicatie beëindigen' annuleren",
   "CREATE_DOCUMENT_LOCKED": "Kan document niet maken (component is vergrendeld).",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publicatieaanvraag voor '{{documentName}}'",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Er is geen paginacontent of versiegeschiedenis beschikbaar voor deze pagina."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Er is geen paginacontent of versiegeschiedenis beschikbaar voor deze pagina.",
+  "NEXT": "Volgende..."
 }
