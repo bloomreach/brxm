@@ -92,8 +92,17 @@ class ChoiceFieldCtrl {
   }
 
   isRemovable() {
-    return (this.fieldType.optional || this.fieldType.multiple) &&
-      (!this.fieldType.required || this.fieldValues.length > 1);
+    // we can always remove an optional value
+    if (this.fieldType.optional) {
+      return true;
+    }
+
+    // if the user can only choose 1 type and the minimum amount of fields is reached, it makes no sense to remove
+    if (Object.keys(this.fieldType.choices).length === 1 && this._getNumberOfValues() === this.fieldType.minValues) {
+      return false;
+    }
+
+    return this._getNumberOfValues() > 0;
   }
 
   isAddable() {
