@@ -55,7 +55,7 @@
           </div>
         </h5>
         <div class="field__title-buttons" layout layout-nowrap>
-          <md-menu ng-if="$ctrl.isAddable()">
+          <md-menu ng-if="$ctrl.isAddable() && !$ctrl.hasReachedMaxValues()">
             <md-button class="md-icon-button qa-button-add" ng-sortable-handle ng-click="$mdMenu.open($event)">
               <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
               <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
@@ -70,6 +70,12 @@
           </md-menu>
         </div>
       </div>
+    </div>
+
+    <div ng-if="$ctrl.hasMaxValues()"
+         class="max-values-hint max-values-hint--align-title"
+         md-colors="{ color: 'grey' }">
+      {{ 'MAX_VALUES_HINT' | translate: $ctrl.getMaxValuesStatus() }}
     </div>
 
     <div class="collapse-element">
@@ -123,7 +129,7 @@
                   <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
                 </md-button>
               </div>
-              <md-menu ng-if="$ctrl.fieldType.multiple">
+              <md-menu ng-if="$ctrl.fieldType.multiple && !$ctrl.hasReachedMaxValues()">
                 <md-button class="md-icon-button qa-button-add" ng-sortable-handle ng-click="$mdMenu.open($event)">
                   <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
                   <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
