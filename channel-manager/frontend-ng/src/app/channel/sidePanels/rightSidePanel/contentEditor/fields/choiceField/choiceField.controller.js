@@ -100,6 +100,25 @@ class ChoiceFieldCtrl {
     return this.fieldType.multiple || (this.fieldType.optional && !this.fieldValues.length);
   }
 
+  hasMaxValues() {
+    return this.fieldType.hasMaxValues;
+  }
+
+  hasReachedMaxValues() {
+    return this._getNumberOfValues() === this.fieldType.maxValues;
+  }
+
+  getMaxValuesStatus() {
+    return {
+      current: this._getNumberOfValues(),
+      max: this.fieldType.maxValues,
+    };
+  }
+
+  _getNumberOfValues() {
+    return this.fieldValues ? this.fieldValues.length : 0;
+  }
+
   onDrag({ clone, from, item, oldIndex, }) {
     this._nextNode = from === item.parentNode ? item.nextSibling : clone.nextSibling;
     this.$scope.$apply(() => {
@@ -160,9 +179,9 @@ class ChoiceFieldCtrl {
        * This check is needed because "this.form" not always has the same order as the fields in the page.
        * So, if the field selected happens to be in the first index, the name will match the first key that
        * starts with that string, which might be one with a higher index since the ordering isn't reliable.
-       * 
+       *
        * Example:
-       * 
+       *
        * const name = hst:employee/hst:interview;
        *
        * this.form = {
