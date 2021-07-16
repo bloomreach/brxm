@@ -114,6 +114,10 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
     @Override
     public final void setMinValues(final int minValues) {
+        if (minValues < 0) {
+            throw new IllegalArgumentException(String.format("The minimum amount of values for field '%s' can not " +
+                    "be less than 0.", id));
+        }
         this.minValues = minValues;
     }
 
@@ -124,6 +128,14 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
     @Override
     public final void setMaxValues(final int maxValues) {
+        if (maxValues < 1) {
+            throw new IllegalArgumentException(String.format("The maximum amount of values for field '%s' can not " +
+                    "be less than 1", id));
+        }
+        if (maxValues < minValues) {
+            throw new IllegalArgumentException(String.format("The maximum amount of values for field '%s' can not " +
+                    "be less than the minimum amount of values, which is set to %d", id, minValues));
+        }
         this.maxValues = maxValues;
     }
 
