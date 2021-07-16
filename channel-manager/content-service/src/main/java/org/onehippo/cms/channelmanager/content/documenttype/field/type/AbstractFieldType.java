@@ -227,14 +227,8 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
         if (fieldContext.isMultiple()) {
             setMinValues(0);
-
-            final int customMaxValues = loadMaxValues(fieldContext);
-            if (customMaxValues == -1) {
-                setMaxValues(Integer.MAX_VALUE);
-            } else {
-                setMaxValues(customMaxValues);
-                hasMaxValues = true;
-            }
+            setMaxValues(loadMaxValues(fieldContext));
+            hasMaxValues = maxValues != Integer.MAX_VALUE;
         }
 
         setMultiple(fieldContext.isMultiple());
@@ -249,7 +243,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private int loadMaxValues(final FieldTypeContext fieldContext) {
         return fieldContext.getStringConfig(PROPERTY_MAX_ITEMS)
                 .map(Integer::parseInt)
-                .orElse(-1);
+                .orElse(Integer.MAX_VALUE);
     }
 
     @Override
