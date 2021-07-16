@@ -72,11 +72,11 @@
       </div>
     </div>
 
-    <div ng-if="$ctrl.hasMaxValues()"
-         class="max-values-hint max-values-hint--align-title"
-         md-colors="{ color: 'grey' }">
-      {{ 'MAX_VALUES_HINT' | translate: $ctrl.getMaxValuesStatus() }}
-    </div>
+    <max-values-hint ng-if="$ctrl.hasMaxValues()"
+                     values="$ctrl.fieldValues"
+                     max="$ctrl.fieldType.maxValues"
+                     class="field-hint--align-title">
+    </max-values-hint>
 
     <div class="collapse-element">
       <div ng-if="!$ctrl.isEmpty()" ng-sortable-area>

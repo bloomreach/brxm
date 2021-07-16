@@ -221,6 +221,20 @@ compound-field {
   }
 }
 
+.field-hint {
+  &--bordered {
+    border-left: 3px solid map-get($grey, 500);
+  }
+
+  &--align-left {
+    padding-left: 0;
+  }
+
+  &--align-title {
+    padding: 0 0 0 22px;
+  }
+}
+
 .max-values-hint {
   clear: left;
   padding: 5px 0 0 16px;

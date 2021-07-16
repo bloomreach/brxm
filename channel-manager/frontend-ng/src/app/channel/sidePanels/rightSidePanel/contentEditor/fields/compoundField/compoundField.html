@@ -14,12 +14,11 @@
   limitations under the License.
   -->
 
-
-<div ng-if="$ctrl.hasMaxValues()"
-     class="max-values-hint max-values-hint--bordered"
-     md-colors="{ color: 'grey' }">
-  {{ 'MAX_VALUES_HINT' | translate: $ctrl.getMaxValuesStatus() }}
-</div>
+<max-values-hint ng-if="$ctrl.hasMaxValues()"
+                 values="$ctrl.fieldValues"
+                 max="$ctrl.fieldType.maxValues"
+                 class="field-hint--bordered">
+</max-values-hint>
 
 <div ng-if="!$ctrl.isEmpty()" ng-sortable-area>
   <div
