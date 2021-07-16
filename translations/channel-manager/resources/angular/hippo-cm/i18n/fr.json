@@ -503,5 +503,6 @@
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Annuler la demande de mise hors connexion programmée",
   "CREATE_DOCUMENT_LOCKED": "Impossible de créer le document (le composant est verrouillé)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publication requise pour '{{documentName}}’",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Aucun contenu de page ou historique de version disponible pour cette page."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Aucun contenu de page ou historique de version disponible pour cette page.",
+  "NEXT": "Suivant..."
 }

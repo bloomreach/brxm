@@ -505,5 +505,6 @@
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Cancelar solicitud de cancelación de publicación programada",
   "CREATE_DOCUMENT_LOCKED": "No es posible crear el documento (el componente está bloqueado)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publicación solicitada para '{{documentName}}'",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "No hay contenido de la página ni historial de versiones disponible para esta página."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "No hay contenido de la página ni historial de versiones disponible para esta página.",
+  "NEXT": "Siguiente..."
 }
