@@ -29,7 +29,7 @@
 (async function SetupNavappConnections() {
   'use strict';
 
-  const navCom = window.bloomreach && window.bloomreach['navapp-communication'];
+  const navCom = window.brNavappCommunication;
 
   if (!navCom) {
     throw Error('Navapp Communication Library not found but it is required');

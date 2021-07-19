@@ -21,14 +21,6 @@
       "esnext.array",
       "dom"
     ],
-    "paths": {
-      "@bloomreach/navapp-communication": [
-        "dist/navapp-communication"
-      ],
-      "@bloomreach/navapp-communication/*": [
-        "dist/navapp-communication/*"
-      ]
-    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

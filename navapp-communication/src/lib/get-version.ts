@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-export const DEFAULT_COMMUNICATION_TIMEOUT = 300000; // 5 minutes
+import { version } from '../../package.json'
 
-export function mergeIntersecting(obj1: object, obj2: object): object {
-  const intersection = Object.keys(obj1).reduce((obj, key) => {
-    if (key in obj2) {
-      obj[key] = obj2[key];
-    }
-
-    return obj;
-  }, {});
-
-  return { ...obj1, ...intersection };
+export function getVersion(): string {
+  return version;
 }
