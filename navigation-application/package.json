@@ -7,7 +7,7 @@
     "start:example-app": "ng serve iframe-app-example",
     "start:example-app:fetch-error": "ng serve iframe-app-example --configuration=nav-items-fetch-error",
     "sprites": "svg-sprite --config sprite-config.json src/assets/menu-icons/*.svg",
-    "build": "ng build navapp",
+    "build": "ng build navapp --prod",
     "test": "ng test navapp",
     "test:single-run": "ng test --no-watch --browsers ChromeHeadless",
     "lint": "npm run lint:styles && ng lint",
