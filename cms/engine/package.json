@@ -17,7 +17,7 @@
     "test": "karma start"
   },
   "dependencies": {
-    "@bloomreach/navapp": "1.5.3",
+    "@bloomreach/navapp": "1.5.5",
     "@bloomreach/navapp-communication": "3.1.0",
     "penpal": "4.1.1"
   },
