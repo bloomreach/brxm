@@ -130,6 +130,15 @@ export class MenuStructureService {
           new MenuItemContainer(this.translate('MENU_CONTAINER_OVERVIEW'), [
             new MenuItemLink('insights/overview/sitewide-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITEWIDE_OVERVIEW')),
             new MenuItemLink('insights/overview/site-search-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-1', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-2', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-3', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-4', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-5', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-6', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-7', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-8', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
+            new MenuItemLink('insights/overview/homepage-overview-9', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW')),
             new MenuItemLink('insights/overview/site-search-kpis', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_KPIS')),
           ]),
           new MenuItemContainer(this.translate('MENU_CONTAINER_REPORTING'), [

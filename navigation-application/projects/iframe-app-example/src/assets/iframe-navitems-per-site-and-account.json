@@ -2,156 +2,156 @@
   "1-1": [
     {
       "id": "site-search/search-ranking",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/search-ranking"
     },
     {
       "id": "site-search/redirects",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/redirects"
     },
     {
       "id": "site-search/search-facets",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/search-facets"
     },
     {
       "id": "site-search/ab-testing",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/ab-testing"
     },
     {
       "id": "site-search/campaigns",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/campaigns"
     },
     {
       "id": "site-search/assets",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/assets"
     },
     {
       "id": "site-search/autosuggest-blacklist",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/autosuggest-blacklist"
     },
     {
       "id": "site-search/synonyms",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/synonyms"
     },
     {
       "id": "site-search/search-ranking-diagnostics",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/search-ranking-diagnostics"
     },
     {
       "id": "site-search/profile-simulator",
-      "appIframeUrl": "http://localhost:4201/brsm1",
+      "appIframeUrl": "http://localhost:5000/brsm1",
       "appPath": "site-search/profile-simulator"
     }
   ],
   "2-1": [
     {
       "id": "categories/category-ranking",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "categories/category-ranking"
     },
     {
       "id": "categories/all-category-pages",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "categories/all-category-pages"
     },
     {
       "id": "categories/category-facets-ranking",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "categories/category-facets-ranking"
     },
     {
       "id": "seo",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "seo"
     },
     {
       "id": "pathways",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "pathways"
     },
     {
       "id": "insights/opportunities/top-opportunities",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "insights/opportunities/top-opportunities"
     },
     {
       "id": "insights/opportunities/improve-category-navigation",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "insights/opportunities/improve-category-navigation"
     },
     {
       "id": "insights/opportunities/improve-site-search",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "insights/opportunities/improve-site-search"
     },
     {
       "id": "insights/activities",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "insights/activities"
     },
     {
       "id": "insights/playbooks",
-      "appIframeUrl": "http://localhost:4201/brsm2",
+      "appIframeUrl": "http://localhost:5000/brsm2",
       "appPath": "insights/playbooks"
     }
   ],
   "3-1": [
     {
       "id": "insights/collections/product-collections",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/collections/product-collections"
     },
     {
       "id": "insights/collections/category-collections",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/collections/category-collections"
     },
     {
       "id": "insights/collections/page-collections",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/collections/page-collections"
     },
     {
       "id": "insights/collections/query-collections",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/collections/query-collections"
     },
     {
       "id": "insights/collections/brand-collections",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/collections/brand-collections"
     },
     {
       "id": "insights/overview/account-overview",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/overview/account-overview"
     },
     {
       "id": "insights/overview/account-traffic-breakdown",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/overview/account-traffic-breakdown"
     },
     {
       "id": "insights/overview/sitewide-overview",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/overview/sitewide-overview"
     },
     {
       "id": "insights/overview/site-search-overview",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/overview/site-search-overview"
     },
     {
       "id": "insights/overview/site-search-kpis",
-      "appIframeUrl": "http://localhost:4201/brsm",
+      "appIframeUrl": "http://localhost:5000/brsm",
       "appPath": "insights/overview/site-search-kpis"
     }
   ]

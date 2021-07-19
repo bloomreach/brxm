@@ -34,9 +34,9 @@
 
   <properties>
     <sonar.sources>.</sonar.sources>
-    <sonar.inclusions>projects/navapp/**/*.ts,projects/navapp-communication/**/*.ts</sonar.inclusions>
+    <sonar.inclusions>projects/navapp/**/*.ts,</sonar.inclusions>
     <sonar.exclusions>projects/**/*.spec.ts</sonar.exclusions>
-    <sonar.typescript.lcov.reportPaths>coverage/navapp-communication/lcov.info,coverage/navapp/lcov.info</sonar.typescript.lcov.reportPaths>
+    <sonar.typescript.lcov.reportPaths>coverage/navapp/lcov.info</sonar.typescript.lcov.reportPaths>
   </properties>
 
   <scm>
@@ -210,7 +210,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>run build:prod</arguments>
+                  <arguments>run build</arguments>
                 </configuration>
               </execution>
             </executions>
@@ -236,7 +236,6 @@
                 <exclude>.*</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>projects/navapp/**/*.svg</exclude>
-                <exclude>**/.auto-changelog</exclude>\n
                 <exclude>**/browserslist</exclude>\n
                 <exclude>projects/target/surefire-reports/TEST-karma.xml</exclude>
                 <!-- Generated or pulled-in files which are not cleaned up -->
@@ -253,4 +252,3 @@
     </profile>
   </profiles>
 </project>
-

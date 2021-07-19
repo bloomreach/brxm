@@ -118,6 +118,13 @@ export interface ParentApi {
    * @param location The NavLocation navigated to
    */
   navigate: (location: NavLocation) => Promise<void>;
+
+  /**
+   * Is called by a child app to set the site by siteId in the navapp and all client apps
+   * @param siteId the selected SiteId
+   */
+  updateSelectedSite: (siteId: SiteId) => Promise<void>;
+
   /**
    * Is called by an application when it needs to cover the nav-app’s UI surface with a mask to prevent user
    * interactions for example because the user input is needed for a dialog.
