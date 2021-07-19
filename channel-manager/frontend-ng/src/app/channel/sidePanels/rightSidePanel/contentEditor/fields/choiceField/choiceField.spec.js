@@ -31,6 +31,8 @@ describe('ChoiceField', () => {
     optional: false,
     multiple: true,
     hint: 'bla bla',
+    minValues: 1,
+    maxValues: 3,
     choices: {
       choice1: {
         id: 'choice1',
@@ -142,6 +144,16 @@ describe('ChoiceField', () => {
       $ctrl.fieldValues = ['a'];
 
       expect($ctrl.isDraggable()).toBe(false);
+    });
+  });
+
+  describe('isAddable', () => {
+    it('should be addable while the maximum amount of values has not been reached', () => {
+      expect($ctrl.isAddable()).toBe(false);
+
+      $ctrl.fieldType.maxValues += 1;
+
+      expect($ctrl.isAddable()).toBe(true);
     });
   });
 
