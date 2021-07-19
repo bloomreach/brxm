@@ -16,7 +16,7 @@
 
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { ClientErrorCodes, SiteId } from '@bloomreach/navapp-communication';
 
 import { AppState } from './services/app-state';
 import { ChildApiMethodsService } from './services/child-api-methods.service';
@@ -87,5 +87,9 @@ export class AppComponent implements OnInit {
 
   toggleLogoutErrorState(): void {
     this.state.generateAnErrorUponLogout = !this.state.generateAnErrorUponLogout;
+  }
+
+  updateSelectedSite(siteId: SiteId): void {
+    this.communicationService.updateSelectedSite(siteId);
   }
 }

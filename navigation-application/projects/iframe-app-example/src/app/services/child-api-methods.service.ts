@@ -15,9 +15,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ChildApi, NavLocation, SiteId } from '@bloomreach/navapp-communication';
+import { ChildApi, NavigationTrigger, NavLocation, SiteId } from '@bloomreach/navapp-communication';
 
-import { NavigationTrigger } from '../../../../navapp-communication/src/lib/api';
 import navItemsPerSiteAndAccount from '../../assets/iframe-navitems-per-site-and-account.json';
 import defaultNavItems from '../../assets/iframe-navitems.json';
 import sites from '../../assets/sites.json';

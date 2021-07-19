@@ -66,7 +66,7 @@ describe('ConnectionService', () => {
       createRenderer: rendererMock,
     });
 
-    connectToChildSpy = spyOnProperty(commLib, 'connectToChild').and.returnValue(parentConfig => {
+    connectToChildSpy = spyOn(commLib, 'connectToChild').and.callFake(parentConfig => {
       parentMethods = parentConfig.methods;
 
       return Promise.resolve({});
@@ -98,7 +98,7 @@ describe('ConnectionService', () => {
     let connectToChildReject: (reason?: any) => any;
 
     beforeEach(() => {
-      connectToChildSpy.and.returnValue(parentConfig => {
+      connectToChildSpy.and.callFake(parentConfig => {
         parentMethods = parentConfig.methods;
 
         return new Promise((resolve, reject) => {
@@ -228,7 +228,7 @@ describe('ConnectionService', () => {
   }));
 
   it('should reject the promise when a connection can not be established', fakeAsync(() => {
-    connectToChildSpy.and.returnValue(() => Promise.reject('some error'));
+    connectToChildSpy.and.callFake(() => Promise.reject('some error'));
 
     const iframeMock = {
      src: 'https://app.com',

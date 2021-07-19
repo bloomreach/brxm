@@ -70,7 +70,7 @@ public class NavAppBridgeHeaderItem extends HippoHeaderItem {
 
         final String navAppCommunicationResourcePrefix = getNavAppCommunicationResourcePrefix();
 
-        Stream.of("penpal.js", "bloomreach-navapp-communication.umd.js")
+        Stream.of("penpal.js", "index.umd.js")
                 .map(javascriptResourceName -> Url.parse(String.format("%s%s", navAppCommunicationResourcePrefix, javascriptResourceName)))
                 .map(WebApplicationHelper::createUniqueUrlResourceReference)
                 .forEach(reference -> JavaScriptHeaderItem.forReference(reference).render(response));

@@ -31,4 +31,4 @@ fs.copySync('node_modules/@bloomreach/navapp/dist/navapp/', targetDirNavApp);
 // ----------------------------------------------------------------------------
 
 fs.copyFileSync('node_modules/penpal/dist/penpal.js', targetDirNavAppCommunication + '/penpal.js');
-fs.copySync('node_modules/@bloomreach/navapp-communication/bundles/', targetDirNavAppCommunication);
+fs.copySync('node_modules/@bloomreach/navapp-communication/dist/', targetDirNavAppCommunication);
