@@ -130,20 +130,8 @@ public class NodeFieldServiceImpl implements NodeFieldService {
     public void removeNodeField(final String documentPath, final FieldPath fieldPath,
                                 final List<FieldType> fields) {
 
-        final FieldType fieldType = getFieldType(fieldPath, fields);
         final String nodeFieldPath = documentPath + SEPARATOR + fieldPath;
         try {
-            final Node fieldNode = session.getNode(nodeFieldPath);
-            final Node parentNode = fieldNode.getParent();
-            final String fieldName = fieldPath.getLastSegmentName();
-            final long numberOfFields = parentNode.getNodes(fieldName).getSize();
-
-            if (numberOfFields <= fieldType.getMinValues()) {
-                log.warn("Cannot delete field '{}', the minimum amount of required fields is {}", fieldPath,
-                        fieldType.getMinValues());
-                throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "cardinality", "min-values"));
-            }
-
             session.removeItem(nodeFieldPath);
             session.save();
         } catch (final PathNotFoundException e) {
