@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import org.hippoecm.frontend.session.UserSession;
 
 public class DefaultLoginPlugin extends LoginPlugin {
 
-    private static final TextTemplate INIT_JS = new PackageTextTemplate(DefaultLoginPlugin.class, "timezones-init.js");
     // jstz.min.js is fetched by npm
     private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class,
             "jstz.min.js");
@@ -48,6 +47,8 @@ public class DefaultLoginPlugin extends LoginPlugin {
     public static final String SELECTABLE_TIMEZONES_CONFIG_PARAM = "selectable.timezones";
     public static final List<String> SUPPORTED_JAVA_TIMEZONES = Collections.unmodifiableList(
             getSupportedJavaTimeZones());
+
+    private final TextTemplate initScript = new PackageTextTemplate(DefaultLoginPlugin.class, "timezones-init.js");
 
     /**
      * Exclude POSIX compatible timezones because they may cause confusions
@@ -112,7 +113,7 @@ public class DefaultLoginPlugin extends LoginPlugin {
             super.internalRenderHead(container);
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM) && useBrowserTimeZoneIfAvailable) {
                 container.getHeaderResponse().render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
-                container.getHeaderResponse().render(OnLoadHeaderItem.forScript(INIT_JS.asString()));
+                container.getHeaderResponse().render(OnLoadHeaderItem.forScript(initScript.asString()));
             }
         }
 
