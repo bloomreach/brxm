@@ -708,6 +708,16 @@
     "MENU_ITEM_XM_API_TOKEN_MANAGEMENT" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "MENU_ITEM_INSIGHTS_OVERVIEW_HOMEPAGE_OVERVIEW" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

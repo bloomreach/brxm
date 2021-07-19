@@ -1,5 +1,5 @@
 <!--
-  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,6 +14,6 @@
   limitations under the License.
   -->
 
-<img class="loader" src="navapp-assets/loaders/br-loader.png?v=1">
+# NavappCommunication
 
-
+TODO: write README
