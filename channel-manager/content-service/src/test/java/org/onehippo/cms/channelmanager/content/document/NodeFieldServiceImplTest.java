@@ -406,7 +406,6 @@ public class NodeFieldServiceImplTest {
     @Test
     public void removeNodeFieldShouldThrowIfFieldNodeDoesNotExist() throws Exception {
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
-        mockDocumentAndField("document", "field");
 
         session.removeItem("/document/field");
         expectLastCall().andThrow(new PathNotFoundException());
@@ -421,23 +420,8 @@ public class NodeFieldServiceImplTest {
     }
 
     @Test
-    public void removeNodeFieldShouldThrowIfMinValuesIsNotRespected() throws Exception {
-        final FieldType fieldType = mockFieldType("field", "ns:type", 1, 1, true, COMPOUND);
-        mockDocumentAndField("document", "field");
-        replayAll();
-
-        try {
-            nodeFieldService.removeNodeField("/document", new FieldPath("field"), singletonList(fieldType));
-        } catch (final InternalServerErrorException e) {
-            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR, "cardinality", "min-values");
-        }
-        verifyAll();
-    }
-
-    @Test
     public void removeNodeFieldShouldDeleteFieldNode() throws Exception {
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
-        mockDocumentAndField("document", "field");
 
         session.removeItem("/document/field");
         expectLastCall();
@@ -458,17 +442,6 @@ public class NodeFieldServiceImplTest {
         expect(it.getSize()).andReturn(nrOfFields);
         expect(documentNode.getNodes(fieldName)).andReturn(it);
         return documentNode;
-    }
-
-    private void mockDocumentAndField(final String documentName, final String fieldName) throws Exception {
-        final Node documentNode = createMock(Node.class);
-        final NodeIterator it = createMock(NodeIterator.class);
-        expect(it.getSize()).andReturn(1L);
-        expect(documentNode.getNodes(fieldName)).andReturn(it);
-
-        final Node fieldNode = createMock(Node.class);
-        expect(fieldNode.getParent()).andReturn(documentNode);
-        expect(session.getNode("/" + documentName + "/" + fieldName)).andReturn(fieldNode);
     }
 
     private static Node mockField(final String fieldName, final Node parent) throws Exception {
