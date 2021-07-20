@@ -130,6 +130,8 @@ public class NodeFieldServiceImpl implements NodeFieldService {
     public void removeNodeField(final String documentPath, final FieldPath fieldPath,
                                 final List<FieldType> fields) {
 
+        getFieldType(fieldPath, fields);
+
         final String nodeFieldPath = documentPath + SEPARATOR + fieldPath;
         try {
             session.removeItem(nodeFieldPath);
