@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -45,11 +45,11 @@
     <extra.app.name>Getting Started Extra Site</extra.app.name>
 
     <maven.archetype.plugin.version>2.4</maven.archetype.plugin.version>
-    <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
+    <maven.antrun.plugin.version>3.0.0</maven.antrun.plugin.version>
     <maven.dependency.plugin.version>3.1.1</maven.dependency.plugin.version>
 
     <!-- ant and junit versions are aligned with the versions which maven-antrun-plugin uses -->
-    <ant.version>1.9.4</ant.version>
+    <ant.version>1.10.9</ant.version>
     <junit.version>4.13.1</junit.version>
 
     <docker.test.bootstrap.timeout>120000</docker.test.bootstrap.timeout>
