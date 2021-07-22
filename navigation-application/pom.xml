@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -39,12 +39,6 @@
     <sonar.typescript.lcov.reportPaths>coverage/navapp/lcov.info</sonar.typescript.lcov.reportPaths>
   </properties>
 
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/bloomreach-navigation-application.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community-dev/bloomreach-navigation-application.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community-dev/bloomreach-navigation-application</url>
-  </scm>
-
   <build>
     <defaultGoal>validate</defaultGoal>
     <plugins>
@@ -78,6 +72,15 @@
             </goals>
             <configuration>
               <arguments>run lint</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm run build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run build</arguments>
             </configuration>
           </execution>
           <execution>
@@ -147,7 +150,7 @@
                   <filtering>false</filtering>
                 </resource>
                 <resource>
-                  <directory>${basedir}/node_modules/@bloomreach/navapp-communication/bundles</directory>
+                  <directory>${basedir}/node_modules/@bloomreach/navapp-communication/dist</directory>
                   <targetPath>navapp-communication</targetPath>
                   <filtering>false</filtering>
                 </resource>
@@ -169,56 +172,6 @@
 
   <profiles>
     <profile>
-      <id>fast-frontends</id>
-      <activation>
-        <property><name>fast-frontends</name></property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.eirslett</groupId>
-            <artifactId>frontend-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>npm run build</id>
-                <goals>
-                  <goal>npm</goal>
-                </goals>
-                <configuration>
-                  <arguments>run build</arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>slow-frontends</id>
-      <activation>
-        <property><name>!fast-frontends</name></property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.eirslett</groupId>
-            <artifactId>frontend-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>npm run build</id>
-                <goals>
-                  <goal>npm</goal>
-                </goals>
-                <configuration>
-                  <arguments>run build</arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>pedantic</id>
       <build>
         <plugins>
@@ -236,7 +189,7 @@
                 <exclude>.*</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>projects/navapp/**/*.svg</exclude>
-                <exclude>**/browserslist</exclude>\n
+                <exclude>**/browserslist</exclude>
                 <exclude>projects/target/surefire-reports/TEST-karma.xml</exclude>
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
