@@ -170,6 +170,12 @@
     <dependencies>
 
       <dependency>
+        <groupId>com.bloomreach.xm</groupId>
+        <artifactId>navigation-application</artifactId>
+        <version>${hippo.navapp.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-commons</artifactId>
         <version>${hippo.commons.version}</version>
@@ -357,14 +363,6 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson2-databind.version}</version>
-      </dependency>
-
-      <!-- NavApp -->
-      <dependency>
-        <groupId>com.bloomreach.xm</groupId>
-        <artifactId>navigation-application</artifactId>
-        <version>${hippo.navapp.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <!-- test dependencies -->
