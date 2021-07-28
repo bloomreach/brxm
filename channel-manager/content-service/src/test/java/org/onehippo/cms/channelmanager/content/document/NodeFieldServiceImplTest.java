@@ -134,9 +134,8 @@ public class NodeFieldServiceImplTest {
     }
 
     @Test
-    public void addNodeFieldShouldThrowIfFieldIsNotMultiple() {
-        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, false, COMPOUND);
-        expect(fieldType.isOptional()).andReturn(false);
+    public void addNodeFieldShouldThrowIfFieldIsNotMultipleButMaxValuesIsGreaterThanOne() {
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 2, false, COMPOUND);
         replayAll();
 
         try {
@@ -390,8 +389,7 @@ public class NodeFieldServiceImplTest {
 
     @Test
     public void removeNodeFieldShouldThrowIfFieldIsNotMultiple() {
-        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, false, COMPOUND);
-        expect(fieldType.isOptional()).andReturn(false);
+        final FieldType fieldType = mockFieldType("field", "ns:type", 0, 2, false, COMPOUND);
         replayAll();
 
         try {

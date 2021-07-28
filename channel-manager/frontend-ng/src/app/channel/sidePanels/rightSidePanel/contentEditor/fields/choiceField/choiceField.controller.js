@@ -106,7 +106,7 @@ class ChoiceFieldCtrl {
   }
 
   isAddable() {
-    return this.fieldType.multiple || (this.fieldType.optional && !this.fieldValues.length);
+    return !this.hasReachedMaxValues();
   }
 
   hasMaxValues() {
