@@ -22,6 +22,7 @@ import documentFieldsComponent from './documentFields/documentFields.component';
 import dynamicDropdownFieldComponent from './dynamicDropdown/dynamicDropdown.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
+import maxValuesHintComponent from './maxValuesHint/maxValuesHint.component';
 import openuiStringFieldComponent from './openuiStringField/openuiStringField.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import radioGroupFieldComponent from './radioGroup/radioGroup.component';
@@ -39,6 +40,7 @@ const fieldsModule = angular
   .component('documentFields', documentFieldsComponent)
   .component('dynamicDropdown', dynamicDropdownFieldComponent)
   .component('imageLink', imageLinkComponent)
+  .component('maxValuesHint', maxValuesHintComponent)
   .component('openuiStringField', openuiStringFieldComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('radioGroup', radioGroupFieldComponent)
