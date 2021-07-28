@@ -233,8 +233,9 @@ public class NodeFieldServiceImpl implements NodeFieldService {
             throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "fieldType", fieldPath.toString()));
         }
 
-        if (!(fieldType.isMultiple() || fieldType.isOptional())) {
-            log.warn("The field '{}' does not support multiple values", fieldPath);
+        if (fieldType.getMaxValues() > 1 && !fieldType.isMultiple()) {
+            log.warn("The field '{}' does not support multiple values but expects a maximum of {} values", fieldPath,
+                    fieldType.getMaxValues());
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "fieldType", "not-multiple"));
         }
 
