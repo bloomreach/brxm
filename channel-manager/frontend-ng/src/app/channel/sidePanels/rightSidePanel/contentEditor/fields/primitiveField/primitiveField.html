@@ -256,6 +256,11 @@
           <div ng-if="$ctrl.fieldType.type === 'DATE_AND_TIME'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
           <div ng-if="$ctrl.fieldType.type === 'DATE_ONLY'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
         </div>
+
+        <max-values-hint ng-if="$last && $ctrl.hasMaxValues() && !$ctrl.isDragging()"
+                         values="$ctrl.fieldValues"
+                         max="$ctrl.fieldType.maxValues">
+        </max-values-hint>
       </md-input-container>
 
       <div ng-transclude="buttons" class="field__buttons" layout flex="none">
@@ -292,7 +297,7 @@
             </md-menu-item>
           </md-menu-content>
         </md-menu>
-  
+
         <md-button ng-if="$ctrl.isRemovable()" class="md-icon-button qa-button-remove" ng-click="$ctrl.onRemove($index)">
           <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'REMOVE_VALUE' | translate }}</md-tooltip>
           <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
@@ -302,9 +307,19 @@
   </div>
 
   <div ng-if="$ctrl.isAddable()" layout layout-align="space-between center" class="field__tools">
-    <div ng-if="!$ctrl.fieldValues.length" md-colors="{ color: 'grey' }">{{ $ctrl.fieldType.displayName }}</div>
+    <div ng-if="!$ctrl.fieldValues.length"
+         md-colors="{ color: 'grey' }">
+      {{ $ctrl.fieldType.displayName }}
+      <max-values-hint ng-if="$ctrl.hasMaxValues() && !$ctrl.fieldValues.length"
+                       values="$ctrl.fieldValues"
+                       max="$ctrl.fieldType.maxValues"
+                       class="field-hint--align-left">
+      </max-values-hint>
+    </div>
 
-    <div class="field__button-add" flex="auto">
+    <div class="field__button-add"
+         flex="auto"
+         ng-if="!$ctrl.hasReachedMaxValues()">
       <md-button class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd()">
         <md-tooltip>{{ ::'ADD_VALUE' | translate }}</md-tooltip>
         <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>

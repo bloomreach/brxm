@@ -57,11 +57,10 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private String jcrType;
     private String effectiveType;
     private boolean orderable;
-
-    @JsonIgnore
     private int minValues = 1;
-    @JsonIgnore
     private int maxValues = 1;
+    private boolean hasMaxValues;
+
     @JsonIgnore
     private boolean isMultiple;
 
@@ -115,6 +114,10 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
     @Override
     public final void setMinValues(final int minValues) {
+        if (minValues < 0) {
+            throw new IllegalArgumentException(String.format("The minimum amount of values for field '%s' can not " +
+                    "be less than 0.", id));
+        }
         this.minValues = minValues;
     }
 
@@ -125,6 +128,14 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
     @Override
     public final void setMaxValues(final int maxValues) {
+        if (maxValues < 1) {
+            throw new IllegalArgumentException(String.format("The maximum amount of values for field '%s' can not " +
+                    "be less than 1", id));
+        }
+        if (maxValues < minValues) {
+            throw new IllegalArgumentException(String.format("The maximum amount of values for field '%s' can not " +
+                    "be less than the minimum amount of values, which is set to %d", id, minValues));
+        }
         this.maxValues = maxValues;
     }
 
@@ -199,6 +210,10 @@ public abstract class AbstractFieldType implements BaseFieldType {
         return validatorNames;
     }
 
+    public final boolean getHasMaxValues() {
+        return hasMaxValues;
+    }
+
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         final ContentTypeContext parentContext = fieldContext.getParentContext();
@@ -225,6 +240,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
         if (fieldContext.isMultiple()) {
             setMinValues(0);
             setMaxValues(loadMaxValues(fieldContext));
+            hasMaxValues = maxValues != Integer.MAX_VALUE;
         }
 
         setMultiple(fieldContext.isMultiple());
