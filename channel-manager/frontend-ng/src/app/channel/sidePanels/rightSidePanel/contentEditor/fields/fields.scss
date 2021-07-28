@@ -72,10 +72,14 @@ compound-field {
 .field {
   &--bordered {
     border-left: 3px solid map-get($grey, 500);
-    margin-bottom: $form-dense-distance;
+
+    &:last-child {
+      margin-bottom: $form-dense-distance;
+    }
 
     & & {
       border-left: none;
+      margin-bottom: 0;
     }
   }
 
@@ -214,5 +218,36 @@ compound-field {
 
   &__error {
     margin-left: $icon-size + 4px;
+  }
+}
+
+.field-hint {
+  &--bordered {
+    border-left: 3px solid map-get($grey, 500);
+  }
+
+  &--align-left {
+    padding-left: 0;
+  }
+
+  &--align-title {
+    padding: 0 0 0 22px;
+  }
+}
+
+.max-values-hint {
+  clear: left;
+  padding: 5px 0 0 16px;
+
+  &--align-left {
+    padding-left: 0;
+  }
+
+  &--align-title {
+    padding: 0 0 0 22px;
+  }
+
+  &--bordered {
+    border-left: 3px solid map-get($grey, 500);
   }
 }

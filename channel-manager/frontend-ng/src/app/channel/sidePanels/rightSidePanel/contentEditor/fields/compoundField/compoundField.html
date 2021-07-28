@@ -14,7 +14,13 @@
   limitations under the License.
   -->
 
-<div ng-if="$ctrl.fieldValues" ng-sortable-area>
+<max-values-hint ng-if="$ctrl.hasMaxValues()"
+                 values="$ctrl.fieldValues"
+                 max="$ctrl.fieldType.maxValues"
+                 class="field-hint--bordered">
+</max-values-hint>
+
+<div ng-if="!$ctrl.isEmpty()" ng-sortable-area>
   <div
     ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
     compound-field-value="fieldValue"
@@ -102,7 +108,7 @@
                 <md-icon md-font-icon="mdi-close-circle-outline"></md-icon>
               </md-button>
             </div>
-            <md-button ng-if="$ctrl.fieldType.multiple" class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
+            <md-button ng-if="$ctrl.fieldType.multiple && !$ctrl.hasReachedMaxValues()" class="md-icon-button qa-button-add" ng-click="$ctrl.onAdd($index + 1)">
               <md-tooltip ng-if="$ctrl.dragging !== $index">{{ ::'ADD_VALUE' | translate }}</md-tooltip>
               <md-icon md-font-icon="mdi-plus-circle-outline"></md-icon>
             </md-button>
