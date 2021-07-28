@@ -2038,6 +2038,16 @@
     "CREATE_PAGE_TOOLTIP_HST" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "MAX_VALUES_HINT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

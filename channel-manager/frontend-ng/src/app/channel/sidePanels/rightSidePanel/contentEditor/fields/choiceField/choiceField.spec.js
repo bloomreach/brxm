@@ -28,6 +28,8 @@ describe('ChoiceField', () => {
   const choiceType = {
     displayName: 'Choice',
     required: true,
+    optional: false,
+    multiple: true,
     hint: 'bla bla',
     choices: {
       choice1: {
@@ -71,8 +73,8 @@ describe('ChoiceField', () => {
     $scope = $rootScope.$new();
     $element = angular.element('<div>');
     $ctrl = $componentController('choiceField', { $element, $scope, FeedbackService }, {
-      fieldType: choiceType,
-      fieldValues: choiceValues,
+      fieldType: { ...choiceType },
+      fieldValues: choiceValues.slice(),
       name: 'test-name',
     });
     $ctrl.form = { $setDirty: jasmine.createSpy('$setDirty') };
@@ -136,6 +138,7 @@ describe('ChoiceField', () => {
 
     it('should not be draggable when there are less than 2 values', () => {
       $ctrl.fieldType.multiple = true;
+      $ctrl.fieldType.orderable = true;
       $ctrl.fieldValues = ['a'];
 
       expect($ctrl.isDraggable()).toBe(false);
@@ -143,33 +146,25 @@ describe('ChoiceField', () => {
   });
 
   describe('isRemovable', () => {
-    it('should be removable when there is more than one value', () => {
-      $ctrl.fieldType.multiple = true;
-      $ctrl.fieldType.required = true;
-      $ctrl.fieldValues = ['a', 'b'];
+    it('should be removable when the fieldType is optional', () => {
+      $ctrl.fieldType.optional = true;
 
       expect($ctrl.isRemovable()).toBe(true);
     });
 
-    it('should be removable when the field type is not required', () => {
-      $ctrl.fieldType.multiple = true;
-      $ctrl.fieldType.required = false;
-      $ctrl.fieldValues = ['a'];
-
-      expect($ctrl.isRemovable()).toBe(true);
-    });
-
-    it('should not be removable when the field type is not multiple', () => {
-      $ctrl.fieldType.multiple = false;
-      $ctrl.fieldValues = ['a', 'b'];
+    it('should not be removable when the amount of choices is one and the minimum amount of values is reached', () => {
+      delete $ctrl.fieldType.choices.choice2;
+      $ctrl.fieldType.minValues = 3;
 
       expect($ctrl.isRemovable()).toBe(false);
     });
 
-    it('should not be removable when there are less than 2 values', () => {
-      $ctrl.fieldType.multiple = true;
-      $ctrl.fieldType.required = true;
-      $ctrl.fieldValues = ['a'];
+    it('should be removable when the number of values is greater than zero', () => {
+      expect($ctrl.isRemovable()).toBe(true);
+    });
+
+    it('should not be removable when the number of values is zero', () => {
+      $ctrl.fieldValues = [];
 
       expect($ctrl.isRemovable()).toBe(false);
     });
