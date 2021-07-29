@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.openui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -39,6 +41,7 @@ import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.viewer.ComparePlugin;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
@@ -48,6 +51,8 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionPoint;
+import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,20 +218,23 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
     private class DocumentFieldsBehavior extends AbstractDefaultAjaxBehavior {
         private static final String QUERY_PARAM_PATH = "fieldpath";
         private static final String QUERY_PARAM_COMPARE = "compare";
+        private static final String CURRENT_CONTAINER_COMPOUND = ".";
 
         @Override
         protected void respond(final AjaxRequestTarget target) {
             final RequestCycle requestCycle = RequestCycle.get();
             final Request request = requestCycle.getRequest();
             final IRequestParameters queryParameters = request.getQueryParameters();
-            final List<StringValue> path = queryParameters.getParameterValues(QUERY_PARAM_PATH);
             final StringValue compare = queryParameters.getParameterValue(QUERY_PARAM_COMPARE);
+            final Optional<Node> nodeOption = getNode(compare);
+            final List<StringValue> path = convertCurrentContainerCompoundPathSegment(
+                    queryParameters.getParameterValues(QUERY_PARAM_PATH), nodeOption);
             final JSONObject result = new JSONObject();
 
             result.put("data", JSONObject.NULL);
 
             if (!Objects.isNull(path) && !path.isEmpty()) {
-                getNode(compare).ifPresent(node -> result.put("data", getValue(path, node)));
+                nodeOption.ifPresent(node -> result.put("data", getValue(path, node)));
             }
 
             requestCycle.replaceAllRequestHandlers(new TextRequestHandler("application/json", "UTF-8", result.toString()));
@@ -243,6 +251,56 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
                     .map(StringValue::toString)
                     .toArray(String[]::new));
         }
-    }
 
+        private List<StringValue> convertCurrentContainerCompoundPathSegment(final List<StringValue> sourcePath,
+                final Optional<Node> nodeOption) {
+            final String compoundPath = (sourcePath != null && !sourcePath.isEmpty()) ? sourcePath.get(0).toString()
+                    : null;
+
+            if (!CURRENT_CONTAINER_COMPOUND.equals(compoundPath)) {
+                return sourcePath;
+            }
+
+            try {
+                final JcrPropertyValueModel<?> propValueModel = (JcrPropertyValueModel<?>) getModel();
+                final Node compoundNode = propValueModel.getJcrPropertymodel().getProperty().getParent();
+
+                if (!compoundNode.isNodeType(HippoNodeType.NT_COMPOUND)) {
+                    return sourcePath;
+                }
+
+                final List<StringValue> convertedPath = new ArrayList<>(sourcePath);
+
+                // replace the current compound reference, '.', by the real compound field name.
+                final String compoundName = compoundNode.getName();
+                convertedPath.set(0, StringValue.valueOf(compoundName));
+
+                if (!nodeOption.isPresent()) {
+                    return convertedPath;
+                }
+
+                final Node node = nodeOption.get();
+                final ContentType contentType = fieldLookupService.getContentTypeForNode(node);
+                final ContentTypeChild compoundType = contentType != null
+                        ? fieldLookupService.getContentTypeChildByKey(contentType, compoundName)
+                        : null;
+
+                if (compoundType == null || !compoundType.isMultiple()) {
+                    return convertedPath;
+                }
+
+                // if the compound type is multiple, but if the second path param is not in digits,
+                // let's insert the compound index number for convenience.
+                if (convertedPath.size() > 1 && !NumberUtils.isDigits(convertedPath.get(1).toString())) {
+                    convertedPath.add(1, StringValue.valueOf(compoundNode.getIndex() - 1));
+                }
+
+                return convertedPath;
+            } catch (RepositoryException e) {
+                log.error("Failed to resolve the container compound node.", e);
+            }
+
+            return sourcePath;
+        }
+    }
 }
