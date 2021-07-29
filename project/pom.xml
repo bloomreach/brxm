@@ -65,7 +65,7 @@
     <commons-chain.version>1.2</commons-chain.version>
     <commons-codec.version>1.14</commons-codec.version>
     <commons-collections4.version>4.4</commons-collections4.version>
-    <commons-compress.version>1.20</commons-compress.version>
+    <commons-compress.version>1.21</commons-compress.version>
     <commons-crypto.version>1.0.0</commons-crypto.version>
     <commons-csv.version>1.8</commons-csv.version>
     <commons-dbcp2.version>2.7.0</commons-dbcp2.version>
