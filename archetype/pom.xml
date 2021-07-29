@@ -50,7 +50,7 @@
     <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
 
     <!-- ant and junit versions are aligned with the versions which maven-antrun-plugin uses -->
-    <ant.version>1.9.4</ant.version>
+    <ant.version>1.10.11</ant.version>
     <junit.version>4.13.1</junit.version>
 
     <docker.test.bootstrap.timeout>120000</docker.test.bootstrap.timeout>
