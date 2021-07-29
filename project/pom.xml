@@ -95,18 +95,18 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
-    <cxf.version>3.3.10</cxf.version>
+    <cxf.version>3.3.11</cxf.version>
     <jaxrs.version>2.1.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.5</jackson2.version>
     <jackson2-databind.version>2.10.5.1</jackson2-databind.version>
-    <spring.version>5.3.5</spring.version>
-    <spring-boot.version>2.4.4</spring-boot.version>
+    <spring.version>5.3.7</spring.version>
+    <spring-boot.version>2.4.9</spring-boot.version>
     <!-- spring-data-redis version is not in sync with spring, caching module needs to be updated. See ENT-2061 -->
     <spring-data-redis.version>1.8.23.RELEASE</spring-data-redis.version>
     <spring-integration-ftp.version>5.4.5</spring-integration-ftp.version>
     <spring-integration-sftp.version>5.4.5</spring-integration-sftp.version>
-    <spring-security.version>5.4.6</spring-security.version>
+    <spring-security.version>5.4.7</spring-security.version>
     <spring-security-oauth2.version>2.5.1.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.5.14</groovy.version>
@@ -115,6 +115,7 @@
     <npm.version>7.11.2</npm.version>
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
+    <snakeyaml.version>1.26</snakeyaml.version>
 
     <!-- test dependencies -->
     <!-- restassured 4.3.0 and higher requires groovy 3.0 or higher-->
@@ -169,7 +170,7 @@
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>9</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>9.0.37</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>9.0.48</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>https://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
