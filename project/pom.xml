@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2021 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
-    <cxf.version>3.3.10</cxf.version>
+    <cxf.version>3.3.11</cxf.version>
     <jaxrs.version>2.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.5</jackson2.version>
@@ -115,6 +115,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
     <jetty.version>9.4.35.v20201120</jetty.version>
+    <snakeyaml.version>1.26</snakeyaml.version>
 
     <!-- test dependencies -->
     <restassured.version>4.1.2</restassured.version>
@@ -167,7 +168,7 @@
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>9</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>9.0.37</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>9.0.48</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>https://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
