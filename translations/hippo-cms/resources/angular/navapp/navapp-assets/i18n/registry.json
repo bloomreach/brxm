@@ -110,8 +110,14 @@
       "locales" : null
     },
     "MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLACKLIST" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "MENU_CONTAINER_INTERNAL_REPORTS" : {
       "status" : "CLEAN",
