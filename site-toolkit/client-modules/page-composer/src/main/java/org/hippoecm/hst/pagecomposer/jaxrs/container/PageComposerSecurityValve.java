@@ -56,12 +56,14 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
 
         if (cmsHttpSession == null) {
             sendError(context.getServletResponse(), HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(cmsHttpSession);
 
         if (cmsSessionContext == null) {
             sendError(context.getServletResponse(), HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         // We synchronize on http session to disallow concurrent requests for the Channel manager.
