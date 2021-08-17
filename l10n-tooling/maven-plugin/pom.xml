@@ -22,14 +22,14 @@
     <artifactId>hippo-cms-l10n-tooling-project</artifactId>
     <version>14.7.0-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>hippo-cms-l10n-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
 
   <name>Hippo CMS L10N Maven Plugin</name>
 
   <properties>
-    <maven.version>3.6.2</maven.version>
+    <maven.version>3.8.1</maven.version>
     <maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
     <maven.shared.dependency.tree.version>3.0.1</maven.shared.dependency.tree.version>
     <commons-lang.version>2.6</commons-lang.version>
