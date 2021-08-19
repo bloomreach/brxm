@@ -43,7 +43,6 @@
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
     <hippo.services.htmlprocessor.version>${hippo.release.version}</hippo.services.htmlprocessor.version>
 
-    <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
@@ -158,12 +157,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-gallerypicker</artifactId>
         <version>${hippo.plugin.gallerypicker.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

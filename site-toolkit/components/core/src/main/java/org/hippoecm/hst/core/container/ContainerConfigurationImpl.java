@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -126,7 +127,7 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
 
     @SuppressWarnings("unchecked")
     public List<String> getList(String key) {
-        return configuration.getList(key);
+        return Arrays.asList(configuration.getStringArray(key));
     }
 
     public long getLong(String key, long defaultValue) {

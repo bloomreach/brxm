@@ -38,7 +38,6 @@
     <!-- runtime dependencies -->
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
-    <commons-lang.version>2.6</commons-lang.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <!-- test dependencies -->
@@ -85,7 +84,6 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>${commons-lang.version}</version>
     </dependency>
 
     <!-- test dependencies -->

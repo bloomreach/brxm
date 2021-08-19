@@ -103,13 +103,7 @@
     <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
 
     <!-- Project Dependencies -->
-    <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-lang.version>2.6</commons-lang.version>
-    <commons-proxy.version>1.0</commons-proxy.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
-    <commons-imaging.version>1.0-alpha1</commons-imaging.version>
-
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
     <mortbay-jetty.version>6.1.22</mortbay-jetty.version>
@@ -340,22 +334,6 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson2-databind.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-proxy</artifactId>
-        <version>${commons-proxy.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-beanutils</groupId>
-        <artifactId>commons-beanutils</artifactId>
-        <version>${commons-beanutils.version}</version>
       </dependency>
 
       <!-- test dependencies -->
