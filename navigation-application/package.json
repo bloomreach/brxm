@@ -70,7 +70,7 @@
     "karma-jasmine-html-reporter": "1.7.0",
     "karma-junit-reporter": "2.0.1",
     "ng-packagr": "11.2.4",
-    "ngx-cookie-service": "2.4.0",
+    "ngx-cookie-service": "11.0.2",
     "protractor": "7.0.0",
     "stylelint": "13.13.1",
     "stylelint-config-recommended-scss": "4.3.0",

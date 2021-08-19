@@ -40,31 +40,37 @@ export class AppState {
   generateAnErrorUponLogout = false;
   shouldAskBeforeNavigation = false;
 
+  private localSiteId: SiteId;
+
   constructor(
     private readonly location: Location,
     private readonly cookiesService: CookieService,
-  ) {}
+  ) {
+    this.localSiteId = this.selectedSiteId;
+
+    if (!this.localSiteId.accountId || !this.localSiteId.siteId) {
+      const { accountId, siteId } = sites[0];
+      this.selectedSiteId = { accountId, siteId };
+    }
+  }
 
   get isBrSmMock(): boolean {
     return this.location.path().startsWith('/brsm');
   }
 
   get selectedSiteId(): SiteId {
-    let [accountId, siteId] = this.cookiesService.get(SITE_COOKIE_NAME).split(',').map(x => +x);
-
-    if (!accountId || !siteId) {
-      const firstSite = sites[0];
-
-      accountId = firstSite.accountId;
-      siteId = firstSite.siteId;
-
-      this.selectedSiteId = { accountId, siteId };
-    }
+    const [accountId, siteId] = this.cookiesService.get(SITE_COOKIE_NAME).split(',').map(x => +x);
 
     return { accountId, siteId };
   }
 
   set selectedSiteId(value: SiteId) {
+    this.localSiteId = value;
     this.cookiesService.set(SITE_COOKIE_NAME, `${value.accountId},${value.siteId}`);
+  }
+
+  isLocalSiteIdOutOfDate(): boolean {
+    return this.localSiteId.accountId !== this.selectedSiteId.accountId || 
+      this.localSiteId.siteId !== this.selectedSiteId.siteId;
   }
 }
