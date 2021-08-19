@@ -15,13 +15,15 @@
  */
 
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ClientErrorCodes, SiteId } from '@bloomreach/navapp-communication';
 
 import { AppState } from './services/app-state';
 import { ChildApiMethodsService } from './services/child-api-methods.service';
 import { CommunicationService } from './services/communication.service';
 import { NavigatorService } from './services/navigator.service';
+import { Subject, interval } from 'rxjs';
+import { takeUntil, tap, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -31,8 +33,10 @@ import { NavigatorService } from './services/navigator.service';
     { provide: LocationStrategy, useClass: PathLocationStrategy },
   ],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   parentApiVersion: string;
+
+  private unsubscribe = new Subject();
 
   constructor(
     private readonly communicationService: CommunicationService,
@@ -54,6 +58,22 @@ export class AppComponent implements OnInit {
     await this.communicationService.connect(this.childApiMethodsService.getMethods());
 
     this.parentApiVersion = this.communicationService.parentApiVersion;
+
+    if (this.state.isBrSmMock) {
+      interval(1000)
+      .pipe(
+        takeUntil(this.unsubscribe),
+        filter(() => this.state.isLocalSiteIdOutOfDate())
+      )
+      .subscribe(() => {
+        this.communicationService.updateSelectedSite(this.state.selectedSiteId);
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onButtonClicked(): void {
@@ -94,6 +114,7 @@ export class AppComponent implements OnInit {
   }
 
   updateSelectedSite(siteId: SiteId): void {
+    this.state.selectedSiteId = siteId;
     this.communicationService.updateSelectedSite(siteId);
   }
 
