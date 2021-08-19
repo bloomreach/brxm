@@ -91,8 +91,8 @@
     <mime4j.version>0.6</mime4j.version>
 
     <!-- Before updating the swagger version verify swagger yaml works. See HSTTWO-4537 -->
-    <swagger-core.version>1.5.15</swagger-core.version>
-    <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
+    <swagger-core.version>1.6.2</swagger-core.version>
+    <swagger-jaxrs.version>1.6.2</swagger-jaxrs.version>
 
     <bytebuddy.version>1.10.2</bytebuddy.version>
     <org.skyscreamer.version>1.5.0</org.skyscreamer.version>
