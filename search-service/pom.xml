@@ -45,12 +45,6 @@
     <junit.version>4.13.1</junit.version>
     <easymock.version>3.4</easymock.version>
 
-    <commons-lang.version>2.6</commons-lang.version>
-    <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-configuration.version>1.10</commons-configuration.version>
-    <commons-proxy.version>1.0</commons-proxy.version>
-
     <aspectj.version>1.8.10</aspectj.version>
 
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
@@ -106,60 +100,6 @@
         <artifactId>hippo-services</artifactId>
         <version>${hippo.services.version}</version>
         <scope>provided</scope>
-      </dependency>
-
-      <!-- Apache Commons -->
-      
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>${commons-collections.version}</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>commons-beanutils</groupId>
-        <artifactId>commons-beanutils</artifactId>
-        <version>${commons-beanutils.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>commons-configuration</groupId>
-        <artifactId>commons-configuration</artifactId>
-        <version>${commons-configuration.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-core</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-proxy</artifactId>
-        <version>${commons-proxy.version}</version>
       </dependency>
 
       <!-- AspectJ -->
