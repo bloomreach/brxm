@@ -69,13 +69,6 @@
 
     <xalan.version>2.7.2</xalan.version>
 
-    <commons-lang.version>2.6</commons-lang.version>
-    <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-pool.version>1.6</commons-pool.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-jexl.version>1.1</commons-jexl.version>
-    <commons-configuration.version>1.10</commons-configuration.version>
-    <commons-proxy.version>1.0</commons-proxy.version>
     <ehcache-core.version>2.10.6</ehcache-core.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
@@ -94,7 +87,7 @@
     <hippo.plugin.gallerypicker.version>${hippo.release.version}</hippo.plugin.gallerypicker.version>
     <hippo.plugin.selections.version>${hippo.release.version}</hippo.plugin.selections.version>
     <hippo.packages.version>${hippo.release.version}</hippo.packages.version>
-    
+
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <mime4j.version>0.6</mime4j.version>
@@ -236,82 +229,6 @@
         <artifactId>xalan</artifactId>
         <version>${xalan.version}</version>
         <scope>runtime</scope>
-      </dependency>
-
-      <!-- Apache Commons -->
-
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>${commons-collections.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-pool</groupId>
-        <artifactId>commons-pool</artifactId>
-        <version>${commons-pool.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-beanutils</groupId>
-        <artifactId>commons-beanutils</artifactId>
-        <version>${commons-beanutils.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-jexl</groupId>
-        <artifactId>commons-jexl</artifactId>
-        <version>${commons-jexl.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-configuration</groupId>
-        <artifactId>commons-configuration</artifactId>
-        <version>${commons-configuration.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-core</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-proxy</artifactId>
-        <version>${commons-proxy.version}</version>
       </dependency>
 
       <dependency>
@@ -591,7 +508,7 @@
       </dependency>
 
       <!-- byte buddy dependency -->
-      
+
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
