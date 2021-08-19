@@ -32,6 +32,7 @@
 
   <properties>
     <javax.inject.version>1</javax.inject.version>
+    <maven-core.version>3.8.1</maven-core.version>
     <maven-model.version>3.5.4</maven-model.version>
     <maven-archetype.version>3.1.1</maven-archetype.version>
     <core.jdt.version>3.10.0</core.jdt.version>
@@ -89,6 +90,11 @@
         <version>${maven-model.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${maven-core.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.maven.archetype</groupId>
         <artifactId>archetype-common</artifactId>
         <version>${maven-archetype.version}</version>
@@ -99,6 +105,10 @@
              when updating to a newer archetype-common versions these exclusions
              need to be checked/sanitized again -->
         <exclusions>
+          <exclusion>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings</artifactId>
