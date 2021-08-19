@@ -42,8 +42,6 @@
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
 
-    <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-lang.version>2.6</commons-lang.version>
     <ahocorasick.version>0.4.0</ahocorasick.version>
 
     <jsp-api.version>2.2</jsp-api.version>
@@ -88,13 +86,6 @@
         <artifactId>spring-test</artifactId>
         <version>${spring.version}</version>
         <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -216,12 +207,6 @@
         <artifactId>hippo-repository-builtin</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>${commons-collections.version}</version>
       </dependency>
 
       <dependency>
