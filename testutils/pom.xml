@@ -34,7 +34,6 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
-    <commons-lang3.version>3.8.1</commons-lang3.version>
     <junit.version>4.13.1</junit.version>
   </properties>
 
@@ -47,7 +46,6 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang3.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
