@@ -41,7 +41,6 @@
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
-    <commons-lang3.version>3.9</commons-lang3.version>
     <findbugs.jsr305.version>1.3.9</findbugs.jsr305.version>
     <jsoup.version>1.11.2</jsoup.version>
     <rome.version>0.9</rome.version>
@@ -159,11 +158,6 @@
         <artifactId>hst-test</artifactId>
         <version>${hippo.hst.version}</version>
         <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>${commons-lang3.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
