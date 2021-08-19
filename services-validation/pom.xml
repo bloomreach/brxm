@@ -40,7 +40,6 @@
     <!-- runtime dependencies -->
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
-    <commons-lang.version>2.6</commons-lang.version>
 
     <!-- test dependencies -->
     <junit.version>4.13.1</junit.version>
@@ -88,13 +87,11 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>${commons-lang.version}</version>
     </dependency>
 
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>${commons-validator.version}</version>
     </dependency>
 
     <!-- test dependencies -->

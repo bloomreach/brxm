@@ -87,10 +87,6 @@
     <hamcrest-core.version>1.3</hamcrest-core.version>
 
     <!-- Project Dependencies -->
-    <commons-text.version>1.6</commons-text.version>
-    <commons-lang3.version>3.9</commons-lang3.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-collections4.version>4.4</commons-collections4.version>
     <tika.version>1.27</tika.version>
     <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
     <pdfbox.version>2.0.24</pdfbox.version>
@@ -99,7 +95,6 @@
     <easymock.version>4.0.2</easymock.version>
     <powermock.version>2.0.2</powermock.version>
     <decentxml.version>1.4</decentxml.version>
-    <commons-scxml2.version>2.0-M1</commons-scxml2.version>
     <mysql.version>8.0.17</mysql.version>
     <mssql.version>6.2.2.jre8</mssql.version>
     <postgresql.version>42.1.4</postgresql.version>
@@ -449,16 +444,6 @@
         <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-collections4</artifactId>
-        <version>${commons-collections4.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox</artifactId>
         <version>${pdfbox.version}</version>
@@ -473,11 +458,6 @@
             <artifactId>pdfbox-debugger</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>commons-beanutils</groupId>
-        <artifactId>commons-beanutils</artifactId>
-        <version>${commons-beanutils.version}</version>
       </dependency>
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
@@ -562,28 +542,6 @@
         <groupId>de.pdark</groupId>
         <artifactId>decentxml</artifactId>
         <version>${decentxml.version}</version>
-      </dependency>
-      <!-- SCXML -->
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-scxml2</artifactId>
-        <version>${commons-scxml2.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>${commons-lang3.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-text</artifactId>
-        <version>${commons-text.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
