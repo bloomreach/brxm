@@ -31,8 +31,6 @@
   <packaging>pom</packaging>
 
   <properties>
-    <commons-lang.version>2.6</commons-lang.version>
-    <commons-csv.version>1.6</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
     <apache-poi.version>4.1.1</apache-poi.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
@@ -55,21 +53,6 @@
   
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-csv</artifactId>
-        <version>${commons-csv.version}</version>
-      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
