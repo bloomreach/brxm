@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,11 +153,19 @@ describe('Create content step 2 controller', () => {
     spyOn(ContentEditor, 'close');
     spyOn(CreateContentService, 'stop');
 
-    $ctrl.switchEditor();
+    $ctrl._switchEditor();
 
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', testDocument.id, 'edit');
     expect(ContentEditor.close).toHaveBeenCalled();
     expect(CreateContentService.stop).toHaveBeenCalled();
+  });
+
+  it('saves the document before switching the editor', () => {
+    spyOn(ContentEditor, 'saveDraftIfDirty').and.returnValue($q.resolve());
+
+    $ctrl.switchEditor();
+
+    expect(ContentEditor.saveDraftIfDirty).toHaveBeenCalled();
   });
 
   it('discards the editable instance, saves the component parameter and finishes create-content on save', () => {
