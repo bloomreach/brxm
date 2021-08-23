@@ -70,7 +70,7 @@ export class AppState {
   }
 
   isLocalSiteIdOutOfDate(): boolean {
-    return this.localSiteId.accountId !== this.selectedSiteId.accountId || 
+    return this.localSiteId.accountId !== this.selectedSiteId.accountId ||
       this.localSiteId.siteId !== this.selectedSiteId.siteId;
   }
 }

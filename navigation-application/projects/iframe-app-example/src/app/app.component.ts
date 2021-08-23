@@ -15,15 +15,15 @@
  */
 
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ClientErrorCodes, SiteId } from '@bloomreach/navapp-communication';
+import { interval, Subject } from 'rxjs';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 import { AppState } from './services/app-state';
 import { ChildApiMethodsService } from './services/child-api-methods.service';
 import { CommunicationService } from './services/communication.service';
 import { NavigatorService } from './services/navigator.service';
-import { Subject, interval } from 'rxjs';
-import { takeUntil, tap, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -36,7 +36,7 @@ import { takeUntil, tap, filter } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
   parentApiVersion: string;
 
-  private unsubscribe = new Subject();
+  private readonly unsubscribe = new Subject();
 
   constructor(
     private readonly communicationService: CommunicationService,
@@ -63,7 +63,7 @@ export class AppComponent implements OnInit, OnDestroy {
       interval(1000)
       .pipe(
         takeUntil(this.unsubscribe),
-        filter(() => this.state.isLocalSiteIdOutOfDate())
+        filter(() => this.state.isLocalSiteIdOutOfDate()),
       )
       .subscribe(() => {
         this.communicationService.updateSelectedSite(this.state.selectedSiteId);
