@@ -53,7 +53,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>rome</groupId>
+      <groupId>com.rometools</groupId>
       <artifactId>rome</artifactId>
     </dependency>
     <dependency>
