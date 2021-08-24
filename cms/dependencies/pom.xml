@@ -32,7 +32,7 @@
     <!-- spring boot -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>spring-boot</artifactId>
+      <artifactId>xm-spring-boot-integration</artifactId>
       <version>${project.version}</version>
     </dependency>
 
