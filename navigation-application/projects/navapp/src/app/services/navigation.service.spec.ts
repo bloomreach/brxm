@@ -351,38 +351,18 @@ describe('NavigationService', () => {
   });
 
   describe('nav item', () => {
-    let navItemActive$: Subject<boolean>;
-
     beforeEach(() => {
-      navItemActive$ = new Subject<boolean>();
-
       const navItemMock: NavItem = {
         id: 'item1',
         appIframeUrl: 'http://domain.com/iframe1/url',
         appPath: 'app/path/to/home',
-        active$: navItemActive$,
       } as any;
 
       service.init([navItemMock]);
       service.initialNavigation();
     });
 
-    it('should not proceed the navigation process while nav item is not ready', () => {
-      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
-      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
-    });
-
-    it('should not proceed the navigation process if active$ emitted "false"', () => {
-      navItemActive$.next(false);
-
-      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
-      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
-    });
-
-    it('should proceed the navigation process when nav item is ready', () => {
-      navItemActive$.next(true);
-      navItemActive$.complete();
-
+    it('should proceed the navigation process', () => {
       expect(clientAppServiceMock.getApp).toHaveBeenCalled();
       expect(childApi.beforeNavigation).toHaveBeenCalled();
     });

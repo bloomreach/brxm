@@ -59,22 +59,12 @@ export class TopLevelMenuItemComponent {
   @HostBinding('class.small')
   small = false;
 
-  @Input()
-  @HostBinding('class.disabled')
-  @HostBinding('class.qa-disabled')
-  disabled = false;
-
   @Output()
   menuItemClick = new EventEmitter<void>();
 
   @HostListener('click', ['$event'])
   onHostClickHandler(event: MouseEvent): void {
     event.stopImmediatePropagation();
-
-    if (this.disabled) {
-      return;
-    }
-
     this.menuItemClick.emit();
   }
 }

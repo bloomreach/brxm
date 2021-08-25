@@ -49,18 +49,8 @@ export class MenuItemLinkComponent implements OnInit {
     this.navItemUrl = this.urlMapperService.mapNavItemToBrowserUrl(this.navItem);
   }
 
-  @HostBinding('class.disabled')
-  @HostBinding('class.qa-disabled')
-  get disabled(): boolean {
-    return !this.navItem || !this.navItem.active;
-  }
-
   onClick(e: MouseEvent): void {
     e.preventDefault();
-
-    if (this.disabled || !this.navItem) {
-      return;
-    }
 
     this.navigationService.navigateByUrl(this.navItemUrl, NavigationTrigger.Menu);
   }

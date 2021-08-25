@@ -19,11 +19,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class NavItem implements NavItemDto {
-  private readonly activation$ = new BehaviorSubject<boolean>(false);
-
   constructor(
     private readonly dto: NavItemDto,
-    private readonly unsubscribe: Observable<void>,
   ) {}
 
   get id(): string {
@@ -40,19 +37,5 @@ export class NavItem implements NavItemDto {
 
   get displayName(): string {
     return this.dto.displayName;
-  }
-
-  get active$(): Observable<boolean> {
-    return this.activation$.pipe(
-      takeUntil(this.unsubscribe),
-    );
-  }
-
-  get active(): boolean {
-    return this.activation$.value;
-  }
-
-  activate(): void {
-    this.activation$.next(true);
   }
 }
