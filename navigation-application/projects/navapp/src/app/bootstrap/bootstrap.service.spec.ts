@@ -15,7 +15,7 @@
  */
 
 import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { NavigationTrigger, Site, SiteId } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem, Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
@@ -28,7 +28,7 @@ import { NavItemMock } from '../models/nav-item.mock';
 import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { MainLoaderService } from '../services/main-loader.service';
-import { NavConfigService } from '../services/nav-config.service';
+import { Configuration, NavConfigService } from '../services/nav-config.service';
 import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
 import { SiteService } from '../services/site.service';
@@ -366,11 +366,13 @@ describe('BootstrapService', () => {
         beforeEach(async () => {
           bootstrapped = false;
 
-          navConfigServiceMock.fetchNavigationConfiguration.and.returnValue({
+          const configuration: Configuration = {
             navItems: [],
             sites: [],
-            selectedSite: undefined,
-          });
+            selectedSiteId: undefined
+          };
+
+          navConfigServiceMock.fetchNavigationConfiguration.and.returnValue(Promise.resolve(configuration));
 
           await service.bootstrap();
 
@@ -689,7 +691,7 @@ describe('BootstrapService', () => {
     describe('if everything goes well', () => {
       let reinitialized: boolean;
 
-      const newNavItemDtosMock = [
+      const newNavItemDtosMock: NavItem[] = [
         { id: '4', appIframeUrl: 'https://some-new-url', appPath: 'home/path' },
         { id: '5', appIframeUrl: 'https://some-new-url', appPath: 'some/path' },
         { id: '6', appIframeUrl: 'https://another-new-url', appPath: 'another/path' },
@@ -704,7 +706,7 @@ describe('BootstrapService', () => {
       beforeEach(waitForAsync(() => {
         reinitialized = false;
 
-        navConfigServiceMock.refetchNavItems.and.returnValue(newNavItemDtosMock);
+        navConfigServiceMock.refetchNavItems.and.returnValue(Promise.resolve(newNavItemDtosMock));
         navItemServiceMock.registerNavItemDtos.and.returnValue(newNavItemsMock);
 
         service.reinitialize().then(() => reinitialized = true);

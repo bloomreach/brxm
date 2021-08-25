@@ -90,6 +90,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -110,6 +111,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -147,6 +149,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -163,6 +166,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -179,6 +183,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
