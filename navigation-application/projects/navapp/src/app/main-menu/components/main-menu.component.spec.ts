@@ -294,44 +294,4 @@ describe('MainMenuComponent', () => {
       expect(actual).toBeTruthy();
     });
   });
-
-  describe('isMenuItemDisabled', () => {
-    describe('when MenuItemLink instance is provided', () => {
-      let navItem: NavItem;
-      let menuItemLink: MenuItemLink;
-
-      beforeEach(() => {
-        navItem = new NavItemMock({}, NEVER, false);
-        menuItemLink = new MenuItemLinkMock({ navItem });
-      });
-
-      it('should return "true" initially', () => {
-        const actual = component.isMenuItemDisabled(menuItemLink);
-
-        expect(actual).toBeTruthy();
-      });
-
-      it('should return "false" if a nav item is active', () => {
-        navItem.activate();
-
-        const actual = component.isMenuItemDisabled(menuItemLink);
-
-        expect(actual).toBeFalsy();
-      });
-    });
-
-    describe('when MenuItemContainer instance is provided', () => {
-      let menuItemContainer: MenuItemContainer;
-
-      beforeEach(() => {
-        menuItemContainer = new MenuItemContainerMock();
-      });
-
-      it('should return "false"', () => {
-        const actual = component.isMenuItemDisabled(new MenuItemContainerMock());
-
-        expect(actual).toBeFalsy();
-      });
-    });
-  });
 });
