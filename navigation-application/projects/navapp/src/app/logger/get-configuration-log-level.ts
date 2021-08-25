@@ -20,7 +20,7 @@ import { CustomWindow } from '../shared/services/window-ref.service';
 
 export function getConfigurationLogLevel(): NgxLoggerLevel {
   try {
-    const logLevelString = (window as CustomWindow).NavAppSettings.appSettings.logLevel;
+    const logLevelString = (window as unknown as CustomWindow).NavAppSettings.appSettings.logLevel;
 
     return NgxLoggerLevel[logLevelString];
   } catch {
