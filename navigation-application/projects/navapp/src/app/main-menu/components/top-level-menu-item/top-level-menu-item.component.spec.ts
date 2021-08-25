@@ -61,10 +61,6 @@ describe('TopLevelMenuItemComponent', () => {
       expect(wrapper.classes.pressed).toBeFalsy();
     });
 
-    it('should not be disabled', () => {
-      expect(de.classes.disabled).toBeFalsy();
-    });
-
     it('should show an empty caption', () => {
       const caption = wrapper.query(By.css('.caption'));
 
@@ -136,49 +132,6 @@ describe('TopLevelMenuItemComponent', () => {
 
     it('should emit menuItemClick output', () => {
       expect(emitted).toBe(true);
-    });
-  });
-
-  describe('when disabled', () => {
-    beforeEach(waitForAsync(() => {
-      component.disabled = true;
-
-      fixture.detectChanges();
-    }));
-
-    it('should have "disabled" class', () => {
-      expect(de.classes.disabled).toBeTruthy();
-    });
-
-    it('should have "qa-disabled" class', () => {
-      expect(de.classes['qa-disabled']).toBeTruthy();
-    });
-
-    describe('click on the host element', () => {
-      let emitted: boolean;
-      let event: jasmine.SpyObj<MouseEvent>;
-
-      beforeEach(() => {
-        emitted = false;
-
-        component.menuItemClick.pipe(
-          first(),
-        ).subscribe(() => emitted = true);
-
-        event = jasmine.createSpyObj('MouseEvent', [
-          'stopImmediatePropagation',
-        ]);
-
-        de.triggerEventHandler('click', event);
-      });
-
-      it('should stop immediate propagation', () => {
-        expect(event.stopImmediatePropagation).toHaveBeenCalled();
-      });
-
-      it('should not emit menuItemClick output', () => {
-        expect(emitted).toBe(false);
-      });
     });
   });
 });
