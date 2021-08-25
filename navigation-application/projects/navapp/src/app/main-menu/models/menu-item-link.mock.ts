@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NavItemMock } from '../../models/nav-item.mock';
+import { NavItemMock } from '../../models/dto/nav-item-dto.mock';
 
 import { MenuItemLink } from './menu-item-link.model';
 

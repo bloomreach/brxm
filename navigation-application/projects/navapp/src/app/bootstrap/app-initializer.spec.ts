@@ -16,7 +16,7 @@
 
 import { waitForAsync } from '@angular/core/testing';
 
-import { NavItemMock } from '../models/nav-item.mock';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 
 import { appInitializer } from './app-initializer';
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { ChildApi } from '@bloomreach/navapp-communication';
+import { fakeAsync, TestBed, tick, waitForAsync} from '@angular/core/testing';
+import { ChildApi, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { Subject } from 'rxjs';
@@ -25,7 +25,6 @@ import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
 import { AppSettingsMock } from '../../models/dto/app-settings.mock';
 import { FailedConnection } from '../../models/failed-connection.model';
-import { NavItem } from '../../models/nav-item.model';
 import { APP_SETTINGS } from '../../services/app-settings';
 import { ClientApp } from '../models/client-app.model';
 

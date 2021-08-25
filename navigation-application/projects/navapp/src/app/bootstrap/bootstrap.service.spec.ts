@@ -24,7 +24,7 @@ import { ClientAppService } from '../client-app/services/client-app.service';
 import { CriticalError } from '../error-handling/models/critical-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
-import { NavItemMock } from '../models/nav-item.mock';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { MainLoaderService } from '../services/main-loader.service';
@@ -38,12 +38,6 @@ import { BootstrapService } from './bootstrap.service';
 
 describe('BootstrapService', () => {
   let service: BootstrapService;
-
-  const navItemDtosMock = [
-    { id: '1', appIframeUrl: 'https://some-url', appPath: 'home/path' },
-    { id: '2', appIframeUrl: 'https://some-url', appPath: 'some/path' },
-    { id: '3', appIframeUrl: 'https://another-url', appPath: 'another/path' },
-  ];
 
   const sitesMock: Site[] = [
     {
@@ -74,9 +68,9 @@ describe('BootstrapService', () => {
   };
 
   const navItemsMock = [
-    new NavItemMock({ id: '1' }),
-    new NavItemMock({ id: '2' }),
-    new NavItemMock({ id: '3' }),
+    new NavItemMock({ id: '1', appIframeUrl: 'https://some-url', appPath: 'home/path' }),
+    new NavItemMock({ id: '2', appIframeUrl: 'https://some-url', appPath: 'some/path' }),
+    new NavItemMock({ id: '3', appIframeUrl: 'https://another-url', appPath: 'another/path' }),
   ];
 
   let selectedSiteSubject: Subject<Site>;
@@ -101,15 +95,15 @@ describe('BootstrapService', () => {
 
     navConfigServiceMock = jasmine.createSpyObj('NavConfigService', {
       fetchNavigationConfiguration: ({
-        navItems: navItemDtosMock,
+        navItems: navItemsMock,
         sites: sitesMock,
         selectedSiteId: selectedSiteIdMock,
       }),
-      refetchNavItems: navItemDtosMock,
+      refetchNavItems: navItemsMock,
     });
 
     navItemServiceMock = jasmine.createSpyObj('NavItemService', {
-      registerNavItemDtos: navItemsMock,
+      registerNavItems: navItemsMock,
       activateNavItems: undefined,
     });
 
@@ -231,7 +225,7 @@ describe('BootstrapService', () => {
       });
 
       it('should register fetched nav item DTOs', () => {
-        expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(navItemDtosMock);
+        expect(navItemServiceMock.registerNavItems).toHaveBeenCalledWith(navItemsMock);
       });
 
       it('should initialize MenuStateService', () => {
@@ -394,7 +388,7 @@ describe('BootstrapService', () => {
         beforeEach(async () => {
           bootstrapped = false;
 
-          navItemServiceMock.registerNavItemDtos.and.callFake(() => {
+          navItemServiceMock.registerNavItems.and.callFake(() => {
             throw new Error('registration of nav item DTOs fetching has failed');
           });
 
@@ -679,23 +673,17 @@ describe('BootstrapService', () => {
     describe('if everything goes well', () => {
       let reinitialized: boolean;
 
-      const newNavItemDtosMock: NavItem[] = [
-        { id: '4', appIframeUrl: 'https://some-new-url', appPath: 'home/path' },
-        { id: '5', appIframeUrl: 'https://some-new-url', appPath: 'some/path' },
-        { id: '6', appIframeUrl: 'https://another-new-url', appPath: 'another/path' },
-      ];
-
       const newNavItemsMock = [
-        new NavItemMock({ id: '4' }),
-        new NavItemMock({ id: '5' }),
-        new NavItemMock({ id: '6' }),
+        new NavItemMock({ id: '4', appIframeUrl: 'https://some-new-url', appPath: 'home/path' }),
+        new NavItemMock({ id: '5', appIframeUrl: 'https://some-new-url', appPath: 'some/path' }),
+        new NavItemMock({ id: '6', appIframeUrl: 'https://another-new-url', appPath: 'another/path' }),
       ];
 
       beforeEach(waitForAsync(() => {
         reinitialized = false;
 
-        navConfigServiceMock.refetchNavItems.and.returnValue(Promise.resolve(newNavItemDtosMock));
-        navItemServiceMock.registerNavItemDtos.and.returnValue(newNavItemsMock);
+        navConfigServiceMock.refetchNavItems.and.returnValue(newNavItemsMock);
+        navItemServiceMock.registerNavItems.and.returnValue(newNavItemsMock);
 
         service.reinitialize().then(() => reinitialized = true);
       }));
@@ -727,7 +715,7 @@ describe('BootstrapService', () => {
       });
 
       it('should register fetched nav item DTOs', () => {
-        expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(newNavItemDtosMock);
+        expect(navItemServiceMock.registerNavItems).toHaveBeenCalledWith(newNavItemsMock);
       });
 
       it('should initialize MenuStateService', () => {
@@ -772,8 +760,13 @@ describe('BootstrapService', () => {
       });
 
       describe('and registration of nav item DTOs thrown an exception', () => {
+<<<<<<< HEAD
         beforeEach(waitForAsync(() => {
           navItemServiceMock.registerNavItemDtos.and.callFake(() => {
+=======
+        beforeEach(async(() => {
+          navItemServiceMock.registerNavItems.and.callFake(() => {
+>>>>>>> d398fca8979 (ENT-2941 Remove duplicate NavItem model and mock)
             throw new Error('registration of nav item DTOs fetching has failed');
           });
 

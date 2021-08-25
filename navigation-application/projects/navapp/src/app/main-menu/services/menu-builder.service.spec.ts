@@ -15,9 +15,9 @@
  */
 
 import { TestBed } from '@angular/core/testing';
+import { NavItem } from '@bloomreach/navapp-communication';
 
-import { NavItemMock } from '../../models/nav-item.mock';
-import { NavItem } from '../../models/nav-item.model';
+import { NavItemMock } from '../../models/dto/nav-item-dto.mock';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
 

@@ -15,9 +15,8 @@
  */
 
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
-import { NavigationTrigger } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
 
-import { NavItem } from '../../../models/nav-item.model';
 import { NavigationService } from '../../../services/navigation.service';
 import { UrlMapperService } from '../../../services/url-mapper.service';
 

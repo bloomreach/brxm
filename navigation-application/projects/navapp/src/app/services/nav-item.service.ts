@@ -15,11 +15,9 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { NavItem as NavItemDto } from '@bloomreach/navapp-communication';
+import { NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
-
-import { NavItem } from '../models/nav-item.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,10 +31,8 @@ export class NavItemService {
     return this.sortedNavItems;
   }
 
-  registerNavItemDtos(navItemDtos: NavItemDto[]): NavItem[] {
-    this.logger.debug('Register nav items', navItemDtos);
-
-    const navItems = navItemDtos.map(dto => new NavItem(dto));
+  registerNavItems(navItems: NavItem[]): NavItem[] {
+    this.logger.debug('Register nav items', navItems);
 
     navItems.sort((a, b) => b.appPath.length - a.appPath.length);
 
