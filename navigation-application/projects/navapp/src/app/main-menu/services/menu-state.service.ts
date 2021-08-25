@@ -15,10 +15,10 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NavItem } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
-import { NavItem } from '../../models/nav-item.model';
 import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';

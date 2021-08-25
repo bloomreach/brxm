@@ -18,11 +18,10 @@ import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { NavigationTrigger } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
 import { NEVER } from 'rxjs';
 
-import { NavItemMock } from '../../../models/nav-item.mock';
-import { NavItem } from '../../../models/nav-item.model';
+import { NavItemMock } from '../../../models/dto/nav-item-dto.mock';
 import { NavigationService } from '../../../services/navigation.service';
 import { UrlMapperService } from '../../../services/url-mapper.service';
 

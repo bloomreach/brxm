@@ -20,7 +20,7 @@ import { NavLocation } from '@bloomreach/navapp-communication';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { InternalError } from '../error-handling/models/internal-error';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
-import { NavItemMock } from '../models/nav-item.mock';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 
 import { APP_SETTINGS } from './app-settings';
 import { NavItemService } from './nav-item.service';
