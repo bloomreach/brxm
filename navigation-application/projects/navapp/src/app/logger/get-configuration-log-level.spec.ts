@@ -24,9 +24,9 @@ describe('getConfigurationLogLevel', () => {
   let navappSettingsOldValue: any;
 
   beforeEach(() => {
-    navappSettingsOldValue = (window as CustomWindow).NavAppSettings;
+    navappSettingsOldValue = (window as unknown as CustomWindow).NavAppSettings;
 
-    (window as CustomWindow).NavAppSettings = {
+    (window as unknown as CustomWindow).NavAppSettings = {
       appSettings: {
         logLevel: 'DEBUG',
       },
@@ -34,7 +34,7 @@ describe('getConfigurationLogLevel', () => {
   });
 
   afterEach(() => {
-    (window as CustomWindow).NavAppSettings = navappSettingsOldValue;
+    (window as unknown as CustomWindow).NavAppSettings = navappSettingsOldValue;
   });
 
   it('should return the minimum log level', () => {
@@ -46,7 +46,7 @@ describe('getConfigurationLogLevel', () => {
   });
 
   it('should return undefined if NavAppSettings is not defined', () => {
-    (window as CustomWindow).NavAppSettings = undefined;
+    (window as unknown as CustomWindow).NavAppSettings = undefined;
 
     const actual = getConfigurationLogLevel();
 
@@ -54,7 +54,7 @@ describe('getConfigurationLogLevel', () => {
   });
 
   it('should return undefined if appSettings section is not defined', () => {
-    (window as CustomWindow).NavAppSettings.appSettings = undefined;
+    (window as unknown as CustomWindow).NavAppSettings.appSettings = undefined;
 
     const actual = getConfigurationLogLevel();
 
@@ -62,7 +62,7 @@ describe('getConfigurationLogLevel', () => {
   });
 
   it('should return undefined if unknown logLevel value is set', () => {
-    (window as CustomWindow).NavAppSettings.appSettings.logLevel = 'UNKNOWN' as any;
+    (window as unknown as CustomWindow).NavAppSettings.appSettings.logLevel = 'UNKNOWN' as any;
 
     const actual = getConfigurationLogLevel();
 
