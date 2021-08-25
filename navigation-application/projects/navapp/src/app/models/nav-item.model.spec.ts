@@ -32,8 +32,7 @@ describe('NavItem', () => {
 
   beforeEach(() => {
     unsubscribe = new Subject();
-
-    model = new NavItem(dto, unsubscribe);
+    model = new NavItem(dto);
   });
 
   it('should return an id', () => {
@@ -66,57 +65,5 @@ describe('NavItem', () => {
     const actual = model.displayName;
 
     expect(actual).toBe(expected);
-  });
-
-  it('should not be active', () => {
-    const actual = model.active;
-
-    expect(actual).toBeFalsy();
-  });
-
-  it('should return an activation observable', () => {
-    const actual = isObservable(model.active$);
-
-    expect(actual).toBeTruthy();
-  });
-
-  it('should be be able to be activated', () => {
-    model.activate();
-
-    const actual = model.active;
-
-    expect(actual).toBeTruthy();
-  });
-
-  describe('activation observable', () => {
-    let currentState: boolean;
-    let subscription: Subscription;
-
-    beforeEach(() => {
-      currentState = undefined;
-      subscription = model.active$.subscribe(x => currentState = x);
-    });
-
-    afterEach(() => {
-      subscription.unsubscribe();
-    });
-
-    it('should emit false as a first value', () => {
-      expect(currentState).toBeFalsy();
-    });
-
-    it('should emit true when the nav item is activated', () => {
-      model.activate();
-
-      expect(currentState).toBeTruthy();
-    });
-
-    it('should not emit values after unsubscribe emitted', () => {
-      unsubscribe.next();
-
-      model.activate();
-
-      expect(currentState).toBeFalsy();
-    });
   });
 });

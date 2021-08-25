@@ -24,9 +24,7 @@ import { NavItem } from '../models/nav-item.model';
 @Injectable({
   providedIn: 'root',
 })
-export class NavItemService implements OnDestroy {
-  private readonly unsubscribe = new Subject<void>();
-
+export class NavItemService {
   private sortedNavItems: NavItem[] = [];
 
   constructor(private readonly logger: NGXLogger) {}
@@ -35,17 +33,10 @@ export class NavItemService implements OnDestroy {
     return this.sortedNavItems;
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
   registerNavItemDtos(navItemDtos: NavItemDto[]): NavItem[] {
     this.logger.debug('Register nav items', navItemDtos);
 
-    this.unsubscribe.next(); // unsubscribe from previous activations
-
-    const navItems = navItemDtos.map(dto => new NavItem(dto, this.unsubscribe));
+    const navItems = navItemDtos.map(dto => new NavItem(dto));
 
     navItems.sort((a, b) => b.appPath.length - a.appPath.length);
 
@@ -76,18 +67,5 @@ export class NavItemService implements OnDestroy {
     };
 
     return this.navItems.find(x => iframeUrlOrPath ? iframeUrlPredicate(x) && appPathPredicate(x) : appPathPredicate(x));
-  }
-
-  activateNavItems(appIframeUrl: string): void {
-    const navItemsToActivate = this.sortedNavItems.filter(x => x.appIframeUrl === appIframeUrl);
-
-    if (!navItemsToActivate.length) {
-      this.logger.warn(`An attempt to activate nav items for '${appIframeUrl}' has failed because there is no nap items registered for that app`);
-      return;
-    }
-
-    this.logger.debug(`Activation of nav items for '${appIframeUrl}'`);
-
-    navItemsToActivate.forEach(x => x.activate());
   }
 }

@@ -49,7 +49,6 @@ export class BootstrapService {
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly logger: NGXLogger,
   ) {
-    this.clientAppService.appConnected$.subscribe(app => this.navItemService.activateNavItems(app.url));
     this.siteService.selectedSite$.pipe(
       skip(1),  // Skip initial value
     ).subscribe(() => this.reinitialize());
