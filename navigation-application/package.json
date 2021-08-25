@@ -46,12 +46,12 @@
     "open-sans-fontface": "1.4.0",
     "penpal": "4.1.1",
     "rxjs": "6.5.3",
-    "tslib": "^2.0.0",
+    "tslib": "2.3.1",
     "zone.js": "0.10.3"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "8.4.0",
-    "@angular-builders/dev-server": "7.3.1",
+    "@angular-builders/custom-webpack": "10.0.1",
+    "@angular-builders/dev-server": "7.3.3",
     "@angular-devkit/build-angular": "0.1002.3",
     "@angular-devkit/build-ng-packagr": "0.1002.3",
     "@angular/cli": "10.2.3",
