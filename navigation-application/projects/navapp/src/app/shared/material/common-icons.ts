@@ -26,7 +26,7 @@ import navCollapse from '!!raw-loader!./icons/nav-collapse.svg';
 import navExpand from '!!raw-loader!./icons/nav-expand.svg';
 import remove from '!!raw-loader!./icons/remove.svg';
 import search from '!!raw-loader!./icons/search.svg';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
 export const registerIcons = (iconRegistry: MatIconRegistry, donSanitizer: DomSanitizer) => {

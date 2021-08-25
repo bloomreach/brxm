@@ -52,7 +52,7 @@ import testing from '!!raw-loader!./icons/menu/testing.svg';
 import user from '!!raw-loader!./icons/menu/user.svg';
 import widgetActive from '!!raw-loader!./icons/menu/widget.highlighted.svg';
 import widget from '!!raw-loader!./icons/menu/widget.svg';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
 export const registerIcons = (iconRegistry: MatIconRegistry, donSanitizer: DomSanitizer) => {
