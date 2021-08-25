@@ -15,7 +15,7 @@
  */
 
 import { Component, DebugElement, NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -50,7 +50,7 @@ xdescribe('MenuScrollComponent', () => {
   let contentDe: DebugElement;
 
   describe('if there is enough space', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       fixture = TestBed.configureTestingModule({
         imports: [
           NoopAnimationsModule,
@@ -216,7 +216,7 @@ xdescribe('MenuScrollComponent', () => {
     }));
 
     describe('when content scrolled 10px down', () => {
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         host.triggerEventHandler('wheel', wheelEvent);
 
         fixture.detectChanges();
@@ -284,7 +284,7 @@ xdescribe('MenuScrollComponent', () => {
       }));
 
       describe('when content\'s height is decreased', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           component.contentFirstElementHeight = 50;
 
           fixture.detectChanges();
@@ -307,7 +307,7 @@ xdescribe('MenuScrollComponent', () => {
     });
 
     describe('when content scrolled fully down', () => {
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         const event = {
           preventDefault: () => {},
           deltaY: 350,
@@ -368,7 +368,7 @@ xdescribe('MenuScrollComponent', () => {
       }));
 
       describe('when container\'s height is increased', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           component.scrollContainerHeight = 200;
 
           fixture.detectChanges();
@@ -380,7 +380,7 @@ xdescribe('MenuScrollComponent', () => {
       });
 
       describe('when content\'s height is decreased', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           component.contentFirstElementHeight = 50;
 
           fixture.detectChanges();

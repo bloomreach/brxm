@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
@@ -136,7 +136,7 @@ describe('SiteService', () => {
       ],
     });
 
-    service = TestBed.get(SiteService);
+    service = TestBed.inject(SiteService);
   });
 
   it('should initialize the service', fakeAsync(() => {
@@ -207,7 +207,7 @@ describe('SiteService', () => {
           isNavappEnabled: true,
         };
 
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           service.updateSelectedSite(site);
         }));
 

@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
@@ -38,7 +38,7 @@ describe('User Drawer Component', () => {
   const userName = 'myUserName';
   const userEmail = 'userEmail';
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     const clientAppServiceMock = {
       allConnectionsSettled: Promise.resolve(),
     };
@@ -66,7 +66,7 @@ describe('User Drawer Component', () => {
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(UserToolbarDrawerComponent);
 
-    authService = TestBed.get(AuthService);
+    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
 
     component = fixture.componentInstance;
 

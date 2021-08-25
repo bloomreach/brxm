@@ -68,8 +68,8 @@ describe('ErrorHandlingService', () => {
       ],
     });
 
-    service = TestBed.get(ErrorHandlingService);
-    logger = TestBed.get(NGXLogger);
+    service = TestBed.inject(ErrorHandlingService);
+    logger = TestBed.inject(NGXLogger);
 
     spyOn(logger, 'error');
   });

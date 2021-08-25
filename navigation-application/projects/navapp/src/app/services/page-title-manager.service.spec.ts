@@ -48,7 +48,7 @@ describe('PageTitleManagerService', () => {
       ],
     });
 
-    service = TestBed.get(PageTitleManagerService);
+    service = TestBed.inject(PageTitleManagerService);
   });
 
   describe('upon initialization', () => {

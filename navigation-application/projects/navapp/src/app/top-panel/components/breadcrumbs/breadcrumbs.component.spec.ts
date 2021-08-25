@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
@@ -38,7 +38,7 @@ describe('BreadcrumbsComponent', () => {
 
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     navigationServiceMock = jasmine.createSpyObj('NavigationService', [
       'navigateToDefaultAppPage',
     ]);
@@ -69,7 +69,7 @@ describe('BreadcrumbsComponent', () => {
   });
 
   describe('when breadcrumbs are emitted', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       breadcrumbsSubject.next([
         'Breadcrumb 1',
         'Breadcrumb 2',

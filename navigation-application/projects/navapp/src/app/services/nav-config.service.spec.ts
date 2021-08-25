@@ -20,7 +20,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { ChildApi, NavItem, Site } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 
@@ -124,11 +124,11 @@ describe('NavConfigService', () => {
       ],
     });
 
-    service = TestBed.get(NavConfigService);
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
-    connectionServiceMock = TestBed.get(ConnectionService);
-    appSettings = TestBed.get(APP_SETTINGS);
+    service = TestBed.inject(NavConfigService);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
+    connectionServiceMock = TestBed.inject(ConnectionService) as jasmine.SpyObj<ConnectionService>;
+    appSettings = TestBed.inject(APP_SETTINGS);
   });
 
   afterEach(() => {
@@ -138,7 +138,7 @@ describe('NavConfigService', () => {
   describe('fetchNavigationConfiguration', () => {
     let configuration: Configuration;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       service.fetchNavigationConfiguration().then(x => configuration = x);
 
       const restReq = httpTestingController.expectOne(appSettings.navConfigResources[1].url);
@@ -245,7 +245,7 @@ describe('NavConfigService', () => {
   describe('fetchNavigationConfiguration for only REST config resources', () => {
     let configuration: Configuration;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       appSettings.navConfigResources = [
         new ConfigResourceMock({
           resourceType: 'REST',
@@ -286,7 +286,7 @@ describe('NavConfigService', () => {
     let configuration: Configuration;
     let error: any;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       connectionServiceMock.connect.and.returnValue(Promise.reject('Unable to connect to the iframe'));
 
       service.fetchNavigationConfiguration().then(c => configuration = c, e => error = e);
@@ -357,7 +357,7 @@ describe('NavConfigService', () => {
       new NavItemDtoMock({id: 'newIframeItem'}),
     ];
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       childApiMock.getNavItems.and.returnValue(newIframeNavItems);
 
       service.refetchNavItems().then(x => navItems = x);
