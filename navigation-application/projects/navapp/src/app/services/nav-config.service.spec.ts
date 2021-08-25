@@ -353,12 +353,12 @@ describe('NavConfigService', () => {
   describe('refetchNavItems', () => {
     let navItems: NavItem[];
 
-    const newIframeNavItems = [
+    const newIframeNavItems: NavItem[] = [
       new NavItemDtoMock({id: 'newIframeItem'}),
     ];
 
     beforeEach(waitForAsync(() => {
-      childApiMock.getNavItems.and.returnValue(newIframeNavItems);
+      childApiMock.getNavItems.and.returnValue(Promise.resolve(newIframeNavItems));
 
       service.refetchNavItems().then(x => navItems = x);
 
