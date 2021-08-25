@@ -243,6 +243,7 @@ xdescribe('ClientAppService', () => {
 
       describe('and returns the config object without apiVersion', () => {
         beforeEach(waitForAsync(() => {
+          // @ts-expect-error
           childApi1.getConfig.and.returnValue(Promise.resolve({}));
           childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
@@ -482,6 +483,7 @@ xdescribe('ClientAppService', () => {
 
         describe('and returns the config object without apiVersion', () => {
           beforeEach(waitForAsync(() => {
+            // @ts-expect-error
             childApi1.getConfig.and.returnValue(Promise.resolve({}));
             childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
