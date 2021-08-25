@@ -28,7 +28,7 @@ describe('QaHelperService', () => {
       providers: [QaHelperService],
     });
 
-    qaHelperService = TestBed.get(QaHelperService);
+    qaHelperService = TestBed.inject(QaHelperService);
   });
 
   it('should get the menu item class for the item', () => {

@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -53,7 +53,7 @@ describe('ExpandableMenuItemComponent', () => {
     'some-icon',
   );
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'isMenuItemHighlighted',
     ]);
@@ -146,7 +146,7 @@ describe('ExpandableMenuItemComponent', () => {
   });
 
   describe('when it is expanded', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       component.toggle();
 
       fixture.detectChanges();

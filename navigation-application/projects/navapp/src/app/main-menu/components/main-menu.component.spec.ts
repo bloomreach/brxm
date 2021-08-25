@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
@@ -60,7 +60,7 @@ describe('MainMenuComponent', () => {
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'toggle',
       'openDrawer',
@@ -102,8 +102,8 @@ describe('MainMenuComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
-    menuStateServiceMock = TestBed.get(MenuStateService);
-    busyIndicatorServiceMock = TestBed.get(BusyIndicatorService);
+    menuStateServiceMock = TestBed.inject(MenuStateService) as jasmine.SpyObj<MenuStateService>;
+    busyIndicatorServiceMock = TestBed.inject(BusyIndicatorService) as jasmine.SpyObj<BusyIndicatorService>;
 
     component.ngOnInit();
 
@@ -224,7 +224,7 @@ describe('MainMenuComponent', () => {
   });
 
   describe('when help menu item is clicked', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       component.onHelpMenuItemClick();
 
       fixture.detectChanges();
@@ -250,7 +250,7 @@ describe('MainMenuComponent', () => {
   });
 
   describe('when user menu item is clicked', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       component.onUserMenuItemClick();
 
       fixture.detectChanges();

@@ -46,8 +46,8 @@ describe('ChildApiMethodsService', () => {
       ],
     });
 
-    const service: ChildApiMethodsService = TestBed.get(ChildApiMethodsService);
-    stateMock = TestBed.get(AppState);
+    const service: ChildApiMethodsService = TestBed.inject(ChildApiMethodsService);
+    stateMock = TestBed.inject(AppState);
 
     childApiMethods = service.getMethods();
   });
@@ -191,10 +191,10 @@ describe('ChildApiMethodsService', () => {
 
   describe('if it is brSM mock', () => {
     beforeEach(() => {
-      const state: AppState = TestBed.get(AppState);
+      const state: AppState = TestBed.inject(AppState);
       (state as any).isBrSmMock = true;
 
-      const service: ChildApiMethodsService = TestBed.get(ChildApiMethodsService);
+      const service: ChildApiMethodsService = TestBed.inject(ChildApiMethodsService);
 
       childApiMethods = service.getMethods();
     });

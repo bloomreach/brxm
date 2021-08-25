@@ -15,7 +15,7 @@
  */
 
 import { Location, PopStateEvent } from '@angular/common';
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -180,8 +180,8 @@ describe('NavigationService', () => {
       ],
     });
 
-    service = TestBed.get(NavigationService);
-    appSettingsMock = TestBed.get(APP_SETTINGS);
+    service = TestBed.inject(NavigationService);
+    appSettingsMock = TestBed.inject(APP_SETTINGS);
 
     service.init(navItemsMock);
   });
@@ -417,7 +417,7 @@ describe('NavigationService', () => {
       );
     }));
 
-    it('should activate the app before ChildApi.navigate() is called and activated even in a case of the error', async(() => {
+    it('should activate the app before ChildApi.navigate() is called and activated even in a case of the error', waitForAsync(() => {
       const navItem = new NavItemMock({
         appIframeUrl: 'http://domain.com/iframe1/url',
         appPath: 'app/path/to/page1',
@@ -824,7 +824,7 @@ describe('NavigationService', () => {
       }));
 
       describe('when beforeNavigation() returned "true"', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
 
           beforeNavigationResolve(true);
@@ -884,7 +884,7 @@ describe('NavigationService', () => {
         appPath: 'app/path/to/page1',
       });
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         loggerMock.debug.calls.reset();
 
         service.navigateByNavItem(navItemToNavigate, NavigationTrigger.NotDefined);

@@ -87,7 +87,7 @@ describe('AppComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
-    stateMock = TestBed.get(AppState);
+    stateMock = TestBed.inject(AppState);
 
     await component.ngOnInit();
 
