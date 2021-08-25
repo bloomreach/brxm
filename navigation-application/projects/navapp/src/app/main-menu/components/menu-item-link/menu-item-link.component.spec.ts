@@ -73,14 +73,6 @@ describe('MenuItemLinkComponent', () => {
       expect(de.classes.highlighted).toBeFalsy();
     });
 
-    it('should be disabled', () => {
-      expect(de.classes.disabled).toBeTruthy();
-    });
-
-    it('should have "qa-disabled" class', () => {
-      expect(de.classes['qa-disabled']).toBeTruthy();
-    });
-
     it('should show an empty caption', () => {
       expect(de.nativeElement.textContent.trim()).toBe('');
     });
@@ -119,16 +111,12 @@ describe('MenuItemLinkComponent', () => {
     beforeEach(waitForAsync(() => {
       linkEl = de.query(By.css('a'));
 
-      navItemMock = new NavItemMock({}, NEVER, false);
+      navItemMock = new NavItemMock({});
 
       component.navItem = navItemMock;
 
       fixture.detectChanges();
     }));
-
-    it('should be disabled', () => {
-      expect(de.classes.disabled).toBeTruthy();
-    });
 
     describe('if received a click event', () => {
       beforeEach(() => {
@@ -144,25 +132,17 @@ describe('MenuItemLinkComponent', () => {
       });
     });
 
-    describe('and activated', () => {
-      beforeEach(waitForAsync(() => {
-        navItemMock.activate();
+    describe('if received a click event', () => {
+      beforeEach(() => {
+        linkEl.triggerEventHandler('click', mouseEventObj);
+      });
 
-        fixture.detectChanges();
-      }));
+      it('should prevent default event handling', () => {
+        expect(mouseEventObj.preventDefault).toHaveBeenCalled();
+      });
 
-      describe('if received a click event', () => {
-        beforeEach(() => {
-          linkEl.triggerEventHandler('click', mouseEventObj);
-        });
-
-        it('should prevent default event handling', () => {
-          expect(mouseEventObj.preventDefault).toHaveBeenCalled();
-        });
-
-        it('should navigate to the nav item', () => {
-          expect(navigationServiceMock.navigateByUrl).toHaveBeenCalledWith('test', NavigationTrigger.Menu);
-        });
+      it('should navigate to the nav item', () => {
+        expect(navigationServiceMock.navigateByUrl).toHaveBeenCalledWith('test', NavigationTrigger.Menu);
       });
     });
   });

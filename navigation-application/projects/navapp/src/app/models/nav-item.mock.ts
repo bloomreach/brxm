@@ -19,7 +19,7 @@ import { NEVER, Observable } from 'rxjs';
 import { NavItem } from './nav-item.model';
 
 export class NavItemMock extends NavItem {
-  constructor(initObject = {}, unsubscribe: Observable<void> = NEVER, activated = true) {
+  constructor(initObject = {}) {
     const dto = {
       id: 'testNavItemId',
       displayName: 'testDisplayName',
@@ -28,10 +28,6 @@ export class NavItemMock extends NavItem {
       ...initObject,
     };
 
-    super(dto, unsubscribe);
-
-    if (activated) {
-      this.activate();
-    }
+    super(dto);
   }
 }

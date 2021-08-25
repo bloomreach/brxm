@@ -79,7 +79,6 @@ describe('BootstrapService', () => {
     new NavItemMock({ id: '3' }),
   ];
 
-  let appConnectedSubject: Subject<ClientApp>;
   let selectedSiteSubject: Subject<Site>;
 
   let authServiceMock: jasmine.SpyObj<AuthService>;
@@ -96,8 +95,6 @@ describe('BootstrapService', () => {
   let loggerMock: jasmine.SpyObj<NGXLogger>;
 
   beforeEach(() => {
-    appConnectedSubject = new Subject();
-
     authServiceMock = jasmine.createSpyObj('AuthService', {
       loginAllResources: Promise.resolve(),
     });
@@ -119,7 +116,6 @@ describe('BootstrapService', () => {
     clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
       init: Promise.resolve(),
     });
-    (clientAppServiceMock as any).appConnected$ = appConnectedSubject.asObservable();
 
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'init',
@@ -252,14 +248,6 @@ describe('BootstrapService', () => {
 
       it('should perform initial navigation', () => {
         expect(navigationServiceMock.initialNavigation).toHaveBeenCalled();
-      });
-
-      it('should activate nav items for the connected app', () => {
-        const expected = 'https://some-url';
-
-        appConnectedSubject.next(new ClientApp(expected, {}));
-
-        expect(navItemServiceMock.activateNavItems).toHaveBeenCalledWith(expected);
       });
 
       describe('logging', () => {
