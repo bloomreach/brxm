@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NavItemDtoMock } from '../models/dto/nav-item-dto.mock';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 
 import { NavItemService } from './nav-item.service';
 
@@ -23,28 +23,28 @@ describe('NavItemService', () => {
   let service: NavItemService;
 
   const appIframeUrl = 'https://test.url/some/path';
-  const mockNavItemDtos = [
-    new NavItemDtoMock({
+  const mockNavItems = [
+    new NavItemMock({
       appPath: 'a',
       appIframeUrl,
     }),
-    new NavItemDtoMock({
+    new NavItemMock({
       appPath: 'a/b/c',
       appIframeUrl,
     }),
-    new NavItemDtoMock({
+    new NavItemMock({
       appPath: 'a/b',
       appIframeUrl,
     }),
-    new NavItemDtoMock({
+    new NavItemMock({
       appPath: 'a/b/c/d',
       appIframeUrl,
     }),
-    new NavItemDtoMock({
+    new NavItemMock({
       appPath: 'test1',
       appIframeUrl,
     }),
-    new NavItemDtoMock({
+    new NavItemMock({
       appPath: 'test2',
       appIframeUrl,
     }),
@@ -87,7 +87,7 @@ describe('NavItemService', () => {
       }),
     ];
 
-    service.registerNavItemDtos(mockNavItemDtos);
+    service.registerNavItems(mockNavItems);
 
     expect(service.navItems.length).toBe(6);
     expect(service.navItems).toEqual(expected);
@@ -103,11 +103,11 @@ describe('NavItemService', () => {
 
   describe('when nav items are registered', () => {
     beforeEach(() => {
-      service.registerNavItemDtos(mockNavItemDtos);
+      service.registerNavItems(mockNavItems);
     });
 
     it('should log that', () => {
-      expect(loggerMock.debug).toHaveBeenCalledWith('Register nav items', mockNavItemDtos);
+      expect(loggerMock.debug).toHaveBeenCalledWith('Register nav items', mockNavItems);
     });
 
     it('should find a nav item by an iframe url and an app path', () => {
@@ -171,21 +171,21 @@ describe('NavItemService', () => {
   describe('when nav items with wrong iframe urls are set', () => {
     beforeEach(() => {
       const dtos = [
-        new NavItemDtoMock({
+        new NavItemMock({
           appPath: 'a',
           appIframeUrl: 'test.url/some/path',
         }),
-        new NavItemDtoMock({
+        new NavItemMock({
           appPath: 'a/b/c',
           appIframeUrl: '/some/path',
         }),
-        new NavItemDtoMock({
+        new NavItemMock({
           appPath: 'b/c',
           appIframeUrl: 'https://test.com/base',
         }),
       ];
 
-      service.registerNavItemDtos(dtos);
+      service.registerNavItems(dtos);
     });
 
     it('should not throw an exception', () => {

@@ -17,7 +17,7 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { first, take } from 'rxjs/operators';
 
-import { NavItemMock } from '../../models/nav-item.mock';
+import { NavItemMock } from '../../models/dto/nav-item-dto.mock';
 import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';

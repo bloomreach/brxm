@@ -28,7 +28,7 @@ import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { ConfigResource } from '../models/dto/config-resource.dto';
 import { ConfigResourceMock } from '../models/dto/config-resource.mock';
-import { NavItemDtoMock } from '../models/dto/nav-item-dto.mock';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 
 import { APP_SETTINGS } from './app-settings';
 import { ConnectionService } from './connection.service';
@@ -41,9 +41,9 @@ describe('NavConfigService', () => {
   let appSettings: AppSettings;
 
   const navItemsMock = [
-    new NavItemDtoMock({ id: 'iframeItem' }),
-    new NavItemDtoMock({ id: 'restItem' }),
-    new NavItemDtoMock({ id: 'internalRestItem', appIframeUrl: '/relative/url' }),
+new NavItemMock({ id: 'iframeItem' }),
+new NavItemMock({ id: 'restItem' }),
+new NavItemMock({ id: 'internalRestItem', appIframeUrl: '/relative/url' }),
   ];
 
   const sitesMock: Site[] = [
@@ -354,7 +354,7 @@ describe('NavConfigService', () => {
     let navItems: NavItem[];
 
     const newIframeNavItems: NavItem[] = [
-      new NavItemDtoMock({id: 'newIframeItem'}),
+      new NavItemMock({id: 'newIframeItem'}),
     ];
 
     beforeEach(waitForAsync(() => {

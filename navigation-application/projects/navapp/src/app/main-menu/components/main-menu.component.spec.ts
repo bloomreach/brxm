@@ -22,8 +22,7 @@ import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { TranslateModule } from '@ngx-translate/core';
 import { NEVER, of } from 'rxjs';
 
-import { NavItemMock } from '../../models/nav-item.mock';
-import { NavItem } from '../../models/nav-item.model';
+import { NavItemMock } from '../../models/dto/nav-item-dto.mock';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
