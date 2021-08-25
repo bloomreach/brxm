@@ -4,8 +4,18 @@
     "codelyzer"
   ],
   "rules": {
+    "align": {
+      "options": [
+        "parameters",
+        "statements"
+      ]
+    },
     "array-type": [true, "array"],
-    "arrow-parens": [true, "ban-single-arg-parens"],
+    "arrow-parens": [
+      true,
+      "ban-single-arg-parens"
+    ],
+    "arrow-return-shorthand": true,
     "deprecation": {
       "severity": "warning"
     },
@@ -15,6 +25,7 @@
     ],
     "interface-name": false,
     "max-classes-per-file": false,
+    "curly": true,
     "max-line-length": [
       true,
       140
@@ -34,9 +45,11 @@
         ]
       }
     ],
+    "eofline": true,
     "no-consecutive-blank-lines": true,
     "no-console": true,
     "no-empty": false,
+    "import-spacing": true,
     "no-inferrable-types": [
       true,
       "ignore-params"
@@ -108,13 +121,40 @@
     "no-reference-import": true,
     "no-unnecessary-callback-wrapper": true,
     "object-literal-shorthand": true,
+    "semicolon": {
+      "options": [
+        "always"
+      ]
+    },
     "one-variable-per-declaration": [true, "ignore-for-loop"],
     "prefer-template": true,
     "space-before-function-paren": [true, { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
     "space-within-parens": [true, 0],
     "no-irregular-whitespace": true,
     "new-parens": true,
-    "indent": [true, "spaces", 2],
+    "indent": [
+      true,
+      "spaces",
+      2
+    ],
+    "typedef-whitespace": {
+      "options": [
+        {
+          "call-signature": "nospace",
+          "index-signature": "nospace",
+          "parameter": "nospace",
+          "property-declaration": "nospace",
+          "variable-declaration": "nospace"
+        },
+        {
+          "call-signature": "onespace",
+          "index-signature": "onespace",
+          "parameter": "onespace",
+          "property-declaration": "onespace",
+          "variable-declaration": "onespace"
+        }
+      ]
+    },
     "typedef": [
       true,
       "call-signature",
@@ -126,6 +166,23 @@
       "Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License."
     ],
     "use-lifecycle-interface": true,
-    "use-pipe-transform-interface": true
+    "use-pipe-transform-interface": true,
+    "variable-name": {
+      "options": [
+        "ban-keywords",
+        "check-format",
+        "allow-pascal-case"
+      ]
+    },
+    "whitespace": {
+      "options": [
+        "check-branch",
+        "check-decl",
+        "check-operator",
+        "check-separator",
+        "check-type",
+        "check-typecast"
+      ]
+    }
   }
 }
