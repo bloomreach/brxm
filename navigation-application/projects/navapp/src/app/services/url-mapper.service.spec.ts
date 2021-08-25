@@ -71,8 +71,8 @@ describe('UrlMapperService', () => {
       ],
     });
 
-    service = TestBed.get(UrlMapperService);
-    clientAppServiceMock = TestBed.get(ClientAppService);
+    service = TestBed.inject(UrlMapperService);
+    clientAppServiceMock = TestBed.inject(ClientAppService);
   });
 
   it('should return the base path', () => {

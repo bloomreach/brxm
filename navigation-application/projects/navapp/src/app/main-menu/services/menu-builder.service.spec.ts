@@ -69,7 +69,7 @@ describe('MenuBuilderService', () => {
       ],
     });
 
-    menuBuilderService = TestBed.get(MenuBuilderService);
+    menuBuilderService = TestBed.inject(MenuBuilderService);
   });
 
   it('should get the filtered menu populated with app paths', () => {

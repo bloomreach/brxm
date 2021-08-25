@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, SecurityContext } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By, DomSanitizer } from '@angular/platform-browser';
 import { ChildApi } from '@bloomreach/navapp-communication';
 
@@ -38,7 +38,7 @@ xdescribe('ClientAppComponent', () => {
   let resolveIframeConnection: (value: ChildApi) => any;
   let rejectIframeConnection: (reason?: string) => any;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     domSanitizerMock = jasmine.createSpyObj('DomSanitizer', {
       sanitize: 'sanitized-url',
       bypassSecurityTrustResourceUrl: 'sanitized-url',

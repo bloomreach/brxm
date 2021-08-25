@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
@@ -36,7 +36,7 @@ describe('MenuItemLinkComponent', () => {
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
   let mouseEventObj: jasmine.SpyObj<MouseEvent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     navigationServiceMock = jasmine.createSpyObj('NavigationService', [
       'navigateByNavItem',
       'navigateByUrl',
@@ -116,7 +116,7 @@ describe('MenuItemLinkComponent', () => {
     let navItemMock: NavItem;
     let linkEl: DebugElement;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       linkEl = de.query(By.css('a'));
 
       navItemMock = new NavItemMock({}, NEVER, false);
@@ -145,7 +145,7 @@ describe('MenuItemLinkComponent', () => {
     });
 
     describe('and activated', () => {
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         navItemMock.activate();
 
         fixture.detectChanges();
