@@ -16,7 +16,7 @@
 
 import { Location, PopStateEvent } from '@angular/common';
 import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { of, Subject, SubscriptionLike } from 'rxjs';
@@ -29,8 +29,7 @@ import { ErrorHandlingService } from '../error-handling/services/error-handling.
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
-import { NavItemMock } from '../models/nav-item.mock';
-import { NavItem } from '../models/nav-item.model';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';

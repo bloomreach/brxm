@@ -84,10 +84,10 @@ export class BootstrapService {
 
       this.showLoader();
 
-      const navItemDtos = await this.navConfigService.refetchNavItems();
+      const navItems = await this.navConfigService.refetchNavItems();
 
       const configuration: Configuration = {
-        navItems: navItemDtos,
+        navItems,
         sites: undefined,
         selectedSiteId: undefined,
       };
@@ -137,7 +137,7 @@ export class BootstrapService {
       this.siteService.init(configuration.sites, configuration.selectedSiteId);
     }
 
-    const navItems = this.navItemService.registerNavItemDtos(configuration.navItems);
+    const navItems = this.navItemService.registerNavItems(configuration.navItems);
 
     this.menuStateService.init(navItems);
     this.navigationService.init(navItems);
