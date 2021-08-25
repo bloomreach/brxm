@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { NavItem } from '../../models/nav-item.model';
+import { NavItem } from '@bloomreach/navapp-communication';
 
 export class MenuItemLink {
   navItem: NavItem;
