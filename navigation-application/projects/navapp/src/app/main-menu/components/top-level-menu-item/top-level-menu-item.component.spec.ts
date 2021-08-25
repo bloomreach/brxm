@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { first } from 'rxjs/operators';
@@ -28,7 +28,7 @@ describe('TopLevelMenuItemComponent', () => {
   let de: DebugElement;
   let wrapper: DebugElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.configureTestingModule({
       imports: [
         NoopAnimationsModule,
@@ -140,7 +140,7 @@ describe('TopLevelMenuItemComponent', () => {
   });
 
   describe('when disabled', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       component.disabled = true;
 
       fixture.detectChanges();

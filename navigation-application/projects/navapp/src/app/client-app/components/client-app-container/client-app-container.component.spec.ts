@@ -15,7 +15,7 @@
  */
 
 import { Component, DebugElement, Input, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -57,7 +57,7 @@ describe('ClientAppContainerComponent', () => {
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
   let navigationServiceMock: NavigationService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     urlsSubject = new BehaviorSubject<string[]>(['mytesturl1', 'mytesturl2']);
 
     clientAppServiceMock = {
@@ -88,7 +88,7 @@ describe('ClientAppContainerComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
-    clientAppServiceMock = TestBed.get(ClientAppService);
+    clientAppServiceMock = TestBed.inject(ClientAppService) as jasmine.SpyObj<ClientAppService>;
 
     fixture.detectChanges();
   }));

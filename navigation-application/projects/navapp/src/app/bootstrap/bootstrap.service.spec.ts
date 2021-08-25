@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { NavigationTrigger, Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
@@ -183,14 +183,14 @@ describe('BootstrapService', () => {
       ],
     });
 
-    service = TestBed.get(BootstrapService);
+    service = TestBed.inject(BootstrapService);
   });
 
   describe('bootstrap', () => {
     describe('if everything goes well', () => {
       let bootstrapped: boolean;
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         bootstrapped = false;
 
         service.bootstrap().then(() => bootstrapped = true);
@@ -701,7 +701,7 @@ describe('BootstrapService', () => {
         new NavItemMock({ id: '6' }),
       ];
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         reinitialized = false;
 
         navConfigServiceMock.refetchNavItems.and.returnValue(newNavItemDtosMock);
@@ -765,7 +765,7 @@ describe('BootstrapService', () => {
 
     describe('if something goes wrong', () => {
       describe('and nav item DTOs fetching has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navConfigServiceMock.refetchNavItems.and.callFake(() => Promise.reject(
             new Error('nav item DTOs fetching has failed'),
           ));
@@ -782,7 +782,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and registration of nav item DTOs thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navItemServiceMock.registerNavItemDtos.and.callFake(() => {
             throw new Error('registration of nav item DTOs fetching has failed');
           });
@@ -799,7 +799,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and ClientAppService initialization has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           clientAppServiceMock.init.and.callFake(() => {
             throw new Error('ClientAppService initialization error');
           });
@@ -816,7 +816,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and ClientAppService initialization has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           clientAppServiceMock.init.and.callFake(() => Promise.reject(new Error('some error')));
 
           service.reinitialize();
@@ -831,7 +831,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and MenuStateService initialization has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           menuStateServiceMock.init.and.callFake(() => {
             throw new Error('MenuStateService initialization error');
           });
@@ -848,7 +848,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and NavigationService initialization has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.init.and.callFake(() => {
             throw new Error('NavigationService initialization error');
           });
@@ -865,7 +865,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and reloading of the page has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => {
             throw new Error('reload of the page error');
           });
@@ -879,7 +879,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and reloading of the page has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => Promise.reject(new Error('some error')));
 
           service.reinitialize();
@@ -891,7 +891,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and navigation to home page has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => {
             throw new Error('reload of the page error');
           });
@@ -911,7 +911,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and navigation to home page has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => {
             throw new Error('reload of the page error');
           });

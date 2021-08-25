@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { ChildApi } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { LoggerTestingModule } from 'ngx-logger/testing';
@@ -73,8 +73,8 @@ xdescribe('ClientAppService', () => {
       ],
     });
 
-    service = TestBed.get(ClientAppService);
-    logger = TestBed.get(NGXLogger);
+    service = TestBed.inject(ClientAppService);
+    logger = TestBed.inject(NGXLogger);
 
     appConnectedSpy = jasmine.createSpy('appConnectedSpy');
     service.appConnected$.pipe(
@@ -114,7 +114,7 @@ xdescribe('ClientAppService', () => {
     describe('when applications without "getConfig()" connected normally', () => {
       let initialized = false;
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         service.init(navItemsMock).then(() => initialized = true);
         service.addConnection(new Connection('http://app1.com', {}));
         service.addConnection(new Connection('http://app2.com', {}));
@@ -133,7 +133,7 @@ xdescribe('ClientAppService', () => {
     describe('when applications with "getConfig()" connected normally', () => {
       let initialized = false;
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         const childApi1 = jasmine.createSpyObj('ChildApi1', {
           getConfig: Promise.resolve({ apiVersion: '1.0.0' }),
         });
@@ -161,7 +161,7 @@ xdescribe('ClientAppService', () => {
     describe('when one application failed to connect', () => {
       let initialized = false;
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         const childApi = jasmine.createSpyObj('ChildApi2', {
           getConfig: Promise.resolve({ apiVersion: '1.0.0' }),
         });
@@ -225,7 +225,7 @@ xdescribe('ClientAppService', () => {
       });
 
       describe('and returns undefined', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           childApi1.getConfig.and.returnValue(Promise.resolve(undefined));
           childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
@@ -242,7 +242,7 @@ xdescribe('ClientAppService', () => {
       });
 
       describe('and returns the config object without apiVersion', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           childApi1.getConfig.and.returnValue(Promise.resolve({}));
           childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
@@ -261,7 +261,7 @@ xdescribe('ClientAppService', () => {
       describe('and returns a rejected promise', () => {
         let initialized: boolean;
 
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           initialized = false;
 
           childApi1.getConfig.and.callFake(() => Promise.reject('some reason'));
@@ -291,7 +291,7 @@ xdescribe('ClientAppService', () => {
       });
 
       describe('and returns the config object with an apiVersion set', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           childApi1.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
           childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '2.0.0' }));
 
@@ -313,7 +313,7 @@ xdescribe('ClientAppService', () => {
     let clientApiWithoutSitesSupport: ChildApi;
     let clientApiWithSitesSupport: ChildApi;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       clientApiWithoutSitesSupport = {
         getConfig: () => Promise.resolve({ apiVersion: '1.0.0', showSiteDropdown: false }),
       };
@@ -465,7 +465,7 @@ xdescribe('ClientAppService', () => {
         });
 
         describe('and returns undefined', () => {
-          beforeEach(async(() => {
+          beforeEach(waitForAsync(() => {
             childApi1.getConfig.and.returnValue(Promise.resolve(undefined));
             childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
@@ -481,7 +481,7 @@ xdescribe('ClientAppService', () => {
         });
 
         describe('and returns the config object without apiVersion', () => {
-          beforeEach(async(() => {
+          beforeEach(waitForAsync(() => {
             childApi1.getConfig.and.returnValue(Promise.resolve({}));
             childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
@@ -499,7 +499,7 @@ xdescribe('ClientAppService', () => {
         describe('and returns a rejected promise', () => {
           let initialized: boolean;
 
-          beforeEach(async(() => {
+          beforeEach(waitForAsync(() => {
             initialized = false;
 
             childApi1.getConfig.and.callFake(() => Promise.reject('some reason'));
