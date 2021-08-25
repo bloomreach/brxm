@@ -28,7 +28,7 @@ describe('translateHttpLoaderFactory', () => {
   ]);
 
   beforeEach(() => {
-    spyOnProperty(getAntiCacheModule, 'getAntiCacheQueryParam', 'get').and.returnValue(() => 'antiCache=some-unique-hash');
+    spyOn(getAntiCacheModule, 'getAntiCacheQueryParam').and.returnValue('antiCache=some-unique-hash');
   });
 
   it('should create TranslateHttpLoader', () => {
