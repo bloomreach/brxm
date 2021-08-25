@@ -28,7 +28,7 @@
             "main": "projects/navapp/src/main.ts",
             "polyfills": "projects/navapp/src/polyfills.ts",
             "tsConfig": "projects/navapp/tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "stylePreprocessorOptions": {
               "includePaths": [
                 "projects/navapp/src/styles"
@@ -141,7 +141,7 @@
             "main": "projects/iframe-app-example/src/main.ts",
             "polyfills": "projects/iframe-app-example/src/polyfills.ts",
             "tsConfig": "projects/iframe-app-example/tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "assets": [
               "projects/iframe-app-example/src/favicon.ico",
               "projects/iframe-app-example/src/assets"
