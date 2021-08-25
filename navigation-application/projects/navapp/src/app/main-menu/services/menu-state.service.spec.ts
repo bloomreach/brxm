@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { first, take } from 'rxjs/operators';
 
 import { NavItemMock } from '../../models/nav-item.mock';
@@ -91,7 +91,7 @@ describe('MenuStateService', () => {
       ],
     });
 
-    service = TestBed.get(MenuStateService);
+    service = TestBed.inject(MenuStateService);
 
     service.init(navItemsMock);
   });
@@ -172,7 +172,7 @@ describe('MenuStateService', () => {
   });
 
   describe('when there is an active menu item', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
     }));
 

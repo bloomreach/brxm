@@ -54,7 +54,7 @@ describe('ErrorPageComponent', () => {
     });
 
     fixture = TestBed.createComponent(ErrorPageComponent);
-    menuStateServiceMock = TestBed.get(MenuStateService);
+    menuStateServiceMock = TestBed.inject(MenuStateService);
     de = fixture.debugElement;
 
     component = fixture.componentInstance;

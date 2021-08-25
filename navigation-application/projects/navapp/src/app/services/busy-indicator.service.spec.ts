@@ -28,7 +28,7 @@ describe('BusyIndicatorService', () => {
       ],
     });
 
-    busyIndicatorService = TestBed.get(BusyIndicatorService);
+    busyIndicatorService = TestBed.inject(BusyIndicatorService);
   });
 
   it('busy indicator should be hidden by default', () => {

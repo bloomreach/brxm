@@ -15,7 +15,7 @@
  */
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { async, TestBed } from '@angular/core/testing';
+import { async, TestBed, waitForAsync } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import 'zone.js/dist/zone-patch-rxjs-fake-async';
 
@@ -61,8 +61,8 @@ describe('UserActivityService', () => {
       ],
     });
 
-    service = TestBed.get(UserActivityService);
-    clientAppServiceMock = TestBed.get(ClientAppService);
+    service = TestBed.inject(UserActivityService);
+    clientAppServiceMock = TestBed.inject(ClientAppService);
 
     service.startPropagation();
   });
@@ -94,7 +94,7 @@ describe('UserActivityService', () => {
       expect(clientApps[2].api.onUserActivity).not.toHaveBeenCalled();
     });
 
-    it('should propagate next time after the timeout has passed', async(() => {
+    it('should propagate next time after the timeout has passed', waitForAsync(() => {
       setTimeout(() => {
         userActivity$.next();
 
