@@ -42,6 +42,7 @@ export class ClientAppMockComponent {
   url: string;
 
   constructor() {
+    // @ts-ignore
     spyOn(this, 'reloadAndConnect');
   }
 

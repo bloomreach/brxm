@@ -19,7 +19,7 @@ import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { of, Subject } from 'rxjs';
+import { of, Subject, SubscriptionLike } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -98,6 +98,7 @@ describe('NavigationService', () => {
     ]);
     locationMock.normalize.and.callFake(x => x.replace('/#', '#'));
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
+    // @ts-ignore
     locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
 
     childApi = jasmine.createSpyObj('ChildApi', {
@@ -423,7 +424,7 @@ describe('NavigationService', () => {
         appPath: 'app/path/to/page1',
       });
 
-      childApi.navigate.and.returnValue(new Promise(r => {
+      childApi.navigate.and.returnValue(new Promise<void>(r => {
         expect(clientAppServiceMock.activateApplication).toHaveBeenCalledWith('http://domain.com/iframe1/url');
 
         r();
@@ -800,7 +801,7 @@ describe('NavigationService', () => {
 
       let beforeNavigationResolve: (value: boolean) => void;
       let beforeNavigationReject: (reason?: any) => void;
-      let navigateResolve: () => void;
+      let navigateResolve: (value: unknown) => void;
       let navigateReject: () => void;
 
       beforeEach(fakeAsync(() => {
@@ -837,7 +838,7 @@ describe('NavigationService', () => {
         });
 
         it('should be hidden if navigate() resolved', fakeAsync(() => {
-          navigateResolve();
+          navigateResolve(undefined);
 
           tick();
 
