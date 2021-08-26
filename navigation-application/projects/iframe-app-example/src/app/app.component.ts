@@ -46,6 +46,10 @@ export class AppComponent implements OnInit {
     return `${location}`;
   }
 
+  get shouldConfirm(): boolean {
+    return this.state.shouldAskBeforeNavigation;
+  }
+
   async ngOnInit(): Promise<void> {
     await this.communicationService.connect(this.childApiMethodsService.getMethods());
 
@@ -91,5 +95,9 @@ export class AppComponent implements OnInit {
 
   updateSelectedSite(siteId: SiteId): void {
     this.communicationService.updateSelectedSite(siteId);
+  }
+
+  toggleConfirm(): void {
+    this.state.shouldAskBeforeNavigation = !this.state.shouldAskBeforeNavigation;
   }
 }

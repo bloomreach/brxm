@@ -38,6 +38,7 @@ export class AppState {
   historyPushStateCount = 0;
   historyReplaceStateCount = 0;
   generateAnErrorUponLogout = false;
+  shouldAskBeforeNavigation = false;
 
   constructor(
     private readonly location: Location,
