@@ -105,12 +105,16 @@ describe('NavigationService', () => {
       navigate: Promise.resolve(),
     });
 
+    const clientApp1 = new ClientAppMock({
+      api: childApi,
+    });
+
     clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
-      getApp: new ClientAppMock({
-        api: childApi,
-      }),
+      getApp: clientApp1,
       activateApplication: undefined,
     });
+
+    (clientAppServiceMock as any).activeApp = clientApp1;
 
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'activateMenuItem',

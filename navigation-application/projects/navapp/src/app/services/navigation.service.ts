@@ -350,20 +350,22 @@ export class NavigationService implements OnDestroy {
       }),
       // Process beforeNavigation
       switchMap(t => {
-        if (!t.app.api.beforeNavigation) {
+        const activeApp = this.clientAppService.activeApp;
+
+        if (!activeApp || !activeApp.api.beforeNavigation) {
           return of(t);
         }
 
-        this.logger.debug(`Navigation: beforeNavigation() is called for '${t.app.url}'`);
+        this.logger.debug(`Navigation: beforeNavigation() is called for '${activeApp.url}'`);
 
-        return from(t.app.api.beforeNavigation()).pipe(
+        return from(activeApp.api.beforeNavigation()).pipe(
           tap(allowedToContinue => {
             if (allowedToContinue) {
-              this.logger.debug(`Navigation: beforeNavigation() call is succeeded for '${t.app.url}'`);
+              this.logger.debug(`Navigation: beforeNavigation() call is succeeded for '${activeApp.url}'`);
               return;
             }
 
-            this.logger.debug(`Navigation: beforeNavigation() call is cancelled for '${t.app.url}'`);
+            this.logger.debug(`Navigation: beforeNavigation() call is cancelled for '${activeApp.url}'`);
           }),
           switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
         );
