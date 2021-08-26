@@ -41,7 +41,7 @@
     <hippo.services.version>${hippo.release.version}</hippo.services.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
-    <jsoup.version>1.11.2</jsoup.version>
+    <jsoup.version>1.14.2</jsoup.version>
     <rome.version>1.16.0</rome.version>
     <junit.version>4.13.1</junit.version>
     <mockito.version>1.10.19</mockito.version>
