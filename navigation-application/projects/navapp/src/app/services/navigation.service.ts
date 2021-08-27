@@ -327,6 +327,16 @@ export class NavigationService implements OnDestroy {
 
         return of({ ...t, navItem: route.navItem, appPathAddOn: appPathAddOnWithoutQueryStringAndHash, queryStringAndHash });
       }),
+      switchMap(t => {
+        const appId = t.navItem.appIframeUrl;
+
+        if (!this.clientAppService.apps.some(app => app.url === appId)) {
+          const clientCreated$ = from(this.clientAppService.createClientApp(appId));
+          return clientCreated$.pipe(switchMap(() => of(t)));
+        }
+
+        return of(t);
+      }),
       // Ensure the app with the found id exists and it has the connected API
       switchMap(t => {
         const appId = t.navItem.appIframeUrl;
