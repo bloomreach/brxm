@@ -92,6 +92,8 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
 
     const alreadyConnectedAppUrls = this.clientAppService.apps.map(x => x.url);
 
-    this.clientAppComponents.filter(x => !alreadyConnectedAppUrls.includes(x.url)).forEach(x => x.reloadAndConnect());
+    this.clientAppComponents
+    .filter(app => !alreadyConnectedAppUrls.includes(app.url))
+    .forEach(app => app.reloadAndConnect());
   }
 }
