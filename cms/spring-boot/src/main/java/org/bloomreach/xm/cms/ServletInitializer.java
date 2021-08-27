@@ -18,17 +18,20 @@ package org.bloomreach.xm.cms;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.util.StringUtils;
 
 public class ServletInitializer extends SpringBootServletInitializer {
 
-    private static final String LOGGING_SYSTEM_PROPERTY = LoggingSystem.class.getName();
+    private static final String LOGGING_SYSTEM_PROPERTY = LoggingSystem.SYSTEM_PROPERTY;
     private static final String LOGGING_SYSTEM_CLASS = XmLoggingSystem.class.getName();
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        // set the XmLoggingSystem class as a system property hence spring boot can use it
-        // as the default LoggingSystem implementation
-        System.setProperty(LOGGING_SYSTEM_PROPERTY, LOGGING_SYSTEM_CLASS);
+        if (!StringUtils.hasLength(System.getProperty(LOGGING_SYSTEM_PROPERTY))) {
+            // set the XmLoggingSystem class as a system property hence spring boot can use it
+            // as the default LoggingSystem implementation
+            System.setProperty(LOGGING_SYSTEM_PROPERTY, LOGGING_SYSTEM_CLASS);
+        }
         return application.sources(XmApplication.class);
     }
 }
