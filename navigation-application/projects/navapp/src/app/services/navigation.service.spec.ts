@@ -112,9 +112,11 @@ describe('NavigationService', () => {
     clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
       getApp: clientApp1,
       activateApplication: undefined,
+      createClientApp: Promise.resolve(true),
     });
 
     (clientAppServiceMock as any).activeApp = clientApp1;
+    (clientAppServiceMock as any).apps = [clientApp1];
 
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'activateMenuItem',
@@ -313,12 +315,13 @@ describe('NavigationService', () => {
       childApi.navigate.calls.reset();
     }));
 
-    it('should be called before the navigate method', () => {
+    it('should be called before the navigate method', fakeAsync(() => {
       service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+      tick();
 
       expect(childApi.beforeNavigation).toHaveBeenCalled();
       expect(childApi.navigate).not.toHaveBeenCalled();
-    });
+    }));
 
     it('should proceed to the navigate method invocation if "true" is returned', fakeAsync(() => {
       service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
@@ -354,7 +357,7 @@ describe('NavigationService', () => {
   });
 
   describe('nav item', () => {
-    beforeEach(() => {
+    beforeEach(fakeAsync(() => {
       const navItemMock: NavItem = {
         id: 'item1',
         appIframeUrl: 'http://domain.com/iframe1/url',
@@ -363,7 +366,8 @@ describe('NavigationService', () => {
 
       service.init([navItemMock]);
       service.initialNavigation();
-    });
+      tick();
+    }));
 
     it('should proceed the navigation process', () => {
       expect(clientAppServiceMock.getApp).toHaveBeenCalled();

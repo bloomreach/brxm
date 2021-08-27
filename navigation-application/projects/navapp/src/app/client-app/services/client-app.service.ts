@@ -18,8 +18,8 @@ import { Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, take, takeUntil, tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
@@ -35,14 +35,14 @@ interface ClientAppWithConfig {
 
 @Injectable()
 export class ClientAppService {
-  private readonly uniqueURLs$ = new BehaviorSubject<string[]>([]);
+  private uniqueURLs: string[] = [];
   private readonly connection$ = new Subject<Connection>();
   private readonly connectedAppWithConfig$ = new Subject<ClientAppWithConfig>();
-  private readonly reset$ = new Subject<void>();
 
   private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppUrl: string;
-  private allAppsAreConnectedOrTimeout = false;
+
+  private readonly clientAppUrls$ = new BehaviorSubject<string[]>([]);
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
@@ -52,17 +52,17 @@ export class ClientAppService {
   }
 
   get urls$(): Observable<string[]> {
-    return this.uniqueURLs$.asObservable();
+    return this.clientAppUrls$.asObservable();
+  }
+
+  get apps(): ClientApp[] {
+    return Array.from(this.connectedApps.values()).map(c => c.app);
   }
 
   get appConnected$(): Observable<ClientApp> {
     return this.connectedAppWithConfig$.pipe(
       map(appWithConfig => appWithConfig.app),
     );
-  }
-
-  get apps(): ClientApp[] {
-    return Array.from(this.connectedApps.values()).map(c => c.app);
   }
 
   get activeApp(): ClientApp {
@@ -88,31 +88,11 @@ export class ClientAppService {
   }
 
   async init(navItems: NavItem[]): Promise<void> {
-    this.reset$.next();
-    // it forces the microtask caused by this.reset$.next() to be executed which lead to finishing previous async init() invocation
-    // in other words it resets the state to perform another initialization
-    await (new Promise(r => setTimeout(r, 0)));
+    this.uniqueURLs = this.filterUniqueURLs(navItems);
 
-    this.allAppsAreConnectedOrTimeout = false;
+    this.logger.debug(`Unique app urls from NavItems:`, this.uniqueURLs);
 
-    const uniqueURLs = this.filterUniqueURLs(navItems);
-
-    this.logger.debug(`Client app iframes are expected to be loaded (${uniqueURLs.length})`, uniqueURLs);
-
-    const allAppsAreConnectedOrTimeoutPromise = this.waitForAllAppsToBeConnectedOrTimeout(
-      this.connectedAppWithConfig$,
-      uniqueURLs.length,
-      this.appSettings.iframesConnectionTimeout * 1.5,
-    ).pipe(takeUntil(this.reset$)).toPromise();
-
-    this.reuseAlreadyConnectedAppsWithoutSitesSupport(uniqueURLs);
-
-    // Propagate urls of apps to load
-    this.uniqueURLs$.next(uniqueURLs);
-
-    await allAppsAreConnectedOrTimeoutPromise;
-
-    this.allAppsAreConnectedOrTimeout = true;
+    this.reuseAlreadyConnectedAppsWithoutSitesSupport(this.uniqueURLs);
   }
 
   activateApplication(appUrl: string): void {
@@ -123,15 +103,19 @@ export class ClientAppService {
     this.activeAppUrl = appUrl;
   }
 
-  addConnection(connection: Connection): void {
-    if (this.allAppsAreConnectedOrTimeout) {
-      throw new Error('An attempt to register a connection after all expected connections are registered or timeout has expired');
-    }
+  async createClientApp(appUrl: string): Promise<ClientApp> {
+    const currentUrls = this.clientAppUrls$.value;
+    this.clientAppUrls$.next([...currentUrls, appUrl]);
+    return this.appConnected$.pipe(
+        filter(app => Location.stripTrailingSlash(app.url) === Location.stripTrailingSlash(appUrl)),
+        take(1),
+    ).toPromise();
+  }
 
-    const uniqueURLs = this.uniqueURLs$.value;
+  addConnection(connection: Connection): void {
     const connectionUrl = Location.stripTrailingSlash(connection.appUrl);
 
-    const url = uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
+    const url = this.uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
 
     if (!url) {
       const message = `An attempt to register a connection to an unknown url '${connection.appUrl}'`;
@@ -239,27 +223,6 @@ export class ClientAppService {
 
       return { apiVersion: 'unknown' };
     }
-  }
-
-  private waitForAllAppsToBeConnectedOrTimeout(
-    connectedApp$: Observable<ClientAppWithConfig>,
-    expectedNumber: number,
-    timeout: number,
-  ): Observable<ClientAppWithConfig[]> {
-    return connectedApp$.pipe(
-      bufferTime(timeout, undefined, expectedNumber),
-      first(),
-      tap(apps => {
-        if (apps.length > 0) {
-          return;
-        }
-
-        throw new CriticalError(
-          'ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP',
-          'All connections to the client applications have failed failed',
-        );
-      }),
-    );
   }
 
   private reuseAlreadyConnectedAppsWithoutSitesSupport(newAppUrls: string[]): void {
