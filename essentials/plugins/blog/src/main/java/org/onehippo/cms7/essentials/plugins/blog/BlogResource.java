@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class BlogResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlogResource.class);
-    private static final String CONFIG_EVENT_BUS = "/hippo:configuration/hippo:modules/essentials-eventbus-listener/hippo:moduleconfig";
+    private static final String CONFIG_EVENT_BUS = "/hippo:configuration/hippo:modules/blog-eventbus-listener/hippo:moduleconfig";
 
     private final JcrService jcrService;
 
