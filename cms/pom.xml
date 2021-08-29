@@ -108,10 +108,10 @@
     <!-- Project Dependencies -->
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
-    <wicket.version>8.9.0</wicket.version>
+    <wicket.version>8.12.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>8.0.0</wicket15-tree.version>
-    <wicket-datetime.version>8.0.0-M7</wicket-datetime.version>
+    <wicket-datetime.version>8.12.0</wicket-datetime.version>
 
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.4</json-lib.version>
@@ -313,7 +313,7 @@
         <version>${wicket.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.wicket</groupId>
+        <groupId>org.wicketstuff</groupId>
         <artifactId>wicket-datetime</artifactId>
         <version>${wicket-datetime.version}</version>
       </dependency>
