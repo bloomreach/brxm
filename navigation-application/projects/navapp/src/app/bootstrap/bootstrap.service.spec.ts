@@ -369,7 +369,7 @@ describe('BootstrapService', () => {
           const configuration: Configuration = {
             navItems: [],
             sites: [],
-            selectedSiteId: undefined
+            selectedSiteId: undefined,
           };
 
           navConfigServiceMock.fetchNavigationConfiguration.and.returnValue(Promise.resolve(configuration));
