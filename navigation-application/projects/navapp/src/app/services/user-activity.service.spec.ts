@@ -17,7 +17,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, TestBed, waitForAsync } from '@angular/core/testing';
 import { Subject } from 'rxjs';
-import 'zone.js/dist/zone-patch-rxjs-fake-async';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
