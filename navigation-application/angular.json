@@ -29,6 +29,7 @@
             "polyfills": "projects/navapp/src/polyfills.ts",
             "tsConfig": "projects/navapp/tsconfig.app.json",
             "aot": true,
+            "extractCss": false,
             "stylePreprocessorOptions": {
               "includePaths": [
                 "projects/navapp/src/styles"
