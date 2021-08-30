@@ -18,6 +18,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 const path = require('path');
 
+const LOADER_JS_FILE_NAME = 'loader.js';
+
 module.exports = (config) => {
   config.plugins.push(
     new WebpackAssetsManifest({
@@ -27,10 +29,14 @@ module.exports = (config) => {
           return false;
         }
 
+        if (entry.value.endsWith(LOADER_JS_FILE_NAME)) {
+          return false;
+        }
+
         return entry;
       },
     }),
-    new CopyPlugin([path.join(__dirname, './loader.js')])
+    new CopyPlugin({ patterns: [path.resolve(__dirname, LOADER_JS_FILE_NAME)] })
   );
 
   return config;
