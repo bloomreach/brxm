@@ -90,7 +90,7 @@ export class ClientAppService {
   async init(navItems: NavItem[]): Promise<void> {
     this.uniqueURLs = this.filterUniqueURLs(navItems);
 
-    this.logger.debug(`Unique app urls from NavItems:`, this.uniqueURLs);
+    this.logger.debug(`Potential ClientApps to connect:`, this.uniqueURLs);
 
     this.reuseAlreadyConnectedAppsWithoutSitesSupport(this.uniqueURLs);
   }
@@ -103,12 +103,32 @@ export class ClientAppService {
     this.activeAppUrl = appUrl;
   }
 
-  async createClientApp(appUrl: string): Promise<ClientApp> {
+  async initiateClientApp(appUrl: string): Promise<ClientApp | void> {
+    this.logger.debug(`Initiating ClientApp ${appUrl}`);
+
+    try {
+      const app = this.getApp(appUrl);
+      if (app) {
+        this.logger.debug(`ClientApp ${appUrl} has been initiated and connected`);
+        return app;
+      }
+    } catch (error) {
+      this.logger.debug(`ClientApp ${appUrl} was not yet initiated`);
+    }
+
     const currentUrls = this.clientAppUrls$.value;
-    this.clientAppUrls$.next([...currentUrls, appUrl]);
+
+    if (!currentUrls.includes(appUrl)) {
+      this.logger.debug(`ClientApp ${appUrl} connecting...`);
+      this.clientAppUrls$.next([...currentUrls, appUrl]);
+    }
+
+    this.logger.debug(`ClientApp ${appUrl} has been initiated and is waiting for connection`);
+
     return this.appConnected$.pipe(
         filter(app => Location.stripTrailingSlash(app.url) === Location.stripTrailingSlash(appUrl)),
         take(1),
+        tap(() => this.logger.debug(`ClientApp ${appUrl} has been initiated and connected`)),
     ).toPromise();
   }
 
