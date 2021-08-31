@@ -112,7 +112,7 @@ describe('NavigationService', () => {
     clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
       getApp: clientApp1,
       activateApplication: undefined,
-      createClientApp: Promise.resolve(true),
+      initiateClientApp: Promise.resolve(true),
     });
 
     (clientAppServiceMock as any).activeApp = clientApp1;
@@ -420,15 +420,16 @@ describe('NavigationService', () => {
       service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
     }));
 
-    it('should navigate to the home page', () => {
+    it('should navigate to the home page', fakeAsync(() => {
       service.navigateToHome(NavigationTrigger.FastTravel);
+      tick();
 
       expect(locationMock.go).toHaveBeenCalledWith(
         `${basePath}/iframe1/url/app/path/to/home`,
         '',
         {},
       );
-    });
+    }));
 
     it('should update browser url when updateByNavLocation is called', fakeAsync(() => {
       urlMapperServiceMock.mapNavLocationToBrowserUrl.and.returnValue([
@@ -625,10 +626,12 @@ describe('NavigationService', () => {
         childApi.navigate.and.callFake(() => Promise.reject(new Error('Some error')));
       });
 
-      it('should update the browser\'s url before any errors are thrown (before resolving an active route)', () => {
+      it('should update the browser\'s url before any errors are thrown (before resolving an active route)', fakeAsync(() => {
         const expectedError = new NotFoundError();
 
         service.navigateByNavItem(invalidNavItem, NavigationTrigger.NotDefined);
+
+        tick();
 
         expect(locationMock.go).toHaveBeenCalledWith(
           '/base-path/some/unknown/url/app/path/to/other-page',
@@ -636,7 +639,7 @@ describe('NavigationService', () => {
           {},
         );
         expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
-      });
+      }));
 
       it('should activate the new appropriate menu item before calling childApi.navigate()', fakeAsync(() => {
         service.navigateByNavItem(validNavItem, NavigationTrigger.NotDefined);
@@ -775,7 +778,7 @@ describe('NavigationService', () => {
 
           tick();
 
-          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 't.app.api.navigate is not a function');
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, jasmine.stringMatching('is not a function'));
         }));
       });
     });
