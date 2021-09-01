@@ -52,10 +52,19 @@ interface Navigation {
   replaceState: boolean;
 }
 
+interface NavigationSetup {
+  url: string;
+  route: Route;
+  appId: string;
+  source: NavigationTrigger;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService implements OnDestroy {
+  private readonly navigation$ = new Subject<Navigation>();
+  private readonly navigationCompleted$ = new Subject<void>();
 
   get navigating$(): Observable<boolean> {
     return this.navigatingFiltered;
@@ -104,6 +113,28 @@ export class NavigationService implements OnDestroy {
     this.navigatingFiltered = this.navigating.pipe(
       distinctUntilAccumulatorIsEmpty(),
     );
+
+    this.navigation$
+    .pipe(
+      switchMap(navigation => from(this.setupNavigation(navigation))),
+      switchMap(navigationSetup => from(this.processNavigation(navigationSetup))),
+    )
+    .subscribe({
+      next: () => this.navigationCompleted$.next(),
+      error: error => {
+        if (error instanceof AppError) {
+          this.errorHandlingService.setError(error);
+        }
+
+        if (error instanceof Error) {
+          this.errorHandlingService.setInternalError(undefined, error.message);
+        }
+
+        if (typeof error === 'string') {
+          error = new InternalError(undefined, error);
+        }
+      },
+    });
   }
 
   init(navItems: NavItem[]): void {
@@ -231,32 +262,16 @@ export class NavigationService implements OnDestroy {
       replaceState,
     };
 
-    try {
-      await this.processNavigation(navigation);
-    } catch (error) {
-      if (error instanceof AppError) {
-        this.errorHandlingService.setError(error);
-      }
-
-      if (error instanceof Error) {
-        this.errorHandlingService.setInternalError(undefined, error.message);
-      }
-
-      if (typeof error === 'string') {
-        error = new InternalError(undefined, error);
-      }
-    } finally {
-      this.busyIndicatorService.hide();
-      this.navigating.next(false);
-    }
+    this.navigation$.next(navigation);
+    return this.navigationCompleted$.pipe(take(1)).toPromise();
   }
 
-  private async processNavigation({
+  private async setupNavigation({
       url,
       state,
       source,
       replaceState,
-    }: Navigation): Promise<void> {
+  }: Navigation): Promise<NavigationSetup> {
     this.logger.debug(`Navigation: initiated to the url '${url}'`);
 
     const baseUrl = stripOffQueryStringAndHash(url);
@@ -272,11 +287,36 @@ export class NavigationService implements OnDestroy {
 
     const route = this.resolveRoute(url);
     const appId = route.navItem.appIframeUrl;
-    await this.handleBeforeNavigation();
-    this.setNavUIState(route, state);
-    await this.clientAppService.initiateClientApp(appId);
-    this.clientAppService.activateApplication(appId);
-    await this.navigate(url, route, source);
+
+    try {
+      await this.handleBeforeNavigation();
+      this.setNavUIState(route, state);
+      await this.clientAppService.initiateClientApp(appId);
+    } finally {
+      this.busyIndicatorService.hide();
+    }
+
+
+    return {
+      url,
+      route,
+      appId,
+      source,
+    };
+  }
+
+  private async processNavigation({
+      url,
+      route,
+      appId,
+      source,
+  }: NavigationSetup): Promise<void> {
+    try {
+      this.clientAppService.activateApplication(appId);
+      await this.navigate(url, route, source);
+    } finally {
+      this.navigating.next(false);
+    }
   }
 
   private resolveRoute(url: string): Route {
@@ -327,7 +367,7 @@ export class NavigationService implements OnDestroy {
         throw new Error('Navigation is cancelled');
       }
 
-      this.logger.debug(`Navigation: beforeNavigation() call is succeeded for '${activeApp.url}'`);
+      this.logger.debug(`Navigation: beforeNavigation() call has succeeded for '${activeApp.url}'`);
     }
   }
 
@@ -366,7 +406,7 @@ export class NavigationService implements OnDestroy {
 
     await app.api.navigate(location, source);
 
-    this.logger.debug(`Navigation: navigate() call is succeeded for '${app.url}'`);
+    this.logger.debug(`Navigation: navigate() call has succeeded for '${app.url}'`);
   }
 
   private setBrowserUrl(url: string, state: { [key: string]: any }, replaceState = false): void {
