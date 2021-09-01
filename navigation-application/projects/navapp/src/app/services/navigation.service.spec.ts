@@ -543,7 +543,7 @@ describe('NavigationService', () => {
     }));
 
     describe('reload', () => {
-      it('should should reload the current route', async () => {
+      it('should reload the current route', async () => {
         locationMock.path.and.returnValue(`${basePath}/iframe2/url/another/app/path/to/home`);
         locationMock.isCurrentPathEqualTo.and.returnValue(true);
 
@@ -815,34 +815,20 @@ describe('NavigationService', () => {
       }));
 
       describe('when beforeNavigation() returned "true"', () => {
-        beforeEach(waitForAsync(() => {
-          service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
-
+        beforeEach(fakeAsync(() => {
           beforeNavigationResolve(true);
+          service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+          tick();
         }));
 
         it('should be shown', () => {
           expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
-          expect(busyIndicatorServiceMock.hide).not.toHaveBeenCalled();
           expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(childApi.navigate);
         });
 
-        it('should be hidden if navigate() resolved', fakeAsync(() => {
-          navigateResolve(undefined);
-
-          tick();
-
+        it('should be hidden before navigate() is called', fakeAsync(() => {
           expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
-          expect(childApi.navigate).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
-        }));
-
-        it('should be hidden if navigate() rejected', fakeAsync(() => {
-          navigateReject();
-
-          tick();
-
-          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
-          expect(childApi.navigate).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalledBefore(childApi.navigate);
         }));
       });
 
@@ -889,8 +875,8 @@ describe('NavigationService', () => {
         expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() is called for \'testClientApp\'');
       });
 
-      it('should log beforeNavigation() call is succeeded', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() call is succeeded for \'testClientApp\'');
+      it('should log beforeNavigation() call has succeeded', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() call has succeeded for \'testClientApp\'');
       });
 
       it('should log navigate() is called', () => {
@@ -903,8 +889,8 @@ describe('NavigationService', () => {
         });
       });
 
-      it('should log navigate() call is succeeded', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: navigate() call is succeeded for \'testClientApp\'');
+      it('should log navigate() call has succeeded', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: navigate() call has succeeded for \'testClientApp\'');
       });
     });
   });
