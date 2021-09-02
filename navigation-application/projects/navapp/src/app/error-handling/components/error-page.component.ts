@@ -21,6 +21,7 @@ import { MenuStateService } from '../../main-menu/services/menu-state.service';
 import { NavigationService } from '../../services/navigation.service';
 import { AppError } from '../models/app-error';
 import { CriticalError } from '../models/critical-error';
+import { AppErrorCodes } from '../models/app-error-codes';
 
 @Component({
   selector: 'brna-error-page',
@@ -37,10 +38,18 @@ export class ErrorPageComponent {
   ) {}
 
   get isGoToHomeButtonVisible(): boolean {
-    return !(this.error instanceof CriticalError) && !!this.menuStateService.currentHomeMenuItem;
+    return !(this.error instanceof CriticalError) && !!this.menuStateService.currentHomeMenuItem && !this.isReloadButtonVisible;
+  }
+
+  get isReloadButtonVisible(): Boolean {
+    return (this.error instanceof AppError) && this.error.code === AppErrorCodes.Timeout;
   }
 
   navigateToHome(): void {
     this.navigationService.navigateToHome(NavigationTrigger.NotDefined);
+  }
+
+  reloadPage(): void {
+    this.navigationService.reload();
   }
 }
