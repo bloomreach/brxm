@@ -24,6 +24,7 @@ import { MenuStateService } from '../../main-menu/services/menu-state.service';
 import { NavigationService } from '../../services/navigation.service';
 import { AppError } from '../models/app-error';
 import { CriticalError } from '../models/critical-error';
+import { TimeoutError } from '../models/timeout-error';
 
 import { ErrorPageComponent } from './error-page.component';
 
@@ -34,6 +35,7 @@ describe('ErrorPageComponent', () => {
 
   const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
     'navigateToHome',
+    'reload'
   ]);
 
   let menuStateServiceMock: any = {
@@ -116,6 +118,52 @@ describe('ErrorPageComponent', () => {
       goToHomeButton.triggerEventHandler('click', {});
 
       expect(navigationServiceMock.navigateToHome).toHaveBeenCalled();
+    });
+  });
+
+  describe('when the timeout error is set', () => {
+    beforeEach(() => {
+      component.error = new TimeoutError('Some error description');
+
+      fixture.detectChanges();
+    });
+
+    it('should show the error code', () => {
+      const codeEl = de.query(By.css('.error-code'));
+
+      expect(codeEl.nativeElement.textContent).toBe('408');
+    });
+
+    it('should show the error message', () => {
+      const messageEl = de.query(By.css('.error-message'));
+
+      expect(messageEl.nativeElement.textContent).toBe('ERROR_TIMEOUT');
+    });
+
+    it('should show the error description', () => {
+      const messageEl = de.query(By.css('.error-description'));
+
+      expect(messageEl.nativeElement.textContent).toBe('Some error description');
+    });
+
+    it('should hide the go to home button', () => {
+      const goToHomeButton = de.query(By.css('.go-to-home-btn'));
+
+      expect(goToHomeButton).toBeNull();
+    });
+
+    it('should show the reload button', () => {
+      const reloadPageButton = de.query(By.css('.reload-page-btn'));
+
+      expect(reloadPageButton).toBeDefined();
+    });
+
+    it('should call reload', () => {
+      const reloadPageButton = de.query(By.css('.reload-page-btn'));
+
+      reloadPageButton.triggerEventHandler('click', {});
+
+      expect(navigationServiceMock.reload).toHaveBeenCalled();
     });
   });
 });
