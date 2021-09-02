@@ -27,6 +27,7 @@ import { AppError } from '../models/app-error';
 import { CriticalError } from '../models/critical-error';
 import { InternalError } from '../models/internal-error';
 import { NotFoundError } from '../models/not-found-error';
+import { TimeoutError } from '../models/timeout-error';
 
 import { ErrorHandlingService } from './error-handling.service';
 
@@ -159,6 +160,23 @@ describe('ErrorHandlingService', () => {
 
     beforeEach(() => {
       service.setNotFoundError('Some available to the user description', 'Description for logs');
+    });
+
+    it('should be set', () => {
+      expect(service.currentError).toEqual(expectedError);
+    });
+
+    it('should forward the error to logger', () => {
+      // @ts-ignore
+      expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
+    });
+  });
+
+  describe('TimeoutError', () => {
+    const expectedError = new TimeoutError('Some available to the user description', 'Description for logs');
+
+    beforeEach(() => {
+      service.setTimeoutError('Some available to the user description', 'Description for logs');
     });
 
     it('should be set', () => {
