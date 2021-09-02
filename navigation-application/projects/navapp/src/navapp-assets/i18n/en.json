@@ -159,6 +159,7 @@
   "HELP_LINK_XM_DOCUMENTATION": "brXM documentation",
   "HELP_LINK_SM_HELP": "brSM help",
   "ERROR_PAGE_BUTTON_BACK_HOME": "Back",
+  "ERROR_PAGE_BUTTON_RELOAD": "Reload",
   "ERROR_PAGE_DEFAULT_ERROR": "Something went wrong",
   "ERROR_CONFIGURATION": "Configuration error",
   "ERROR_UNABLE_TO_LOG_OUT": "Unable to log out",

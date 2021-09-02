@@ -26,5 +26,13 @@
     mat-flat-button
     color="primary"
     (click)="navigateToHome()"
-    class="go-to-home-btn">{{ 'ERROR_PAGE_BUTTON_BACK_HOME' | translate }}</button>
+    class="go-to-home-btn">{{ 'ERROR_PAGE_BUTTON_BACK_HOME' | translate }}
+  </button>
+  <button
+    *ngIf="isReloadButtonVisible"
+    mat-flat-button
+    color="primary"
+    (click)="reloadPage()"
+    class="reload-page-btn">{{ 'ERROR_PAGE_BUTTON_RELOAD' | translate }}
+  </button>
 </div>
