@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-export enum AppErrorCodes {
-  NotFound = 404,
-  Internal = 500,
-  Timeout = 408,
+import { AppError } from './app-error';
+import { AppErrorCodes } from './app-error-codes';
+
+export class TimeoutError extends AppError {
+  constructor(publicDescription?: string, internalDescription?: string) {
+    super(AppErrorCodes.Timeout, 'ERROR_TIMEOUT', publicDescription, internalDescription || publicDescription);
+
+    Object.setPrototypeOf(this, TimeoutError.prototype);
+    this.stack = this.getStack();
+    this.name = 'TimeoutError';
+  }
 }
