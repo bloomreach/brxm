@@ -17,22 +17,21 @@
 <div class="wrapper">
   <img src="navapp-assets/images/error-page-main-image.png">
 
-  <div class="error-code">{{ error?.code || 500 }}</div>
-  <div class="error-message">{{ error?.message || 'ERROR_PAGE_DEFAULT_ERROR' | translate }}</div>
+  <div class="error-message">{{ errorMessage }}</div>
   <div *ngIf="error && error.description" class="error-description">{{ error.description }}</div>
 
   <button
     *ngIf="isGoToHomeButtonVisible"
-    mat-flat-button
+    mat-stroked-button
     color="primary"
     (click)="navigateToHome()"
-    class="go-to-home-btn">{{ 'ERROR_PAGE_BUTTON_BACK_HOME' | translate }}
+    class="action-btn go-to-home-btn">{{ 'ERROR_PAGE_BUTTON_BACK_HOME' | translate }}
   </button>
   <button
     *ngIf="isReloadButtonVisible"
-    mat-flat-button
+    mat-stroked-button
     color="primary"
     (click)="reloadPage()"
-    class="reload-page-btn">{{ 'ERROR_PAGE_BUTTON_RELOAD' | translate }}
+    class="action-btn reload-page-btn">{{ 'ERROR_PAGE_BUTTON_RELOAD' | translate }}
   </button>
 </div>
