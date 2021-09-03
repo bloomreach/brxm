@@ -161,6 +161,7 @@
   "ERROR_PAGE_BUTTON_BACK_HOME": "Back",
   "ERROR_PAGE_BUTTON_RELOAD": "Reload",
   "ERROR_PAGE_DEFAULT_ERROR": "Something went wrong",
+  "ERROR_PAGE_MESSAGE": "{{message}} (code {{code}})",
   "ERROR_CONFIGURATION": "Configuration error",
   "ERROR_UNABLE_TO_LOG_OUT": "Unable to log out",
   "ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN": "Unable to perform silent login",
