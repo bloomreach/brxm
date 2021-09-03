@@ -119,22 +119,7 @@ export class NavigationService implements OnDestroy {
       switchMap(navigation => from(this.setupNavigation(navigation))),
       switchMap(navigationSetup => from(this.processNavigation(navigationSetup))),
     )
-    .subscribe({
-      next: () => this.navigationCompleted$.next(),
-      error: error => {
-        if (error instanceof AppError) {
-          this.errorHandlingService.setError(error);
-        }
-
-        if (error instanceof Error) {
-          this.errorHandlingService.setInternalError(undefined, error.message);
-        }
-
-        if (typeof error === 'string') {
-          error = new InternalError(undefined, error);
-        }
-      },
-    });
+    .subscribe(() => this.navigationCompleted$.next());
   }
 
   init(navItems: NavItem[]): void {
@@ -292,10 +277,11 @@ export class NavigationService implements OnDestroy {
       await this.handleBeforeNavigation();
       this.setNavUIState(route, state);
       await this.clientAppService.initiateClientApp(appId);
+    } catch (error) {
+      this.catchNavError(error);
     } finally {
       this.busyIndicatorService.hide();
     }
-
 
     return {
       url,
@@ -314,6 +300,8 @@ export class NavigationService implements OnDestroy {
     try {
       this.clientAppService.activateApplication(appId);
       await this.navigate(url, route, source);
+    } catch (error) {
+      this.catchNavError(error);
     } finally {
       this.navigating.next(false);
     }
@@ -434,5 +422,19 @@ export class NavigationService implements OnDestroy {
     }
 
     return this.routes.find(x => url.startsWith(x.path));
+  }
+
+  private catchNavError(error: any) {
+    if (error instanceof AppError) {
+      this.errorHandlingService.setError(error);
+    }
+
+    if (error instanceof Error) {
+      this.errorHandlingService.setInternalError(undefined, error.message);
+    }
+
+    if (typeof error === 'string') {
+      error = new InternalError(undefined, error);
+    }
   }
 }
