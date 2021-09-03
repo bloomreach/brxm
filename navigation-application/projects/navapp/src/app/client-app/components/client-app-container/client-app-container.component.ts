@@ -45,10 +45,8 @@ import { ClientAppComponent } from '../client-app/client-app.component';
     ]),
   ],
 })
-export class ClientAppContainerComponent implements OnInit, OnDestroy {
-  private readonly unsubscribe = new Subject();
-
-  urls: string[] = [];
+export class ClientAppContainerComponent {
+  urls$ = this.clientAppService.urls$;
 
   @ViewChildren(ClientAppComponent)
   clientAppComponents: QueryList<ClientAppComponent>;
@@ -63,37 +61,9 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
     return this.navigationService.navigating$;
   }
 
-  ngOnInit(): void {
-    this.clientAppService.urls$
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(urls => this.updateClientApps(urls));
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
   isActive(appURL: string): boolean {
     const activeApp = this.clientAppService.activeApp;
 
     return activeApp ? activeApp.url === appURL : false;
-  }
-
-  private updateClientApps(urls: string[]): void {
-    const isInitialUpdate = this.urls.length === 0;
-    this.urls = urls;
-
-    this.cd.detectChanges();
-
-    if (isInitialUpdate) {
-      return;
-    }
-
-    const alreadyConnectedAppUrls = this.clientAppService.apps.map(x => x.url);
-
-    this.clientAppComponents
-    .filter(app => !alreadyConnectedAppUrls.includes(app.url))
-    .forEach(app => app.reloadAndConnect());
   }
 }

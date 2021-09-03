@@ -18,8 +18,8 @@ import { Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, take, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject, merge, race, throwError } from 'rxjs';
+import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, take, takeUntil, tap, switchMap, mapTo } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
@@ -36,19 +36,16 @@ interface ClientAppWithConfig {
 @Injectable()
 export class ClientAppService {
   private uniqueURLs: string[] = [];
-  private readonly connection$ = new Subject<Connection>();
-  private readonly connectedAppWithConfig$ = new Subject<ClientAppWithConfig>();
-
+  private readonly clientAppUrls$ = new BehaviorSubject<string[]>([]);
+  private readonly connectionError$ = new Subject<{ url: string, reason?: string }>();
+  private readonly connectionHandled$ = new Subject<string>();
   private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppUrl: string;
-
-  private readonly clientAppUrls$ = new BehaviorSubject<string[]>([]);
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
     private readonly logger: NGXLogger,
   ) {
-    this.transformConnectionsToApps(this.connection$).subscribe(this.connectedAppWithConfig$);
   }
 
   get urls$(): Observable<string[]> {
@@ -57,12 +54,6 @@ export class ClientAppService {
 
   get apps(): ClientApp[] {
     return Array.from(this.connectedApps.values()).map(c => c.app);
-  }
-
-  get appConnected$(): Observable<ClientApp> {
-    return this.connectedAppWithConfig$.pipe(
-      map(appWithConfig => appWithConfig.app),
-    );
   }
 
   get activeApp(): ClientApp {
@@ -97,20 +88,20 @@ export class ClientAppService {
 
   activateApplication(appUrl: string): void {
     if (!this.connectedApps.has(appUrl)) {
-      throw new Error(`An attempt to active unknown app '${appUrl}'`);
+      throw new Error(`An attempt to activate unknown app '${appUrl}'`);
     }
 
     this.activeAppUrl = appUrl;
   }
 
-  async initiateClientApp(appUrl: string): Promise<ClientApp | void> {
+  async initiateClientApp(appUrl: string): Promise<unknown> {
     this.logger.debug(`Initiating ClientApp ${appUrl}`);
 
     try {
       const app = this.getApp(appUrl);
       if (app) {
         this.logger.debug(`ClientApp ${appUrl} has been initiated and connected`);
-        return app;
+        return;
       }
     } catch (error) {
       this.logger.debug(`ClientApp ${appUrl} was not yet initiated`);
@@ -125,36 +116,48 @@ export class ClientAppService {
 
     this.logger.debug(`ClientApp ${appUrl} has been initiated and is waiting for connection`);
 
-    return this.appConnected$.pipe(
-        filter(app => Location.stripTrailingSlash(app.url) === Location.stripTrailingSlash(appUrl)),
-        take(1),
-        tap(() => this.logger.debug(`ClientApp ${appUrl} has been initiated and connected`)),
+    return race(
+      this.connectionHandled$,
+      this.connectionError$.pipe(switchMap(error => throwError(`ClientApp ${error.url} failed to connect: ${error.reason}`))),
+    ).pipe(
+      filter(url => url === appUrl),
+      take(1),
     ).toPromise();
   }
 
-  addConnection(connection: Connection): void {
+  async addConnection(connection: Connection): Promise<void> {
     const connectionUrl = Location.stripTrailingSlash(connection.appUrl);
-
     const url = this.uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
 
     if (!url) {
       const message = `An attempt to register a connection to an unknown url '${connection.appUrl}'`;
-
       this.logger.error(message);
-
       return;
     }
 
-    if (connection instanceof FailedConnection) {
-      this.logger.warn(`Failed to establish a connection to the iframe '${url}'`, connection.reason);
-    } else {
-      this.logger.debug(`Connection is established to the iframe '${url}'`);
-    }
-
-    // Fix extra/missing trailing slash issue
+    this.logger.debug(`Connection is established to the iframe '${url}'`);
     connection.appUrl = url;
+    const appWithConfig = await this.createClientAppWithConfig(connection);
+    this.connectedApps.set(appWithConfig.app.url, appWithConfig);
+    this.connectionHandled$.next(url);
+  }
 
-    this.connection$.next(connection);
+  handleFailedConnection({ appUrl, reason }: FailedConnection): void {
+    appUrl = Location.stripTrailingSlash(appUrl);
+
+    this.logger.error(`Failed to establish a connection to the iframe '${appUrl}'`, reason);
+
+    const currentUrls = this.clientAppUrls$.value;
+    const index = currentUrls.findIndex(url => url === appUrl);
+    currentUrls.splice(index, 1);
+    this.clientAppUrls$.next(currentUrls);
+
+    this.activeAppUrl = undefined;
+
+    this.connectionError$.next({
+      url: appUrl,
+      reason
+    });
   }
 
   getApp(appUrl: string): ClientApp {
@@ -186,16 +189,6 @@ export class ClientAppService {
 
   private doesAppSupportSites(app: ClientApp): boolean {
     return this.getAppConfig(app.url).showSiteDropdown || false;
-  }
-
-  private transformConnectionsToApps(connection$: Observable<Connection>): Observable<ClientAppWithConfig> {
-    return connection$.pipe(
-      filter(connection => !(connection instanceof FailedConnection)),
-      mergeMap(connection => this.createClientAppWithConfig(connection)),
-      tap(appWithConfig => this.connectedApps.set(appWithConfig.app.url, appWithConfig)),
-      publishReplay(),
-      refCount(),
-    );
   }
 
   private async createClientAppWithConfig(connection: Connection): Promise<ClientAppWithConfig> {
@@ -252,11 +245,6 @@ export class ClientAppService {
       }
 
       this.connectedApps.delete(url);
-    }
-
-    for (const [url, appWithConfig] of this.connectedApps) {
-      this.logger.debug(`Reuse existing connection for the app without sites support '${url}'`);
-      this.connectedAppWithConfig$.next(appWithConfig);
     }
   }
 }
