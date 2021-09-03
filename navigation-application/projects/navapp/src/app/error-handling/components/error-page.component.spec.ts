@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import { DebugElement, NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { MenuItemLinkMock } from '../../main-menu/models/menu-item-link.mock';
 import { MenuStateService } from '../../main-menu/services/menu-state.service';
@@ -28,6 +28,17 @@ import { TimeoutError } from '../models/timeout-error';
 
 import { ErrorPageComponent } from './error-page.component';
 
+@Pipe({
+  name: 'translate',
+})
+class TranslatePipeMock implements PipeTransform {
+  name = 'translate';
+
+  transform(query: string, ...args: any[]): any {
+    return query;
+  }
+}
+
 describe('ErrorPageComponent', () => {
   let component: ErrorPageComponent;
   let fixture: ComponentFixture<ErrorPageComponent>;
@@ -35,22 +46,33 @@ describe('ErrorPageComponent', () => {
 
   const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
     'navigateToHome',
-    'reload'
+    'reload',
   ]);
 
   let menuStateServiceMock: any = {
     currentHomeMenuItem: undefined,
   };
 
+  const translateServiceMock = {
+    instant: jasmine.createSpy().and.callFake((key, params) => {
+      if (params) {
+        return `key: ${key}, params: ${Object.values(params).join(', ')}`;
+      }
+
+      return key;
+    }),
+  };
+
   beforeEach(() => {
     menuStateServiceMock.currentHomeMenuItem = new MenuItemLinkMock();
 
     TestBed.configureTestingModule({
-      declarations: [ErrorPageComponent],
+      declarations: [ErrorPageComponent, TranslatePipeMock],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
+        { provide: TranslateService, useValue: translateServiceMock },
       ],
       imports: [TranslateModule.forRoot()],
     });
@@ -94,16 +116,10 @@ describe('ErrorPageComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should show the error code', () => {
-      const codeEl = de.query(By.css('.error-code'));
-
-      expect(codeEl.nativeElement.textContent).toBe('404');
-    });
-
-    it('should show the error message', () => {
+    it('should show the error message with error code', () => {
       const messageEl = de.query(By.css('.error-message'));
 
-      expect(messageEl.nativeElement.textContent).toBe('Some error');
+      expect(messageEl.nativeElement.textContent).toBe('key: ERROR_PAGE_MESSAGE, params: Some error, 404');
     });
 
     it('should show the go to home button', () => {
@@ -128,16 +144,10 @@ describe('ErrorPageComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should show the error code', () => {
-      const codeEl = de.query(By.css('.error-code'));
-
-      expect(codeEl.nativeElement.textContent).toBe('408');
-    });
-
-    it('should show the error message', () => {
+    it('should show the error message with error code', () => {
       const messageEl = de.query(By.css('.error-message'));
 
-      expect(messageEl.nativeElement.textContent).toBe('ERROR_TIMEOUT');
+      expect(messageEl.nativeElement.textContent).toBe('key: ERROR_PAGE_MESSAGE, params: ERROR_TIMEOUT, 408');
     });
 
     it('should show the error description', () => {
