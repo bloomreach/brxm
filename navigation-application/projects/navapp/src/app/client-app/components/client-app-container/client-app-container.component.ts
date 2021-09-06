@@ -15,9 +15,8 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Component, QueryList, ViewChildren } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { NavigationService } from '../../../services/navigation.service';
 import { ClientAppService } from '../../services/client-app.service';
@@ -54,7 +53,6 @@ export class ClientAppContainerComponent {
   constructor(
     private readonly clientAppService: ClientAppService,
     private readonly navigationService: NavigationService,
-    private readonly cd: ChangeDetectorRef,
   ) {}
 
   get isNavigating$(): Observable<boolean> {
