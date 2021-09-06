@@ -95,10 +95,9 @@ describe('NavigationService', () => {
       'replaceState',
       'go',
     ]);
-    locationMock.normalize.and.callFake(x => x.replace('/#', '#'));
+    locationMock.normalize.and.callFake((x: string) => x.replace('/#', '#'));
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
-    // @ts-ignore
-    locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
+    locationMock.subscribe.and.callFake((cb: (value: PopStateEvent) => undefined) => locationChangeFunction = cb);
 
     childApi = jasmine.createSpyObj('ChildApi', {
       beforeNavigation: Promise.resolve(true),
@@ -823,12 +822,26 @@ describe('NavigationService', () => {
 
         it('should be shown', () => {
           expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.hide).not.toHaveBeenCalled();
           expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(childApi.navigate);
         });
 
-        it('should be hidden before navigate() is called', fakeAsync(() => {
+        it('should be hidden if navigate() resolved', fakeAsync(() => {
+          navigateResolve();
+
+          tick();
+
           expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
-          expect(busyIndicatorServiceMock.hide).toHaveBeenCalledBefore(childApi.navigate);
+          expect(childApi.navigate).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        }));
+
+        it('should be hidden if navigate() rejected', fakeAsync(() => {
+          navigateReject();
+
+          tick();
+
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(childApi.navigate).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
         }));
       });
 

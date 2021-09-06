@@ -19,8 +19,8 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
-import { catchError, filter, finalize, mapTo, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, from, Observable, Subject, Subscription } from 'rxjs';
+import { catchError, switchMap, take } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -52,13 +52,6 @@ interface Navigation {
   replaceState: boolean;
 }
 
-interface NavigationSetup {
-  url: string;
-  route: Route;
-  appId: string;
-  source: NavigationTrigger;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -88,6 +81,7 @@ export class NavigationService implements OnDestroy {
   private currentNavItem: NavItem;
   private readonly navigating = new BehaviorSubject(false);
   private readonly navigatingFiltered: Observable<boolean>;
+  private currentNavigationUrl = '';
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
@@ -115,10 +109,7 @@ export class NavigationService implements OnDestroy {
     );
 
     this.navigation$
-    .pipe(
-      switchMap(navigation => from(this.setupNavigation(navigation))),
-      switchMap(navigationSetup => from(this.processNavigation(navigationSetup))),
-    )
+    .pipe(switchMap(navigation => from(this.processNavigation(navigation))))
     .subscribe(() => this.navigationCompleted$.next());
   }
 
@@ -251,12 +242,12 @@ export class NavigationService implements OnDestroy {
     return this.navigationCompleted$.pipe(take(1)).toPromise();
   }
 
-  private async setupNavigation({
+  private async processNavigation({
       url,
       state,
       source,
       replaceState,
-  }: Navigation): Promise<NavigationSetup> {
+  }: Navigation): Promise<void> {
     this.logger.debug(`Navigation: initiated to the url '${url}'`);
 
     const baseUrl = stripOffQueryStringAndHash(url);
@@ -270,39 +261,33 @@ export class NavigationService implements OnDestroy {
       this.setBrowserUrl(url, state, replaceState);
     }
 
-    const route = this.resolveRoute(url);
-    const appId = route.navItem.appIframeUrl;
+    this.currentNavigationUrl = url;
 
     try {
+      const route = this.resolveRoute(url);
+      const appId = route.navItem.appIframeUrl;
+
       await this.handleBeforeNavigation();
-      this.setNavUIState(route, state);
+
+      this.busyIndicatorService.show();
+      this.navigating.next(true);
+
+      this.currentNavItem = route.navItem;
+      this.menuStateService.activateMenuItem(this.currentNavItem.appIframeUrl, this.currentNavItem.appPath);
+      this.breadcrumbsService.setSuffix(state.breadcrumbLabel as string);
+
       await this.clientAppService.initiateClientApp(appId);
+
+      if (this.currentNavigationUrl === url) {
+        this.clientAppService.activateApplication(appId);
+        await this.navigate(url, route, source);
+      }
     } catch (error) {
-      this.catchNavError(error);
+      if (this.currentNavigationUrl === url) {
+        this.setAppError(error);
+      }
     } finally {
       this.busyIndicatorService.hide();
-    }
-
-    return {
-      url,
-      route,
-      appId,
-      source,
-    };
-  }
-
-  private async processNavigation({
-      url,
-      route,
-      appId,
-      source,
-  }: NavigationSetup): Promise<void> {
-    try {
-      this.clientAppService.activateApplication(appId);
-      await this.navigate(url, route, source);
-    } catch (error) {
-      this.catchNavError(error);
-    } finally {
       this.navigating.next(false);
     }
   }
@@ -357,14 +342,6 @@ export class NavigationService implements OnDestroy {
 
       this.logger.debug(`Navigation: beforeNavigation() call has succeeded for '${activeApp.url}'`);
     }
-  }
-
-  private setNavUIState(route: Route, state: Record<string, unknown>): void {
-    this.busyIndicatorService.show();
-    this.navigating.next(true);
-    this.currentNavItem = route.navItem;
-    this.menuStateService.activateMenuItem(this.currentNavItem.appIframeUrl, this.currentNavItem.appPath);
-    this.breadcrumbsService.setSuffix(state.breadcrumbLabel as string);
   }
 
   private async navigate(url: string, route: Route, source: NavigationTrigger): Promise<void> {
@@ -424,7 +401,7 @@ export class NavigationService implements OnDestroy {
     return this.routes.find(x => url.startsWith(x.path));
   }
 
-  private catchNavError(error: any) {
+  private setAppError(error: any): void {
     if (error instanceof AppError) {
       this.errorHandlingService.setError(error);
     }
@@ -433,8 +410,6 @@ export class NavigationService implements OnDestroy {
       this.errorHandlingService.setInternalError(undefined, error.message);
     }
 
-    if (typeof error === 'string') {
-      error = new InternalError(undefined, error);
-    }
+    this.errorHandlingService.setInternalError(undefined, error);
   }
 }
