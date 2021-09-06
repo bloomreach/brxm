@@ -15,7 +15,7 @@
  */
 
 import { Component, DebugElement, Input, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -40,13 +40,6 @@ import { ClientAppContainerComponent } from './client-app-container.component';
 export class ClientAppMockComponent {
   @Input()
   url: string;
-
-  constructor() {
-    // @ts-ignore
-    spyOn(this, 'reloadAndConnect');
-  }
-
-  reloadAndConnect(): void {}
 }
 
 describe('ClientAppContainerComponent', () => {
@@ -102,28 +95,28 @@ describe('ClientAppContainerComponent', () => {
     expect(clientApps[1].componentInstance.url).toBe('mytesturl2');
   });
 
-  it('should keep created client app nodes hidden', () => {
+  it('should keep created client app nodes hidden initially', () => {
     const clientApps = de.queryAll(By.directive(ClientAppComponent));
 
     expect(clientApps[0].classes.hidden).toBeTruthy();
     expect(clientApps[1].classes.hidden).toBeTruthy();
   });
 
-  it('should show the second client app node', fakeAsync(() => {
+  it('should show the second client app node', () => {
     (clientAppServiceMock as any).activeApp = new ClientApp('mytesturl2', {});
 
     fixture.detectChanges();
-
-    tick();
 
     const clientApps = de.queryAll(By.css('brna-client-app'));
 
     expect(clientApps[0].classes.hidden).toBeTruthy();
     expect(clientApps[1].classes.hidden).toBeFalsy();
-  }));
+  });
 
   it('should update client app nodes', () => {
     urlsSubject.next(['mytesturl1', 'mytesturl3', 'mytesturl4']);
+
+    fixture.detectChanges();
 
     const clientApps = de.queryAll(By.directive(ClientAppComponent));
 
@@ -131,22 +124,5 @@ describe('ClientAppContainerComponent', () => {
     expect(clientApps[0].componentInstance.url).toBe('mytesturl1');
     expect(clientApps[1].componentInstance.url).toBe('mytesturl3');
     expect(clientApps[2].componentInstance.url).toBe('mytesturl4');
-  });
-
-  it('should call reloadAndConnect for client app nodes which are not in clientAppService.apps', () => {
-    (clientAppServiceMock as any).apps = [
-      new ClientApp('mytesturl1', {}),
-    ];
-
-    urlsSubject.next(['mytesturl1', 'mytesturl3', 'mytesturl4']);
-
-    const childComponents = component.clientAppComponents.toArray();
-
-    expect(childComponents[0].url).toBe('mytesturl1');
-    expect(childComponents[0].reloadAndConnect).not.toHaveBeenCalled();
-    expect(childComponents[1].url).toBe('mytesturl3');
-    expect(childComponents[1].reloadAndConnect).toHaveBeenCalled();
-    expect(childComponents[2].url).toBe('mytesturl4');
-    expect(childComponents[2].reloadAndConnect).toHaveBeenCalled();
   });
 });
