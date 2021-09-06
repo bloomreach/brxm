@@ -53,6 +53,7 @@ xdescribe('ClientAppComponent', () => {
 
     clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
       'addConnection',
+      'handleFailedConnection',
     ]);
 
     fixture = TestBed.configureTestingModule({
@@ -106,44 +107,7 @@ xdescribe('ClientAppComponent', () => {
 
       tick();
 
-      expect(clientAppServiceMock.addConnection).toHaveBeenCalledWith(expected);
+      expect(clientAppServiceMock.handleFailedConnection).toHaveBeenCalledWith(expected);
     }));
-  });
-
-  describe('reloadAndConnect', () => {
-    it('should reload the iframe', () => {
-      const spy = spyOnProperty(iframeDe.nativeElement, 'src', 'set');
-
-      component.reloadAndConnect();
-
-      expect(spy).toHaveBeenCalledWith('sanitized-url');
-    });
-
-    describe('connection to the iframe', () => {
-      it('should be initiated', () => {
-        expect(connectionServiceMock.connectToIframe).toHaveBeenCalledWith(iframeDe.nativeElement);
-      });
-
-      it('should add a connection if iframe has been successfully connected', fakeAsync(() => {
-        const api = {};
-        const expected = new Connection(iframeDe.nativeElement.src, api);
-
-        resolveIframeConnection(api);
-
-        tick();
-
-        expect(clientAppServiceMock.addConnection).toHaveBeenCalledWith(expected);
-      }));
-
-      it('should add a failed connection if there is an error', fakeAsync(() => {
-        const expected = new FailedConnection(iframeDe.nativeElement.src, 'some reason');
-
-        rejectIframeConnection('some reason');
-
-        tick();
-
-        expect(clientAppServiceMock.addConnection).toHaveBeenCalledWith(expected);
-      }));
-    });
   });
 });

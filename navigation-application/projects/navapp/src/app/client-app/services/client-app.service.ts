@@ -18,8 +18,8 @@ import { Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, of, Subject, merge, race, throwError } from 'rxjs';
-import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, take, takeUntil, tap, switchMap, mapTo } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of, race, Subject, throwError } from 'rxjs';
+import { bufferTime, filter, first, map, mapTo, mergeMap, publishReplay, refCount, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
@@ -152,11 +152,9 @@ export class ClientAppService {
     currentUrls.splice(index, 1);
     this.clientAppUrls$.next(currentUrls);
 
-    this.activeAppUrl = undefined;
-
     this.connectionError$.next({
       url: appUrl,
-      reason
+      reason,
     });
   }
 

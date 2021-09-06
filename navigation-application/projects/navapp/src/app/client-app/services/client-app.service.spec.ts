@@ -76,11 +76,6 @@ xdescribe('ClientAppService', () => {
     logger = TestBed.inject(NGXLogger);
 
     appConnectedSpy = jasmine.createSpy('appConnectedSpy');
-    service.appConnected$.pipe(
-      takeUntil(unsubscribe),
-    ).subscribe(app => {
-      appConnectedSpy(app.url);
-    });
   });
 
   afterEach(() => {
