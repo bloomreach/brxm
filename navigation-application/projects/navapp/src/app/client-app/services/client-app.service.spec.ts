@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { fakeAsync, TestBed, tick, waitForAsync} from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { ChildApi, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { LoggerTestingModule } from 'ngx-logger/testing';
