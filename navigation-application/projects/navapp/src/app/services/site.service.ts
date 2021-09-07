@@ -39,7 +39,9 @@ export class SiteService {
     private readonly windowRef: WindowRef,
     private readonly logger: NGXLogger,
     private readonly connectionService: ConnectionService,
-  ) { }
+  ) {
+    this.connectionService.updateSelectedSite$.subscribe((siteId: SiteId) => this.selectSite(siteId));
+  }
 
   get selectedSite$(): Observable<Site> {
     return this.selectedSite.asObservable();
@@ -51,7 +53,6 @@ export class SiteService {
 
   init(sites: Site[], selectedSiteId: SiteId): void {
     this.currentSites = sites;
-    this.connectionService.updateSelectedSite$.subscribe((siteId: SiteId) => this.selectSite(siteId));
     this.selectSite(selectedSiteId);
   }
 
