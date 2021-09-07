@@ -97,7 +97,7 @@ describe('NavigationService', () => {
     ]);
     locationMock.normalize.and.callFake((x: string) => x.replace('/#', '#'));
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
-    locationMock.subscribe.and.callFake((cb: (value: PopStateEvent) => undefined) => locationChangeFunction = cb);
+    locationMock.subscribe.and.callFake((cb: any) => locationChangeFunction = cb);
 
     childApi = jasmine.createSpyObj('ChildApi', {
       beforeNavigation: Promise.resolve(true),
@@ -790,7 +790,7 @@ describe('NavigationService', () => {
 
       let beforeNavigationResolve: (value: boolean) => void;
       let beforeNavigationReject: (reason?: any) => void;
-      let navigateResolve: (value: unknown) => void;
+      let navigateResolve: (value?: unknown) => void;
       let navigateReject: () => void;
 
       beforeEach(fakeAsync(() => {
