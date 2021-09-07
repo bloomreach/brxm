@@ -682,7 +682,7 @@ describe('BootstrapService', () => {
       beforeEach(waitForAsync(() => {
         reinitialized = false;
 
-        navConfigServiceMock.refetchNavItems.and.returnValue(newNavItemsMock);
+        navConfigServiceMock.refetchNavItems.and.returnValue(Promise.resolve(newNavItemsMock));
         navItemServiceMock.registerNavItems.and.returnValue(newNavItemsMock);
 
         service.reinitialize().then(() => reinitialized = true);
@@ -760,13 +760,8 @@ describe('BootstrapService', () => {
       });
 
       describe('and registration of nav item DTOs thrown an exception', () => {
-<<<<<<< HEAD
         beforeEach(waitForAsync(() => {
-          navItemServiceMock.registerNavItemDtos.and.callFake(() => {
-=======
-        beforeEach(async(() => {
           navItemServiceMock.registerNavItems.and.callFake(() => {
->>>>>>> d398fca8979 (ENT-2941 Remove duplicate NavItem model and mock)
             throw new Error('registration of nav item DTOs fetching has failed');
           });
 
