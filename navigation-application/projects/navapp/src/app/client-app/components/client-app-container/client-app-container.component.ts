@@ -15,8 +15,9 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, QueryList, ViewChildren } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { NavigationService } from '../../../services/navigation.service';
 import { ClientAppService } from '../../services/client-app.service';
@@ -44,8 +45,9 @@ import { ClientAppComponent } from '../client-app/client-app.component';
     ]),
   ],
 })
-export class ClientAppContainerComponent {
-  urls$ = this.clientAppService.urls$;
+export class ClientAppContainerComponent implements OnInit, OnDestroy {
+  unsubscribe = new Subject<void>();
+  urls: string[] = [];
 
   @ViewChildren(ClientAppComponent)
   clientAppComponents: QueryList<ClientAppComponent>;
@@ -53,7 +55,22 @@ export class ClientAppContainerComponent {
   constructor(
     private readonly clientAppService: ClientAppService,
     private readonly navigationService: NavigationService,
+    private readonly cd: ChangeDetectorRef,
   ) {}
+
+  ngOnInit(): void {
+    this.clientAppService.urls$
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(urls => {
+      this.urls = urls;
+      this.cd.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
 
   get isNavigating$(): Observable<boolean> {
     return this.navigationService.navigating$;
