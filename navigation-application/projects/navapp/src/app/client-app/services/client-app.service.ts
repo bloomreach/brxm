@@ -80,10 +80,10 @@ export class ClientAppService {
 
   async init(navItems: NavItem[]): Promise<void> {
     this.uniqueURLs = this.filterUniqueURLs(navItems);
+    this.clientAppUrls$.next([]);
+    this.connectedApps.clear();
 
     this.logger.debug(`Potential ClientApps to connect:`, this.uniqueURLs);
-
-    this.reuseAlreadyConnectedAppsWithoutSitesSupport(this.uniqueURLs);
   }
 
   activateApplication(appUrl: string): void {
@@ -100,7 +100,7 @@ export class ClientAppService {
     try {
       const app = this.getApp(appUrl);
       if (app) {
-        this.logger.debug(`ClientApp ${appUrl} has been initiated and connected`);
+        this.logger.debug(`ClientApp ${appUrl} is already present and connected`);
         return;
       }
     } catch (error) {
@@ -233,16 +233,6 @@ export class ClientAppService {
       this.logger.warn(`Unable to load config for '${app.url}'. Reason: '${e}'.`);
 
       return { apiVersion: 'unknown' };
-    }
-  }
-
-  private reuseAlreadyConnectedAppsWithoutSitesSupport(newAppUrls: string[]): void {
-    for (const [url, appWithConfig] of this.connectedApps) {
-      if (newAppUrls.includes(url) && !appWithConfig.config.showSiteDropdown) {
-        continue;
-      }
-
-      this.connectedApps.delete(url);
     }
   }
 }
