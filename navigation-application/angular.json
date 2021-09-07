@@ -2,27 +2,22 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "defaultProject": "navapp",
   "projects": {
     "navapp": {
-      "root": "projects/navapp/",
-      "sourceRoot": "projects/navapp/src",
       "projectType": "application",
-      "prefix": "brna",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
+      "root": "projects/navapp",
+      "sourceRoot": "projects/navapp/src",
+      "prefix": "brna",
       "architect": {
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./projects/navapp/custom-webpack.config.js"
-            },
-            "indexTransform": "./projects/navapp/index-html-transform.js",
-            "outputPath": "dist/navapp/",
+            "outputPath": "dist/navapp",
             "resourcesOutputPath": "navapp-assets",
             "index": "projects/navapp/src/index.html",
             "main": "projects/navapp/src/main.ts",
@@ -43,6 +38,13 @@
             ],
             "scripts": [
               "projects/navapp/src/app/pendo.js"
+            ],
+            "customWebpackConfig": {
+              "path": "./projects/navapp/custom-webpack.config.js"
+            },
+            "indexTransform": "./projects/navapp/index-html-transform.js",
+            "allowedCommonJsDependencies": [
+              "@bloomreach/navapp-communication"
             ]
           },
           "configurations": {
@@ -56,10 +58,8 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": true,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "extractLicenses": false,
+              "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
               "budgets": [
@@ -109,7 +109,8 @@
             ],
             "styles": [
               "projects/navapp/src/styles.scss"
-            ]
+            ],
+            "scripts": []
           }
         },
         "lint": {
@@ -120,8 +121,7 @@
               "projects/navapp/tsconfig.spec.json"
             ],
             "exclude": [
-              "**/node_modules/**",
-              "./package.json"
+              "**/node_modules/**"
             ]
           }
         }
@@ -149,9 +149,40 @@
             ],
             "styles": [
               "projects/iframe-app-example/src/styles.css"
+            ],
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "@bloomreach/navapp-communication"
             ]
           },
           "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/iframe-app-example/src/environments/environment.ts",
+                  "with": "projects/iframe-app-example/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
             "nav-items-fetch-error": {
               "fileReplacements": [
                 {
@@ -170,6 +201,9 @@
             "disableHostCheck": true
           },
           "configurations": {
+            "production": {
+              "browserTarget": "iframe-app-example:build:production"
+            },
             "nav-items-fetch-error": {
               "browserTarget": "iframe-app-example:build:nav-items-fetch-error"
             }
@@ -184,15 +218,21 @@
             "karmaConfig": "projects/iframe-app-example/karma.conf.js",
             "codeCoverage": true,
             "assets": [
-              "projects/iframe-app-example/src/favicon.ico"
-            ]
+              "projects/iframe-app-example/src/favicon.ico",
+              "projects/iframe-app-example/src/assets"
+            ],
+            "styles": [
+              "projects/iframe-app-example/src/styles.css"
+            ],
+            "scripts": []
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/iframe-app-example/tsconfig.app.json"
+              "projects/iframe-app-example/tsconfig.app.json",
+              "projects/iframe-app-example/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -201,5 +241,6 @@
         }
       }
     }
-  }
+  },
+  "defaultProject": "navapp"
 }
