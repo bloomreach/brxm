@@ -81,7 +81,6 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "navapp:build",
-            "disableHostCheck": true,
             "publicHost": "http://localhost:4200"
           },
           "configurations": {
@@ -197,8 +196,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "iframe-app-example:build",
-            "port": 5000,
-            "disableHostCheck": true
+            "port": 5000
           },
           "configurations": {
             "production": {
