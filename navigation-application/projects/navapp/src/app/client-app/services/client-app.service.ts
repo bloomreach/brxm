@@ -22,6 +22,7 @@ import { BehaviorSubject, merge, Observable, of, race, Subject, throwError } fro
 import { bufferTime, filter, first, map, mapTo, mergeMap, publishReplay, refCount, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
+import { TimeoutError } from '../../error-handling/models/timeout-error';
 import { Connection } from '../../models/connection.model';
 import { AppSettings } from '../../models/dto/app-settings.dto';
 import { FailedConnection } from '../../models/failed-connection.model';
@@ -107,6 +108,8 @@ export class ClientAppService {
       this.logger.debug(`ClientApp ${appUrl} was not yet initiated`);
     }
 
+    this.activeAppUrl = undefined;
+
     const currentUrls = this.clientAppUrls$.value;
 
     if (!currentUrls.includes(appUrl)) {
@@ -118,7 +121,9 @@ export class ClientAppService {
 
     return race(
       this.connectionHandled$,
-      this.connectionError$.pipe(switchMap(error => throwError(`ClientApp ${error.url} failed to connect: ${error.reason}`))),
+      this.connectionError$.pipe(
+        switchMap(error => throwError(new TimeoutError('ERROR_TIMEOUT_DESCRIPTION', `ClientApp ${error.url} failed to connect: ${error.reason}`))),
+      ),
     ).pipe(
       filter(url => url === appUrl),
       take(1),
