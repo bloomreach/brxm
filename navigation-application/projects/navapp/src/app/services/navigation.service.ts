@@ -395,10 +395,14 @@ export class NavigationService implements OnDestroy {
   private setAppError(error: any): void {
     if (error instanceof AppError) {
       this.errorHandlingService.setError(error);
+
+      return;
     }
 
     if (error instanceof Error) {
       this.errorHandlingService.setInternalError(undefined, error.message);
+
+      return;
     }
 
     this.errorHandlingService.setInternalError(undefined, error);
