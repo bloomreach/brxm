@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,5 @@
  * limitations under the License.
  */
 
-/* You can add global styles to this file, and also import other style files */
-
-@import '~normalize.css/normalize.css';
-@import '~open-sans-fontface/open-sans.css';
-@import './styles/default';
-@import './app/shared/material/styles/material';
+@include angular-material-theme($hippo-theme);
+@include mat-core($custom-typography);
