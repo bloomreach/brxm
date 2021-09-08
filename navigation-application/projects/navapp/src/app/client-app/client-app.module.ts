@@ -18,12 +18,14 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { SharedModule } from '../shared/shared.module';
+
 import { ClientAppContainerComponent } from './components/client-app-container/client-app-container.component';
 import { ClientAppComponent } from './components/client-app/client-app.component';
 import { ClientAppService } from './services/client-app.service';
 
 @NgModule({
-  imports: [BrowserModule, CommonModule],
+  imports: [BrowserModule, CommonModule, SharedModule],
   declarations: [ClientAppContainerComponent, ClientAppComponent],
   providers: [ClientAppService],
   exports: [ClientAppContainerComponent],
