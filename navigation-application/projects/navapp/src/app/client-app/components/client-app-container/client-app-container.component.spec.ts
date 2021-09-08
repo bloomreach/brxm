@@ -20,7 +20,6 @@ import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { NavigationService } from '../../../services/navigation.service';
 import { ClientApp } from '../../models/client-app.model';
 import { ClientAppService } from '../../services/client-app.service';
 import { ClientAppComponent } from '../client-app/client-app.component';
@@ -49,7 +48,6 @@ describe('ClientAppContainerComponent', () => {
 
   let urlsSubject: Subject<string[]>;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
-  let navigationServiceMock: NavigationService;
 
   beforeEach(waitForAsync(() => {
     urlsSubject = new BehaviorSubject<string[]>(['mytesturl1', 'mytesturl2']);
@@ -58,10 +56,6 @@ describe('ClientAppContainerComponent', () => {
       apps: [],
       urls$: urlsSubject,
       activeApp: undefined,
-    } as any;
-
-    navigationServiceMock = {
-      navigating$: new Subject<boolean>(),
     } as any;
 
     fixture = TestBed.configureTestingModule({
@@ -74,7 +68,6 @@ describe('ClientAppContainerComponent', () => {
       ],
       providers: [
         { provide: ClientAppService, useValue: clientAppServiceMock },
-        { provide: NavigationService, useValue: navigationServiceMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(ClientAppContainerComponent);
