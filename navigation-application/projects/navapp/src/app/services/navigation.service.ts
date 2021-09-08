@@ -55,10 +55,6 @@ interface Navigation {
   providedIn: 'root',
 })
 export class NavigationService implements OnDestroy {
-  get navigating$(): Observable<boolean> {
-    return this.navigatingFiltered;
-  }
-
   private get basePath(): string {
     return this.appSettings.basePath;
   }
@@ -75,8 +71,6 @@ export class NavigationService implements OnDestroy {
   private routes: Route[];
   private locationSubscription: Subscription;
   private currentNavItem: NavItem;
-  private readonly navigating = new BehaviorSubject(false);
-  private readonly navigatingFiltered: Observable<boolean>;
   private currentNavigationUrl = '';
 
   constructor(
@@ -99,10 +93,6 @@ export class NavigationService implements OnDestroy {
     this.connectionService
       .updateNavLocation$
       .subscribe(navLocation => this.updateByNavLocation(navLocation));
-
-    this.navigatingFiltered = this.navigating.pipe(
-      distinctUntilAccumulatorIsEmpty(),
-    );
   }
 
   init(navItems: NavItem[]): void {
@@ -261,7 +251,6 @@ export class NavigationService implements OnDestroy {
       await this.handleBeforeNavigation();
 
       this.busyIndicatorService.show();
-      this.navigating.next(true);
 
       this.currentNavItem = route.navItem;
       this.menuStateService.activateMenuItem(this.currentNavItem.appIframeUrl, this.currentNavItem.appPath);
@@ -279,7 +268,6 @@ export class NavigationService implements OnDestroy {
       }
     } finally {
       this.busyIndicatorService.hide();
-      this.navigating.next(false);
     }
   }
 
