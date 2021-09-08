@@ -19,8 +19,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, from, Observable, Subject, Subscription } from 'rxjs';
-import { catchError, switchMap, take } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -56,9 +55,6 @@ interface Navigation {
   providedIn: 'root',
 })
 export class NavigationService implements OnDestroy {
-  private readonly navigation$ = new Subject<Navigation>();
-  private readonly navigationCompleted$ = new Subject<void>();
-
   get navigating$(): Observable<boolean> {
     return this.navigatingFiltered;
   }
@@ -107,10 +103,6 @@ export class NavigationService implements OnDestroy {
     this.navigatingFiltered = this.navigating.pipe(
       distinctUntilAccumulatorIsEmpty(),
     );
-
-    this.navigation$
-    .pipe(switchMap(navigation => from(this.processNavigation(navigation))))
-    .subscribe(() => this.navigationCompleted$.next());
   }
 
   init(navItems: NavItem[]): void {
@@ -238,15 +230,14 @@ export class NavigationService implements OnDestroy {
       replaceState,
     };
 
-    this.navigation$.next(navigation);
-    return this.navigationCompleted$.pipe(take(1)).toPromise();
+    await this.processNavigation(navigation);
   }
 
   private async processNavigation({
-      url,
-      state,
-      source,
-      replaceState,
+    url,
+    state,
+    source,
+    replaceState,
   }: Navigation): Promise<void> {
     this.logger.debug(`Navigation: initiated to the url '${url}'`);
 
