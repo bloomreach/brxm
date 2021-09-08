@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,12 @@
 
 @import '~@angular/material/theming';
 @import '~@bloomreach/frontend-theme/palettes';
-@import 'variables';
-
-$custom-typography: mat-typography-config(
-  $font-family: inspect($font-family)
-);
-
-@include mat-core($custom-typography);
 
 $hippo-primary: mat-palette($blue);
 $hippo-accent: mat-palette($orange);
 $hippo-warn: mat-palette($red);
 $hippo-theme: mat-light-theme($hippo-primary, $hippo-accent, $hippo-warn);
 
-@include angular-material-theme($hippo-theme);
-
-// default body text color
-.mat-typography {
-  color: map-get($text-color, "dark");
-}
-
-.mat-flat-button > span {
-  letter-spacing: 1px;
-}
+$custom-typography: mat-typography-config(
+  $font-family: inspect($font-family)
+);
