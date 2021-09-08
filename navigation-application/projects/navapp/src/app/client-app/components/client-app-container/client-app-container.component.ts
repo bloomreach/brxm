@@ -16,10 +16,9 @@
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { NavigationService } from '../../../services/navigation.service';
 import { ClientAppService } from '../../services/client-app.service';
 import { ClientAppComponent } from '../client-app/client-app.component';
 
@@ -54,7 +53,6 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly clientAppService: ClientAppService,
-    private readonly navigationService: NavigationService,
     private readonly cd: ChangeDetectorRef,
   ) {}
 
@@ -70,10 +68,6 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe.next();
     this.unsubscribe.complete();
-  }
-
-  get isNavigating$(): Observable<boolean> {
-    return this.navigationService.navigating$;
   }
 
   get isLoaderShowed(): boolean {
