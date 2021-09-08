@@ -76,6 +76,12 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
     return this.navigationService.navigating$;
   }
 
+  get isLoaderShowed(): boolean {
+    const allAppAreInactive = !this.urls.some(url => this.isActive(url));
+
+    return allAppAreInactive;
+  }
+
   isActive(appURL: string): boolean {
     const activeApp = this.clientAppService.activeApp;
 
