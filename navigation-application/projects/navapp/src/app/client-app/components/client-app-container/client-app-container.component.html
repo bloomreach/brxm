@@ -15,6 +15,7 @@
   -->
 
 <div [@fadeInOut]="isNavigating$ | async" class="backdrop"></div>
+<brna-loader *ngIf="isLoaderShowed"></brna-loader>
 <brna-client-app *ngFor="let url of urls"
                  [url]="url"
                  [class.hidden]="!isActive(url)">
