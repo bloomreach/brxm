@@ -245,10 +245,13 @@ export class NavigationService implements OnDestroy {
     this.currentNavigationUrl = url;
 
     try {
+      const shouldContinue = await this.handleBeforeNavigation();
+      if (!shouldContinue) {
+        return;
+      }
+
       const route = this.resolveRoute(url);
       const appId = route.navItem.appIframeUrl;
-
-      await this.handleBeforeNavigation();
 
       this.busyIndicatorService.show();
 
@@ -306,7 +309,7 @@ export class NavigationService implements OnDestroy {
     return app;
   }
 
-  private async handleBeforeNavigation(): Promise<void> {
+  private async handleBeforeNavigation(): Promise<boolean> {
     const activeApp = this.clientAppService.activeApp;
 
     if (activeApp && activeApp.api.beforeNavigation) {
@@ -316,11 +319,14 @@ export class NavigationService implements OnDestroy {
 
       if (!allowedToContinue) {
         this.logger.debug(`Navigation: beforeNavigation() call is cancelled for '${activeApp.url}'`);
-        throw new Error('Navigation is cancelled');
+        return false;
       }
 
       this.logger.debug(`Navigation: beforeNavigation() call has succeeded for '${activeApp.url}'`);
+      return true;
     }
+
+    return true;
   }
 
   private async navigate(url: string, route: Route, source: NavigationTrigger): Promise<void> {

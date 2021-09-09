@@ -668,15 +668,17 @@ describe('NavigationService', () => {
         expect(errorHandlingServiceMock.clearError).toHaveBeenCalled();
       }));
 
-      it('should translate the public error message if there is an unknown url', () => {
+      it('should translate the public error message if there is an unknown url', fakeAsync(() => {
         const badNavItem = new NavItemMock({
           appIframeUrl: 'https://unknown-url.com/unknown/path',
         });
 
         service.navigateByNavItem(badNavItem, NavigationTrigger.NotDefined);
 
+        tick();
+
         expect(translateServiceMock.instant).toHaveBeenCalledWith('ERROR_UNKNOWN_URL', { url: '/base-path/unknown/path/testPath' });
-      });
+      }));
 
       it('should throw an error if the url provided is not recognizable', fakeAsync(() => {
         const expectedError = new NotFoundError('translated text');
