@@ -66,6 +66,7 @@ describe('MainMenuComponent', () => {
       'closeDrawer',
       'isMenuItemHighlighted',
       'activateMenuItem',
+      'isMenuItemFailed',
     ]);
     (menuStateServiceMock as any).menu$ = of(menuMock);
     (menuStateServiceMock as any).isDrawerOpened = false;
