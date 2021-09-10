@@ -56,6 +56,7 @@ describe('ExpandableMenuItemComponent', () => {
   beforeEach(waitForAsync(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'isMenuItemHighlighted',
+      'isMenuItemFailed',
     ]);
 
     qaHelperServiceMock = jasmine.createSpyObj('QaHelperService', [

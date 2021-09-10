@@ -28,6 +28,7 @@
           [caption]="item.caption"
           [navItem]="item.navItem"
           [highlighted]="isHighlighted(item)"
+          [failed]="isFailed(item)"
           [ngClass]="getQaClass(item)">
         </brna-menu-item-link>
         <brna-expandable-menu-item
