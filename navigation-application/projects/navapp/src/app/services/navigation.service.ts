@@ -247,6 +247,7 @@ export class NavigationService implements OnDestroy {
     try {
       const shouldContinue = await this.handleBeforeNavigation();
       if (!shouldContinue) {
+        this.logger.debug('Navigation: Canceling navigation');
         return;
       }
 
