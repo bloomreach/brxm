@@ -16,25 +16,6 @@
 
 @import 'variables';
 
-@mixin showNormalIcon() {
-  .mat-icon {
-    display: block;
-  }
-
-  .mat-icon.highlighted {
-    display: none;
-  }
-}
-
-@mixin showActiveIcon() {
-  .mat-icon {
-    display: none;
-  }
-
-  .mat-icon.highlighted {
-    display: block;
-  }
-}
 
 :host {
   cursor: pointer;
@@ -52,8 +33,6 @@
 }
 
 .menu-item {
-  @include showNormalIcon;
-
   align-items: center;
   display: grid;
   grid-template-columns: $menu-collapsed-width 1fr;
@@ -72,8 +51,6 @@
   }
 
   &:hover {
-    @include showNormalIcon;
-
     background-color: $menu-hover-bg;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12);
 
@@ -84,13 +61,15 @@
   }
 
   &.highlighted {
-    @include showActiveIcon;
-
     &::before {
       opacity: 1;
     }
 
     .mat-icon {
+      ::ng-deep .menu-icon-boundary { // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+        fill: $menu-icon-highlighted-primary-color;
+      }
+
       color: $menu-icon-highlighted-secondary-color;
       transition: color 300ms;
     }
@@ -101,8 +80,6 @@
     }
 
     &:hover {
-      @include showActiveIcon;
-
       .mat-icon,
       .caption {
         color: $menu-hover-text-color;
