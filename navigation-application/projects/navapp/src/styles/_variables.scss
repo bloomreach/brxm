@@ -52,11 +52,12 @@ $menu-sub-item-bg: #000010;
 $menu-text-color: rgba(255, 255, 255, .8);
 $menu-text-color-light: white;
 $menu-icon-color: rgba(255, 255, 255, .7);
+$menu-icon-highlighted-primary-color: #00b5e2;
 $menu-icon-highlighted-secondary-color: white;
 $menu-title-text-color: rgba(255, 255, 255, 1);
 $menu-pressed-text-color: #fff;
 $menu-hover-text-color: $menu-bg;
-$menu-highlighted-text-color: #00b5e2;
+$menu-highlighted-text-color: $menu-icon-highlighted-primary-color;
 $menu-drawer-menu-hover-text-color: #fff;
 
 $menu-arrow-height: 36px;

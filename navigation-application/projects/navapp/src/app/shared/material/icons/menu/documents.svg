@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
 <svg version="1.1" id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
 <g>
@@ -6,7 +21,7 @@
 	<rect x="13.7" y="24.5" width="17.6" height="2"/>
 	<rect x="13.7" y="31.4" width="17.6" height="2"/>
 	<rect x="13.7" y="38.2" width="17.6" height="2"/>
-	<path d="M46.1,0H7.8v4.9H3.9V50h37.3v-3.9h4.9V0z M7.8,46.1V8.8h19.6v9.8h9.8v27.5H7.8z M44.1,44.1h-2.9V16.7L29.4,4.9
+	<path class="menu-icon-boundary" d="M46.1,0H7.8v4.9H3.9V50h37.3v-3.9h4.9V0z M7.8,46.1V8.8h19.6v9.8h9.8v27.5H7.8z M44.1,44.1h-2.9V16.7L29.4,4.9
 		H9.8V2h34.3V44.1z"/>
 </g>
 </svg>
