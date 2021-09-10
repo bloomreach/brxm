@@ -79,7 +79,7 @@
       transition: color 300ms;
     }
 
-    &:hover {
+    &:not(.failed):hover {
       .mat-icon,
       .caption {
         color: $menu-hover-text-color;
@@ -99,6 +99,30 @@
       .mat-icon,
       .caption {
         color: $menu-text-color;
+      }
+    }
+  }
+
+  &.failed {
+    .mat-icon {
+      ::ng-deep .menu-icon-boundary { // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+        fill: rgba($menu-failed-color, .8);
+      }
+
+      color: rgba($menu-failed-color, .8);
+    }
+
+    &:hover {
+      .mat-icon {
+        ::ng-deep .menu-icon-boundary { // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+          fill: $menu-failed-color;
+        }
+
+        color: $menu-failed-color;
+      }
+
+      .caption {
+        color: $menu-failed-color;
       }
     }
   }

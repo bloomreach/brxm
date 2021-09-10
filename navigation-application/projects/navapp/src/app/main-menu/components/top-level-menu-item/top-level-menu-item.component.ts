@@ -53,6 +53,9 @@ export class TopLevelMenuItemComponent {
   pressed = false;
 
   @Input()
+  failed = false;
+
+  @Input()
   @HostBinding('class.small')
   small = false;
 
