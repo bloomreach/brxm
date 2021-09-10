@@ -30,6 +30,7 @@ import { MenuBuilderService } from './menu-builder.service';
 export class MenuStateService {
   private readonly menuItems$ = new BehaviorSubject<MenuItem[]>([]);
   private readonly activePath = new BehaviorSubject<MenuItem[]>([]);
+  private readonly failedMenuItems: MenuItem[] = [];
 
   private homeMenuItemLink: MenuItemLink;
   private collapsed = true;
@@ -85,6 +86,26 @@ export class MenuStateService {
     this.setActiveItem(navItem.id);
   }
 
+  markMenuItemAsFailed(navItem: NavItem | undefined): void {
+    if (!navItem) {
+      return;
+    }
+
+    const failedMenuItemsPath = this.buildMenuPath(this.menuItems$.value, navItem.id);
+    const failedMenuItem = failedMenuItemsPath[failedMenuItemsPath.length - 1];
+
+    const wasAlreadyMarked = this.failedMenuItems.some(menuItem => menuItem === failedMenuItem);
+    if (wasAlreadyMarked) {
+      return;
+    }
+
+    this.failedMenuItems.push(failedMenuItem);
+  }
+
+  isMenuItemFailed(item: MenuItem): boolean {
+    return !!this.failedMenuItems.find(menuItem => menuItem === item);
+  }
+
   isMenuItemHighlighted(item: MenuItem): boolean {
     const currentBreadcrumbs = this.activePath.value;
 
@@ -109,7 +130,9 @@ export class MenuStateService {
     const menuItems = this.menuItems$.value;
 
     const prevActivePath = this.activePath.value;
-    const activePath = this.buildActivePath(menuItems, activeItemId);
+    const activePath = this.buildMenuPath(menuItems, activeItemId);
+
+    this.clearFailedMenuItem(activePath);
 
     const arePathsEqual = prevActivePath &&
       prevActivePath.length === activePath.length &&
@@ -120,13 +143,13 @@ export class MenuStateService {
     }
   }
 
-  private buildActivePath(
+  private buildMenuPath(
     menu: MenuItem[],
     activeMenuItemId: string,
   ): MenuItem[] {
     return menu.reduce((activePath, item) => {
       if (item instanceof MenuItemContainer) {
-        const subActivePath = this.buildActivePath(
+        const subActivePath = this.buildMenuPath(
           item.children,
           activeMenuItemId,
         );
@@ -157,5 +180,12 @@ export class MenuStateService {
     if (firstMenuItem instanceof MenuItemContainer) {
       return this.findHomeMenuItemLink(firstMenuItem.children);
     }
+  }
+
+  private clearFailedMenuItem(menuItems: MenuItem[]): void {
+    const lastMenuItem = menuItems[menuItems.length - 1];
+    const indexOfFailedMenuItem = this.failedMenuItems.findIndex(menuItem => menuItem === lastMenuItem);
+
+    this.failedMenuItems.splice(indexOfFailedMenuItem, 1);
   }
 }
