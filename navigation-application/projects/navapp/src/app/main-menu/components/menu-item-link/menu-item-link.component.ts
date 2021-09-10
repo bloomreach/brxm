@@ -37,6 +37,10 @@ export class MenuItemLinkComponent implements OnInit {
   @HostBinding('class.qa-highlighted')
   highlighted = false;
 
+  @Input()
+  @HostBinding('class.failed')
+  failed = false;
+
   navItemUrl: string;
 
   constructor(
