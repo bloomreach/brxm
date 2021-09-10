@@ -17,7 +17,7 @@
 @import 'variables';
 
 :host {
-  display: block;
+  display: flex;
   font-size: $menu-drawer-font-size;
   line-height: 32px;
   padding-right: 10px;
@@ -37,8 +37,16 @@
 
 .menu-item-link {
   color: $menu-text-color;
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: space-between;
   text-decoration: none;
   white-space: nowrap;
+
+  .mat-icon {
+    height: 1.5em;
+    width: 1.5em;
+  }
 
   &:hover {
     color: $menu-drawer-menu-hover-text-color;
