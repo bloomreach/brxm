@@ -24,6 +24,7 @@ import expandLess from '!!raw-loader!./icons/expand_less.svg';
 import expandMore from '!!raw-loader!./icons/expand_more.svg';
 import navCollapse from '!!raw-loader!./icons/nav-collapse.svg';
 import navExpand from '!!raw-loader!./icons/nav-expand.svg';
+import reload from '!!raw-loader!./icons/reload.svg';
 import remove from '!!raw-loader!./icons/remove.svg';
 import search from '!!raw-loader!./icons/search.svg';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -45,4 +46,5 @@ export const registerIcons = (iconRegistry: MatIconRegistry, donSanitizer: DomSa
   registerIcon('search', search);
   registerIcon('arrow_drop_down', arrowDropDown);
   registerIcon('arrow_right', arrowRight);
+  registerIcon('reload', reload);
 };
