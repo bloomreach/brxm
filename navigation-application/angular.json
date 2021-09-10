@@ -80,7 +80,7 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "navapp:build",
-            "publicHost": "http://localhost:4200"
+            "publicHost": "http://127.0.0.1:4200"
           },
           "configurations": {
             "production": {
@@ -163,7 +163,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
