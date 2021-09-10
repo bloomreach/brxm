@@ -16,7 +16,6 @@
 
 @import 'variables';
 
-
 :host {
   cursor: pointer;
   display: grid;
@@ -66,12 +65,13 @@
     }
 
     .mat-icon {
-      ::ng-deep .menu-icon-boundary { // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
-        fill: $menu-icon-highlighted-primary-color;
-      }
-
       color: $menu-icon-highlighted-secondary-color;
       transition: color 300ms;
+
+      // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+      ::ng-deep .menu-icon-boundary {
+        fill: $menu-icon-highlighted-primary-color;
+      }
     }
 
     .caption {
@@ -105,20 +105,22 @@
 
   &.failed {
     .mat-icon {
-      ::ng-deep .menu-icon-boundary { // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
-        fill: rgba($menu-failed-color, .8);
-      }
+      color: $menu-failed-inactive-color;
 
-      color: rgba($menu-failed-color, .8);
+      // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+      ::ng-deep .menu-icon-boundary {
+        fill: $menu-failed-inactive-color;
+      }
     }
 
     &:hover {
       .mat-icon {
-        ::ng-deep .menu-icon-boundary { // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+        color: $menu-failed-color;
+
+        // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+        ::ng-deep .menu-icon-boundary {
           fill: $menu-failed-color;
         }
-
-        color: $menu-failed-color;
       }
 
       .caption {

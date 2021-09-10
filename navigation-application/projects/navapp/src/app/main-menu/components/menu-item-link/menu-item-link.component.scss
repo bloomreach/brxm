@@ -25,6 +25,14 @@
   &.highlighted .menu-item-link {
     color: $menu-highlighted-text-color;
   }
+
+  &.failed .menu-item-link {
+    color: $menu-failed-inactive-color;
+
+    &:hover {
+      color: $menu-failed-color;
+    }
+  }
 }
 
 .menu-item-link {
