@@ -70,7 +70,7 @@ export class NavigationService implements OnDestroy {
   }
   private routes: Route[];
   private locationSubscription: Subscription;
-  private currentNavItem: NavItem;
+  private currentNavItem: NavItem | undefined;
   private currentNavigationUrl = '';
 
   constructor(
@@ -268,6 +268,7 @@ export class NavigationService implements OnDestroy {
       }
     } catch (error) {
       if (this.currentNavigationUrl === url) {
+        this.menuStateService.markMenuItemAsFailed(this.currentNavItem);
         this.setAppError(error);
       }
     } finally {
