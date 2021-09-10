@@ -123,6 +123,10 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
     return this.menuStateService.isMenuItemHighlighted(item);
   }
 
+  isMenuItemFailed(item: MenuItem): boolean {
+    return this.menuStateService.isMenuItemFailed(item);
+  }
+
   getQaClass(item: MenuItem | string): string {
     return this.qaHelperService.getMenuItemClass(item);
   }

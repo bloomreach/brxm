@@ -120,6 +120,7 @@ describe('NavigationService', () => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'activateMenuItem',
       'deactivateMenuItem',
+      'markMenuItemAsFailed',
     ]);
     (menuStateServiceMock as any).currentHomeMenuItem = {
       navItem: {
