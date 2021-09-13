@@ -19,7 +19,7 @@ import { Injectable } from '@angular/core';
 import { NavigationTrigger, NavLocation, SiteId } from '@bloomreach/navapp-communication';
 import { CookieService } from 'ngx-cookie-service';
 
-import sites from '../../assets/sites.json';
+import sitesJson from '../../assets/sites.json';
 
 const SITE_COOKIE_NAME = 'EXAMPLE_APP_SITE_ID';
 
@@ -39,28 +39,28 @@ export class AppState {
   historyReplaceStateCount = 0;
   generateAnErrorUponLogout = false;
   shouldAskBeforeNavigation = false;
-
   private localSiteId: SiteId;
+  private readonly sites: SiteId[] = sitesJson;
 
   constructor(
     private readonly location: Location,
     private readonly cookiesService: CookieService,
-  ) {
-    this.localSiteId = this.selectedSiteId;
-
-    if (!this.localSiteId.accountId || !this.localSiteId.siteId) {
-      const { accountId, siteId } = sites[0];
-      this.selectedSiteId = { accountId, siteId };
-    }
-  }
+  ) { }
 
   get isBrSmMock(): boolean {
     return this.location.path().startsWith('/brsm');
   }
 
   get selectedSiteId(): SiteId {
-    const [accountId, siteId] = this.cookiesService.get(SITE_COOKIE_NAME).split(',').map(x => +x);
+    const cookieString = this.cookiesService.get(SITE_COOKIE_NAME);
 
+    if (!cookieString) {
+      const defaultSite = this.sites[0];
+      this.selectedSiteId = defaultSite;
+      return defaultSite;
+    }
+
+    const [accountId, siteId] = cookieString.split(',').map(x => +x);
     return { accountId, siteId };
   }
 
