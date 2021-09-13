@@ -152,6 +152,7 @@
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_ASSISTED_OVERVIEW": "Assisted overview",
   "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SUGGEST_OVERVIEW": "Suggest overview",
   "MENU_ITEM_SEARCH_AND_MERCHANDISING": "Search & Merchandising",
+  "MENU_ITEM_TOOLTIP_FAILED_ERROR": "Loading failed. Click to reload",
   "LOGOUT": "Logout",
   "MENU_CONTAINER_HELP": "Help",
   "MENU_CONTAINER_USER_ACCOUNT": "User account",
