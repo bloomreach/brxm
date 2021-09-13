@@ -20,6 +20,10 @@
   'collapsed': collapsed,
   'failed': failed
 }">
+  <div class="menu-icon">
+    <mat-icon [svgIcon]="icon"></mat-icon>
+    <mat-icon *ngIf="failed" svgIcon="reload" class="reload-icon"></mat-icon>
+  </div>
   <div class="caption">
     {{ caption }}
   </div>

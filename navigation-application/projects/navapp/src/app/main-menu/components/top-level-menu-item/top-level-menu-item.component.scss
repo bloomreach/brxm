@@ -37,6 +37,21 @@
   grid-template-columns: $menu-collapsed-width 1fr;
   padding-right: (2 * $menu-icon-margin);
 
+  .menu-icon {
+    display: grid;
+    position: relative;
+
+    .reload-icon {
+      background-color: $menu-bg;
+      border-radius: 50%;
+      bottom: -6px;
+      height: 19px;
+      position: absolute;
+      right: 10px;
+      width: 19px;
+    }
+  }
+
   &::before {
     background-color: $menu-highlighted-text-color;
     content: '';
@@ -125,6 +140,10 @@
 
       .caption {
         color: $menu-failed-color;
+      }
+
+      .reload-icon {
+        background-color: $menu-hover-bg;
       }
     }
   }
