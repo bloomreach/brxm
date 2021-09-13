@@ -19,6 +19,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angul
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
+import { TranslateModule } from '@ngx-translate/core';
 import { NEVER } from 'rxjs';
 
 import { NavItemMock } from '../../../models/dto/nav-item-dto.mock';
@@ -52,6 +53,7 @@ describe('MenuItemLinkComponent', () => {
     fixture = TestBed.configureTestingModule({
       imports: [
         NoopAnimationsModule,
+        TranslateModule.forRoot(),
       ],
       declarations: [MenuItemLinkComponent],
       providers: [

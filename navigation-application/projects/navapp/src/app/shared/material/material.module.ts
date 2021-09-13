@@ -21,6 +21,7 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -36,6 +37,7 @@ import { registerIcons as registerMenuIcons } from './menu-icons';
     MatSidenavModule,
     MatSnackBarModule,
     MatTreeModule,
+    MatTooltipModule,
   ],
 })
 export class MaterialModule {

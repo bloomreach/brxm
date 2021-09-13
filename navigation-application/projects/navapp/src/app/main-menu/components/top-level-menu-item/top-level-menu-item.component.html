@@ -19,7 +19,7 @@
   'highlighted': highlighted,
   'collapsed': collapsed,
   'failed': failed
-}">
+}" [matTooltip]="getTooltip()">
   <div class="menu-icon">
     <mat-icon [svgIcon]="icon"></mat-icon>
     <mat-icon *ngIf="failed" svgIcon="reload" class="reload-icon"></mat-icon>

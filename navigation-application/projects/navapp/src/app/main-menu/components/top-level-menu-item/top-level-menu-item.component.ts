@@ -22,6 +22,7 @@ import {
   trigger,
 } from '@angular/animations';
 import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'brna-top-level-menu-item',
@@ -62,9 +63,17 @@ export class TopLevelMenuItemComponent {
   @Output()
   menuItemClick = new EventEmitter<void>();
 
+  constructor(
+    private readonly translateService: TranslateService,
+  ) {}
+
   @HostListener('click', ['$event'])
   onHostClickHandler(event: MouseEvent): void {
     event.stopImmediatePropagation();
     this.menuItemClick.emit();
+  }
+
+  getTooltip(): string {
+    return this.failed ? this.translateService.instant('MENU_ITEM_TOOLTIP_FAILED_ERROR') : '';
   }
 }
