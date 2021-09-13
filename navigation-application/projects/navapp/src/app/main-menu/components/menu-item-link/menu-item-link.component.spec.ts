@@ -16,6 +16,7 @@
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
@@ -52,6 +53,7 @@ describe('MenuItemLinkComponent', () => {
 
     fixture = TestBed.configureTestingModule({
       imports: [
+        MatTooltipModule,
         NoopAnimationsModule,
         TranslateModule.forRoot(),
       ],
@@ -76,6 +78,10 @@ describe('MenuItemLinkComponent', () => {
 
     it('should show an empty caption', () => {
       expect(de.nativeElement.textContent.trim()).toBe('');
+    });
+
+    it('should not be failed', () => {
+      expect(de.classes.failed).toBeFalsy();
     });
 
     describe('if received a click event', () => {
@@ -104,6 +110,24 @@ describe('MenuItemLinkComponent', () => {
 
     expect(de.nativeElement.textContent).toContain('some caption');
   }));
+
+  describe('failed tooltip', () => {
+    it('should contain failed tooltip', fakeAsync(() => {
+      component.failed = true;
+
+      fixture.detectChanges();
+      expect(de.nativeElement.innerHTML).toContain('MENU_ITEM_TOOLTIP_FAILED_ERROR');
+    }));
+
+    it('should not contain failed tooltip if item not failed', fakeAsync(() => {
+      component.failed = false;
+
+      fixture.detectChanges();
+
+      expect(de.nativeElement.innerHTML).not.toContain('MENU_ITEM_TOOLTIP_FAILED_ERROR');
+    }));
+
+  });
 
   describe('when a nav item is set', () => {
     let navItemMock: NavItem;

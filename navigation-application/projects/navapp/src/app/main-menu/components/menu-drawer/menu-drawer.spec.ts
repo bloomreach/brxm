@@ -40,6 +40,7 @@ describe('MenuDrawerComponent', () => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'closeDrawer',
       'isMenuItemHighlighted',
+      'isMenuItemFailed',
     ]);
 
     qaHelperServiceMock = jasmine.createSpyObj('QaHelperService', [
@@ -135,6 +136,16 @@ describe('MenuDrawerComponent', () => {
 
     expect(actual).toBeTruthy();
     expect(menuStateServiceMock.isMenuItemHighlighted).toHaveBeenCalledWith(link);
+  });
+
+  it('should check for the menu failed state', () => {
+    menuStateServiceMock.isMenuItemFailed.and.returnValue(true);
+    const link = new MenuItemLink('some-failed-id', 'some caption');
+
+    const actual = component.isFailed(link);
+
+    expect(actual).toBeTrue();
+    expect(menuStateServiceMock.isMenuItemFailed).toHaveBeenCalledWith(link);
   });
 
   it('should get qa class', () => {
