@@ -102,10 +102,10 @@ describe('AppState', () => {
 
       const actual = state.selectedSiteId;
 
-      expect(actual).toEqual({
+      expect(actual).toEqual(jasmine.objectContaining({
         siteId: -1,
         accountId: 1,
-      });
+      }));
     });
   });
 });
