@@ -16,6 +16,7 @@
 
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
+import { TranslateService } from '@ngx-translate/core';
 
 import { NavigationService } from '../../../services/navigation.service';
 import { UrlMapperService } from '../../../services/url-mapper.service';
@@ -46,6 +47,7 @@ export class MenuItemLinkComponent implements OnInit {
   constructor(
     private readonly navigationService: NavigationService,
     private readonly urlMapperService: UrlMapperService,
+    private readonly translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -56,5 +58,9 @@ export class MenuItemLinkComponent implements OnInit {
     e.preventDefault();
 
     this.navigationService.navigateByUrl(this.navItemUrl, NavigationTrigger.Menu);
+  }
+
+  getTooltip(): string {
+    return this.failed ? this.translateService.instant('MENU_ITEM_TOOLTIP_FAILED_ERROR') : '';
   }
 }
