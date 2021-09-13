@@ -25,6 +25,7 @@ import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
+import { TimeoutError } from '../error-handling/models/timeout-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
@@ -736,6 +737,24 @@ describe('NavigationService', () => {
           undefined,
           'An attempt to update the app url was failed due to app path is not allowable: \'unknown/path\'',
         );
+      });
+
+      it('should mark menu item as failed if error happened', async () => {
+        const navItemToNavigate = new NavItemMock({
+          appIframeUrl: 'http://domain.com/iframe1/url',
+          appPath: 'app/path/to/page1',
+        });
+
+        clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new TimeoutError('Timeout error'); });
+
+        await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+        expect(menuStateServiceMock.markMenuItemAsFailed).toHaveBeenCalledWith(new NavItemMock({
+          id: 'item2',
+          displayName: 'testDisplayName',
+          appIframeUrl: 'http://domain.com/iframe1/url',
+          appPath: 'app/path/to/page1',
+        }));
       });
 
       describe('of client apps', () => {
