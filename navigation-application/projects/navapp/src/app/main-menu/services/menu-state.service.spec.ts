@@ -202,4 +202,36 @@ describe('MenuStateService', () => {
       expect(actual).toBeFalsy();
     });
   });
+
+  describe('when active menu item is failed', () => {
+    beforeEach(waitForAsync(() => {
+      service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
+      service.markMenuItemAsFailed(new NavItemMock({
+        id: 'nav-item-2',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      }));
+    }));
+
+    it('should do nothing if navigation item is undefined', () => {
+      const navItem = undefined;
+
+      expect(() => service.markMenuItemAsFailed(navItem)).not.toThrow();
+    });
+
+    it('should mark menu item as failed', () => {
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeTrue();
+    });
+
+    it('should clean failed menu item when activate current menu item', () => {
+      service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
+
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeFalse();
+    });
+
+  });
 });
