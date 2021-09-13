@@ -112,6 +112,16 @@ describe('ExpandableSubMenuItemComponent', () => {
     expect(menuStateServiceMock.isMenuItemHighlighted).toHaveBeenCalledWith(link);
   });
 
+  it('should check for the menu failed state', () => {
+    menuStateServiceMock.isMenuItemFailed.and.returnValue(true);
+    const link = new MenuItemLink('some-failed-id', 'some caption');
+
+    const actual = component.isFailed(link);
+
+    expect(actual).toBeTrue();
+    expect(menuStateServiceMock.isMenuItemFailed).toHaveBeenCalledWith(link);
+  });
+
   it('should get qa class', () => {
     qaHelperServiceMock.getMenuItemClass.and.returnValue('qa-class');
     const link = new MenuItemLink('some-id', 'some caption');
