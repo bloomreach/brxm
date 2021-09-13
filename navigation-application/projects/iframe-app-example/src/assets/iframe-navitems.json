@@ -296,7 +296,7 @@
   },
   {
     "id": "setup/devstudio/account-information",
-    "appIframeUrl": "http://localhost:5000/brsm",
+    "appIframeUrl": "http://localhost:5042/brsm",
     "appPath": "setup/devstudio/account-information"
   },
   {
@@ -306,12 +306,12 @@
   },
   {
     "id": "setup/data-connect",
-    "appIframeUrl": "http://localhost:5000/brsm",
+    "appIframeUrl": "http://localhost:5042/brsm",
     "appPath": "setup/data-connect"
   },
   {
     "id": "setup/devstudio/feed/configuration",
-    "appIframeUrl": "http://localhost:5000/brsm",
+    "appIframeUrl": "http://localhost:5042/brsm",
     "appPath": "setup/devstudio/feed/configuration"
   },
   {
