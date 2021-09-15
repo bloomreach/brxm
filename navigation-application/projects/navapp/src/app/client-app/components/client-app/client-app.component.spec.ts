@@ -26,7 +26,7 @@ import { ClientAppService } from '../../services/client-app.service';
 
 import { ClientAppComponent } from './client-app.component';
 
-xdescribe('ClientAppComponent', () => {
+describe('ClientAppComponent', () => {
   let component: ClientAppComponent;
   let fixture: ComponentFixture<ClientAppComponent>;
   let iframeDe: DebugElement;
@@ -71,8 +71,6 @@ xdescribe('ClientAppComponent', () => {
     component.url = 'some-url';
 
     component.ngOnInit();
-
-    fixture.detectChanges();
   }));
 
   it('should create', () => {
@@ -85,6 +83,10 @@ xdescribe('ClientAppComponent', () => {
   });
 
   describe('connection to the iframe', () => {
+    beforeEach(() => {
+      component.ngAfterViewInit();
+    });
+
     it('should be initiated', () => {
       expect(connectionServiceMock.connectToIframe).toHaveBeenCalledWith(iframeDe.nativeElement);
     });

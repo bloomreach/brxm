@@ -6,7 +6,8 @@
     "types": [
       "jasmine",
       "pendo-io-browser"
-    ]
+    ],
+    "module": "CommonJS"
   },
   "files": [
     "src/test.ts",
