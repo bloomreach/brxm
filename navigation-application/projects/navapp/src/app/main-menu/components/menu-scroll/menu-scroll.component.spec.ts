@@ -42,7 +42,7 @@ class TestComponent {
   contentFirstElementHeight = 100;
 }
 
-xdescribe('MenuScrollComponent', () => {
+describe('MenuScrollComponent', () => {
   let component: TestComponent;
   let fixture: ComponentFixture<TestComponent>;
   let de: DebugElement;
@@ -96,7 +96,7 @@ xdescribe('MenuScrollComponent', () => {
 
       host.triggerEventHandler('wheel', event);
 
-      expect(contentDe.styles.transform).toBe('translateY(-0px)');
+      expect(contentDe.styles.transform).toBe('translateY(0px)');
     });
   });
 
@@ -105,9 +105,10 @@ xdescribe('MenuScrollComponent', () => {
     let wheelEvent: jasmine.SpyObj<WheelEvent>;
 
     beforeEach(fakeAsync(() => {
-      spyOnProperty(normalizeWheelEventModule, 'normalizeWheelEvent', 'get').and.returnValue((event: WheelEvent) => ({
+      spyOn(normalizeWheelEventModule, 'normalizeWheelEvent').and.callFake((event: WheelEvent) => ({
         x: 0,
         y: event.deltaY,
+        wheel: true,
       }));
 
       mouseEvent = jasmine.createSpyObj('mouseEvent', [
@@ -202,7 +203,7 @@ xdescribe('MenuScrollComponent', () => {
 
       flush();
 
-      expect(contentDe.styles.transform).toBe('translateY(-0px)');
+      expect(contentDe.styles.transform).toBe('translateY(0px)');
     }));
 
     it('should scroll the content', fakeAsync(() => {
@@ -243,7 +244,7 @@ xdescribe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translateY(-0px)');
+        expect(contentDe.styles.transform).toBe('translateY(0px)');
       }));
 
       it('should scroll step down if scroll down button is clicked', fakeAsync(() => {
@@ -300,7 +301,7 @@ xdescribe('MenuScrollComponent', () => {
           }));
 
           it('should auto scroll up', () => {
-            expect(contentDe.styles.transform).toBe('translateY(-0px)');
+            expect(contentDe.styles.transform).toBe('translateY(0px)');
           });
         });
       });
