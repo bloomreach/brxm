@@ -186,6 +186,8 @@ export class MenuStateService {
     const lastMenuItem = menuItems[menuItems.length - 1];
     const indexOfFailedMenuItem = this.failedMenuItems.findIndex(menuItem => menuItem === lastMenuItem);
 
-    this.failedMenuItems.splice(indexOfFailedMenuItem, 1);
+    if (indexOfFailedMenuItem !== -1) {
+      this.failedMenuItems.splice(indexOfFailedMenuItem, 1);
+    }
   }
 }
