@@ -213,6 +213,14 @@ describe('MenuStateService', () => {
       }));
     }));
 
+    afterEach(() => {
+      navItemService.findNavItem.and.callFake(() => ({
+        id: 'nav-item-2',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      }));
+    });
+
     it('should do nothing if navigation item is undefined', () => {
       const navItem = undefined;
 
@@ -233,5 +241,30 @@ describe('MenuStateService', () => {
       expect(failed).toBeFalse();
     });
 
+    it('should keep failed menu item if activate another menu item but on the same iframe', () => {
+      navItemService.findNavItem.and.callFake(() => ({
+        id: 'nav-item-1',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/home',
+      }));
+      service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/home');
+
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeTrue();
+    });
+
+    it('should keep failed menu item if activate another menu item in another iframe', () => {
+      navItemService.findNavItem.and.callFake(() => ({
+        id: 'nav-item-3',
+        appIframeUrl: 'http://domain.com/iframe2/url',
+        appPath: 'app/path/to/home',
+      }));
+      service.activateMenuItem('http://domain.com/iframe2/url', 'app/path/to/home');
+
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeTrue();
+    });
   });
 });
