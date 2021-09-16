@@ -27,6 +27,7 @@ import { AppError } from '../error-handling/models/app-error';
 import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
+import { TimeoutError } from '../error-handling/models/timeout-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
 import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
@@ -268,7 +269,10 @@ export class NavigationService implements OnDestroy {
       }
     } catch (error) {
       if (this.currentNavigationUrl === url) {
-        this.menuStateService.markMenuItemAsFailed(this.currentNavItem);
+        if (error instanceof TimeoutError) {
+          this.menuStateService.markMenuItemAsFailed(this.currentNavItem);
+        }
+
         this.setAppError(error);
       }
     } finally {

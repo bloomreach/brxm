@@ -23,6 +23,8 @@ import { of, Subject, SubscriptionLike } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { AppError } from '../error-handling/models/app-error';
+import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { TimeoutError } from '../error-handling/models/timeout-error';
@@ -739,22 +741,76 @@ describe('NavigationService', () => {
         );
       });
 
-      it('should mark menu item as failed if error happened', async () => {
-        const navItemToNavigate = new NavItemMock({
-          appIframeUrl: 'http://domain.com/iframe1/url',
-          appPath: 'app/path/to/page1',
+      describe('highlight menu item', () => {
+        it('should mark menu item as failed if timeout error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new TimeoutError('Timeout error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).toHaveBeenCalledWith(new NavItemMock({
+            id: 'item2',
+            displayName: 'testDisplayName',
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          }));
         });
 
-        clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new TimeoutError('Timeout error'); });
+        it('should not mark menu item as failed if critical error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
 
-        await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new CriticalError('Critical error'); });
 
-        expect(menuStateServiceMock.markMenuItemAsFailed).toHaveBeenCalledWith(new NavItemMock({
-          id: 'item2',
-          displayName: 'testDisplayName',
-          appIframeUrl: 'http://domain.com/iframe1/url',
-          appPath: 'app/path/to/page1',
-        }));
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
+
+        it('should not mark menu item as failed if internal error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new InternalError('Internal error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
+
+        it('should not mark menu item as failed if application error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new AppError(42, 'Application error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
+
+        it('should not mark menu item as failed if not found error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new NotFoundError('Not found error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
       });
 
       describe('of client apps', () => {
