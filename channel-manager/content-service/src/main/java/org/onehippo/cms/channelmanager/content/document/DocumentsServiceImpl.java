@@ -158,6 +158,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST));
 
         } catch (WorkflowException e) {
+            log.error("Could read handle for uuid: {} and branchId: {}, please check the node.", uuid, branchId, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
         }
     }
@@ -206,6 +207,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             return workflow.listBranches();
         } catch (WorkflowException e) {
+            log.error("Could not list branches for node: { path: {} }", JcrUtils.getNodePathQuietly(workflow.getNode()),
+                    e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -295,7 +298,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             session.save();
         } catch (final RepositoryException e) {
-            log.warn("Failed to save changes to draft node of document {}", uuid, e);
+            log.error("Failed to save changes to draft node of document {}", uuid, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -306,6 +309,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.error("Failed to commit changes to document {}", uuid, e);
             throw new InternalServerErrorException(
                     errorInfoFromHintsOrNoHolder(branchId, HintsUtils.getHints(workflow, branchId),
                             session));
@@ -379,7 +383,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             workflow.disposeEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to dispose of editable instance", e);
+            log.error("Failed to dispose of editable instance", e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -434,7 +438,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             session.save();
             return getCreatedDocument(handle, documentType);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
+            log.error("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), documentTemplateQuery, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
@@ -447,7 +451,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final String channelId = JcrUtils.getStringProperty(folder, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null);
         if (StringUtils.isEmpty(channelId)) {
-            log.warn("Failed to retrieve XPageLayout[{}]. Could not read property {} on node {}",
+            log.error("Failed to retrieve XPageLayout[{}]. Could not read property {} on node {}",
                     layoutId, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, JcrUtils.getNodePathQuietly(folder));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
@@ -455,7 +459,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final ChannelService channelService = HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
         final Map<String, XPageLayout> xPageLayouts = channelService.getXPageLayouts(channelId);
         if (!xPageLayouts.containsKey(layoutId)) {
-            log.warn("Failed to retrieve XPageLayout[{}]. Available id's are {}",
+            log.error("Failed to retrieve XPageLayout[{}]. Available id's are {}",
                     layoutId, String.join(",", xPageLayouts.keySet()));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
@@ -464,8 +468,12 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     private static Document getCreatedDocument(final Node handle, final DocumentType documentType) throws RepositoryException {
-        final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
-                .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Optional<Node> optionalDraftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT);
+        if (!optionalDraftNode.isPresent()) {
+            log.error("Could not read draft variant for node : { path: {}}", JcrUtils.getNodePathQuietly(handle));
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+        final Node draftNode = optionalDraftNode.get();
         return createDocument(handle.getIdentifier(), handle, documentType, draftNode);
     }
 
@@ -483,7 +491,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             final Map<String, Serializable> hints = documentWorkflow.hints();
             return Boolean.TRUE.equals(hints.get(AbstractSaveDraftDocumentService.SAVE_DRAFT));
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to determine if save draft is allowed for document: { path : {}}"
+            log.error("Failed to determine if save draft is allowed for document: { path : {}}"
                     , JcrUtils.getNodePathQuietly(handle));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
@@ -570,7 +578,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                                                       final String type,
                                                       final UserContext userContext) {
         if (fieldPath.isEmpty()) {
-            log.warn("Can not add node field if fieldPath is empty");
+            log.error("Can not add node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -594,7 +602,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                                  final int position,
                                  final UserContext userContext) {
         if (fieldPath.isEmpty()) {
-            log.warn("Can not reorder node field if fieldPath is empty");
+            log.error("Can not reorder node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -611,7 +619,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                                 final FieldPath fieldPath,
                                 final UserContext userContext) {
         if (fieldPath.isEmpty()) {
-            log.warn("Can not remove node field if fieldPath is empty");
+            log.error("Can not remove node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -652,6 +660,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             return draft.getPath();
         } catch (RepositoryException e) {
+            log.error("Could not get path for node : { path : {} }", JcrUtils.getNodePathQuietly(draft));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
         }
     }
@@ -661,6 +670,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             branchHandle = new BranchHandleImpl(branchId, handle);
         } catch (WorkflowException e) {
+            log.error("Could not get variant info for node node : { path : {} }", JcrUtils.getNodePathQuietly(handle), e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
         }
 
@@ -677,7 +687,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             log.info("Archiving document '{}'", uuid);
             documentWorkflow.delete();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to archive document '{}'", uuid, e);
+            log.error("Failed to archive document '{}'", uuid, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -687,7 +697,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             log.info("Erasing document '{}'", uuid);
             folderWorkflow.delete(handle.getName());
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to erase document '{}'", uuid, e);
+            log.error("Failed to erase document '{}'", uuid, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -708,7 +718,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             return getDocumentTypeByNodeTypeIdentifier(userContext, id);
         } catch (final ErrorWithPayloadException e) {
-            log.warn("Failed to retrieve type of document '{}'", getNodePathQuietly(handle), e);
+            log.error("Failed to retrieve type of document '{}'", getNodePathQuietly(handle), e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
