@@ -459,8 +459,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         final ChannelService channelService = HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
         final Map<String, XPageLayout> xPageLayouts = channelService.getXPageLayouts(channelId);
         if (!xPageLayouts.containsKey(layoutId)) {
-            log.error("Failed to retrieve XPageLayout[{}]. Available id's are {}",
-                    layoutId, String.join(",", xPageLayouts.keySet()));
+            log.error("Failed to retrieve XPageLayout[{}]. Available id's are {}", layoutId,
+                    String.join(",", xPageLayouts.isEmpty() ? Collections.singleton("none") : xPageLayouts.keySet()));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
