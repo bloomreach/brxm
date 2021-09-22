@@ -15,7 +15,7 @@
  */
 
 import { DOCUMENT, Location } from '@angular/common';
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { ChildApi, ClientError } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
@@ -123,7 +123,7 @@ describe('AuthService', () => {
       ],
     });
 
-    service = TestBed.get(AuthService);
+    service = TestBed.inject(AuthService);
   });
 
   it('should set up listener for unauthorized errors', () => {
@@ -209,7 +209,7 @@ describe('AuthService', () => {
     });
 
     describe('if something went wrong and Child1Api.logout promise has been rejected', () => {
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         rejectChild1Logout(new Error('something went wrong'));
       }));
 
@@ -231,7 +231,7 @@ describe('AuthService', () => {
     });
 
     describe('after child application apis responded successfully', () => {
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         resolveChild1Logout();
         resolveChild2Logout();
       }));

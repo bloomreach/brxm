@@ -15,8 +15,10 @@
  */
 
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ClientErrorCodes, SiteId } from '@bloomreach/navapp-communication';
+import { interval, Subject } from 'rxjs';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 import { AppState } from './services/app-state';
 import { ChildApiMethodsService } from './services/child-api-methods.service';
@@ -31,8 +33,10 @@ import { NavigatorService } from './services/navigator.service';
     { provide: LocationStrategy, useClass: PathLocationStrategy },
   ],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   parentApiVersion: string;
+
+  private readonly unsubscribe = new Subject();
 
   constructor(
     private readonly communicationService: CommunicationService,
@@ -46,10 +50,30 @@ export class AppComponent implements OnInit {
     return `${location}`;
   }
 
+  get shouldConfirm(): boolean {
+    return this.state.shouldAskBeforeNavigation;
+  }
+
   async ngOnInit(): Promise<void> {
     await this.communicationService.connect(this.childApiMethodsService.getMethods());
 
     this.parentApiVersion = this.communicationService.parentApiVersion;
+
+    if (this.state.isBrSmMock) {
+      interval(1000)
+      .pipe(
+        takeUntil(this.unsubscribe),
+        filter(() => this.state.isLocalSiteIdOutOfDate()),
+      )
+      .subscribe(() => {
+        this.communicationService.updateSelectedSite(this.state.selectedSiteId);
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onButtonClicked(): void {
@@ -90,6 +114,11 @@ export class AppComponent implements OnInit {
   }
 
   updateSelectedSite(siteId: SiteId): void {
+    this.state.selectedSiteId = siteId;
     this.communicationService.updateSelectedSite(siteId);
+  }
+
+  toggleConfirm(): void {
+    this.state.shouldAskBeforeNavigation = !this.state.shouldAskBeforeNavigation;
   }
 }

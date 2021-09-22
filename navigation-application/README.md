@@ -38,8 +38,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `npm run start` for a dev server and `npm run start:example-app`. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-If you wish to run the communication library in the dev mode to watch changes run `npm run build navapp-communication -- --watch` before `npm run start`.
-
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
@@ -58,4 +56,4 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 ## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.

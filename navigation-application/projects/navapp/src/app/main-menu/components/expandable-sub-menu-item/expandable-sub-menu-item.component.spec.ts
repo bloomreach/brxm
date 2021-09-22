@@ -15,7 +15,7 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -45,9 +45,10 @@ describe('ExpandableSubMenuItemComponent', () => {
     'some-icon',
   );
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'isMenuItemHighlighted',
+      'isMenuItemFailed',
     ]);
 
     qaHelperServiceMock = jasmine.createSpyObj('QaHelperService', [
@@ -111,6 +112,16 @@ describe('ExpandableSubMenuItemComponent', () => {
     expect(menuStateServiceMock.isMenuItemHighlighted).toHaveBeenCalledWith(link);
   });
 
+  it('should check for the menu failed state', () => {
+    menuStateServiceMock.isMenuItemFailed.and.returnValue(true);
+    const link = new MenuItemLink('some-failed-id', 'some caption');
+
+    const actual = component.isFailed(link);
+
+    expect(actual).toBeTrue();
+    expect(menuStateServiceMock.isMenuItemFailed).toHaveBeenCalledWith(link);
+  });
+
   it('should get qa class', () => {
     qaHelperServiceMock.getMenuItemClass.and.returnValue('qa-class');
     const link = new MenuItemLink('some-id', 'some caption');
@@ -122,7 +133,7 @@ describe('ExpandableSubMenuItemComponent', () => {
   });
 
   describe('when it is expanded', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       component.toggle();
 
       fixture.detectChanges();

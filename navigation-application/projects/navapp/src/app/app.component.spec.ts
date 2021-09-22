@@ -92,11 +92,11 @@ describe('AppComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
-    overlayServiceMock = TestBed.get(OverlayService);
-    rightSidePanelServiceMock = TestBed.get(RightSidePanelService);
-    errorHandlingServiceMock = TestBed.get(ErrorHandlingService);
-    mainLoaderServiceMock = TestBed.get(MainLoaderService);
-    appSettings = TestBed.get(APP_SETTINGS);
+    overlayServiceMock = TestBed.inject(OverlayService);
+    rightSidePanelServiceMock = TestBed.inject(RightSidePanelService) as jasmine.SpyObj<RightSidePanelService>;
+    errorHandlingServiceMock = TestBed.inject(ErrorHandlingService);
+    mainLoaderServiceMock = TestBed.inject(MainLoaderService);
+    appSettings = TestBed.inject(APP_SETTINGS);
   });
 
   it('should create the app', () => {
