@@ -9,20 +9,15 @@
     "src/polyfills.ts"
   ],
   "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "src/test.ts",
-    "src/**/*.spec.ts"
+    "src/**/*.d.ts"
   ],
   "typedocOptions": {
+    "entryPoints": ["src/main.ts", "src/app/models/dto"],
     "exclude": "!**/src/app/models/dto/**.dto.ts",
-    "excludeNotExported": true,
     "excludePrivate": true,
     "excludeProtected": true,
     "hideGenerator": true,
-    "mode": "file",
-    "out": "./docs/navapp",
+    "out": "../../docs/navapp",
     "name": "Bloomreach Navigation Application"
   }
 }

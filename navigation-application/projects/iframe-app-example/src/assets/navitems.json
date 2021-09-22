@@ -6,7 +6,7 @@
   },
   {
     "id": "xm-experience-manager",
-    "appIframeUrl": "http://localhost:5000",
+    "appIframeUrl": "http://localhost:5001",
     "appPath": "experience-manager"
   },
   {

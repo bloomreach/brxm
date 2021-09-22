@@ -15,7 +15,7 @@
  */
 
 import { Component, DebugElement, NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -50,7 +50,7 @@ describe('MenuScrollComponent', () => {
   let contentDe: DebugElement;
 
   describe('if there is enough space', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       fixture = TestBed.configureTestingModule({
         imports: [
           NoopAnimationsModule,
@@ -96,7 +96,7 @@ describe('MenuScrollComponent', () => {
 
       host.triggerEventHandler('wheel', event);
 
-      expect(contentDe.styles.transform).toBe('translateY(-0px)');
+      expect(contentDe.styles.transform).toBe('translateY(0px)');
     });
   });
 
@@ -105,9 +105,10 @@ describe('MenuScrollComponent', () => {
     let wheelEvent: jasmine.SpyObj<WheelEvent>;
 
     beforeEach(fakeAsync(() => {
-      spyOnProperty(normalizeWheelEventModule, 'normalizeWheelEvent', 'get').and.returnValue((event: WheelEvent) => ({
+      spyOn(normalizeWheelEventModule, 'normalizeWheelEvent').and.callFake((event: WheelEvent) => ({
         x: 0,
         y: event.deltaY,
+        wheel: true,
       }));
 
       mouseEvent = jasmine.createSpyObj('mouseEvent', [
@@ -202,7 +203,7 @@ describe('MenuScrollComponent', () => {
 
       flush();
 
-      expect(contentDe.styles.transform).toBe('translateY(-0px)');
+      expect(contentDe.styles.transform).toBe('translateY(0px)');
     }));
 
     it('should scroll the content', fakeAsync(() => {
@@ -216,7 +217,7 @@ describe('MenuScrollComponent', () => {
     }));
 
     describe('when content scrolled 10px down', () => {
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         host.triggerEventHandler('wheel', wheelEvent);
 
         fixture.detectChanges();
@@ -243,7 +244,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translateY(-0px)');
+        expect(contentDe.styles.transform).toBe('translateY(0px)');
       }));
 
       it('should scroll step down if scroll down button is clicked', fakeAsync(() => {
@@ -284,7 +285,7 @@ describe('MenuScrollComponent', () => {
       }));
 
       describe('when content\'s height is decreased', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           component.contentFirstElementHeight = 50;
 
           fixture.detectChanges();
@@ -300,14 +301,14 @@ describe('MenuScrollComponent', () => {
           }));
 
           it('should auto scroll up', () => {
-            expect(contentDe.styles.transform).toBe('translateY(-0px)');
+            expect(contentDe.styles.transform).toBe('translateY(0px)');
           });
         });
       });
     });
 
     describe('when content scrolled fully down', () => {
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         const event = {
           preventDefault: () => {},
           deltaY: 350,
@@ -368,7 +369,7 @@ describe('MenuScrollComponent', () => {
       }));
 
       describe('when container\'s height is increased', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           component.scrollContainerHeight = 200;
 
           fixture.detectChanges();
@@ -380,7 +381,7 @@ describe('MenuScrollComponent', () => {
       });
 
       describe('when content\'s height is decreased', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           component.contentFirstElementHeight = 50;
 
           fixture.detectChanges();

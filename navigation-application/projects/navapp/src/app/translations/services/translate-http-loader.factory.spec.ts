@@ -17,8 +17,6 @@
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import * as getAntiCacheModule from '../../services/get-anti-cache-query-param';
-
 import { translateHttpLoaderFactory } from './translate-http-loader.factory';
 
 describe('translateHttpLoaderFactory', () => {
@@ -27,12 +25,14 @@ describe('translateHttpLoaderFactory', () => {
     'path',
   ]);
 
+  const now = Date.now();
+
   beforeEach(() => {
-    spyOnProperty(getAntiCacheModule, 'getAntiCacheQueryParam', 'get').and.returnValue(() => 'antiCache=some-unique-hash');
+    spyOn(window.Date, 'now').and.returnValue(now);
   });
 
   it('should create TranslateHttpLoader', () => {
-    const expected = new TranslateHttpLoader(httpClientMock, 'navapp-assets/i18n/', '.json?antiCache=some-unique-hash');
+    const expected = new TranslateHttpLoader(httpClientMock, 'navapp-assets/i18n/', `.json?antiCache=${now}`);
 
     const actual = translateHttpLoaderFactory(httpClientMock, locationMock);
 

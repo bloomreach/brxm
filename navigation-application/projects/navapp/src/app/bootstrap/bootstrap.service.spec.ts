@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { NavigationTrigger, Site, SiteId } from '@bloomreach/navapp-communication';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { NavigationTrigger, NavItem, Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
@@ -24,11 +24,11 @@ import { ClientAppService } from '../client-app/services/client-app.service';
 import { CriticalError } from '../error-handling/models/critical-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
-import { NavItemMock } from '../models/nav-item.mock';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { MainLoaderService } from '../services/main-loader.service';
-import { NavConfigService } from '../services/nav-config.service';
+import { Configuration, NavConfigService } from '../services/nav-config.service';
 import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
 import { SiteService } from '../services/site.service';
@@ -38,12 +38,6 @@ import { BootstrapService } from './bootstrap.service';
 
 describe('BootstrapService', () => {
   let service: BootstrapService;
-
-  const navItemDtosMock = [
-    { id: '1', appIframeUrl: 'https://some-url', appPath: 'home/path' },
-    { id: '2', appIframeUrl: 'https://some-url', appPath: 'some/path' },
-    { id: '3', appIframeUrl: 'https://another-url', appPath: 'another/path' },
-  ];
 
   const sitesMock: Site[] = [
     {
@@ -74,12 +68,11 @@ describe('BootstrapService', () => {
   };
 
   const navItemsMock = [
-    new NavItemMock({ id: '1' }),
-    new NavItemMock({ id: '2' }),
-    new NavItemMock({ id: '3' }),
+    new NavItemMock({ id: '1', appIframeUrl: 'https://some-url', appPath: 'home/path' }),
+    new NavItemMock({ id: '2', appIframeUrl: 'https://some-url', appPath: 'some/path' }),
+    new NavItemMock({ id: '3', appIframeUrl: 'https://another-url', appPath: 'another/path' }),
   ];
 
-  let appConnectedSubject: Subject<ClientApp>;
   let selectedSiteSubject: Subject<Site>;
 
   let authServiceMock: jasmine.SpyObj<AuthService>;
@@ -96,30 +89,27 @@ describe('BootstrapService', () => {
   let loggerMock: jasmine.SpyObj<NGXLogger>;
 
   beforeEach(() => {
-    appConnectedSubject = new Subject();
-
     authServiceMock = jasmine.createSpyObj('AuthService', {
       loginAllResources: Promise.resolve(),
     });
 
     navConfigServiceMock = jasmine.createSpyObj('NavConfigService', {
       fetchNavigationConfiguration: ({
-        navItems: navItemDtosMock,
+        navItems: navItemsMock,
         sites: sitesMock,
         selectedSiteId: selectedSiteIdMock,
       }),
-      refetchNavItems: navItemDtosMock,
+      refetchNavItems: navItemsMock,
     });
 
     navItemServiceMock = jasmine.createSpyObj('NavItemService', {
-      registerNavItemDtos: navItemsMock,
+      registerNavItems: navItemsMock,
       activateNavItems: undefined,
     });
 
     clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
       init: Promise.resolve(),
     });
-    (clientAppServiceMock as any).appConnected$ = appConnectedSubject.asObservable();
 
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'init',
@@ -183,14 +173,14 @@ describe('BootstrapService', () => {
       ],
     });
 
-    service = TestBed.get(BootstrapService);
+    service = TestBed.inject(BootstrapService);
   });
 
   describe('bootstrap', () => {
     describe('if everything goes well', () => {
       let bootstrapped: boolean;
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         bootstrapped = false;
 
         service.bootstrap().then(() => bootstrapped = true);
@@ -235,7 +225,7 @@ describe('BootstrapService', () => {
       });
 
       it('should register fetched nav item DTOs', () => {
-        expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(navItemDtosMock);
+        expect(navItemServiceMock.registerNavItems).toHaveBeenCalledWith(navItemsMock);
       });
 
       it('should initialize MenuStateService', () => {
@@ -252,14 +242,6 @@ describe('BootstrapService', () => {
 
       it('should perform initial navigation', () => {
         expect(navigationServiceMock.initialNavigation).toHaveBeenCalled();
-      });
-
-      it('should activate nav items for the connected app', () => {
-        const expected = 'https://some-url';
-
-        appConnectedSubject.next(new ClientApp(expected, {}));
-
-        expect(navItemServiceMock.activateNavItems).toHaveBeenCalledWith(expected);
       });
 
       describe('logging', () => {
@@ -366,11 +348,13 @@ describe('BootstrapService', () => {
         beforeEach(async () => {
           bootstrapped = false;
 
-          navConfigServiceMock.fetchNavigationConfiguration.and.returnValue({
+          const configuration: Configuration = {
             navItems: [],
             sites: [],
-            selectedSite: undefined,
-          });
+            selectedSiteId: undefined,
+          };
+
+          navConfigServiceMock.fetchNavigationConfiguration.and.returnValue(Promise.resolve(configuration));
 
           await service.bootstrap();
 
@@ -404,7 +388,7 @@ describe('BootstrapService', () => {
         beforeEach(async () => {
           bootstrapped = false;
 
-          navItemServiceMock.registerNavItemDtos.and.callFake(() => {
+          navItemServiceMock.registerNavItems.and.callFake(() => {
             throw new Error('registration of nav item DTOs fetching has failed');
           });
 
@@ -689,23 +673,17 @@ describe('BootstrapService', () => {
     describe('if everything goes well', () => {
       let reinitialized: boolean;
 
-      const newNavItemDtosMock = [
-        { id: '4', appIframeUrl: 'https://some-new-url', appPath: 'home/path' },
-        { id: '5', appIframeUrl: 'https://some-new-url', appPath: 'some/path' },
-        { id: '6', appIframeUrl: 'https://another-new-url', appPath: 'another/path' },
-      ];
-
       const newNavItemsMock = [
-        new NavItemMock({ id: '4' }),
-        new NavItemMock({ id: '5' }),
-        new NavItemMock({ id: '6' }),
+        new NavItemMock({ id: '4', appIframeUrl: 'https://some-new-url', appPath: 'home/path' }),
+        new NavItemMock({ id: '5', appIframeUrl: 'https://some-new-url', appPath: 'some/path' }),
+        new NavItemMock({ id: '6', appIframeUrl: 'https://another-new-url', appPath: 'another/path' }),
       ];
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         reinitialized = false;
 
-        navConfigServiceMock.refetchNavItems.and.returnValue(newNavItemDtosMock);
-        navItemServiceMock.registerNavItemDtos.and.returnValue(newNavItemsMock);
+        navConfigServiceMock.refetchNavItems.and.returnValue(Promise.resolve(newNavItemsMock));
+        navItemServiceMock.registerNavItems.and.returnValue(newNavItemsMock);
 
         service.reinitialize().then(() => reinitialized = true);
       }));
@@ -737,7 +715,7 @@ describe('BootstrapService', () => {
       });
 
       it('should register fetched nav item DTOs', () => {
-        expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(newNavItemDtosMock);
+        expect(navItemServiceMock.registerNavItems).toHaveBeenCalledWith(newNavItemsMock);
       });
 
       it('should initialize MenuStateService', () => {
@@ -765,7 +743,7 @@ describe('BootstrapService', () => {
 
     describe('if something goes wrong', () => {
       describe('and nav item DTOs fetching has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navConfigServiceMock.refetchNavItems.and.callFake(() => Promise.reject(
             new Error('nav item DTOs fetching has failed'),
           ));
@@ -782,8 +760,8 @@ describe('BootstrapService', () => {
       });
 
       describe('and registration of nav item DTOs thrown an exception', () => {
-        beforeEach(async(() => {
-          navItemServiceMock.registerNavItemDtos.and.callFake(() => {
+        beforeEach(waitForAsync(() => {
+          navItemServiceMock.registerNavItems.and.callFake(() => {
             throw new Error('registration of nav item DTOs fetching has failed');
           });
 
@@ -799,7 +777,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and ClientAppService initialization has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           clientAppServiceMock.init.and.callFake(() => {
             throw new Error('ClientAppService initialization error');
           });
@@ -816,7 +794,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and ClientAppService initialization has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           clientAppServiceMock.init.and.callFake(() => Promise.reject(new Error('some error')));
 
           service.reinitialize();
@@ -831,7 +809,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and MenuStateService initialization has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           menuStateServiceMock.init.and.callFake(() => {
             throw new Error('MenuStateService initialization error');
           });
@@ -848,7 +826,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and NavigationService initialization has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.init.and.callFake(() => {
             throw new Error('NavigationService initialization error');
           });
@@ -865,7 +843,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and reloading of the page has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => {
             throw new Error('reload of the page error');
           });
@@ -879,7 +857,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and reloading of the page has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => Promise.reject(new Error('some error')));
 
           service.reinitialize();
@@ -891,7 +869,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and navigation to home page has thrown an exception', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => {
             throw new Error('reload of the page error');
           });
@@ -911,7 +889,7 @@ describe('BootstrapService', () => {
       });
 
       describe('and navigation to home page has failed', () => {
-        beforeEach(async(() => {
+        beforeEach(waitForAsync(() => {
           navigationServiceMock.reload.and.callFake(() => {
             throw new Error('reload of the page error');
           });

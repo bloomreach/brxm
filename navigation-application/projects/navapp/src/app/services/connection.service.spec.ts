@@ -16,7 +16,7 @@
 
 import { DOCUMENT } from '@angular/common';
 import { Renderer2, RendererFactory2 } from '@angular/core';
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import * as commLib from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 
@@ -83,8 +83,8 @@ describe('ConnectionService', () => {
       ],
     });
 
-    service = TestBed.get(ConnectionService);
-    logger = TestBed.get(NGXLogger);
+    service = TestBed.inject(ConnectionService);
+    logger = TestBed.inject(NGXLogger);
   });
 
   it('should create the renderer', () => {
@@ -217,7 +217,7 @@ describe('ConnectionService', () => {
     });
   });
 
-  it('should connect to an iframe', async(() => {
+  it('should connect to an iframe', waitForAsync(() => {
     const iframeMock = {
       src: 'https://app.com',
     } as any;
@@ -245,7 +245,7 @@ describe('ConnectionService', () => {
   }));
 
   describe('when the iframe is connected', () => {
-   beforeEach(async(() => {
+   beforeEach(waitForAsync(() => {
      const iframeMock = {
        src: 'https://some-app.com',
      } as any;

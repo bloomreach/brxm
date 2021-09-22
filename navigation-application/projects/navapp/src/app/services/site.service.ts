@@ -18,6 +18,7 @@ import { Injectable } from '@angular/core';
 import { Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, ReplaySubject } from 'rxjs';
+import { filter, map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { WindowRef } from '../shared/services/window-ref.service';
@@ -39,7 +40,13 @@ export class SiteService {
     private readonly windowRef: WindowRef,
     private readonly logger: NGXLogger,
     private readonly connectionService: ConnectionService,
-  ) { }
+  ) {
+    this.connectionService.updateSelectedSite$
+      .pipe(
+        withLatestFrom(this.selectedSite$.pipe(map(({siteId, accountId}) => ({siteId, accountId})))),
+        filter(([newSiteId, selectedSiteId]) => !this.areSiteIdsEqual(newSiteId, selectedSiteId)),
+      ).subscribe(([newSiteId]) => this.selectSite(newSiteId));
+  }
 
   get selectedSite$(): Observable<Site> {
     return this.selectedSite.asObservable();
@@ -51,7 +58,7 @@ export class SiteService {
 
   init(sites: Site[], selectedSiteId: SiteId): void {
     this.currentSites = sites;
-    this.connectionService.updateSelectedSite$.subscribe((siteId: SiteId) => this.selectSite(siteId));
+
     this.selectSite(selectedSiteId);
   }
 
@@ -108,5 +115,9 @@ export class SiteService {
     }
 
     this.windowRef.nativeWindow.location.assign(newUrl.href);
+  }
+
+  private areSiteIdsEqual(siteId1: SiteId, siteId2: SiteId): boolean {
+    return (siteId1.accountId === siteId2.accountId) && (siteId1.siteId === siteId2.siteId);
   }
 }

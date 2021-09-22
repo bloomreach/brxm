@@ -28,7 +28,7 @@ describe('MainLoaderService', () => {
       ],
     });
 
-    service = TestBed.get(MainLoaderService);
+    service = TestBed.inject(MainLoaderService);
   });
 
   it('should set make the loader visible initially', () => {

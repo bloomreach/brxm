@@ -15,15 +15,14 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { TranslateModule } from '@ngx-translate/core';
 import { NEVER, of } from 'rxjs';
 
-import { NavItemMock } from '../../models/nav-item.mock';
-import { NavItem } from '../../models/nav-item.model';
+import { NavItemMock } from '../../models/dto/nav-item-dto.mock';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
@@ -60,13 +59,14 @@ describe('MainMenuComponent', () => {
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'toggle',
       'openDrawer',
       'closeDrawer',
       'isMenuItemHighlighted',
       'activateMenuItem',
+      'isMenuItemFailed',
     ]);
     (menuStateServiceMock as any).menu$ = of(menuMock);
     (menuStateServiceMock as any).isDrawerOpened = false;
@@ -102,8 +102,8 @@ describe('MainMenuComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
-    menuStateServiceMock = TestBed.get(MenuStateService);
-    busyIndicatorServiceMock = TestBed.get(BusyIndicatorService);
+    menuStateServiceMock = TestBed.inject(MenuStateService) as jasmine.SpyObj<MenuStateService>;
+    busyIndicatorServiceMock = TestBed.inject(BusyIndicatorService) as jasmine.SpyObj<BusyIndicatorService>;
 
     component.ngOnInit();
 
@@ -224,7 +224,7 @@ describe('MainMenuComponent', () => {
   });
 
   describe('when help menu item is clicked', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       component.onHelpMenuItemClick();
 
       fixture.detectChanges();
@@ -250,7 +250,7 @@ describe('MainMenuComponent', () => {
   });
 
   describe('when user menu item is clicked', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       component.onUserMenuItemClick();
 
       fixture.detectChanges();
@@ -292,46 +292,6 @@ describe('MainMenuComponent', () => {
       const actual = component.isMenuItemHighlighted(menuItem);
 
       expect(actual).toBeTruthy();
-    });
-  });
-
-  describe('isMenuItemDisabled', () => {
-    describe('when MenuItemLink instance is provided', () => {
-      let navItem: NavItem;
-      let menuItemLink: MenuItemLink;
-
-      beforeEach(() => {
-        navItem = new NavItemMock({}, NEVER, false);
-        menuItemLink = new MenuItemLinkMock({ navItem });
-      });
-
-      it('should return "true" initially', () => {
-        const actual = component.isMenuItemDisabled(menuItemLink);
-
-        expect(actual).toBeTruthy();
-      });
-
-      it('should return "false" if a nav item is active', () => {
-        navItem.activate();
-
-        const actual = component.isMenuItemDisabled(menuItemLink);
-
-        expect(actual).toBeFalsy();
-      });
-    });
-
-    describe('when MenuItemContainer instance is provided', () => {
-      let menuItemContainer: MenuItemContainer;
-
-      beforeEach(() => {
-        menuItemContainer = new MenuItemContainerMock();
-      });
-
-      it('should return "false"', () => {
-        const actual = component.isMenuItemDisabled(new MenuItemContainerMock());
-
-        expect(actual).toBeFalsy();
-      });
     });
   });
 });

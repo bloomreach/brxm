@@ -14,18 +14,30 @@
  * limitations under the License.
  */
 
-import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import { DebugElement, NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { MenuItemLinkMock } from '../../main-menu/models/menu-item-link.mock';
 import { MenuStateService } from '../../main-menu/services/menu-state.service';
 import { NavigationService } from '../../services/navigation.service';
 import { AppError } from '../models/app-error';
 import { CriticalError } from '../models/critical-error';
+import { TimeoutError } from '../models/timeout-error';
 
 import { ErrorPageComponent } from './error-page.component';
+
+@Pipe({
+  name: 'translate',
+})
+class TranslatePipeMock implements PipeTransform {
+  name = 'translate';
+
+  transform(query: string, ...args: any[]): any {
+    return query;
+  }
+}
 
 describe('ErrorPageComponent', () => {
   let component: ErrorPageComponent;
@@ -34,27 +46,39 @@ describe('ErrorPageComponent', () => {
 
   const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
     'navigateToHome',
+    'reload',
   ]);
 
   let menuStateServiceMock: any = {
     currentHomeMenuItem: undefined,
   };
 
+  const translateServiceMock = {
+    instant: jasmine.createSpy().and.callFake((key, params) => {
+      if (params) {
+        return `key: ${key}, params: ${Object.values(params).join(', ')}`;
+      }
+
+      return key;
+    }),
+  };
+
   beforeEach(() => {
     menuStateServiceMock.currentHomeMenuItem = new MenuItemLinkMock();
 
     TestBed.configureTestingModule({
-      declarations: [ErrorPageComponent],
+      declarations: [ErrorPageComponent, TranslatePipeMock],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
+        { provide: TranslateService, useValue: translateServiceMock },
       ],
       imports: [TranslateModule.forRoot()],
     });
 
     fixture = TestBed.createComponent(ErrorPageComponent);
-    menuStateServiceMock = TestBed.get(MenuStateService);
+    menuStateServiceMock = TestBed.inject(MenuStateService);
     de = fixture.debugElement;
 
     component = fixture.componentInstance;
@@ -92,16 +116,10 @@ describe('ErrorPageComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should show the error code', () => {
-      const codeEl = de.query(By.css('.error-code'));
-
-      expect(codeEl.nativeElement.textContent).toBe('404');
-    });
-
-    it('should show the error message', () => {
+    it('should show the error message with error code', () => {
       const messageEl = de.query(By.css('.error-message'));
 
-      expect(messageEl.nativeElement.textContent).toBe('Some error');
+      expect(messageEl.nativeElement.textContent).toBe('key: ERROR_PAGE_MESSAGE, params: Some error, 404');
     });
 
     it('should show the go to home button', () => {
@@ -116,6 +134,46 @@ describe('ErrorPageComponent', () => {
       goToHomeButton.triggerEventHandler('click', {});
 
       expect(navigationServiceMock.navigateToHome).toHaveBeenCalled();
+    });
+  });
+
+  describe('when the timeout error is set', () => {
+    beforeEach(() => {
+      component.error = new TimeoutError('Some error description');
+
+      fixture.detectChanges();
+    });
+
+    it('should show the error message with error code', () => {
+      const messageEl = de.query(By.css('.error-message'));
+
+      expect(messageEl.nativeElement.textContent).toBe('key: ERROR_PAGE_MESSAGE, params: ERROR_TIMEOUT, 408');
+    });
+
+    it('should show the error description', () => {
+      const messageEl = de.query(By.css('.error-description'));
+
+      expect(messageEl.nativeElement.textContent).toBe('Some error description');
+    });
+
+    it('should hide the go to home button', () => {
+      const goToHomeButton = de.query(By.css('.go-to-home-btn'));
+
+      expect(goToHomeButton).toBeNull();
+    });
+
+    it('should show the reload button', () => {
+      const reloadPageButton = de.query(By.css('.reload-page-btn'));
+
+      expect(reloadPageButton).toBeDefined();
+    });
+
+    it('should call reload', () => {
+      const reloadPageButton = de.query(By.css('.reload-page-btn'));
+
+      reloadPageButton.triggerEventHandler('click', {});
+
+      expect(navigationServiceMock.reload).toHaveBeenCalled();
     });
   });
 });

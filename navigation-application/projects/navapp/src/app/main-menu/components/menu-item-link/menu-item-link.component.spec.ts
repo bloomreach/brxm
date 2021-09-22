@@ -15,14 +15,15 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { NavigationTrigger } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
+import { TranslateModule } from '@ngx-translate/core';
 import { NEVER } from 'rxjs';
 
-import { NavItemMock } from '../../../models/nav-item.mock';
-import { NavItem } from '../../../models/nav-item.model';
+import { NavItemMock } from '../../../models/dto/nav-item-dto.mock';
 import { NavigationService } from '../../../services/navigation.service';
 import { UrlMapperService } from '../../../services/url-mapper.service';
 
@@ -36,7 +37,7 @@ describe('MenuItemLinkComponent', () => {
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
   let mouseEventObj: jasmine.SpyObj<MouseEvent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     navigationServiceMock = jasmine.createSpyObj('NavigationService', [
       'navigateByNavItem',
       'navigateByUrl',
@@ -52,7 +53,9 @@ describe('MenuItemLinkComponent', () => {
 
     fixture = TestBed.configureTestingModule({
       imports: [
+        MatTooltipModule,
         NoopAnimationsModule,
+        TranslateModule.forRoot(),
       ],
       declarations: [MenuItemLinkComponent],
       providers: [
@@ -73,16 +76,12 @@ describe('MenuItemLinkComponent', () => {
       expect(de.classes.highlighted).toBeFalsy();
     });
 
-    it('should be disabled', () => {
-      expect(de.classes.disabled).toBeTruthy();
-    });
-
-    it('should have "qa-disabled" class', () => {
-      expect(de.classes['qa-disabled']).toBeTruthy();
-    });
-
     it('should show an empty caption', () => {
       expect(de.nativeElement.textContent.trim()).toBe('');
+    });
+
+    it('should not be failed', () => {
+      expect(de.classes.failed).toBeFalsy();
     });
 
     describe('if received a click event', () => {
@@ -112,23 +111,37 @@ describe('MenuItemLinkComponent', () => {
     expect(de.nativeElement.textContent).toContain('some caption');
   }));
 
+  describe('failed tooltip', () => {
+    it('should contain failed tooltip', fakeAsync(() => {
+      component.failed = true;
+
+      fixture.detectChanges();
+      expect(de.nativeElement.innerHTML).toContain('MENU_ITEM_TOOLTIP_FAILED_ERROR');
+    }));
+
+    it('should not contain failed tooltip if item not failed', fakeAsync(() => {
+      component.failed = false;
+
+      fixture.detectChanges();
+
+      expect(de.nativeElement.innerHTML).not.toContain('MENU_ITEM_TOOLTIP_FAILED_ERROR');
+    }));
+
+  });
+
   describe('when a nav item is set', () => {
     let navItemMock: NavItem;
     let linkEl: DebugElement;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       linkEl = de.query(By.css('a'));
 
-      navItemMock = new NavItemMock({}, NEVER, false);
+      navItemMock = new NavItemMock({});
 
       component.navItem = navItemMock;
 
       fixture.detectChanges();
     }));
-
-    it('should be disabled', () => {
-      expect(de.classes.disabled).toBeTruthy();
-    });
 
     describe('if received a click event', () => {
       beforeEach(() => {
@@ -144,25 +157,17 @@ describe('MenuItemLinkComponent', () => {
       });
     });
 
-    describe('and activated', () => {
-      beforeEach(async(() => {
-        navItemMock.activate();
+    describe('if received a click event', () => {
+      beforeEach(() => {
+        linkEl.triggerEventHandler('click', mouseEventObj);
+      });
 
-        fixture.detectChanges();
-      }));
+      it('should prevent default event handling', () => {
+        expect(mouseEventObj.preventDefault).toHaveBeenCalled();
+      });
 
-      describe('if received a click event', () => {
-        beforeEach(() => {
-          linkEl.triggerEventHandler('click', mouseEventObj);
-        });
-
-        it('should prevent default event handling', () => {
-          expect(mouseEventObj.preventDefault).toHaveBeenCalled();
-        });
-
-        it('should navigate to the nav item', () => {
-          expect(navigationServiceMock.navigateByUrl).toHaveBeenCalledWith('test', NavigationTrigger.Menu);
-        });
+      it('should navigate to the nav item', () => {
+        expect(navigationServiceMock.navigateByUrl).toHaveBeenCalledWith('test', NavigationTrigger.Menu);
       });
     });
   });

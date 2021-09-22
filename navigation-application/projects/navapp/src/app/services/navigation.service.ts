@@ -16,11 +16,10 @@
 
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
-import { catchError, filter, finalize, mapTo, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -28,12 +27,12 @@ import { AppError } from '../error-handling/models/app-error';
 import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
+import { TimeoutError } from '../error-handling/models/timeout-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
 import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
-import { NavItem } from '../models/nav-item.model';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';
@@ -48,28 +47,15 @@ interface Route {
 
 interface Navigation {
   url: string;
-  navItem: NavItem;
-  appPathAddOn: string;
-  queryStringAndHash: string;
-  state: { [key: string]: string };
+  state: Record<string, unknown>;
   source: NavigationTrigger;
-  app: ClientApp;
   replaceState: boolean;
-  resolve: () => void;
-  reject: (reason?: any) => void;
 }
-
-type Transition = Partial<Navigation>;
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService implements OnDestroy {
-
-  get navigating$(): Observable<boolean> {
-    return this.navigatingFiltered;
-  }
-
   private get basePath(): string {
     return this.appSettings.basePath;
   }
@@ -85,10 +71,8 @@ export class NavigationService implements OnDestroy {
   }
   private routes: Route[];
   private locationSubscription: Subscription;
-  private readonly transitions = new Subject<Transition | Error>();
-  private currentNavItem: NavItem;
-  private readonly navigating = new BehaviorSubject(false);
-  private readonly navigatingFiltered: Observable<boolean>;
+  private currentNavItem: NavItem | undefined;
+  private currentNavigationUrl = '';
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
@@ -110,12 +94,6 @@ export class NavigationService implements OnDestroy {
     this.connectionService
       .updateNavLocation$
       .subscribe(navLocation => this.updateByNavLocation(navLocation));
-
-    this.navigatingFiltered = this.navigating.pipe(
-      distinctUntilAccumulatorIsEmpty(),
-    );
-
-    this.setupNavigations();
   }
 
   init(navItems: NavItem[]): void {
@@ -228,194 +206,163 @@ export class NavigationService implements OnDestroy {
     }) as any;
   }
 
-  private setupNavigations(): void {
-    this.transitions.pipe(
-      switchMap((t: Transition) => this.processTransition(t).pipe(
-        catchError(error => {
-          if (typeof error === 'string') {
-            error = new InternalError(undefined, error);
-          }
-
-          return of(error);
-        }),
-        finalize(() => {
-          // Always resolve a promise (for now) to overcome consequent problems of handling promise rejection
-          // t.reject(error);
-          t.resolve();
-
-          this.busyIndicatorService.hide();
-          this.navigating.next(false);
-        }),
-      )),
-    ).subscribe((t: Navigation | Error) => {
-      if (t instanceof AppError) {
-        this.errorHandlingService.setError(t);
-
-        return;
-      }
-
-      if (t instanceof Error) {
-        this.errorHandlingService.setInternalError(undefined, t.message);
-
-        return;
-      }
-    });
-  }
-
-  private scheduleNavigation(
+  private async scheduleNavigation(
     url: string,
     source: NavigationTrigger,
-    state: { [key: string]: string } = {},
+    state: Record<string, unknown> = {},
     replaceState = false,
   ): Promise<void> {
-    let resolve: () => void;
-    let reject: () => void;
-
-    const promise = new Promise<void>((res, rej) => {
-      resolve = res;
-      reject = rej;
-    });
-
     const normalizedUrl = this.location.normalize(url);
 
-    this.transitions.next({
+    const navigation: Navigation = {
       url: normalizedUrl,
       state,
       source,
       replaceState,
-      resolve,
-      reject,
-    });
+    };
 
-    return promise;
+    await this.processNavigation(navigation);
   }
 
-  private processTransition(transition: Transition): Observable<Navigation> {
-    return of(transition).pipe(
-      // Redirect all empty urls to the home url
-      tap(t => {
-        this.logger.debug(`Navigation: initiated to the url '${t.url}'`);
-        const url = stripOffQueryStringAndHash(t.url);
+  private async processNavigation({
+    url,
+    state,
+    source,
+    replaceState,
+  }: Navigation): Promise<void> {
+    this.logger.debug(`Navigation: initiated to the url '${url}'`);
 
-        if (url === '' || url === '/') {
-          t.url = this.homeUrl;
-          this.logger.debug(`Navigation: redirected to home url '${t.url}'`);
-        }
-      }),
-      // Eagerly update the browser url
-      tap(t => {
-        if (t.source !== NavigationTrigger.PopState) {
-          this.setBrowserUrl(t.url, t.state, t.replaceState);
-        }
-      }),
-      // Resolving the url
-      switchMap((t: Transition) => {
-        const route = this.matchRoute(t.url);
+    const baseUrl = stripOffQueryStringAndHash(url);
 
-        if (!route) {
-          this.menuStateService.deactivateMenuItem();
-          this.currentNavItem = undefined;
+    if (baseUrl === '' || baseUrl === '/') {
+      url = this.homeUrl;
+      this.logger.debug(`Navigation: redirected to home url '${url}'`);
+    }
 
-          const publicDescription = this.translateService.instant('ERROR_UNKNOWN_URL', { url: t.url });
-          return throwError(new NotFoundError(publicDescription));
-        }
+    if (source !== NavigationTrigger.PopState) {
+      this.setBrowserUrl(url, state, replaceState);
+    }
 
-        const appPathAddOn = t.url.slice(route.path.length);
-        const [
-          appPathAddOnWithoutQueryStringAndHash,
-          queryStringAndHash,
-        ] = this.urlMapperService.extractPathAndQueryStringAndHash(appPathAddOn);
+    this.currentNavigationUrl = url;
 
-        return of({ ...t, navItem: route.navItem, appPathAddOn: appPathAddOnWithoutQueryStringAndHash, queryStringAndHash });
-      }),
-      // Wait for the nav app to be ready
-      switchMap(t => t.navItem.active$.pipe(
-        filter(x => x),
-        mapTo(t),
-        take(1),
-      )),
-      // Ensure the app with the found id exists and it has the connected API
-      switchMap(t => {
-        const appId = t.navItem.appIframeUrl;
-        const app = this.clientAppService.getApp(appId);
+    try {
+      const shouldContinue = await this.handleBeforeNavigation();
+      if (!shouldContinue) {
+        this.logger.debug('Navigation: Canceling navigation');
+        return;
+      }
 
-        if (!app) {
-          return throwError(new NotFoundError(
-            undefined,
-            `There is no app with id="${appId}"`,
-          ));
-        }
+      const route = this.resolveRoute(url);
+      const appId = route.navItem.appIframeUrl;
 
-        if (!app.api) {
-          return throwError(new InternalError(
-            undefined,
-            `The app with id="${appId}" is not connected to the nav app`,
-          ));
-        }
+      this.busyIndicatorService.show();
 
-        return of({ ...t, app });
-      }),
-      // Process beforeNavigation
-      switchMap(t => {
-        if (!t.app.api.beforeNavigation) {
-          return of(t);
-        }
+      this.currentNavItem = route.navItem;
+      this.menuStateService.activateMenuItem(this.currentNavItem.appIframeUrl, this.currentNavItem.appPath);
+      this.breadcrumbsService.setSuffix(state.breadcrumbLabel as string);
 
-        this.logger.debug(`Navigation: beforeNavigation() is called for '${t.app.url}'`);
+      await this.clientAppService.initiateClientApp(appId);
 
-        return from(t.app.api.beforeNavigation()).pipe(
-          tap(allowedToContinue => {
-            if (allowedToContinue) {
-              this.logger.debug(`Navigation: beforeNavigation() call is succeeded for '${t.app.url}'`);
-              return;
-            }
-
-            this.logger.debug(`Navigation: beforeNavigation() call is cancelled for '${t.app.url}'`);
-          }),
-          switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
-        );
-      }),
-      tap(() => {
-        this.busyIndicatorService.show();
-        this.navigating.next(true);
-      }),
-      // Eagerly update the menu and the breadcrumb label
-      tap(t => {
-        const { breadcrumbLabel } = t.state;
-
-        this.currentNavItem = t.navItem;
-        this.menuStateService.activateMenuItem(t.navItem.appIframeUrl, t.navItem.appPath);
-        this.breadcrumbsService.setSuffix(breadcrumbLabel);
-      }),
-      // Activate the app
-      tap(t => {
-        const appId = t.navItem.appIframeUrl;
-
+      if (this.currentNavigationUrl === url) {
         this.clientAppService.activateApplication(appId);
-      }),
-      // Process navigation
-      switchMap((t: Transition) => {
-        const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn) + t.queryStringAndHash;
-        const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
-        const appPathPrefix = new URL(t.navItem.appIframeUrl).pathname;
-        const location = {
-          pathPrefix: appPathPrefix,
-          path: appPathWithoutLeadingSlash,
-        };
+        await this.navigate(url, route, source);
+      }
+    } catch (error) {
+      if (this.currentNavigationUrl === url) {
+        if (error instanceof TimeoutError) {
+          this.menuStateService.markMenuItemAsFailed(this.currentNavItem);
+        }
 
-        this.logger.debug(`Navigation: navigate() is called for '${t.app.url}'`, {
-          location,
-          source: t.source,
-        });
+        this.setAppError(error);
+      }
+    } finally {
+      this.busyIndicatorService.hide();
+    }
+  }
 
-        const navigationPromise = t.app.api.navigate(location, t.source);
+  private resolveRoute(url: string): Route {
+    const route = this.matchRoute(url);
 
-        return from(navigationPromise).pipe(
-          mapTo(t as Navigation),
-          tap(x => this.logger.debug(`Navigation: navigate() call is succeeded for '${x.app.url}'`)),
-        );
-      }),
-    ) as Observable<Navigation>;
+    if (!route) {
+      this.menuStateService.deactivateMenuItem();
+      this.currentNavItem = undefined;
+
+      const publicDescription = this.translateService.instant('ERROR_UNKNOWN_URL', { url });
+      throw new NotFoundError(publicDescription);
+    }
+
+    return route;
+  }
+
+  private async getClientApp(url: string): Promise<ClientApp> {
+    // Ensure the app with the found id exists and it has the connected API
+    const app = this.clientAppService.getApp(url);
+
+    if (!app) {
+      throw new NotFoundError(
+        undefined,
+        `There is no app with id="${url}"`,
+      );
+    }
+
+    if (!app.api) {
+      throw new InternalError(
+        undefined,
+        `The app with id="${url}" is not connected to the nav app`,
+      );
+    }
+
+    return app;
+  }
+
+  private async handleBeforeNavigation(): Promise<boolean> {
+    const activeApp = this.clientAppService.activeApp;
+
+    if (activeApp && activeApp.api.beforeNavigation) {
+      this.logger.debug(`Navigation: beforeNavigation() is called for '${activeApp.url}'`);
+
+      const allowedToContinue = await activeApp.api.beforeNavigation();
+
+      if (!allowedToContinue) {
+        this.logger.debug(`Navigation: beforeNavigation() call is cancelled for '${activeApp.url}'`);
+        return false;
+      }
+
+      this.logger.debug(`Navigation: beforeNavigation() call has succeeded for '${activeApp.url}'`);
+      return true;
+    }
+
+    return true;
+  }
+
+  private async navigate(url: string, route: Route, source: NavigationTrigger): Promise<void> {
+    const appBasePath = url.slice(route.path.length);
+
+    const [
+      appPathAddOn,
+      queryStringAndHash,
+    ] = this.urlMapperService.extractPathAndQueryStringAndHash(appBasePath);
+
+    const navItem = route.navItem;
+
+    const appPath = Location.joinWithSlash(navItem.appPath, appPathAddOn) + queryStringAndHash;
+    const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
+    const appPathPrefix = new URL(navItem.appIframeUrl).pathname;
+    const location = {
+      pathPrefix: appPathPrefix,
+      path: appPathWithoutLeadingSlash,
+    };
+
+    const app = await this.getClientApp(route.navItem.appIframeUrl);
+
+    this.logger.debug(`Navigation: navigate() is called for '${app.url}'`, {
+      location,
+      source,
+    });
+
+    await app.api.navigate(location, source);
+
+    this.logger.debug(`Navigation: navigate() call has succeeded for '${app.url}'`);
   }
 
   private setBrowserUrl(url: string, state: { [key: string]: any }, replaceState = false): void {
@@ -443,5 +390,21 @@ export class NavigationService implements OnDestroy {
     }
 
     return this.routes.find(x => url.startsWith(x.path));
+  }
+
+  private setAppError(error: any): void {
+    if (error instanceof AppError) {
+      this.errorHandlingService.setError(error);
+
+      return;
+    }
+
+    if (error instanceof Error) {
+      this.errorHandlingService.setInternalError(undefined, error.message);
+
+      return;
+    }
+
+    this.errorHandlingService.setInternalError(undefined, error);
   }
 }
