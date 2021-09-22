@@ -17,23 +17,22 @@
 import { Methods } from './methods';
 import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 
-const wrapMethod = <R>(
-  method: (...arg: any[]) => R,
-  methodName: string,
-  timeout: number,
-): (...arg: any[]) => Promise<R> => (...args) => new Promise(async (resolve, reject) => {
-  const timer = setTimeout(() => {
-    reject(`${methodName} call timed out`);
-  }, timeout);
+const wrapMethod =
+  <R>(method: (...arg: any[]) => R, methodName: string, timeout: number): ((...arg: any[]) => Promise<R>) =>
+  (...args) =>
+    new Promise(async (resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(`${methodName} call timed out`);
+      }, timeout);
 
-  try {
-    const value = await method(...args);
-    clearTimeout(timer);
-    resolve(value);
-  } catch (error) {
-    reject(error);
-  }
-});
+      try {
+        const value = await method(...args);
+        clearTimeout(timer);
+        resolve(value);
+      } catch (error) {
+        reject(error);
+      }
+    });
 
 export function wrapWithTimeout<T extends Methods>(api: T, timeout = DEFAULT_COMMUNICATION_TIMEOUT): T {
   if (!timeout || timeout < 0) {
@@ -43,11 +42,7 @@ export function wrapWithTimeout<T extends Methods>(api: T, timeout = DEFAULT_COM
   const wrappedApi: T = {} as T;
 
   for (const methodName of Object.keys(api)) {
-    wrappedApi[methodName] = wrapMethod(
-      api[methodName].bind(api),
-      methodName,
-      timeout,
-    );
+    wrappedApi[methodName] = wrapMethod(api[methodName].bind(api), methodName, timeout);
   }
 
   return wrappedApi;
