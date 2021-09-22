@@ -28,7 +28,7 @@ $body-text-color: map-get($grey, "900");
 // Typography
 //
 // Font, line-height, and color for body text, headings, and more.
-$font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+$font-family: 'Open Sans', roboto, 'Helvetica Neue', sans-serif;
 $font-weight-semibold: 500;
 $font-weight-bold: 600;
 
@@ -52,12 +52,15 @@ $menu-sub-item-bg: #000010;
 $menu-text-color: rgba(255, 255, 255, .8);
 $menu-text-color-light: white;
 $menu-icon-color: rgba(255, 255, 255, .7);
+$menu-icon-highlighted-primary-color: #00b5e2;
 $menu-icon-highlighted-secondary-color: white;
 $menu-title-text-color: rgba(255, 255, 255, 1);
 $menu-pressed-text-color: #fff;
 $menu-hover-text-color: $menu-bg;
-$menu-highlighted-text-color: #00b5e2;
+$menu-highlighted-text-color: $menu-icon-highlighted-primary-color;
 $menu-drawer-menu-hover-text-color: #fff;
+$menu-failed-color: #f44336;
+$menu-failed-inactive-color: rgba($menu-failed-color, .8);
 
 $menu-arrow-height: 36px;
 $menu-arrow-bg-gradient: #303d5000, #303d50fe;

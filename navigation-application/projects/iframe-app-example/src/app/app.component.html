@@ -112,9 +112,10 @@
   <li><button (click)="navigateInternally()">history.pushState() navigation</button></li>
   <li><button (click)="navigateInternallyWithReplaceState()">history.replaceState() navigation</button></li>
   <li><button (click)="reloadPage()">Reload</button></li>
+  <li><button (click)="toggleConfirm()">Toggle confirm navigation: {{ shouldConfirm }}</button></li>
   <li>
-    <button (click)="updateSelectedSite({ siteId: 4, accountId: 1})">
-      Update selected site to the www.company.com Europe site
+    <button (click)="updateSelectedSite({ siteId: -1, accountId: 8})">
+      Update selected site to the myapp.com site
     </button>
   </li>
 </ul>

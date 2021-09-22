@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { first, take } from 'rxjs/operators';
 
-import { NavItemMock } from '../../models/nav-item.mock';
+import { NavItemMock } from '../../models/dto/nav-item-dto.mock';
 import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -91,7 +91,7 @@ describe('MenuStateService', () => {
       ],
     });
 
-    service = TestBed.get(MenuStateService);
+    service = TestBed.inject(MenuStateService);
 
     service.init(navItemsMock);
   });
@@ -172,7 +172,7 @@ describe('MenuStateService', () => {
   });
 
   describe('when there is an active menu item', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
     }));
 
@@ -200,6 +200,71 @@ describe('MenuStateService', () => {
       const actual = service.isMenuItemHighlighted(builtMenuMock[0]);
 
       expect(actual).toBeFalsy();
+    });
+  });
+
+  describe('when active menu item is failed', () => {
+    beforeEach(waitForAsync(() => {
+      service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
+      service.markMenuItemAsFailed(new NavItemMock({
+        id: 'nav-item-2',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      }));
+    }));
+
+    afterEach(() => {
+      navItemService.findNavItem.and.callFake(() => ({
+        id: 'nav-item-2',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      }));
+    });
+
+    it('should do nothing if navigation item is undefined', () => {
+      const navItem = undefined;
+
+      expect(() => service.markMenuItemAsFailed(navItem)).not.toThrow();
+    });
+
+    it('should mark menu item as failed', () => {
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeTrue();
+    });
+
+    it('should clean failed menu item when activate current menu item', () => {
+      service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
+
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeFalse();
+    });
+
+    it('should keep failed menu item if activate another menu item but on the same iframe', () => {
+      navItemService.findNavItem.and.callFake(() => ({
+        id: 'nav-item-1',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/home',
+      }));
+      service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/home');
+
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeTrue();
+    });
+
+    it('should keep failed menu item if activate another menu item in another iframe', () => {
+      navItemService.findNavItem.and.callFake(() => ({
+        id: 'nav-item-3',
+        appIframeUrl: 'http://domain.com/iframe2/url',
+        appPath: 'app/path/to/home',
+      }));
+      service.activateMenuItem('http://domain.com/iframe2/url', 'app/path/to/home');
+
+      const failed = service.isMenuItemFailed(builtMenuMock[0].children[1]);
+
+      expect(failed).toBeTrue();
     });
   });
 });

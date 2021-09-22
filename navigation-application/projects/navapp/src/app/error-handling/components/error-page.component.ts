@@ -16,10 +16,12 @@
 
 import { Component, Input } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
+import { TranslateService } from '@ngx-translate/core';
 
 import { MenuStateService } from '../../main-menu/services/menu-state.service';
 import { NavigationService } from '../../services/navigation.service';
 import { AppError } from '../models/app-error';
+import { AppErrorCodes } from '../models/app-error-codes';
 import { CriticalError } from '../models/critical-error';
 
 @Component({
@@ -34,13 +36,28 @@ export class ErrorPageComponent {
   constructor(
     private readonly navigationService: NavigationService,
     private readonly menuStateService: MenuStateService,
+    private readonly translateService: TranslateService,
   ) {}
 
+  get errorMessage(): string {
+    const message = this.error.message || this.translateService.instant('ERROR_PAGE_DEFAULT_ERROR');
+    const code = this.error.code || 500;
+
+    return this.translateService.instant('ERROR_PAGE_MESSAGE', { message, code });
+  }
   get isGoToHomeButtonVisible(): boolean {
-    return !(this.error instanceof CriticalError) && !!this.menuStateService.currentHomeMenuItem;
+    return !(this.error instanceof CriticalError) && !!this.menuStateService.currentHomeMenuItem && !this.isReloadButtonVisible;
+  }
+
+  get isReloadButtonVisible(): boolean {
+    return (this.error instanceof AppError) && this.error.code === AppErrorCodes.Timeout;
   }
 
   navigateToHome(): void {
     this.navigationService.navigateToHome(NavigationTrigger.NotDefined);
+  }
+
+  reloadPage(): void {
+    this.navigationService.reload();
   }
 }

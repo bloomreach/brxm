@@ -17,4 +17,5 @@
 export enum AppErrorCodes {
   NotFound = 404,
   Internal = 500,
+  Timeout = 408,
 }

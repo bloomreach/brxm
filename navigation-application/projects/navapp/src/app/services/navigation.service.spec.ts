@@ -15,22 +15,24 @@
  */
 
 import { Location, PopStateEvent } from '@angular/common';
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
+import { fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { of, Subject } from 'rxjs';
+import { of, Subject, SubscriptionLike } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { AppError } from '../error-handling/models/app-error';
+import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
+import { TimeoutError } from '../error-handling/models/timeout-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
-import { NavItemMock } from '../models/nav-item.mock';
-import { NavItem } from '../models/nav-item.model';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';
@@ -96,25 +98,32 @@ describe('NavigationService', () => {
       'replaceState',
       'go',
     ]);
-    locationMock.normalize.and.callFake(x => x.replace('/#', '#'));
+    locationMock.normalize.and.callFake((x: string) => x.replace('/#', '#'));
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
-    locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
+    locationMock.subscribe.and.callFake((cb: any) => locationChangeFunction = cb);
 
     childApi = jasmine.createSpyObj('ChildApi', {
       beforeNavigation: Promise.resolve(true),
       navigate: Promise.resolve(),
     });
 
-    clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
-      getApp: new ClientAppMock({
-        api: childApi,
-      }),
-      activateApplication: undefined,
+    const clientApp1 = new ClientAppMock({
+      api: childApi,
     });
+
+    clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
+      getApp: clientApp1,
+      activateApplication: undefined,
+      initiateClientApp: Promise.resolve(true),
+    });
+
+    (clientAppServiceMock as any).activeApp = clientApp1;
+    (clientAppServiceMock as any).apps = [clientApp1];
 
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'activateMenuItem',
       'deactivateMenuItem',
+      'markMenuItemAsFailed',
     ]);
     (menuStateServiceMock as any).currentHomeMenuItem = {
       navItem: {
@@ -180,8 +189,8 @@ describe('NavigationService', () => {
       ],
     });
 
-    service = TestBed.get(NavigationService);
-    appSettingsMock = TestBed.get(APP_SETTINGS);
+    service = TestBed.inject(NavigationService);
+    appSettingsMock = TestBed.inject(APP_SETTINGS);
 
     service.init(navItemsMock);
   });
@@ -309,12 +318,13 @@ describe('NavigationService', () => {
       childApi.navigate.calls.reset();
     }));
 
-    it('should be called before the navigate method', () => {
+    it('should be called before the navigate method', fakeAsync(() => {
       service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+      tick();
 
       expect(childApi.beforeNavigation).toHaveBeenCalled();
       expect(childApi.navigate).not.toHaveBeenCalled();
-    });
+    }));
 
     it('should proceed to the navigate method invocation if "true" is returned', fakeAsync(() => {
       service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
@@ -350,38 +360,19 @@ describe('NavigationService', () => {
   });
 
   describe('nav item', () => {
-    let navItemActive$: Subject<boolean>;
-
-    beforeEach(() => {
-      navItemActive$ = new Subject<boolean>();
-
+    beforeEach(fakeAsync(() => {
       const navItemMock: NavItem = {
         id: 'item1',
         appIframeUrl: 'http://domain.com/iframe1/url',
         appPath: 'app/path/to/home',
-        active$: navItemActive$,
       } as any;
 
       service.init([navItemMock]);
       service.initialNavigation();
-    });
+      tick();
+    }));
 
-    it('should not proceed the navigation process while nav item is not ready', () => {
-      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
-      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
-    });
-
-    it('should not proceed the navigation process if active$ emitted "false"', () => {
-      navItemActive$.next(false);
-
-      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
-      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
-    });
-
-    it('should proceed the navigation process when nav item is ready', () => {
-      navItemActive$.next(true);
-      navItemActive$.complete();
-
+    it('should proceed the navigation process', () => {
       expect(clientAppServiceMock.getApp).toHaveBeenCalled();
       expect(childApi.beforeNavigation).toHaveBeenCalled();
     });
@@ -417,13 +408,13 @@ describe('NavigationService', () => {
       );
     }));
 
-    it('should activate the app before ChildApi.navigate() is called and activated even in a case of the error', async(() => {
+    it('should activate the app before ChildApi.navigate() is called and activated even in a case of the error', waitForAsync(() => {
       const navItem = new NavItemMock({
         appIframeUrl: 'http://domain.com/iframe1/url',
         appPath: 'app/path/to/page1',
       });
 
-      childApi.navigate.and.returnValue(new Promise(r => {
+      childApi.navigate.and.returnValue(new Promise<void>(r => {
         expect(clientAppServiceMock.activateApplication).toHaveBeenCalledWith('http://domain.com/iframe1/url');
 
         r();
@@ -432,15 +423,16 @@ describe('NavigationService', () => {
       service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
     }));
 
-    it('should navigate to the home page', () => {
+    it('should navigate to the home page', fakeAsync(() => {
       service.navigateToHome(NavigationTrigger.FastTravel);
+      tick();
 
       expect(locationMock.go).toHaveBeenCalledWith(
         `${basePath}/iframe1/url/app/path/to/home`,
         '',
         {},
       );
-    });
+    }));
 
     it('should update browser url when updateByNavLocation is called', fakeAsync(() => {
       urlMapperServiceMock.mapNavLocationToBrowserUrl.and.returnValue([
@@ -554,7 +546,7 @@ describe('NavigationService', () => {
     }));
 
     describe('reload', () => {
-      it('should should reload the current route', async () => {
+      it('should reload the current route', async () => {
         locationMock.path.and.returnValue(`${basePath}/iframe2/url/another/app/path/to/home`);
         locationMock.isCurrentPathEqualTo.and.returnValue(true);
 
@@ -637,10 +629,12 @@ describe('NavigationService', () => {
         childApi.navigate.and.callFake(() => Promise.reject(new Error('Some error')));
       });
 
-      it('should update the browser\'s url before any errors are thrown (before resolving an active route)', () => {
+      it('should update the browser\'s url before any errors are thrown (before resolving an active route)', fakeAsync(() => {
         const expectedError = new NotFoundError();
 
         service.navigateByNavItem(invalidNavItem, NavigationTrigger.NotDefined);
+
+        tick();
 
         expect(locationMock.go).toHaveBeenCalledWith(
           '/base-path/some/unknown/url/app/path/to/other-page',
@@ -648,7 +642,7 @@ describe('NavigationService', () => {
           {},
         );
         expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
-      });
+      }));
 
       it('should activate the new appropriate menu item before calling childApi.navigate()', fakeAsync(() => {
         service.navigateByNavItem(validNavItem, NavigationTrigger.NotDefined);
@@ -678,15 +672,17 @@ describe('NavigationService', () => {
         expect(errorHandlingServiceMock.clearError).toHaveBeenCalled();
       }));
 
-      it('should translate the public error message if there is an unknown url', () => {
+      it('should translate the public error message if there is an unknown url', fakeAsync(() => {
         const badNavItem = new NavItemMock({
           appIframeUrl: 'https://unknown-url.com/unknown/path',
         });
 
         service.navigateByNavItem(badNavItem, NavigationTrigger.NotDefined);
 
+        tick();
+
         expect(translateServiceMock.instant).toHaveBeenCalledWith('ERROR_UNKNOWN_URL', { url: '/base-path/unknown/path/testPath' });
-      });
+      }));
 
       it('should throw an error if the url provided is not recognizable', fakeAsync(() => {
         const expectedError = new NotFoundError('translated text');
@@ -745,6 +741,78 @@ describe('NavigationService', () => {
         );
       });
 
+      describe('highlight menu item', () => {
+        it('should mark menu item as failed if timeout error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new TimeoutError('Timeout error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).toHaveBeenCalledWith(new NavItemMock({
+            id: 'item2',
+            displayName: 'testDisplayName',
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          }));
+        });
+
+        it('should not mark menu item as failed if critical error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new CriticalError('Critical error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
+
+        it('should not mark menu item as failed if internal error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new InternalError('Internal error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
+
+        it('should not mark menu item as failed if application error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new AppError(42, 'Application error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
+
+        it('should not mark menu item as failed if not found error happened', async () => {
+          const navItemToNavigate = new NavItemMock({
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          });
+
+          clientAppServiceMock.initiateClientApp.and.callFake(() => { throw new NotFoundError('Not found error'); });
+
+          await service.navigateByNavItem(navItemToNavigate, NavigationTrigger.Menu);
+
+          expect(menuStateServiceMock.markMenuItemAsFailed).not.toHaveBeenCalled();
+        });
+      });
+
       describe('of client apps', () => {
         const navItemToNavigate = new NavItemMock({
           appIframeUrl: 'http://domain.com/iframe1/url',
@@ -787,7 +855,7 @@ describe('NavigationService', () => {
 
           tick();
 
-          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 't.app.api.navigate is not a function');
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, jasmine.stringMatching('is not a function'));
         }));
       });
     });
@@ -800,7 +868,7 @@ describe('NavigationService', () => {
 
       let beforeNavigationResolve: (value: boolean) => void;
       let beforeNavigationReject: (reason?: any) => void;
-      let navigateResolve: () => void;
+      let navigateResolve: (value?: unknown) => void;
       let navigateReject: () => void;
 
       beforeEach(fakeAsync(() => {
@@ -824,10 +892,10 @@ describe('NavigationService', () => {
       }));
 
       describe('when beforeNavigation() returned "true"', () => {
-        beforeEach(async(() => {
-          service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
-
+        beforeEach(fakeAsync(() => {
           beforeNavigationResolve(true);
+          service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+          tick();
         }));
 
         it('should be shown', () => {
@@ -884,7 +952,7 @@ describe('NavigationService', () => {
         appPath: 'app/path/to/page1',
       });
 
-      beforeEach(async(() => {
+      beforeEach(waitForAsync(() => {
         loggerMock.debug.calls.reset();
 
         service.navigateByNavItem(navItemToNavigate, NavigationTrigger.NotDefined);
@@ -898,8 +966,8 @@ describe('NavigationService', () => {
         expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() is called for \'testClientApp\'');
       });
 
-      it('should log beforeNavigation() call is succeeded', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() call is succeeded for \'testClientApp\'');
+      it('should log beforeNavigation() call has succeeded', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() call has succeeded for \'testClientApp\'');
       });
 
       it('should log navigate() is called', () => {
@@ -912,8 +980,8 @@ describe('NavigationService', () => {
         });
       });
 
-      it('should log navigate() call is succeeded', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: navigate() call is succeeded for \'testClientApp\'');
+      it('should log navigate() call has succeeded', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: navigate() call has succeeded for \'testClientApp\'');
       });
     });
   });

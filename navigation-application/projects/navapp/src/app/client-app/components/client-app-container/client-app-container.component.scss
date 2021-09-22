@@ -18,14 +18,3 @@
   display: grid;
   position: relative;
 }
-
-.backdrop {
-  background-color: white;
-  bottom: 0;
-  left: 0;
-  opacity: .3;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 31;
-}

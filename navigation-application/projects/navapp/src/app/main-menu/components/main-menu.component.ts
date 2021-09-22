@@ -123,12 +123,8 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
     return this.menuStateService.isMenuItemHighlighted(item);
   }
 
-  isMenuItemDisabled(item: MenuItem): boolean {
-    if (item instanceof MenuItemLink) {
-      return !item.navItem.active;
-    }
-
-    return false;
+  isMenuItemFailed(item: MenuItem): boolean {
+    return this.menuStateService.isMenuItemFailed(item);
   }
 
   getQaClass(item: MenuItem | string): string {

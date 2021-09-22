@@ -16,10 +16,9 @@
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { NavigationService } from '../../../services/navigation.service';
 import { ClientAppService } from '../../services/client-app.service';
 import { ClientAppComponent } from '../client-app/client-app.component';
 
@@ -46,8 +45,7 @@ import { ClientAppComponent } from '../client-app/client-app.component';
   ],
 })
 export class ClientAppContainerComponent implements OnInit, OnDestroy {
-  private readonly unsubscribe = new Subject();
-
+  unsubscribe = new Subject<void>();
   urls: string[] = [];
 
   @ViewChildren(ClientAppComponent)
@@ -55,18 +53,16 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly clientAppService: ClientAppService,
-    private readonly navigationService: NavigationService,
     private readonly cd: ChangeDetectorRef,
   ) {}
 
-  get isNavigating$(): Observable<boolean> {
-    return this.navigationService.navigating$;
-  }
-
   ngOnInit(): void {
     this.clientAppService.urls$
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(urls => this.updateClientApps(urls));
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(urls => {
+      this.urls = urls;
+      this.cd.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {
@@ -74,24 +70,15 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
+  get isLoaderShowed(): boolean {
+    const allAppAreInactive = !this.urls.some(url => this.isActive(url));
+
+    return allAppAreInactive;
+  }
+
   isActive(appURL: string): boolean {
     const activeApp = this.clientAppService.activeApp;
 
     return activeApp ? activeApp.url === appURL : false;
-  }
-
-  private updateClientApps(urls: string[]): void {
-    const isInitialUpdate = this.urls.length === 0;
-    this.urls = urls;
-
-    this.cd.detectChanges();
-
-    if (isInitialUpdate) {
-      return;
-    }
-
-    const alreadyConnectedAppUrls = this.clientAppService.apps.map(x => x.url);
-
-    this.clientAppComponents.filter(x => !alreadyConnectedAppUrls.includes(x.url)).forEach(x => x.reloadAndConnect());
   }
 }
