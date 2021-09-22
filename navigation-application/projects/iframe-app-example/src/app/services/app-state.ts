@@ -19,7 +19,7 @@ import { Injectable } from '@angular/core';
 import { NavigationTrigger, NavLocation, SiteId } from '@bloomreach/navapp-communication';
 import { CookieService } from 'ngx-cookie-service';
 
-import sites from '../../assets/sites.json';
+import sitesJson from '../../assets/sites.json';
 
 const SITE_COOKIE_NAME = 'EXAMPLE_APP_SITE_ID';
 
@@ -38,32 +38,39 @@ export class AppState {
   historyPushStateCount = 0;
   historyReplaceStateCount = 0;
   generateAnErrorUponLogout = false;
+  shouldAskBeforeNavigation = false;
+  private localSiteId: SiteId;
+  private readonly sites: SiteId[] = sitesJson;
 
   constructor(
     private readonly location: Location,
     private readonly cookiesService: CookieService,
-  ) {}
+  ) { }
 
   get isBrSmMock(): boolean {
     return this.location.path().startsWith('/brsm');
   }
 
   get selectedSiteId(): SiteId {
-    let [accountId, siteId] = this.cookiesService.get(SITE_COOKIE_NAME).split(',').map(x => +x);
+    const cookieString = this.cookiesService.get(SITE_COOKIE_NAME);
 
-    if (!accountId || !siteId) {
-      const firstSite = sites[0];
-
-      accountId = firstSite.accountId;
-      siteId = firstSite.siteId;
-
-      this.selectedSiteId = { accountId, siteId };
+    if (!cookieString) {
+      const defaultSite = this.sites[0];
+      this.selectedSiteId = defaultSite;
+      return defaultSite;
     }
 
+    const [accountId, siteId] = cookieString.split(',').map(x => +x);
     return { accountId, siteId };
   }
 
   set selectedSiteId(value: SiteId) {
+    this.localSiteId = value;
     this.cookiesService.set(SITE_COOKIE_NAME, `${value.accountId},${value.siteId}`);
+  }
+
+  isLocalSiteIdOutOfDate(): boolean {
+    return this.localSiteId.accountId !== this.selectedSiteId.accountId ||
+      this.localSiteId.siteId !== this.selectedSiteId.siteId;
   }
 }

@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -25,6 +25,7 @@ import { AppError } from '../models/app-error';
 import { CriticalError } from '../models/critical-error';
 import { InternalError } from '../models/internal-error';
 import { NotFoundError } from '../models/not-found-error';
+import { TimeoutError } from '../models/timeout-error';
 
 @Injectable()
 export class ErrorHandlingService {
@@ -74,6 +75,10 @@ export class ErrorHandlingService {
 
   setInternalError(publicDescription?: string, internalDescription?: string): void {
     this.error = new InternalError(publicDescription, internalDescription);
+  }
+
+  setTimeoutError(publicDescription?: string, internalDescription?: string): void {
+    this.error = new TimeoutError(publicDescription, internalDescription);
   }
 
   setClientError(errorCode: ClientErrorCodes, message?: string, errorType?: string): void {

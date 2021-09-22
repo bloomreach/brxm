@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import { NavItem } from '@bloomreach/navapp-communication';
+@import './mat-variables.scss';
 
-export class NavItemMock implements NavItem {
-  id = 'testNavItemId';
-  displayName = 'testDisplayName';
-  appIframeUrl = 'https://test.url';
-  appPath = 'testPath';
+.mat-stroked-button:not(.mat-button-disabled) {
+  &.mat-primary {
+    border-color: map-get($hippo-primary, 500);
+  }
 
-  constructor(initObject = {}) {
-    Object.keys(initObject).forEach(key => {
-      this[key] = initObject[key];
-    });
+  &.mat-primary:focus {
+    box-shadow: 0 0 0 2px map-get($hippo-primary, 100);
   }
 }

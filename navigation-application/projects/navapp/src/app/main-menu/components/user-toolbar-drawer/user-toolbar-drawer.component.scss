@@ -62,10 +62,4 @@
   &:hover {
     color: $menu-text-color-light;
   }
-
-  &.disabled {
-    cursor: default;
-    opacity: .5;
-    pointer-events: none;
-  }
 }

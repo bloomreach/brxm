@@ -15,12 +15,13 @@
  */
 
 module.exports = (targetOptions, indexHtml) => {
-  const searchString = 'loader.js';
-  const closingString = '" type="module"></script>\n';
-  const startIndex = indexHtml.indexOf(searchString) + searchString.length;
-  const endIndex = indexHtml.indexOf('</body>');
-  const firstPart = indexHtml.slice(0, startIndex);
-  const lastPart = indexHtml.slice(endIndex);
-  const indexWithoutInjectedScripts = firstPart.concat(closingString).concat(lastPart);
-  return indexWithoutInjectedScripts;
+  // Match a link to a css file
+  const ngStyle = /<link .*css">/;
+
+  // Match scripts section before closing body tag
+  // Capture the loader.js script and closing body tag in groups
+  const ngScripts = /(<script.+loader.js.+<\/script>)\s.*(<\/body>)/;
+
+  // Replace the injected css link and remove all angular scripts but leave the loader.js script
+  return indexHtml.replace(ngStyle, '').replace(ngScripts, '$1\n  $2');
 };

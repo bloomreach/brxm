@@ -52,6 +52,10 @@ export class CommunicationService {
       methods: childApiMethods,
     };
 
+    if (this.state.isBrSmMock) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+
     this.parentApi = await connectToParent(connectionConfig);
     this.config = await this.parentApi.getConfig();
   }

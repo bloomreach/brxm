@@ -16,7 +16,6 @@
 
 import { of } from 'rxjs';
 
-import { createSpyObj } from '../../../test-utilities';
 import { MenuStateService } from '../../main-menu/services/menu-state.service';
 
 import { BreadcrumbsService } from './breadcrumbs.service';
@@ -32,7 +31,7 @@ describe('BreadcrumbsService', () => {
    ]);
 
   beforeEach(() => {
-    menuStateService = createSpyObj([], { activePath$: activePathMock$ });
+    menuStateService = { activePath$: activePathMock$ } as MenuStateService; // TODO: used DI
 
     service = new BreadcrumbsService(menuStateService);
   });

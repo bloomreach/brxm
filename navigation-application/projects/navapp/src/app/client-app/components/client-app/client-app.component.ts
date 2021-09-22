@@ -59,15 +59,6 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
     this.connect();
   }
 
-  reloadAndConnect(): void {
-    this.reload();
-    this.connect();
-  }
-
-  private reload(): void {
-    this.iframe.nativeElement.src = this.domSanitizer.sanitize(SecurityContext.URL, this.url);
-  }
-
   private connect(): void {
     const nativeIFrame = this.iframe.nativeElement;
     const url = nativeIFrame.src;
@@ -76,7 +67,7 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
       .connectToIframe(nativeIFrame)
       .then(
         api => this.clientAppService.addConnection(new Connection(url, api)),
-        error => this.clientAppService.addConnection(new FailedConnection(url, error)),
+        error => this.clientAppService.handleFailedConnection(new FailedConnection(url, error)),
       );
   }
 }

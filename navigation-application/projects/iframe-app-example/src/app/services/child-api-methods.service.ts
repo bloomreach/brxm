@@ -70,6 +70,13 @@ export class ChildApiMethodsService {
 
         return new Promise(r => setTimeout(r, this.state.navigationDelay));
       },
+      beforeNavigation: async () => {
+        if (this.state.shouldAskBeforeNavigation) {
+          return confirm('Should I navigate?');
+        }
+
+        return true;
+      },
       logout: async () => this.state.generateAnErrorUponLogout ?
         Promise.reject(new Error('Custom logout error')) :
         Promise.resolve(),

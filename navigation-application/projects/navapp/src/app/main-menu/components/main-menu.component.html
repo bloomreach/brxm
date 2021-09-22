@@ -30,11 +30,10 @@
       <brna-top-level-menu-item *ngFor="let item of menuItems$ | async"
                                 [caption]="item.caption"
                                 [icon]="item.icon"
-                                [highlightedIcon]="item.icon  + '.highlighted'"
                                 [collapsed]="collapsed"
                                 [pressed]="item === drawerMenuItem"
                                 [highlighted]="isMenuItemHighlighted(item)"
-                                [disabled]="isMenuItemDisabled(item)"
+                                [failed]="isMenuItemFailed(item)"
                                 [ngClass]="getQaClass(item)"
                                 (menuItemClick)="onMenuItemClick(item)">
       </brna-top-level-menu-item>

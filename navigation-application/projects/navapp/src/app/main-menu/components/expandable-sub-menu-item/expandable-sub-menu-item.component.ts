@@ -78,6 +78,10 @@ export class ExpandableSubMenuItemComponent implements OnChanges {
     return this.menuStateService.isMenuItemHighlighted(item);
   }
 
+  isFailed(item: MenuItem): boolean {
+    return this.menuStateService.isMenuItemFailed(item);
+  }
+
   getQaClass(item: MenuItemLink): string {
     return this.qaHelperService.getMenuItemClass(item);
   }

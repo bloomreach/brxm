@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { async } from '@angular/core/testing';
+import { waitForAsync } from '@angular/core/testing';
 
-import { NavItemMock } from '../models/nav-item.mock';
+import { NavItemMock } from '../models/dto/nav-item-dto.mock';
 
 import { appInitializer } from './app-initializer';
 
@@ -27,7 +27,7 @@ describe('appInitializer', () => {
 
   let initialized: boolean;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     initialized = false;
 
     appInitializer(bootstrapServiceMock)().then(() => initialized = true);

@@ -52,8 +52,8 @@ describe('CommunicationService', () => {
       ],
     });
 
-    service = TestBed.get(CommunicationService);
-    stateMock = TestBed.get(AppState);
+    service = TestBed.inject(CommunicationService);
+    stateMock = TestBed.inject(AppState);
 
     return service.connect({});
   });

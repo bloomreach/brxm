@@ -15,7 +15,7 @@
  */
 
 import { TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -27,6 +27,7 @@ import { AppError } from '../models/app-error';
 import { CriticalError } from '../models/critical-error';
 import { InternalError } from '../models/internal-error';
 import { NotFoundError } from '../models/not-found-error';
+import { TimeoutError } from '../models/timeout-error';
 
 import { ErrorHandlingService } from './error-handling.service';
 
@@ -68,8 +69,8 @@ describe('ErrorHandlingService', () => {
       ],
     });
 
-    service = TestBed.get(ErrorHandlingService);
-    logger = TestBed.get(NGXLogger);
+    service = TestBed.inject(ErrorHandlingService);
+    logger = TestBed.inject(NGXLogger);
 
     spyOn(logger, 'error');
   });
@@ -90,6 +91,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -110,6 +112,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -147,6 +150,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -163,6 +167,24 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
+      expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
+    });
+  });
+
+  describe('TimeoutError', () => {
+    const expectedError = new TimeoutError('Some available to the user description', 'Description for logs');
+
+    beforeEach(() => {
+      service.setTimeoutError('Some available to the user description', 'Description for logs');
+    });
+
+    it('should be set', () => {
+      expect(service.currentError).toEqual(expectedError);
+    });
+
+    it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });
@@ -179,6 +201,7 @@ describe('ErrorHandlingService', () => {
     });
 
     it('should forward the error to logger', () => {
+      // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
     });
   });

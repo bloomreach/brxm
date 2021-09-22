@@ -15,9 +15,11 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateModule } from '@ngx-translate/core';
 import { first } from 'rxjs/operators';
 
 import { TopLevelMenuItemComponent } from './top-level-menu-item.component';
@@ -28,10 +30,12 @@ describe('TopLevelMenuItemComponent', () => {
   let de: DebugElement;
   let wrapper: DebugElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.configureTestingModule({
       imports: [
+        MatTooltipModule,
         NoopAnimationsModule,
+        TranslateModule.forRoot(),
       ],
       declarations: [TopLevelMenuItemComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -61,8 +65,8 @@ describe('TopLevelMenuItemComponent', () => {
       expect(wrapper.classes.pressed).toBeFalsy();
     });
 
-    it('should not be disabled', () => {
-      expect(de.classes.disabled).toBeFalsy();
+    it('should not be failed', () => {
+      expect(wrapper.classes.failed).toBeFalsy();
     });
 
     it('should show an empty caption', () => {
@@ -112,6 +116,34 @@ describe('TopLevelMenuItemComponent', () => {
     expect(wrapper.classes.collapsed).toBeFalsy();
   }));
 
+  it('should switch into the failed state', fakeAsync(() => {
+    component.failed = true;
+
+    fixture.detectChanges();
+
+    tick();
+
+    expect(wrapper.classes.failed).toBeTrue();
+  }));
+
+  describe('failed tooltip', () => {
+    it('should contain tooltip if failed', fakeAsync(() => {
+      component.failed = true;
+
+      fixture.detectChanges();
+
+      expect(de.nativeElement.innerHTML).toContain('MENU_ITEM_TOOLTIP_FAILED_ERROR');
+    }));
+
+    it('should not contain tooltip if not failed', fakeAsync(() => {
+      component.failed = false;
+
+      fixture.detectChanges();
+
+      expect(de.nativeElement.innerHTML).not.toContain('MENU_ITEM_TOOLTIP_FAILED_ERROR');
+    }));
+  });
+
   describe('click on the host element', () => {
     let emitted: boolean;
     let event: jasmine.SpyObj<MouseEvent>;
@@ -136,49 +168,6 @@ describe('TopLevelMenuItemComponent', () => {
 
     it('should emit menuItemClick output', () => {
       expect(emitted).toBe(true);
-    });
-  });
-
-  describe('when disabled', () => {
-    beforeEach(async(() => {
-      component.disabled = true;
-
-      fixture.detectChanges();
-    }));
-
-    it('should have "disabled" class', () => {
-      expect(de.classes.disabled).toBeTruthy();
-    });
-
-    it('should have "qa-disabled" class', () => {
-      expect(de.classes['qa-disabled']).toBeTruthy();
-    });
-
-    describe('click on the host element', () => {
-      let emitted: boolean;
-      let event: jasmine.SpyObj<MouseEvent>;
-
-      beforeEach(() => {
-        emitted = false;
-
-        component.menuItemClick.pipe(
-          first(),
-        ).subscribe(() => emitted = true);
-
-        event = jasmine.createSpyObj('MouseEvent', [
-          'stopImmediatePropagation',
-        ]);
-
-        de.triggerEventHandler('click', event);
-      });
-
-      it('should stop immediate propagation', () => {
-        expect(event.stopImmediatePropagation).toHaveBeenCalled();
-      });
-
-      it('should not emit menuItemClick output', () => {
-        expect(emitted).toBe(false);
-      });
     });
   });
 });
