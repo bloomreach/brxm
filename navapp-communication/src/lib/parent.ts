@@ -16,10 +16,7 @@
 
 import Penpal from 'penpal';
 
-import {
-  ParentApi,
-  ParentConnectConfig,
-} from './api';
+import { ParentApi, ParentConnectConfig } from './api';
 
 /**
  * Method to connect to a parent window.
@@ -27,9 +24,6 @@ import {
  * @param parentOrigin the origin should match the parent origin or a connection wont be allowed
  * @param methods the api that the child app exposes to the parent
  */
-export async function connectToParent({
-  parentOrigin,
-  methods,
-}: ParentConnectConfig): Promise<ParentApi> {
+export async function connectToParent({ parentOrigin, methods }: ParentConnectConfig): Promise<ParentApi> {
   return Penpal.connectToParent({ parentOrigin, methods }).promise;
 }
