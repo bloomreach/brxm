@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
 <svg version="1.1" id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-<path d="M40.9,4.5c2.5,0,4.5,2,4.5,4.5v31.8c0,2.5-2,4.5-4.5,4.5H9.1c-2.5,0-4.5-2-4.5-4.5V9.1c0-2.5,2-4.5,4.5-4.5
+<path class="menu-icon-boundary" d="M40.9,4.5c2.5,0,4.5,2,4.5,4.5v31.8c0,2.5-2,4.5-4.5,4.5H9.1c-2.5,0-4.5-2-4.5-4.5V9.1c0-2.5,2-4.5,4.5-4.5
 	H40.9 M40.9,0H9.1C4.1,0,0,4.1,0,9.1v31.8c0,5,4.1,9.1,9.1,9.1h31.8c5,0,9.1-4.1,9.1-9.1V9.1C50,4.1,45.9,0,40.9,0L40.9,0z"/>
 </svg>

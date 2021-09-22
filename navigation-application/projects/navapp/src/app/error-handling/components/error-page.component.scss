@@ -26,24 +26,19 @@
   top: 25%;
 }
 
-.error-code {
-  color: $brand-text-color;
-  font-size: 22px;
-  font-weight: 600;
-  padding-top: 25px;
-}
-
 .error-message {
-  font-size: 30px;
-  font-weight: 600;
-  padding-top: 20px;
+  font-size: 20px;
+  padding-top: 36px;
 }
 
 .error-description {
-  font-size: 22px;
-  padding-top: 20px;
+  font-size: 14px;
+  line-height: 20px;
+  margin: auto;
+  max-width: 400px;
+  padding-top: 16px;
 }
 
-.go-to-home-btn {
-  margin-top: 30px;
+.action-btn {
+  margin-top: 16px;
 }

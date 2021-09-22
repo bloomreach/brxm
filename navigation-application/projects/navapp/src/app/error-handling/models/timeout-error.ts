@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-import { NEVER, Observable } from 'rxjs';
+import { AppError } from './app-error';
+import { AppErrorCodes } from './app-error-codes';
 
-import { NavItem } from './nav-item.model';
+export class TimeoutError extends AppError {
+  constructor(publicDescription?: string, internalDescription?: string) {
+    super(AppErrorCodes.Timeout, 'ERROR_TIMEOUT', publicDescription, internalDescription || publicDescription);
 
-export class NavItemMock extends NavItem {
-  constructor(initObject = {}, unsubscribe: Observable<void> = NEVER, activated = true) {
-    const dto = {
-      id: 'testNavItemId',
-      displayName: 'testDisplayName',
-      appIframeUrl: 'https://test.url',
-      appPath: 'testPath',
-      ...initObject,
-    };
-
-    super(dto, unsubscribe);
-
-    if (activated) {
-      this.activate();
-    }
+    Object.setPrototypeOf(this, TimeoutError.prototype);
+    this.stack = this.getStack();
+    this.name = 'TimeoutError';
   }
 }

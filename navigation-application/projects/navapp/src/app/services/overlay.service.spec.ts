@@ -38,7 +38,7 @@ describe('OverlayService', () => {
       ],
     });
 
-    service = TestBed.get(OverlayService);
+    service = TestBed.inject(OverlayService);
   });
 
   it('should be hidden by default', () => {

@@ -188,7 +188,9 @@
               <excludes combine.children="append">
                 <exclude>.*</exclude>
                 <exclude>**/*.md</exclude>
-                <exclude>projects/navapp/**/*.svg</exclude>
+                <exclude>**/*.conf.js</exclude>
+                <exclude>**/*.config.js</exclude>
+                <exclude>**/*.svg</exclude>
                 <exclude>**/browserslist</exclude>
                 <exclude>projects/target/surefire-reports/TEST-karma.xml</exclude>
                 <!-- Generated or pulled-in files which are not cleaned up -->

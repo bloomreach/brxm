@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,5 @@
  * limitations under the License.
  */
 
-import { NavItem } from '@bloomreach/navapp-communication';
-
-export class NavItemMock implements NavItem {
-  id = 'testNavItemId';
-  displayName = 'testDisplayName';
-  appIframeUrl = 'https://test.url';
-  appPath = 'testPath';
-
-  constructor(initObject = {}) {
-    Object.keys(initObject).forEach(key => {
-      this[key] = initObject[key];
-    });
-  }
-}
+@include angular-material-theme($hippo-theme);
+@include mat-core($custom-typography);

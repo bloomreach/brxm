@@ -17,7 +17,7 @@
 @import 'variables';
 
 :host {
-  display: block;
+  display: flex;
   font-size: $menu-drawer-font-size;
   line-height: 32px;
   padding-right: 10px;
@@ -26,21 +26,27 @@
     color: $menu-highlighted-text-color;
   }
 
-  &.disabled {
-    opacity: .5;
+  &.failed .menu-item-link {
+    color: $menu-failed-inactive-color;
 
-    .menu-item-link {
-      color: $menu-text-color;
-      cursor: default;
-      font-weight: normal;
+    &:hover {
+      color: $menu-failed-color;
     }
   }
 }
 
 .menu-item-link {
   color: $menu-text-color;
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: space-between;
   text-decoration: none;
   white-space: nowrap;
+
+  .mat-icon {
+    height: 1.5em;
+    width: 1.5em;
+  }
 
   &:hover {
     color: $menu-drawer-menu-hover-text-color;

@@ -16,26 +16,6 @@
 
 @import 'variables';
 
-@mixin showNormalIcon() {
-  .mat-icon {
-    display: block;
-  }
-
-  .mat-icon.highlighted {
-    display: none;
-  }
-}
-
-@mixin showActiveIcon() {
-  .mat-icon {
-    display: none;
-  }
-
-  .mat-icon.highlighted {
-    display: block;
-  }
-}
-
 :host {
   cursor: pointer;
   display: grid;
@@ -49,24 +29,28 @@
       width: 16px;
     }
   }
-
-  &.disabled {
-    cursor: default;
-
-    .mat-icon,
-    .caption {
-      opacity: .5;
-    }
-  }
 }
 
 .menu-item {
-  @include showNormalIcon;
-
   align-items: center;
   display: grid;
   grid-template-columns: $menu-collapsed-width 1fr;
   padding-right: (2 * $menu-icon-margin);
+
+  .menu-icon {
+    display: grid;
+    position: relative;
+
+    .reload-icon {
+      background-color: $menu-bg;
+      border-radius: 50%;
+      bottom: -6px;
+      height: 19px;
+      position: absolute;
+      right: 10px;
+      width: 19px;
+    }
+  }
 
   &::before {
     background-color: $menu-highlighted-text-color;
@@ -81,8 +65,6 @@
   }
 
   &:hover {
-    @include showNormalIcon;
-
     background-color: $menu-hover-bg;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12);
 
@@ -93,8 +75,6 @@
   }
 
   &.highlighted {
-    @include showActiveIcon;
-
     &::before {
       opacity: 1;
     }
@@ -102,6 +82,11 @@
     .mat-icon {
       color: $menu-icon-highlighted-secondary-color;
       transition: color 300ms;
+
+      // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+      ::ng-deep .menu-icon-boundary {
+        fill: $menu-icon-highlighted-primary-color;
+      }
     }
 
     .caption {
@@ -109,9 +94,7 @@
       transition: color 300ms;
     }
 
-    &:hover {
-      @include showActiveIcon;
-
+    &:not(.failed):hover {
       .mat-icon,
       .caption {
         color: $menu-hover-text-color;
@@ -131,6 +114,36 @@
       .mat-icon,
       .caption {
         color: $menu-text-color;
+      }
+    }
+  }
+
+  &.failed {
+    .mat-icon {
+      color: $menu-failed-inactive-color;
+
+      // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+      ::ng-deep .menu-icon-boundary {
+        fill: $menu-failed-inactive-color;
+      }
+    }
+
+    &:hover {
+      .mat-icon {
+        color: $menu-failed-color;
+
+        // Use ::ng-deep to disables view-encapsulation because .menu-icon-boundary class located in svg
+        ::ng-deep .menu-icon-boundary {
+          fill: $menu-failed-color;
+        }
+      }
+
+      .caption {
+        color: $menu-failed-color;
+      }
+
+      .reload-icon {
+        background-color: $menu-hover-bg;
       }
     }
   }
