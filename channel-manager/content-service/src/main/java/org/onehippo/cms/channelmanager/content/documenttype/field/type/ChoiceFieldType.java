@@ -130,7 +130,7 @@ public class ChoiceFieldType extends NodeFieldType {
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to read nodes for choice type '{}'", getId(), e);
+            log.error("Failed to read nodes for choice type '{}'", getId(), e);
             throw new InternalServerErrorException();
         }
 

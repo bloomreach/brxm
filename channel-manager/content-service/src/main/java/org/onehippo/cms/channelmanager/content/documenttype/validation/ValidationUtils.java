@@ -112,7 +112,7 @@ public class ValidationUtils {
             final Node parent = draftNode.getParent();
             return new ValueContextImpl(jcrName, jcrType, jcrType, draftNode, parent, locale, timeZone);
         } catch (RepositoryException e) {
-            log.warn("Cannot create validation context for document type '{}'", jcrType, e);
+            log.error("Cannot create validation context for document type '{}'", jcrType, e);
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
     }

@@ -51,9 +51,9 @@ import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.campaign.Campaign;
 import org.onehippo.repository.campaign.VersionLabel;
+import org.onehippo.repository.campaign.VersionsMeta;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.documentworkflow.campaign.JcrVersionsMetaUtils;
-import org.onehippo.repository.campaign.VersionsMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,7 +186,7 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
 
             // now find the 'active' version
             final DocumentCampaignService documentCampaignService = HippoServiceRegistry.getService(DocumentCampaignService.class);
-            final Optional<Campaign> activeCampaign = documentCampaignService == null ? Optional.empty() : documentCampaignService.findActiveCampaign(handleNode, branchId);
+            final Optional<Campaign> activeCampaign = documentCampaignServicFe == null ? Optional.empty() : documentCampaignService.findActiveCampaign(handleNode, branchId);
 
             // truncate the number of versions to 100 but if there is a published version which is not part of the first
             // 100, set it as the 100th version to always at least have that one in the response
@@ -229,6 +229,9 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
             throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
 
         } catch (RepositoryException e) {
+            log.error(
+                    "Something went wrong during reading the version history for node : { identifier: {} }, branchId: {}, user : { id: {}}",
+                    handleId, branchId, userSession.getUserID(), e);
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
     }
@@ -275,6 +278,8 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
             throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
 
         } catch (RepositoryException | WorkflowException| RemoteException e) {
+            log.error("Something went wrong during update of revision: { identifier : {} } for user: { id: {} }"
+                    , frozenNodeId, userSession.getUserID(), e);
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
         return version;
