@@ -63,12 +63,12 @@ public class NodeFieldServiceImpl implements NodeFieldService {
 
         final FieldType fieldType = getFieldType(fieldPath, fields);
         if (fieldType.getType() == COMPOUND && !fieldType.getJcrType().equals(type)) {
-            log.warn("The compound field '{}' does not support subfields of type '{}'", fieldPath, type);
+            log.error("The compound field '{}' does not support subfields of type '{}'", fieldPath, type);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "type", "not-supported"));
         }
 
         if (fieldType.getType() == CHOICE && !((ChoiceFieldType)fieldType).getChoices().containsKey(type)) {
-            log.warn("The choice field '{}' does not support subfields of type '{}'", fieldPath, type);
+            log.error("The choice field '{}' does not support subfields of type '{}'", fieldPath, type);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "type", "not-supported"));
         }
 
@@ -79,12 +79,12 @@ public class NodeFieldServiceImpl implements NodeFieldService {
             final long numberOfFields = parent.getNodes(fieldPath.getLastSegmentName()).getSize();
 
             if (numberOfFields == fieldType.getMaxValues()) {
-                log.warn("Cannot add field '{}', the maximum amount of fields allowed is {}", fieldPath,
+                log.error("Cannot add field '{}', the maximum amount of fields allowed is {}", fieldPath,
                         fieldType.getMaxValues());
                 throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "cardinality", "max-values"));
             }
         } catch (final RepositoryException e) {
-            log.warn("An error occurred while checking the cardinality of field '{}'", fieldPath, e);
+            log.error("An error occurred while checking the cardinality of field '{}'", fieldPath, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
 
@@ -103,7 +103,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
             final long numberOfFields = parentNode.getNodes(fieldName).getSize();
 
             if (position > numberOfFields) {
-                log.warn("Failed to re-order field '{}', new position '{}' is out of bounds", fieldPath, position);
+                log.error("Failed to re-order field '{}', new position '{}' is out of bounds", fieldPath, position);
                 throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "order", "out-of-bounds"));
             }
 
@@ -139,7 +139,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
         } catch (final PathNotFoundException e) {
             throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "field", fieldPath.toString()));
         } catch (final RepositoryException e) {
-            log.warn("Failed to remove field '{}' from document '{}'", fieldPath, nodeFieldPath, e);
+            log.error("Failed to remove field '{}' from document '{}'", fieldPath, nodeFieldPath, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
     }
@@ -221,7 +221,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
 
             session.save();
         } catch (final RepositoryException e) {
-            log.warn("Failed to copy prototype '{}' to document '{}'", prototypePath, targetPath, e);
+            log.error("Failed to copy prototype '{}' to document '{}'", prototypePath, targetPath, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
     }
@@ -234,7 +234,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
         }
 
         if (fieldType.getMaxValues() > 1 && !fieldType.isMultiple()) {
-            log.warn("The field '{}' does not support multiple values but expects a maximum of {} values", fieldPath,
+            log.error("The field '{}' does not support multiple values but expects a maximum of {} values", fieldPath,
                     fieldType.getMaxValues());
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR, "fieldType", "not-multiple"));
         }
