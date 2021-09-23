@@ -103,7 +103,7 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
                 child.remove();
             }
         } catch (final RepositoryException e) {
-            log.warn("Failed to write {} field '{}'", getType(), valueName, e);
+            log.error("Failed to write {} field '{}'", getType(), valueName, e);
             throw new InternalServerErrorException();
         }
     }
@@ -197,7 +197,7 @@ public abstract class NodeFieldType extends AbstractFieldType implements BaseFie
 
             return violationCount;
         } catch (final RepositoryException e) {
-            log.warn("Failed to validate {} field '{}'", getType(), valueName, e);
+            log.error("Failed to validate {} field '{}'", getType(), valueName, e);
             throw new InternalServerErrorException();
         }
     }

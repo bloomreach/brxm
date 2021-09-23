@@ -63,7 +63,7 @@ public class FolderUtils {
         try {
             return parentNode.hasNode(name);
         } catch (final RepositoryException e) {
-            log.warn("Failed to check whether node '{}' exists below '{}'", name, JcrUtils.getNodePathQuietly(parentNode), e);
+            log.error("Failed to check whether node '{}' exists below '{}'", name, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
     }
@@ -82,7 +82,7 @@ public class FolderUtils {
             }
             return false;
         } catch (final RepositoryException e) {
-            log.warn("Failed to check whether a node with display name '{}' exists below '{}'",
+            log.error("Failed to check whether a node with display name '{}' exists below '{}'",
                     displayName, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
@@ -114,7 +114,7 @@ public class FolderUtils {
             }
             return getExistingFolder(absPath, session);
         } catch (final RepositoryException e) {
-            log.warn("Failed to get folder '{}'", absPath, e);
+            log.error("Failed to get folder '{}'", absPath, e);
             throw new InternalServerErrorException();
         }
     }
@@ -126,7 +126,7 @@ public class FolderUtils {
             log.warn("Cannot get folder of document handle '{}': it does not have a parent", JcrUtils.getNodePathQuietly(documentHandle));
             throw new NotFoundException();
         } catch (final RepositoryException e) {
-            log.warn("Failed to get folder of document handle '{}'", JcrUtils.getNodePathQuietly(documentHandle), e);
+            log.error("Failed to get folder of document handle '{}'", JcrUtils.getNodePathQuietly(documentHandle), e);
             throw new InternalServerErrorException();
         }
     }
@@ -139,7 +139,7 @@ public class FolderUtils {
                 return createFolder(parentFolder, relPath, session, folderTemplateQuery);
             }
         } catch (final RepositoryException e) {
-            log.warn("Failed to get or create folder '{}' below '{}'", relPath, JcrUtils.getNodePathQuietly(parentFolder), e);
+            log.error("Failed to get or create folder '{}' below '{}'", relPath, JcrUtils.getNodePathQuietly(parentFolder), e);
             throw new InternalServerErrorException();
         }
     }
@@ -208,7 +208,7 @@ public class FolderUtils {
                 return createFolderFromParent(name, parentNode, folderWorkflow);
             }
         } else {
-            log.warn("Failed to create folder '{}': workflow 'internal' of node '{}' has type {},"
+            log.error("Failed to create folder '{}': workflow 'internal' of node '{}' has type {},"
                             + " which is not an instance of FolderWorkflow",
                     name, JcrUtils.getNodePathQuietly(parentNode), workflow.getClass().getCanonicalName());
             throw new InternalServerErrorException();
@@ -227,7 +227,7 @@ public class FolderUtils {
             final Session session = parentNode.getSession();
             return session.getNode(newNodePath);
         } catch (WorkflowException | RemoteException e) {
-            log.warn("Failed to execute 'add' with template query '{}', type '{}' and relPath '{}' in folder workflow {}",
+            log.error("Failed to execute 'add' with template query '{}', type '{}' and relPath '{}' in folder workflow {}",
                     folderTemplateQuery, parentNodeType, parentNode, workflow.getClass().getCanonicalName(), e);
             throw new InternalServerErrorException();
         }
@@ -246,7 +246,7 @@ public class FolderUtils {
             copyFolderTypes(parentNode, newFolder);
             return newFolder;
         } catch (RemoteException | WorkflowException e) {
-            log.warn("Failed to execute 'add' with category '{}', type '{}' and relPath '{}' in folder workflow {}",
+            log.error("Failed to execute 'add' with category '{}', type '{}' and relPath '{}' in folder workflow {}",
                     category, parentNodeType, name, workflow.getClass().getCanonicalName(), e);
             throw new InternalServerErrorException();
         }
