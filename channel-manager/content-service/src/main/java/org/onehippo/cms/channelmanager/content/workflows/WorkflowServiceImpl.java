@@ -106,11 +106,11 @@ public class WorkflowServiceImpl implements WorkflowService {
                     version(branchId, documentWorkflow, version);
                     break;
                 default:
-                    log.warn("Document workflow action '{}' is not implemented", action);
+                    log.error("Document workflow action '{}' is not implemented", action);
                     throw new InternalServerErrorException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_IMPLEMENTED));
             }
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to execute workflow action '{}' on document '{}'", action, uuid, e);
+            log.error("Failed to execute workflow action '{}' on document '{}'", action, uuid, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -153,7 +153,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                     documentWorkflow.labelVersion(frozenNodeId, v.getLabel());
                 }
             } catch (Exception e) {
-                log.warn("Unexpected error when setting campaign or label.", e);
+                log.error("Unexpected error when setting campaign or label.", e);
                 throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
             }
         });
@@ -174,12 +174,12 @@ public class WorkflowServiceImpl implements WorkflowService {
             if (nodeIterator.hasNext()) {
                 requestNode = nodeIterator.nextNode();
                 if (nodeIterator.hasNext()) {
-                    log.warn("Multiple request nodes found for '{}'. This situation is not supported.", handle.getIdentifier());
+                    log.error("Multiple request nodes found for '{}'. This situation is not supported.", handle.getIdentifier());
                     throw new InternalServerErrorException(new ErrorInfo(Reason.MULTIPLE_REQUESTS));
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Unexpected error when reading request child nodes.", e);
+            log.error("Unexpected error when reading request child nodes.", e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
         return requestNode;
@@ -190,7 +190,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             try {
                 return !EditingUtils.isRequestActionAvailable(action, requestNode.getIdentifier(), hints);
             } catch (RepositoryException e) {
-                log.warn("Unexpected error when retrieving node identifier.", e);
+                log.error("Unexpected error when retrieving node identifier.", e);
                 throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
             }
         } else {
@@ -210,7 +210,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         try {
             return node.getIdentifier();
         } catch (RepositoryException e) {
-            log.warn("Unexpected error when retrieving node identifier.", e);
+            log.error("Unexpected error when retrieving node identifier.", e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -228,7 +228,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             final Map<String, Serializable> hints = documentWorkflow.hints(branchId);
 
             if (!EditingUtils.isActionAvailable("restoreVersionToBranch", hints)) {
-                log.info("Workflow action '{}' is not available for document '{}' and frozen node id",
+                log.info("Workflow action '{}' is not available for document '{}' and frozen node id '{}'",
                         "restoreVersionToBranch", uuid, frozenNodeId);
                 throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
             }
@@ -278,7 +278,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
             throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.VERSION_DOES_NOT_EXIST));
         } catch (RepositoryException | RemoteException | WorkflowException e) {
-            log.warn("Failed to execute workflow action 'restoreVersionToBranch' on document '{}' for version id",
+            log.error("Failed to execute workflow action 'restoreVersionToBranch' on document '{}' for version id '{}'",
                     uuid, frozenNodeId, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
