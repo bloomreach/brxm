@@ -186,7 +186,7 @@ public class DocumentVersionServiceImpl implements DocumentVersionService {
 
             // now find the 'active' version
             final DocumentCampaignService documentCampaignService = HippoServiceRegistry.getService(DocumentCampaignService.class);
-            final Optional<Campaign> activeCampaign = documentCampaignServicFe == null ? Optional.empty() : documentCampaignService.findActiveCampaign(handleNode, branchId);
+            final Optional<Campaign> activeCampaign = documentCampaignService == null ? Optional.empty() : documentCampaignService.findActiveCampaign(handleNode, branchId);
 
             // truncate the number of versions to 100 but if there is a published version which is not part of the first
             // 100, set it as the 100th version to always at least have that one in the response
