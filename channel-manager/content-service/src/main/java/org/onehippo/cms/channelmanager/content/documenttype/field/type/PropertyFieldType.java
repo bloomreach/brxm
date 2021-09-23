@@ -114,7 +114,7 @@ public abstract class PropertyFieldType extends AbstractFieldType implements Lea
 
             writeProperty(node, valuesAsStrings);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write value(s) to property {}", getId(), e);
+            log.error("Failed to write value(s) to property {}", getId(), e);
             throw new InternalServerErrorException();
         }
     }
