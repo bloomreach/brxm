@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class DocumentNameUtils {
         try {
             return handle.getName();
         } catch (final RepositoryException e) {
-            log.warn("Failed to read name of node '{}'", JcrUtils.getNodePathQuietly(handle), e);
+            log.error("Failed to read name of node '{}'", JcrUtils.getNodePathQuietly(handle), e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -90,7 +90,7 @@ public class DocumentNameUtils {
         try {
             documentWorkflow.rename(urlName);
         } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to rename document '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
+            log.error("Failed to rename document '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -100,7 +100,7 @@ public class DocumentNameUtils {
         try {
             workflow.rename(urlName);
         } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to rename draft '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
+            log.error("Failed to rename draft '{}' to '{}'", JcrUtils.getNodePathQuietly(handle), urlName, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -115,7 +115,7 @@ public class DocumentNameUtils {
         try {
             workflow.setDisplayName(displayName);
         } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to set display name of node '{}' to '{}'",
+            log.error("Failed to set display name of node '{}' to '{}'",
                     JcrUtils.getNodePathQuietly(handle), displayName, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
