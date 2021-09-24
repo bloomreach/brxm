@@ -24,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.UserContext;
@@ -66,14 +65,14 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
                     .orElseThrow(() -> new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST)));
             FieldTypeUtils.writeFieldValues(document.getFields(), docType.getFields(), draftNode);
         } catch (RepositoryException e) {
-            log.warn("Failed to update draft variant of handle: { identifier :  {} }", identifier, e);
+            log.error("Failed to update draft variant of handle: { identifier :  {} }", identifier, e);
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
 
         try {
             session.save();
         } catch (final RepositoryException e) {
-            log.warn("Failed to save changes to draft node of document {}", identifier, e);
+            log.error("Failed to save changes to draft node of document {}", identifier, e);
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
 
@@ -81,7 +80,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
         try {
             workflow.saveDraft();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to save draft for user '{}'.", session.getUserID(), e);
+            log.error("Failed to save draft of document: { identifier: {} } for user {}", identifier, session.getUserID(), e);
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
     }
@@ -95,7 +94,7 @@ public final class JcrSaveDraftDocumentService extends AbstractSaveDraftDocument
             documentHandle.initialize();
             return documentHandle.isRetainable();
         } catch (WorkflowException | RepositoryException e) {
-            log.warn("Failed to determine if document is retainable");
+            log.error("Failed to determine if document : { identifier : {} } is retainable", getIdentifier());
             throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
     }

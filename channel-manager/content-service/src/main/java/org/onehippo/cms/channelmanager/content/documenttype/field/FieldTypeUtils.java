@@ -413,7 +413,7 @@ public class FieldTypeUtils {
             final CompoundContext childContext = context.getChildContext(child);
             return field.writeFieldValue(fieldPath.getRemainingSegments(), values, childContext);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(parentNode), e);
+            log.error("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
     }
