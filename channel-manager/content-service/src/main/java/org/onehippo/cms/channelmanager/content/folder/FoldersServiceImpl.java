@@ -68,7 +68,7 @@ public class FoldersServiceImpl implements FoldersService {
                 folders.add(folder);
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to get folders for path '/{}'", relPath, e);
+            log.error("Failed to get folders for path '/{}'", relPath, e);
             throw new InternalServerErrorException();
         }
         return folders;
