@@ -73,12 +73,13 @@ public class DocumentTemplateQueryServiceImpl implements DocumentTemplateQuerySe
         final String documentTemplateQueryPath = HIPPO_TEMPLATES_PATH + "/" + id;
         try {
             if (!session.nodeExists(documentTemplateQueryPath)) {
+                log.error("The template query: { id: {}} has not been found", id);
                 throw new InternalServerErrorException(new ErrorInfo(TEMPLATE_QUERY_NOT_FOUND, "documentTemplateQuery", id));
             }
 
             final Node documentTemplateQueryNode = session.getNode(documentTemplateQueryPath);
             if (!documentTemplateQueryNode.isNodeType("nt:query")) {
-                log.warn("Node '{}' is not of type nt:query", documentTemplateQueryPath);
+                log.error("Node '{}' is not of type nt:query", documentTemplateQueryPath);
                 throw new InternalServerErrorException(new ErrorInfo(TEMPLATE_QUERY_NOT_FOUND, "documentTemplateQuery", id));
             }
 
@@ -104,10 +105,10 @@ public class DocumentTemplateQueryServiceImpl implements DocumentTemplateQuerySe
                 }
             }
         } catch (final InvalidQueryException e) {
-            log.debug("Failed to execute template query '{}'", id, e);
+            log.error("Failed to execute template query '{}'", id, e);
             throw new InternalServerErrorException(new ErrorInfo(INVALID_TEMPLATE_QUERY, "documentTemplateQuery", id));
         } catch (final RepositoryException e) {
-            log.debug("Failed to read document type data for template query '{}'", id, e);
+            log.error("Failed to read document type data for template query '{}'", id, e);
             throw new InternalServerErrorException(new ErrorInfo(INVALID_TEMPLATE_QUERY, "documentTemplateQuery", id));
         }
 

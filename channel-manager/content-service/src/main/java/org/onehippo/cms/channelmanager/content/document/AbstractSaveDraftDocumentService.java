@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,15 +95,18 @@ public abstract class AbstractSaveDraftDocumentService implements SaveDraftDocum
     protected abstract boolean isDocumentRetainable();
 
     public final DocumentType getDocumentType() {
-        final String id = getVariantNodeType().orElseThrow(
-                () -> new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST)));
-
-        try {
-            return getDocumentTypeByNodeTypeIdentifier(id);
-        } catch (ErrorWithPayloadException e) {
-            log.warn("Failed to retrieve type of document '{identifier: {} }'", identifier, e);
-            throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
+        final Optional<String> variantNodeType = getVariantNodeType();
+        if (variantNodeType.isPresent()) {
+            try {
+                return getDocumentTypeByNodeTypeIdentifier(variantNodeType.get());
+            } catch (ErrorWithPayloadException e) {
+                log.error("Failed to retrieve type of document '{identifier: {} }'", identifier, e);
+                throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
+            }
         }
+        log.error("Could not determine document type for handle : { identifier : {} }", getIdentifier());
+        throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
+
     }
 
     public final boolean canEditDraft() {
