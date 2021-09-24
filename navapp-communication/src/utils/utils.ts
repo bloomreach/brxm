@@ -16,7 +16,10 @@
 
 export const DEFAULT_COMMUNICATION_TIMEOUT = 300000; // 5 minutes
 
-export function mergeIntersecting(obj1: object, obj2: object): object {
+export function mergeIntersecting(
+  obj1: Record<string, unknown>,
+  obj2: Record<string, unknown>,
+): Record<string, unknown> {
   const intersection = Object.keys(obj1).reduce((obj, key) => {
     if (key in obj2) {
       obj[key] = obj2[key];

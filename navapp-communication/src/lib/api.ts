@@ -79,7 +79,8 @@ export interface UserSettings {
    * language. Format: two lowercase alpha characters. Examples: 'en', 'fr', 'sq'.
    */
   language: string;
-  /** The time zone the user specified at login. Where applicable, the app should display its date fields using that time zone.
+  /** The time zone the user specified at login.
+   * Where applicable, the app should display its date fields using that time zone.
    * Format: TZ database names in the form "Area/Location", e.g. "America/New_York" as specified by the TZDB group.
    * See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones from more examples.
    */
@@ -112,8 +113,8 @@ export interface ParentApi {
    */
   updateNavLocation: (location: NavLocation) => Promise<void>;
   /**
-   * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to perform a
-   * ‘beforeNavigation’ and ‘navigate’ to route to the provided location.
+   * Is called by an application to perform internal or cross-app navigation.
+   * It **does** trigger the nav-app to perform a ‘beforeNavigation’ and ‘navigate’ to route to the provided location.
    * **Do not set locations to other applications for navigation **
    * @param location The NavLocation navigated to
    */
@@ -135,13 +136,14 @@ export interface ParentApi {
    */
   hideMask: () => Promise<void>;
   /**
-   * Is called by an application when it needs to show the busy indicator to indicate the user has to wait until the application has
-   * changed its ui state.
+   * Is called by an application when it needs to show the busy indicator to indicate
+   * the user has to wait until the application has changed its ui state.
    * For each call to the application should make a @{link {ParentApi.hideBusyIndicator}} call.
    */
   showBusyIndicator: () => Promise<void>;
   /**
-   * Is called by an application when it needs to hide the busy indicator to indicate the user can interact with the application again
+   * Is called by an application when it needs to hide the busy indicator to indicate
+   * the user can interact with the application again.
    * For each call to the application should make a @{link {ParentApi.showBusyIndicator}} call.
    */
   hideBusyIndicator: () => Promise<void>;
@@ -215,7 +217,8 @@ export interface ChildApi {
    * It’s an application’s responsibility to make a decision on how to handle this navigational call.
    *
    * @param location the NavLocation to navigate to
-   * @param triggeredBy The source of the navigate call so the client app is able to react appropriately on a specific source
+   * @param triggeredBy The source of the navigate call so the client app is able to react
+   *                    appropriately on a specific source
    */
   navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => Promise<void>;
   /**
