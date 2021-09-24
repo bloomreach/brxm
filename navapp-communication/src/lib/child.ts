@@ -20,7 +20,7 @@ import { wrapWithTimeout } from '../utils/wrap-with-timeout';
 
 import { ChildApi, ChildConnectConfig } from './api';
 
-const wrapChildMethodsWithTimeout = (methods: ChildApi, timeout: number) => {
+const wrapChildMethodsWithTimeout = (methods: ChildApi, timeout: number): ChildApi => {
   const { beforeNavigation } = methods;
   delete methods.beforeNavigation;
 
@@ -38,7 +38,8 @@ const wrapChildMethodsWithTimeout = (methods: ChildApi, timeout: number) => {
  *               communication library looking to connect
  * @param methods The api the parent exposes to the child
  * @param connectionTimeout The time in ms after which an error will be thrown if the child has failed to connect
- * @param methodInvocationTimeout The time in ms after which an error will be thrown if a method doesn't return a response
+ * @param methodInvocationTimeout The time in ms after which an error will be thrown
+ *                                if a method doesn't return a response
  */
 export async function connectToChild({
   iframe,
