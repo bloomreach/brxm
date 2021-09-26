@@ -21,21 +21,21 @@ import { wrapWithTimeout } from './wrap-with-timeout';
 
 export class NavItemDtoMock implements NavItem {
   id = 'testNavItemId';
+
   displayName = 'testDisplayName';
+
   appIframeUrl = 'https://test.url';
+
   appPath = 'testPath';
 
   constructor(initObject = {}) {
-    Object.keys(initObject).forEach(key => {
+    Object.keys(initObject).forEach((key) => {
       this[key] = initObject[key];
     });
   }
 }
 
-const navItemsMock: NavItem[] = [
-  new NavItemDtoMock(),
-  new NavItemDtoMock(),
-];
+const navItemsMock: NavItem[] = [new NavItemDtoMock(), new NavItemDtoMock()];
 
 describe('wrapWithTimeout', () => {
   beforeEach(() => {
@@ -59,11 +59,11 @@ describe('wrapWithTimeout', () => {
 
     const promisedApi = wrapWithTimeout(api);
 
-    promisedApi.getNavItems().catch(e => {
+    promisedApi.getNavItems().catch((e) => {
       expect(e).toBe('getNavItems call timed out');
     });
 
-    jest.advanceTimersByTime(DEFAULT_COMMUNICATION_TIMEOUT)
+    jest.advanceTimersByTime(DEFAULT_COMMUNICATION_TIMEOUT);
   });
 
   it('should not wrap the provided api if the timeout is not set', () => {
@@ -88,18 +88,19 @@ describe('wrapWithTimeout', () => {
 
   it('should reject after timeout', () => {
     const api: ChildApi = {
-      navigate: (): Promise<void> => new Promise(resolve => {
-        setTimeout(resolve, 101);
-      }),
+      navigate: (): Promise<void> =>
+        new Promise((resolve) => {
+          setTimeout(resolve, 101);
+        }),
     };
 
     const promisedApi = wrapWithTimeout(api, 100) as ChildApi;
 
-    promisedApi.navigate({ path: 'test' }, NavigationTrigger.NotDefined).catch(e => {
+    promisedApi.navigate({ path: 'test' }, NavigationTrigger.NotDefined).catch((e) => {
       expect(e).toBe('navigate call timed out');
     });
 
-    jest.advanceTimersByTime(101)
+    jest.advanceTimersByTime(101);
   });
 
   it('should be able to get rejected', async () => {
