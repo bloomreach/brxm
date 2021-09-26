@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { version } from '../../package.json'
+import { version } from '../../package.json';
 
 export function getVersion(): string {
   return version;
