@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -473,8 +473,7 @@ li.hippo-console-menu-actions-save.session-changes a {
   padding: 6px 2px 8px;
   height: 20px;
   width: 42px;
-  background: white url('bloomreach-logo.svg') no-repeat scroll 0 2px/30px 30px;
-  opacity: 0.8;
+  background: white url('bloomreach-logo.svg?v=1') no-repeat scroll 0 2px/30px 30px;
 }
 
 .hippo-console-menu-buttons button {
