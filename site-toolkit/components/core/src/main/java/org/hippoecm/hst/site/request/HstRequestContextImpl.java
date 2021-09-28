@@ -81,10 +81,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HstRequestContextImpl implements HstMutableRequestContext {
 
-    private enum ChannelManagerRequestType {
-        REST,
-        PREVIEW
-    }
 
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
 
@@ -125,7 +121,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected String renderHost;
     private ContentTypes contentTypes;
 
-    private ChannelManagerRequestType channelManagerRequestType;
+    private HstRequestType hstRequestType;
 
     private boolean pageModelApiRequest;
 
@@ -790,35 +786,53 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public boolean isChannelManagerPreviewRequest() {
         checkStateValidity();
-        return channelManagerRequestType == ChannelManagerRequestType.PREVIEW;
+        return hstRequestType == HstRequestType.CHANNEL_MGR_PREVIEW;
     }
 
     @Override
     public void setChannelManagerPreviewRequest() {
         checkStateValidity();
-        if (channelManagerRequestType == ChannelManagerRequestType.REST) {
+        if (hstRequestType == HstRequestType.CHANNEL_MGR_REST) {
             throw new IllegalStateException("Request is already marked to be a Channel Manager REST request, cannot " +
                     "change it to a Channel Manager PREVIEW request");
         }
-        channelManagerRequestType = ChannelManagerRequestType.PREVIEW;
+        hstRequestType = HstRequestType.CHANNEL_MGR_PREVIEW;
     }
 
     @Override
     public void setChannelManagerRestRequest() {
         checkStateValidity();
-        if (channelManagerRequestType == ChannelManagerRequestType.PREVIEW) {
+        if (hstRequestType == HstRequestType.CHANNEL_MGR_PREVIEW) {
             throw new IllegalStateException("Request is already marked to be a Channel Manager PREVIEW request, cannot " +
                     "change it to a Channel Manager REST request");
         }
-        channelManagerRequestType = ChannelManagerRequestType.REST;
+        hstRequestType = HstRequestType.CHANNEL_MGR_REST;
     }
 
     @Override
     public boolean isChannelManagerRestRequest() {
         checkStateValidity();
-        return channelManagerRequestType == ChannelManagerRequestType.REST;
+        return hstRequestType == HstRequestType.CHANNEL_MGR_REST;
     }
 
+
+    @Override
+    public HstRequestType getHstRequestType() {
+        checkStateValidity();
+        return hstRequestType;
+    }
+
+    @Override
+    public void setHstRequestType(final HstRequestType hstRequestType) {
+        checkStateValidity();
+        if (hstRequestType == HstRequestType.CHANNEL_MGR_REST) {
+            setChannelManagerRestRequest();
+        } else if (hstRequestType == HstRequestType.CHANNEL_MGR_PREVIEW) {
+            setChannelManagerPreviewRequest();
+        } else {
+            this.hstRequestType = hstRequestType;
+        }
+    }
 
     @Override
     public void setPageModelApiRequest(final boolean pageModelApiRequest) {
