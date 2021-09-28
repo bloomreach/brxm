@@ -150,6 +150,8 @@ public interface HstMutableRequestContext extends HstRequestContext {
      */
     void setChannelManagerRestRequest();
 
+    void setHstRequestType(HstRequestType hstRequestType);
+
     /**
      * Sets ContentBeansTool instance for this request context
      *
@@ -183,4 +185,5 @@ public interface HstMutableRequestContext extends HstRequestContext {
     void setPageModelApiRequest(boolean pageModelApiRequest);
 
     void setRenderingHistory(boolean renderingHistory);
+
 }
