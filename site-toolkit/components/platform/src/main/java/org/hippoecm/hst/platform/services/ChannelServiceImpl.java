@@ -242,7 +242,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public Map<String, XPageLayout> getXPageLayouts(final String channelId) {
-
+        // TODO set HstRequestContext to 'context-less' instead of channel mgr rest request
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
             HippoWebappContext context = HippoWebappContextRegistry.get().getContext(hstModel.getVirtualHosts().getContextPath());
