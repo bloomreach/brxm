@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.repository.jaxrs.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -23,6 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 
+import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.message.Message;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.jaxrs.CXFRepositoryJaxrsEndpoint;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsEndpoint;
@@ -73,15 +76,52 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
             throw new IllegalStateException(String.format("%s requires a hippo:moduleconfig", getClass().getSimpleName()));
         }
         final ManagedUserSessionInvoker managedUserSessionInvoker = new ManagedUserSessionInvoker(session);
-        jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
-                .invoker(managedUserSessionInvoker)
+        CXFRepositoryJaxrsEndpoint cxfRepositoryJaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
+                .invoker(managedUserSessionInvoker);
+
+        getInInterceptors().forEach(interceptor -> cxfRepositoryJaxrsEndpoint.inInterceptor(interceptor));
+        getOutInterceptors().forEach(interceptor -> cxfRepositoryJaxrsEndpoint.outInterceptor(interceptor));
+        getInFaultInterceptors().forEach(interceptor -> cxfRepositoryJaxrsEndpoint.inFaultInterceptor(interceptor));
+        getOutFaultInterceptors().forEach(interceptor -> cxfRepositoryJaxrsEndpoint.outFaultInterceptor(interceptor));
+
+        jaxrsEndpoint = cxfRepositoryJaxrsEndpoint
                 .singleton(getRestResource(managedUserSessionInvoker))
                 .singleton(createJacksonJsonProvider());
+
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
 
         final ObservationManager observationManager = session.getWorkspace().getObservationManager();
         listeners.forEach(listener -> listener.attach(observationManager));
     }
+
+    /**
+     * To be overridden by subclasses which want to register inInterceptors
+     */
+    protected List<Interceptor<? extends Message>> getInInterceptors() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * To be overridden by subclasses which want to register outInterceptors
+     */
+    protected List<Interceptor<? extends Message>> getOutInterceptors() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * To be overridden by subclasses which want to register InFaultInterceptors
+     */
+    protected List<Interceptor<? extends Message>> getInFaultInterceptors() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * To be overridden by subclasses which want to register OutFaultInterceptors
+     */
+    protected List<Interceptor<? extends Message>> getOutFaultInterceptors() {
+        return Collections.emptyList();
+    }
+
 
     protected abstract Object getRestResource(final SessionRequestContextProvider sessionRequestContextProvider);
 
