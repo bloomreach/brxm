@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -131,16 +131,25 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void setRenderHost(String renderHost);
 
     /**
-     * @param channelManagerPreviewRequest when the request is a channelMngrPreviewRequest have this parameter equal to <code>true</code>
+     * Marks the request to be a channelMngrPreviewRequest
      * @see #isChannelManagerPreviewRequest()
      */
-    public void setChannelManagerPreviewRequest(boolean channelManagerPreviewRequest);
+    void setChannelManagerPreviewRequest();
 
     /**
-     * @deprecated since 13.2.0, use {@link #setChannelManagerPreviewRequest(boolean)} instead
+     * @deprecated since 13.2.0, use {@link #setChannelManagerPreviewRequest()} instead
+     * Marks the request to be a channelMngrRestRequest
+     * @see #isChannelManagerRestRequest()
      */
     @Deprecated
     public void setCmsRequest(boolean cmsRequest);
+
+    /**
+     * Marks the request to be a channelMngrRestRequest
+     * @see #isChannelManagerRestRequest()
+     */
+    void setChannelManagerRestRequest();
+
     /**
      * Sets ContentBeansTool instance for this request context
      *
