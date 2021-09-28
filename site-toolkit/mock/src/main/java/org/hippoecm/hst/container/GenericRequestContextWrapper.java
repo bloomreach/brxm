@@ -1,5 +1,5 @@
 /**
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,14 +173,13 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
-    public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
-        context.setChannelManagerPreviewRequest(channelMngrPreviewRequest);
+    public void setChannelManagerPreviewRequest() {
+        context.setChannelManagerPreviewRequest();
     }
 
-    @Deprecated
     @Override
-    public void setCmsRequest(final boolean cmsRequest) {
-        context.setCmsRequest(cmsRequest);
+    public void setChannelManagerRestRequest() {
+        context.setChannelManagerRestRequest();
     }
 
     @Override
@@ -349,6 +348,11 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
+    public boolean isChannelManagerRestRequest() {
+        return context.isChannelManagerRestRequest();
+    }
+
+    @Override
     public void setPageModelApiRequest(final boolean pageModelApiRequest) {
         context.setPageModelApiRequest(pageModelApiRequest);
     }
@@ -367,12 +371,6 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     @Override
     public boolean isRenderingHistory() {
         return context.isRenderingHistory();
-    }
-
-    @Deprecated
-    @Override
-    public boolean isCmsRequest() {
-        return isChannelManagerPreviewRequest();
     }
 
     @Override
