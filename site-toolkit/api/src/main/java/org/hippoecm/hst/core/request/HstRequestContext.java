@@ -61,7 +61,13 @@ import org.onehippo.cms7.services.contenttype.ContentTypes;
  * @version $Id$
  */
 public interface HstRequestContext extends ModelContributable {
-    
+
+    enum HstRequestType {
+        CHANNEL_MGR_REST,
+        CHANNEL_MGR_PREVIEW,
+        CONTEXT_LESS_REQUEST
+    }
+
 	/** 
 	 * Returns the ServletContext for this request 
      * @return the ServletContext for this request
@@ -234,6 +240,16 @@ public interface HstRequestContext extends ModelContributable {
      * @return {@code true} when the request is for a REST invocation in the Channel Manager
      */
     boolean isChannelManagerRestRequest();
+
+    /**
+     * <p>
+     *     Returns the type of this request. In case the returned type is {@link HstRequestType#CHANNEL_MGR_PREVIEW}
+     *     then {@link #isChannelManagerPreviewRequest()} is always true as well. Likewise if {@link HstRequestType#CHANNEL_MGR_REST}
+     *     is returned, then {@link #isChannelManagerRestRequest()} will also return {@code true}
+     * </p>
+     * @return the {@code HstRequestType} of this request, or {@code null} in case it has not been set
+     */
+    HstRequestType getHstRequestType();
 
     /**
      * @return {@code true} in case the current request is a Page Model API request

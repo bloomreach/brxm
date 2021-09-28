@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
+import static org.hippoecm.hst.core.request.HstRequestContext.HstRequestType.CONTEXT_LESS_REQUEST;
 
 public class DelegatingHstSiteProvider  {
 
@@ -39,6 +40,7 @@ public class DelegatingHstSiteProvider  {
 
     private HstSiteProvider channelManagerHstSiteProvider = (master, branches, requestContext) -> master;
     private HstSiteProvider websiteHstSiteProvider = (master, branches, requestContext) -> master;
+    private HstSiteProvider contextLessHstSiteProvider = (master, branches, requestContext) -> master;
 
     /**
      * this setter can be used by enterprise paltform webapp to inject a custom HstSiteProvider for the channel mngr
@@ -54,9 +56,19 @@ public class DelegatingHstSiteProvider  {
         this.websiteHstSiteProvider = websiteHstSiteProvider;
     }
 
+    public void setContextLessHstSiteProvider(final HstSiteProvider contextLessHstSiteProvider) {
+        this.contextLessHstSiteProvider = contextLessHstSiteProvider;
+    }
+
     public HstSite getHstSite(final CompositeHstSite compositeHstSite, final HstRequestContext requestContext) {
         if (requestContext == null) {
             return compositeHstSite.getMaster();
+        }
+
+        if (requestContext.getHstRequestType() == CONTEXT_LESS_REQUEST) {
+            log.info("HST Request is a context less request like a management api or Wicket request. Return HST Site " +
+                    "by context-less site provider");
+            return contextLessHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
         }
 
         Map<HstSite, HstSite> computedMap = (Map<HstSite, HstSite>)requestContext.getAttribute(RENDER_BRANCH_ID);
@@ -82,22 +94,26 @@ public class DelegatingHstSiteProvider  {
             log.info("Request is a channel manager REST request, use channelManagerHstSiteProvider");
             hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
         } else {
+            log.info("Request is for rendering a (live) website response");
             final CustomWebsiteHstSiteProviderService customWebsiteHstSiteProviderService = HippoServiceRegistry.getService(CustomWebsiteHstSiteProviderService.class);
             final HstSiteProvider customSiteProvider = customWebsiteHstSiteProviderService.get(requestContext.getServletRequest().getContextPath());
             if (customSiteProvider == null) {
+                log.info("Use default website HstSiteProvider");
                 hstSite = websiteHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
             } else {
                 HstSite custom;
                 try {
                     custom = customSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
+                    if (custom == null) {
+                        log.warn("customSiteProvider did not return an HstSite, using default website HstSiteProvider as fallback");
+                        custom = websiteHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
+                    }
                 } catch (Exception e) {
                     log.warn("Exception in custom site provider {}. Fallback to default hst site provider",
                             customSiteProvider.getClass(), e);
                     custom = websiteHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
                 }
-                if (custom == null) {
-                    log.warn("");
-                }
+
                 hstSite = custom;
             }
 

@@ -531,6 +531,22 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
+    public void setHstRequestType(final HstRequestType hstRequestType) {
+        throw new UnsupportedOperationException("Not yet supported");
+    }
+
+    @Override
+    public HstRequestType getHstRequestType() {
+        if (isChannelManagerPreviewRequest()) {
+            return HstRequestType.CHANNEL_MGR_PREVIEW;
+        }
+        if (isChannelManagerRestRequest()) {
+            return HstRequestType.CHANNEL_MGR_REST;
+        }
+        return null;
+    }
+
+    @Override
     public void setPageModelApiRequest(final boolean pageModelApiRequest) {
         this.pageModelApiRequest = pageModelApiRequest;
     }
