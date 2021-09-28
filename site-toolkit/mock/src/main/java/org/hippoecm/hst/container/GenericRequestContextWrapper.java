@@ -358,6 +358,16 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
+    public void setHstRequestType(final HstRequestType hstRequestType) {
+        context.setHstRequestType(hstRequestType);
+    }
+
+    @Override
+    public HstRequestType getHstRequestType() {
+        return context.getHstRequestType();
+    }
+
+    @Override
     public void setPageModelApiRequest(final boolean pageModelApiRequest) {
         context.setPageModelApiRequest(pageModelApiRequest);
     }

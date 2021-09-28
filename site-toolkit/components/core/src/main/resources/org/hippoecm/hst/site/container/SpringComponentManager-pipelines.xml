@@ -17,7 +17,9 @@
 <!--suppress SpringFacetInspection -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
 
   <bean id="resourceLifecycleManagementList" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
@@ -63,6 +65,12 @@
     <property name="valveName" value="cmsSecurityValve"/>
     <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
     <property name="delegatingRepository" ref="javax.jcr.Repository.delegating"/>
+  </bean>
+
+  <bean id="hstRequestTypeContextLessValve" parent="abstractValve" class="org.hippoecm.hst.core.container.RequestTypeContextValve">
+    <property name="type">
+      <util:constant static-field="org.hippoecm.hst.core.request.HstRequestContext.HstRequestType.CONTEXT_LESS_REQUEST"/>
+    </property>
   </bean>
 
   <!-- Generic no-cache response headers setting valve -->
@@ -315,6 +323,7 @@
               <list>
                 <ref bean="initializationValve"/>
                 <ref bean="cmsSecurityValve"/>
+                <ref bean="hstRequestTypeContextLessValve"/>
               </list>
             </property>
             <property name="processingValves">
@@ -397,6 +406,7 @@
             <property name="initializationValves">
               <list>
                 <ref bean="initializationValve"/>
+                <ref bean="hstRequestTypeContextLessValve"/>
               </list>
             </property>
             <property name="processingValves">
