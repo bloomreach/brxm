@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -226,10 +226,14 @@ public interface HstRequestContext extends ModelContributable {
     ContainerConfiguration getContainerConfiguration();
     
     /**
-     * @return <code>true</code> when the request is from a cms context: This can be some REST call from the cms, or 
-     * a channel preview request inside the cms or over the HOST of the cms
+     * @return {@code true} when the request is for the preview of the site in the Channel Manager
      */
     boolean isChannelManagerPreviewRequest();
+
+    /**
+     * @return {@code true} when the request is for a REST invocation in the Channel Manager
+     */
+    boolean isChannelManagerRestRequest();
 
     /**
      * @return {@code true} in case the current request is a Page Model API request
@@ -250,14 +254,6 @@ public interface HstRequestContext extends ModelContributable {
      */
     boolean isRenderingHistory();
 
-    /**
-     * @return {@link #isChannelManagerPreviewRequest()}
-     * @deprecated since 13.2.0 do not use any more, use {@link #isChannelManagerPreviewRequest()} instead. Do NOT
-     * remove this method before 15.0.0 since even customers their FTL's sometimes invoke #isCmsRequest
-     */
-    @Deprecated
-    boolean isCmsRequest();
-    
     /**
      * Returns the context credentials provider
      * @return the context credentials provider

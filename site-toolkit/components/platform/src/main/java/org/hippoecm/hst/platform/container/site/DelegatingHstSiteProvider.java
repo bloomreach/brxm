@@ -76,6 +76,10 @@ public class DelegatingHstSiteProvider  {
         if (preferBranch != null) {
             hstSite = compositeHstSite.getBranches().getOrDefault(preferBranch, compositeHstSite.getMaster());
         } else if (requestContext.isChannelManagerPreviewRequest()) {
+            log.info("Request is a channel manager preview site request, use channelManagerHstSiteProvider");
+            hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
+        }  else if (requestContext.isChannelManagerRestRequest()) {
+            log.info("Request is a channel manager REST request, use channelManagerHstSiteProvider");
             hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
         } else {
             final CustomWebsiteHstSiteProviderService customWebsiteHstSiteProviderService = HippoServiceRegistry.getService(CustomWebsiteHstSiteProviderService.class);
