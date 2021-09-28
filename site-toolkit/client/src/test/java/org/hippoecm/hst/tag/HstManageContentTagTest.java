@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ public class HstManageContentTagTest {
     @Before
     public void setUp() {
         hstRequestContext = new MockHstRequestContext();
-        hstRequestContext.setChannelManagerPreviewRequest(true);
+        hstRequestContext.setChannelManagerPreviewRequest();
         ModifiableRequestContextProvider.set(hstRequestContext);
 
         final MockServletContext servletContext = new MockServletContext();
@@ -179,7 +179,8 @@ public class HstManageContentTagTest {
 
     @Test
     public void noChannelManagerPreviewRequestOutputsNothingAndLogsDebug() throws Exception {
-        hstRequestContext.setChannelManagerPreviewRequest(false);
+        hstRequestContext = new MockHstRequestContext();
+        ModifiableRequestContextProvider.set(hstRequestContext);
 
         assertDebugged("Skipping manageContent tag because not in cms preview.", this::assertEmptyResponse);
     }
