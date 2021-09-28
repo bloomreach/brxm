@@ -65,6 +65,9 @@ public class DelegatingHstSiteProvider  {
             return compositeHstSite.getMaster();
         }
 
+        // Note do not cache the CONTEXT_LESS_REQUEST type on 'computedMap' since the 'CONTEXT_LESS_REQUEST' might be
+        // a temporal switch within a request which is for the rest of the request processing for example a
+        // CHANNEL_MGR_REST type : therefor do not cache on 'computedMap'
         if (requestContext.getHstRequestType() == CONTEXT_LESS_REQUEST) {
             log.info("HST Request is a context less request like a management api or Wicket request. Return HST Site " +
                     "by context-less site provider");
