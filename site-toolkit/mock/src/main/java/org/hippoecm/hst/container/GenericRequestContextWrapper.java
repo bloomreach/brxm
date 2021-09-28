@@ -178,6 +178,11 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
+    public void setCmsRequest(final boolean cmsRequest) {
+        context.setCmsRequest(cmsRequest);
+    }
+
+    @Override
     public void setChannelManagerRestRequest() {
         context.setChannelManagerRestRequest();
     }
