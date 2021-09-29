@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HstRequestContextImpl implements HstMutableRequestContext {
 
+
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
 
     static final String IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR = HstRequestContextImpl.class.getName()
@@ -119,9 +120,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected boolean fullyQualifiedURLs;
     protected String renderHost;
     private ContentTypes contentTypes;
-    // default a request is considered to be not from a cms. If cmsRequest is true, this means the
-    // request is done from a cms context. This can influence for example how a link is created
-    protected boolean channelManagerPreviewRequest;
+
+    private HstRequestType hstRequestType;
 
     private boolean pageModelApiRequest;
 
@@ -786,19 +786,52 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public boolean isChannelManagerPreviewRequest() {
         checkStateValidity();
-        return channelManagerPreviewRequest;
-    }
-
-    @Deprecated
-    @Override
-    public boolean isCmsRequest() {
-        return isChannelManagerPreviewRequest();
+        return hstRequestType == HstRequestType.CHANNEL_MGR_PREVIEW;
     }
 
     @Override
-    public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
+    public void setChannelManagerPreviewRequest() {
         checkStateValidity();
-        this.channelManagerPreviewRequest = channelMngrPreviewRequest;
+        if (hstRequestType == HstRequestType.CHANNEL_MGR_REST) {
+            throw new IllegalStateException("Request is already marked to be a Channel Manager REST request, cannot " +
+                    "change it to a Channel Manager PREVIEW request");
+        }
+        hstRequestType = HstRequestType.CHANNEL_MGR_PREVIEW;
+    }
+
+    @Override
+    public void setChannelManagerRestRequest() {
+        checkStateValidity();
+        if (hstRequestType == HstRequestType.CHANNEL_MGR_PREVIEW) {
+            throw new IllegalStateException("Request is already marked to be a Channel Manager PREVIEW request, cannot " +
+                    "change it to a Channel Manager REST request");
+        }
+        hstRequestType = HstRequestType.CHANNEL_MGR_REST;
+    }
+
+    @Override
+    public boolean isChannelManagerRestRequest() {
+        checkStateValidity();
+        return hstRequestType == HstRequestType.CHANNEL_MGR_REST;
+    }
+
+
+    @Override
+    public HstRequestType getHstRequestType() {
+        checkStateValidity();
+        return hstRequestType;
+    }
+
+    @Override
+    public void setHstRequestType(final HstRequestType hstRequestType) {
+        checkStateValidity();
+        if (hstRequestType == HstRequestType.CHANNEL_MGR_REST) {
+            setChannelManagerRestRequest();
+        } else if (hstRequestType == HstRequestType.CHANNEL_MGR_PREVIEW) {
+            setChannelManagerPreviewRequest();
+        } else {
+            this.hstRequestType = hstRequestType;
+        }
     }
 
     @Override
@@ -827,7 +860,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public void setCmsRequest(final boolean cmsRequest) {
         checkStateValidity();
-        this.channelManagerPreviewRequest = cmsRequest;
+        if (cmsRequest) {
+            setChannelManagerPreviewRequest();
+        }
     }
 
     @Override
