@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,6 +93,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private boolean fullyQualifiedURLs;
     private String renderHost;
     private boolean channelMngrPreviewRequest;
+    private boolean channelManagerRestRequest;
     private boolean pageModelApiRequest;
     private boolean renderingHistory;
     private ContentBeansTool contentBeansTool;
@@ -483,10 +484,9 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         return channelMngrPreviewRequest;
     }
 
-    @Deprecated
     @Override
-    public boolean isCmsRequest() {
-        return false;
+    public boolean isChannelManagerRestRequest() {
+        return channelManagerRestRequest;
     }
 
     @Override
@@ -514,9 +514,36 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
-    public void setChannelManagerPreviewRequest(boolean channelMngrPreviewRequest) {
+    public void setChannelManagerPreviewRequest() {
         checkStateValidity();
-        this.channelMngrPreviewRequest = channelMngrPreviewRequest;
+        this.channelMngrPreviewRequest = true;
+    }
+
+    @Override
+    public void setCmsRequest(final boolean cmsRequest) {
+        setChannelManagerPreviewRequest();
+    }
+
+    @Override
+    public void setChannelManagerRestRequest() {
+        checkStateValidity();
+        this.channelManagerRestRequest = true;
+    }
+
+    @Override
+    public void setHstRequestType(final HstRequestType hstRequestType) {
+        throw new UnsupportedOperationException("Not yet supported");
+    }
+
+    @Override
+    public HstRequestType getHstRequestType() {
+        if (isChannelManagerPreviewRequest()) {
+            return HstRequestType.CHANNEL_MGR_PREVIEW;
+        }
+        if (isChannelManagerRestRequest()) {
+            return HstRequestType.CHANNEL_MGR_REST;
+        }
+        return null;
     }
 
     @Override
@@ -537,12 +564,6 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     @Override
     public void setRenderingHistory(final boolean renderingHistory) {
         this.renderingHistory = renderingHistory;
-    }
-
-    @Deprecated
-    @Override
-    public void setCmsRequest(final boolean cmsRequest) {
-        this.channelMngrPreviewRequest = cmsRequest;
     }
 
     @Override

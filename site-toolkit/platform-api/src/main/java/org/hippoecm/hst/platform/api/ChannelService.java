@@ -118,7 +118,9 @@ public interface ChannelService {
     Properties getChannelResourceValues(String hostGroup, String channelId, String language) throws ChannelException;
 
 	/**
-	 *
+	 * <p>
+	 *     Contrary to SaaS, for PaaS, the {@code channelId} is always the 'master' channel and never a branch.
+	 * </p>
 	 * @param channelId the *live* channelId is expected, not the preview (typically has -preview appended)
 	 * @return Map of the available {@link XPageLayout}s for {@code Channel} with id {@code channelId} where the keys are
 	 * the id of the XPageLayout (which is equal to the XPageLayout HstComponentConfiguration id).

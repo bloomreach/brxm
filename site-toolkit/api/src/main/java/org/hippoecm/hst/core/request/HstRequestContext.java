@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,7 +61,13 @@ import org.onehippo.cms7.services.contenttype.ContentTypes;
  * @version $Id$
  */
 public interface HstRequestContext extends ModelContributable {
-    
+
+    enum HstRequestType {
+        CHANNEL_MGR_REST,
+        CHANNEL_MGR_PREVIEW,
+        CONTEXT_LESS_REQUEST
+    }
+
 	/** 
 	 * Returns the ServletContext for this request 
      * @return the ServletContext for this request
@@ -226,10 +232,24 @@ public interface HstRequestContext extends ModelContributable {
     ContainerConfiguration getContainerConfiguration();
     
     /**
-     * @return <code>true</code> when the request is from a cms context: This can be some REST call from the cms, or 
-     * a channel preview request inside the cms or over the HOST of the cms
+     * @return {@code true} when the request is for the preview of the site in the Channel Manager
      */
     boolean isChannelManagerPreviewRequest();
+
+    /**
+     * @return {@code true} when the request is for a REST invocation in the Channel Manager
+     */
+    boolean isChannelManagerRestRequest();
+
+    /**
+     * <p>
+     *     Returns the type of this request. In case the returned type is {@link HstRequestType#CHANNEL_MGR_PREVIEW}
+     *     then {@link #isChannelManagerPreviewRequest()} is always true as well. Likewise if {@link HstRequestType#CHANNEL_MGR_REST}
+     *     is returned, then {@link #isChannelManagerRestRequest()} will also return {@code true}
+     * </p>
+     * @return the {@code HstRequestType} of this request, or {@code null} in case it has not been set
+     */
+    HstRequestType getHstRequestType();
 
     /**
      * @return {@code true} in case the current request is a Page Model API request
@@ -250,14 +270,6 @@ public interface HstRequestContext extends ModelContributable {
      */
     boolean isRenderingHistory();
 
-    /**
-     * @return {@link #isChannelManagerPreviewRequest()}
-     * @deprecated since 13.2.0 do not use any more, use {@link #isChannelManagerPreviewRequest()} instead. Do NOT
-     * remove this method before 15.0.0 since even customers their FTL's sometimes invoke #isCmsRequest
-     */
-    @Deprecated
-    boolean isCmsRequest();
-    
     /**
      * Returns the context credentials provider
      * @return the context credentials provider

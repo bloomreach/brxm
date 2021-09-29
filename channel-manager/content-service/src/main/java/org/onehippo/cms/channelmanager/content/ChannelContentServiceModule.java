@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -30,7 +31,14 @@ import javax.jcr.observation.EventIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentVersionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
@@ -131,6 +139,13 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     }
 
     @Override
+    protected List<Interceptor<? extends Message>> getInInterceptors() {
+        // make sure every invocation gets marked to be handle as a channel manager request. Otherwise, for example
+        // the HST CompositeHstSiteImpl won't return the correct HstSite object in case some branch is active
+        return Collections.singletonList(new ChannelManagerRequestInInterceptor());
+    }
+
+    @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         branchSelectionService = createBranchSelectionService(session);
 
@@ -206,6 +221,18 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
         HippoNamespacesEventListener() {
             super(ALL_EVENTS, HIPPO_NAMESPACES, true, null, null);
+        }
+    }
+
+    private static class ChannelManagerRequestInInterceptor extends AbstractPhaseInterceptor<Message> {
+
+        public ChannelManagerRequestInInterceptor() {
+            super(Phase.UNMARSHAL);
+        }
+
+        @Override
+        public void handleMessage(final Message message) throws Fault {
+            ((HstMutableRequestContext)RequestContextProvider.get()).setChannelManagerRestRequest();
         }
     }
 }
