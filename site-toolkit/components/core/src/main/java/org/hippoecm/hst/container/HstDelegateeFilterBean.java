@@ -470,7 +470,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     return;
                 }
 
-                requestContext.setChannelManagerPreviewRequest(true);
+                requestContext.setChannelManagerPreviewRequest();
 
                 if (resolvedMount instanceof MutableResolvedMount) {
                     Mount undecoratedMount = resolvedMount.getMount();

@@ -1,18 +1,18 @@
 /*
-*  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+ *  Copyright 2012-2021 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
 package org.hippoecm.hst.platform.services;
 
@@ -40,6 +40,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.ChannelService;
@@ -220,7 +221,7 @@ public class ChannelServiceImpl implements ChannelService {
 
             return hstModel.getChannelManager().persist(userSession, blueprintId, channel);
         } catch (RepositoryException e) {
-            throw new ChannelException("Error while persisting a new channel - Channel:" , e);
+            throw new ChannelException("Error while persisting a new channel - Channel:", e);
         } catch (ChannelException ce) {
             log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
             throw ce;
@@ -232,7 +233,7 @@ public class ChannelServiceImpl implements ChannelService {
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
             final Channel channel = virtualHosts.getChannelById(hostGroup, channelId);
-            if (channel != null){
+            if (channel != null) {
                 return InformationObjectsBuilder.buildResourceBundleProperties(virtualHosts.getResourceBundle(channel, new Locale(language)));
             }
         }
@@ -240,40 +241,60 @@ public class ChannelServiceImpl implements ChannelService {
 
     }
 
+    /**
+     * <p>
+     * Because the {@code channelId} is always for the MASTER with PaaS, we need to make sure that the hstRequestContext
+     * is marked to be HstRequestType.CONTEXT_LESS_REQUEST during these invocations : this is because otherwise, the
+     * DelegatingHstSiteProvider could use the websiteHstSiteProvider to return a live campaign branch, which would
+     * never match the criteria channelId.equals(mount.getChannel().getId())
+     * </p>
+     */
     @Override
     public Map<String, XPageLayout> getXPageLayouts(final String channelId) {
+        HstRequestContext.HstRequestType prevHstRequestType = null;
+        final HstRequestContext hstRequestContext = RequestContextProvider.get();
+        if (hstRequestContext != null && hstRequestContext instanceof HstMutableRequestContext) {
+            prevHstRequestType = hstRequestContext.getHstRequestType();
+            ((HstMutableRequestContext) hstRequestContext).setHstRequestType(HstRequestContext.HstRequestType.CONTEXT_LESS_REQUEST);
+        }
+        try {
+            for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
-        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+                HippoWebappContext context = HippoWebappContextRegistry.get().getContext(hstModel.getVirtualHosts().getContextPath());
 
-            HippoWebappContext context = HippoWebappContextRegistry.get().getContext(hstModel.getVirtualHosts().getContextPath());
+                if (context == null) {
+                    continue;
+                }
+                if (CMS_OR_PLATFORM.contains(context.getType())) {
+                    continue;
+                }
 
-            if (context == null) {
-                continue;
+                final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
+
+                // just find the first Mount which have a matching channel id, and create the XPageLayout from that
+                // channel (it doesn't matter through which hostgroup the channel is found
+
+                // note that 'channelId' can be for a branch as well!
+
+                final Optional<Map<String, HstComponentConfiguration>> xPageLayoutComponents = virtualHosts.getHostGroupNames().stream()
+                        .filter(hostgroupName -> virtualHosts.getChannelById(hostgroupName, channelId) != null)
+                        .flatMap(hostgroupName -> virtualHosts.getMountsByHostGroup(hostgroupName).stream()).collect(Collectors.toList())
+                        .stream()
+                        .filter(mount -> mount.getChannel() != null && channelId.equals(mount.getChannel().getId()))
+                        .map(mount -> mount.getHstSite().getComponentsConfiguration().getXPages())
+                        .findFirst();
+
+                if (!xPageLayoutComponents.isPresent()) {
+                    log.info("Cannot find any XPageLayouts for channel '{}'", channelId);
+                    continue;
+                } else {
+                    return getXPageLayouts(xPageLayoutComponents.get());
+                }
             }
-            if (CMS_OR_PLATFORM.contains(context.getType())) {
-                continue;
-            }
-
-            final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
-
-            // just find the first Mount which have a matching channel id, and create the XPageLayout from that
-            // channel (it doesn't matter through which hostgroup the channel is found
-
-            // note that 'channelId' can be for a branch as well!
-
-            final Optional<Map<String, HstComponentConfiguration>> xPageLayoutComponents = virtualHosts.getHostGroupNames().stream()
-                    .filter(hostgroupName -> virtualHosts.getChannelById(hostgroupName, channelId) != null)
-                    .flatMap(hostgroupName -> virtualHosts.getMountsByHostGroup(hostgroupName).stream()).collect(Collectors.toList())
-                    .stream()
-                    .filter(mount -> mount.getChannel() != null && channelId.equals(mount.getChannel().getId()))
-                    .map(mount -> mount.getHstSite().getComponentsConfiguration().getXPages())
-                    .findFirst();
-
-            if (!xPageLayoutComponents.isPresent()) {
-                log.info("Cannot find any XPageLayouts for channel '{}'", channelId);
-                continue;
-            } else {
-                return getXPageLayouts(xPageLayoutComponents.get());
+        } finally {
+            if (hstRequestContext instanceof HstMutableRequestContext) {
+                // restore original value
+                ((HstMutableRequestContext) hstRequestContext).setHstRequestType(prevHstRequestType);
             }
         }
 
@@ -294,7 +315,7 @@ public class ChannelServiceImpl implements ChannelService {
         return xPageLayoutComponents.values().stream()
                 .map(componentConfiguration -> new XPageLayout(componentConfiguration.getId(),
                         componentConfiguration.getLabel(),
-                        ((HstComponentConfigurationService)componentConfiguration).getJcrTemplateNode()))
+                        ((HstComponentConfigurationService) componentConfiguration).getJcrTemplateNode()))
                 .filter(xPageLayout -> xPageLayout.getJcrTemplateNode() != null)
                 .collect(Collectors.toMap(xpageLayout -> xpageLayout.getKey(), xpageLayout -> xpageLayout));
     }
