@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,12 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../../../services/ng1/config.ng1.service';
 import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
 
 import { CharacteristicsDialogComponent } from './characteristics-dialog.component';
 
-describe('SegmentsDialogComponent', () => {
+describe('CharacteristicsDialogComponent', () => {
 
   @Component({
     // tslint:disable-next-line:component-selector
@@ -36,6 +37,8 @@ describe('SegmentsDialogComponent', () => {
     @Input()
     svgIcon!: string;
   }
+
+  const configServiceMock: Partial<Ng1ConfigService> = {};
 
   let component: CharacteristicsDialogComponent;
   let fixture: ComponentFixture<CharacteristicsDialogComponent>;
@@ -56,6 +59,7 @@ describe('SegmentsDialogComponent', () => {
         MatIconMockComponent,
       ],
       providers: [
+        { provide: NG1_CONFIG_SERVICE, useValue: configServiceMock },
         { provide: NG1_TARGETING_SERVICE, useValue: targetingServiceMock },
         { provide: MatDialogRef, useValue: matDialogRefMock },
       ],
