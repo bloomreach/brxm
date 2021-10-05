@@ -587,7 +587,7 @@ exports[`VariantsComponent collapsing of variant expressions should show express
           class="variant-expressions-list-item"
         >
           <span>
-             EXPRESSION_TARGET_GROUP_COUNTRY EXPRESSION_AND 
+             country-description The Netherlands EXPRESSION_AND 
           </span>
           <button
             aria-describedby="cdk-describedby-message-32"
@@ -867,7 +867,7 @@ exports[`VariantsComponent collapsing of variant expressions should show express
           class="variant-expressions-list-item"
         >
           <span>
-             EXPRESSION_TARGET_GROUP_COUNTRY EXPRESSION_AND 
+             country-description The Netherlands EXPRESSION_AND 
           </span>
           <button
             class="qa-variant-expressions-delete mat-tooltip-trigger"
