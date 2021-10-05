@@ -17,12 +17,14 @@
 import { Component, EventEmitter, Inject, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { StateService, UIRouterGlobals } from '@uirouter/core';
 
 import { Ng1CmsService, NG1_CMS_SERVICE } from '../../../services/ng1/cms.ng1.service';
 import { Ng1ComponentEditorService, NG1_COMPONENT_EDITOR_SERVICE } from '../../../services/ng1/component-editor.ng1.service';
 import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.ng1.service';
 import { NG1_STATE_SERVICE } from '../../../services/ng1/state.ng1.service';
+import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
 import { NG1_UI_ROUTER_GLOBALS } from '../../../services/ng1/ui-router-globals.ng1.service';
 import { Persona } from '../../models/persona.model';
 import { Variant, VariantExpression, VariantExpressionType } from '../../models/variant.model';
@@ -55,10 +57,12 @@ export class VariantsComponent implements OnInit, OnDestroy {
     @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
     @Inject(NG1_COMPONENT_EDITOR_SERVICE) private readonly componentEditorService: Ng1ComponentEditorService,
     @Inject(NG1_STATE_SERVICE) private readonly ng1StateService: StateService,
+    @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
     @Inject(NG1_UI_ROUTER_GLOBALS) private readonly ng1UiRouterGlobals: UIRouterGlobals,
     @Inject(NG1_CMS_SERVICE) private readonly cmsService: Ng1CmsService,
     private readonly ngZone: NgZone,
     private readonly dialogService: MatDialog,
+    private readonly translateService: TranslateService,
     private readonly variantsService: VariantsService,
   ) {
     this.onResetCurrentVariantUnsubscribe = this.$rootScope.$on('component:reset-current-variant', () => {
@@ -181,11 +185,19 @@ export class VariantsComponent implements OnInit, OnDestroy {
 
   getExpressionTranslation(expression: VariantExpression): string {
     if (expression.type === VariantExpressionType.Persona) {
-      return 'EXPRESSION_SEGMENT';
+      return this.translateService.instant('EXPRESSION_SEGMENT', { name: expression.name });
     }
 
     const [characteristic] = expression.id.split('/');
-    return `EXPRESSION_TARGET_GROUP_${characteristic.toUpperCase()}`;
+    const { resources } = this.targetingService.getCharacteristicConfig(characteristic);
+    if (resources && resources['characteristic-description']) {
+      return resources['characteristic-description'].replace('{0}', expression.name);
+    }
+
+    // fallback to builtin translations
+    return this.translateService.instant(`EXPRESSION_TARGET_GROUP_${characteristic.toUpperCase()}`, {
+      name: expression.name,
+     });
   }
 
   hasSelectedSegment(): boolean | undefined {
