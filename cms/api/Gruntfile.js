@@ -48,7 +48,7 @@ module.exports = function (grunt) {
           livereload: false
         },
         files: ['<%= build.src %>/**/*.scss'],
-        tasks: ['stylelint', 'sass', 'autoprefixer', 'concat:css', 'clean:tmp']
+        tasks: ['stylelint', 'sass', 'postcss', 'concat:css', 'clean:tmp']
       },
       reloadCompiledCss: {
         files: ['<%= build.skin %>/**/*.css']
@@ -101,17 +101,13 @@ module.exports = function (grunt) {
       }
     },
 
-    // Autoprefix vendor prefixes
-    autoprefixer: {
-      theme: {
-        options: {
-          browsers: [
-            'last 1 Chrome versions',
-            'last 1 Edge versions',
-            'last 1 Firefox versions',
-            'last 1 Safari versions',
-          ]
-        },
+    postcss: {
+      options: {
+        processors: [
+          require('autoprefixer')(),
+        ]
+      },
+      dist: {
         src: '<%= build.tmp %>/css/<%= build.file %>.css',
         dest: '<%= build.tmp %>/css/<%= build.file %>.css'
       }
@@ -292,7 +288,7 @@ module.exports = function (grunt) {
     'stylelint',
     'sass',
     'svgstore',
-    'autoprefixer',
+    'postcss',
     'concat',
     'uglify',
     'cssmin:theme',
