@@ -19,6 +19,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatSelectionList } from '@angular/material/list';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 
 import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../../../services/ng1/config.ng1.service';
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
@@ -63,6 +64,7 @@ export class CharacteristicsDialogComponent implements OnInit {
       private readonly dialogRef: MatDialogRef<CharacteristicsDialogComponent>,
       private readonly matIconRegistry: MatIconRegistry,
       private readonly domSanitizer: DomSanitizer,
+      private readonly translateService: TranslateService,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -123,6 +125,21 @@ export class CharacteristicsDialogComponent implements OnInit {
 
   getPropertiesAsString(properties: TargetGroupProperty[]): string {
     return properties.map(p => p.value || p.name).join(', ');
+  }
+
+  getTranslation(characteristic: Characteristic): string {
+    const { resources } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    if (resources && resources['characteristic-description']) {
+      return resources['characteristic-description'].replace('{0}', resources['characteristic-subject']);
+    }
+
+    // Keep the internal (no targeting resources) intact as a fallback mechanism
+    const subjectKey = `EXPRESSION_TARGET_GROUP_${characteristic.id.toUpperCase()}_SUBJECT`;
+    const groupKey = `EXPRESSION_TARGET_GROUP_${characteristic.id.toUpperCase()}`;
+
+    return this.translateService.instant(groupKey, {
+      name: this.translateService.instant(subjectKey),
+    });
   }
 
   private parseCharacteristics(characteristics: Characteristic[]): Characteristic[] {
