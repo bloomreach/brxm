@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "3.7.0",
-    "blueimp-file-upload": "9.18.0",
+    "blueimp-file-upload": "9.34.0",
     "blueimp-load-image": "2.12.2",
     "blueimp-tmpl": "3.8.0",
-    "bootstrap-sass": "3.3.7",
+    "bootstrap-sass": "3.4.1",
     "focus-visible": "5.0.2",
     "normalize.css": "6.0.0",
     "open-sans-fontface": "1.4.0",
