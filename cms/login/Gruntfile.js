@@ -100,7 +100,8 @@ module.exports = function (grunt) {
     cssmin: {
       options: {
         report: 'min',
-        sourceMap: true
+        sourceMap: true,
+        rebaseTo: '<%= build.skin %>/css/'
       },
       theme: {
         files: {
