@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,30 +69,14 @@ class TargetingService {
   }
 
   _getCharacteristicConfigKey(id) {
-    switch (id) {
-      case 'city':
-        return 'Hippo.Targeting.CityCharacteristicPlugin';
-      case 'country':
-        return 'Hippo.Targeting.CountryCharacteristicPlugin';
-      case 'continent':
-        return 'Hippo.Targeting.ContinentCharacteristicPlugin';
-      case 'dayofweek':
-        return 'Hippo.Targeting.DayOfWeekCharacteristicPlugin';
-      case 'documenttypes':
-        return 'Hippo.Targeting.DocumentTypeCharacteristicPlugin';
-      case 'groups':
-        return 'Hippo.Targeting.GroupsCharacteristicPlugin';
-      case 'pageviews':
-        return 'Hippo.Targeting.PageViewsCharacteristicPlugin';
-      case 'referrer':
-        return 'Hippo.Targeting.ReferrerCharacteristicPlugin';
-      case 'returningvisitor':
-        return 'Hippo.Targeting.ReturningVisitorCharacteristicPlugin';
-      case 'tracking':
-        return 'Hippo.Targeting.TrackingCookieCharacteristicPlugin';
-      default:
-        throw new Error(`Characteristic with id "${id}" is not supported`);
+    const customCharacteristic = Object.entries(this._characteristicsConfig)
+      .find(([, value]) => value.characteristic === id);
+
+    if (customCharacteristic) {
+      return customCharacteristic[0];
     }
+
+    throw new Error(`Characteristic with id "${id}" is not supported`);
   }
 
   async getVariantIDs(containerItemId) {
