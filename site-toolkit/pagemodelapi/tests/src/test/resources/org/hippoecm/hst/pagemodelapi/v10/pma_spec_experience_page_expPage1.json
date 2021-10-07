@@ -116,6 +116,7 @@
         "date" : 1249891507580,
         "title" : "My Experience Page 1",
         "body" : {
+          "contentType" : "hippostd:html",
           "value" : "My Experience Page 1"
         },
         "summary" : "Summary about Experience Page",
@@ -123,6 +124,7 @@
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "localeString" : null,
+        "contentType" : "unittestproject:newspage",
         "id" : "0da7bebd-fec6-4703-b690-a47b1b3fc7e6"
       }
     },
@@ -540,17 +542,24 @@
       "data" : {
         "name" : "homepage",
         "displayName" : "Home Page",
+        "summary" : "Summary of the homepage",
         "date" : 1249891507580,
         "title" : "This is the homepage",
         "body" : {
+          "contentType" : "hippostd:html",
           "value" : "This is the content of the homepage with a link to <a href=\"/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
-        "summary" : "Summary of the homepage",
+        "newsDocument" : {
+          "uuid" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "uuid" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
+        },
         "imageSetBean" : {
-          "uuid" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
+          "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
         },
         "assetBean" : {
-          "uuid" : "5e56d406-b302-445e-9f80-e624ba053bc4"
+          "$ref" : "/page/u5e56d406b302445e9f80e624ba053bc4"
         },
         "selfBean" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
@@ -569,13 +578,8 @@
         }, {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         } ],
-        "newsDocument" : {
-          "uuid" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
-        },
-        "folderBean" : {
-          "uuid" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
-        },
         "localeString" : "en_US",
+        "contentType" : "unittestproject:textpage",
         "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062",
         "bar" : {
           "$ref" : "/page/uid10"
@@ -665,6 +669,81 @@
       }, {
         "$ref" : "/page/uid17"
       } ]
+    },
+    "udb02dde500984488a72c2a4fc6d51beb" : {
+      "type" : "imageset",
+      "links" : { },
+      "meta" : { },
+      "data" : {
+        "name" : "picture.jpeg",
+        "displayName" : "picture.jpeg",
+        "fileName" : null,
+        "description" : null,
+        "thumbnail" : {
+          "name" : "hippogallery:thumbnail",
+          "displayName" : "hippogallery:thumbnail",
+          "width" : -1,
+          "height" : -1,
+          "lastModified" : 1236880917884,
+          "filename" : "picture_thumbnail.jpeg",
+          "mimeType" : "image/jpeg",
+          "contentType" : "hippogallery:image",
+          "size" : 1490,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
+              "type" : "resource"
+            }
+          }
+        },
+        "original" : {
+          "name" : "hippogallery:original",
+          "displayName" : "hippogallery:original",
+          "width" : -1,
+          "height" : -1,
+          "lastModified" : 1236880917884,
+          "filename" : "picture_original.jpeg",
+          "mimeType" : "image/jpeg",
+          "contentType" : "hippogallery:image",
+          "size" : 168981,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
+              "type" : "resource"
+            }
+          }
+        },
+        "contentType" : "hippogallery:imageset",
+        "localeString" : null,
+        "id" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
+      }
+    },
+    "u5e56d406b302445e9f80e624ba053bc4" : {
+      "type" : "asset",
+      "links" : { },
+      "meta" : { },
+      "data" : {
+        "name" : "testdata.pdf",
+        "displayName" : "Test Data PDF",
+        "asset" : {
+          "name" : "hippogallery:asset",
+          "displayName" : "hippogallery:asset",
+          "lastModified" : 1581065746713,
+          "filename" : null,
+          "mimeType" : "application/pdf",
+          "contentType" : "hippo:resource",
+          "size" : 17381,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/unittestcontent/assets/folder/testdata.pdf",
+              "type" : "resource"
+            }
+          }
+        },
+        "contentType" : "hippogallery:exampleAssetSet",
+        "localeString" : null,
+        "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
+      }
     },
     "uid10" : {
       "name" : "bar",
@@ -778,6 +857,7 @@
       },
       "name" : "banner-new-style",
       "type" : "container-item",
+      "ctype" : "banner",
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "uid17" : {
@@ -798,6 +878,7 @@
       },
       "name" : "banner-new-style-2",
       "type" : "container-item",
+      "ctype" : "banner",
       "componentClass" : "org.hippoecm.hst.test.BannerComponent"
     },
     "u30092f4e2ef74c7286a58ce895908937" : {
@@ -812,12 +893,19 @@
       "data" : {
         "name" : "about-us",
         "displayName" : "About Us",
+        "summary" : "Summary of the about us",
         "date" : 1249891507580,
         "title" : "This is the about us",
         "body" : {
+          "contentType" : "hippostd:html",
           "value" : "This is the content of the about us"
         },
-        "summary" : "Summary of the about us",
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "$ref" : "/page/uebebebeb5fa848a8b03b4524373d992a"
+        },
         "imageSetBean" : {
           "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
         },
@@ -841,13 +929,8 @@
         }, {
           "$ref" : "/page/u30092f4e2ef74c7286a58ce895908937"
         } ],
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
-        "folderBean" : {
-          "$ref" : "/page/uebebebeb5fa848a8b03b4524373d992a"
-        },
         "localeString" : "en_US",
+        "contentType" : "unittestproject:textpage",
         "id" : "30092f4e-2ef7-4c72-86a5-8ce895908937",
         "bar" : {
           "$ref" : "/page/uid18"
@@ -870,12 +953,19 @@
       "data" : {
         "name" : "contact",
         "displayName" : "Contact Us",
+        "summary" : "Summary of the Contact page",
         "date" : 1249891507580,
         "title" : "This is the Contact page",
         "body" : {
+          "contentType" : "hippostd:html",
           "value" : "This is the content of the Contact page"
         },
-        "summary" : "Summary of the Contact page",
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "$ref" : "/page/uebebebeb5fa848a8b03b4524373d992a"
+        },
         "imageSetBean" : {
           "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
         },
@@ -899,13 +989,8 @@
         }, {
           "$ref" : "/page/u30092f4e2ef74c7286a58ce895908938"
         } ],
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
-        "folderBean" : {
-          "$ref" : "/page/uebebebeb5fa848a8b03b4524373d992a"
-        },
         "localeString" : "en_US",
+        "contentType" : "unittestproject:textpage",
         "id" : "30092f4e-2ef7-4c72-86a5-8ce895908938",
         "bar" : {
           "$ref" : "/page/uid19"
@@ -914,76 +999,6 @@
           "name" : "foo",
           "text" : "Foo Text"
         }
-      }
-    },
-    "udb02dde500984488a72c2a4fc6d51beb" : {
-      "type" : "imageset",
-      "links" : { },
-      "meta" : { },
-      "data" : {
-        "name" : "picture.jpeg",
-        "displayName" : "picture.jpeg",
-        "description" : null,
-        "original" : {
-          "name" : "hippogallery:original",
-          "displayName" : "hippogallery:original",
-          "width" : -1,
-          "height" : -1,
-          "lastModified" : 1236880917884,
-          "mimeType" : "image/jpeg",
-          "filename" : "picture_original.jpeg",
-          "size" : 168981,
-          "links" : {
-            "site" : {
-              "href" : "http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
-              "type" : "resource"
-            }
-          }
-        },
-        "thumbnail" : {
-          "name" : "hippogallery:thumbnail",
-          "displayName" : "hippogallery:thumbnail",
-          "width" : -1,
-          "height" : -1,
-          "lastModified" : 1236880917884,
-          "mimeType" : "image/jpeg",
-          "filename" : "picture_thumbnail.jpeg",
-          "size" : 1490,
-          "links" : {
-            "site" : {
-              "href" : "http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
-              "type" : "resource"
-            }
-          }
-        },
-        "fileName" : null,
-        "localeString" : null,
-        "id" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
-      }
-    },
-    "u5e56d406b302445e9f80e624ba053bc4" : {
-      "type" : "asset",
-      "links" : { },
-      "meta" : { },
-      "data" : {
-        "name" : "testdata.pdf",
-        "displayName" : "Test Data PDF",
-        "asset" : {
-          "name" : "hippogallery:asset",
-          "displayName" : "hippogallery:asset",
-          "lastModified" : 1581065746713,
-          "mimeType" : "application/pdf",
-          "filename" : null,
-          "size" : 17381,
-          "links" : {
-            "site" : {
-              "href" : "http://localhost/site/binaries/unittestcontent/assets/folder/testdata.pdf",
-              "type" : "resource"
-            }
-          }
-        },
-        "localeString" : null,
-        "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
       }
     },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
@@ -998,16 +1013,18 @@
       "data" : {
         "name" : "News1",
         "displayName" : "News1",
+        "summary" : "Summary about news item 1",
         "date" : 1239782707580,
         "title" : "News Item 1",
         "body" : {
+          "contentType" : "hippostd:html",
           "value" : "My news item 1 content"
         },
-        "summary" : "Summary about news item 1",
         "textDocument" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "localeString" : null,
+        "contentType" : "unittestproject:newspage",
         "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
       }
     },
@@ -1025,6 +1042,7 @@
         "displayName" : "aboutfolder",
         "localeString" : "en_US",
         "documentSize" : 3,
+        "contentType" : "hippostd:folder",
         "id" : "ebebebeb-5fa8-48a8-b03b-4524373d992a"
       }
     },
@@ -1038,4 +1056,3 @@
     }
   }
 }
-
