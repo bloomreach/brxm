@@ -29,6 +29,7 @@ import org.hippoecm.hst.component.pagination.Page;
 import org.hippoecm.hst.component.pagination.Pagination;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.PageModelEntity;
+import org.hippoecm.hst.content.beans.standard.HippoAsset;
 import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -231,6 +232,17 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
                             .computeIfAbsent(object, obj -> jsonPointerFactory.createJsonPointerId(object));
 
                     serializeBeanReference(gen, jsonPointerId);
+                } else if (object instanceof HippoGalleryImageSet || object instanceof HippoAsset) {
+                    final String jsonPointerId = serializerContext.objectJsonPointerMap
+                            .computeIfAbsent(object, obj -> jsonPointerFactory.createJsonPointerId(object));
+
+                    serializeBeanReference(gen, jsonPointerId);
+
+                    if (!serializerContext.handledPmaEntities.contains(object)) {
+                        serializerContext.handledPmaEntities.add(object);
+                        final JsonPointerWrapper jsonPointerWrapper = getJsonPointerWrapper(object, nextDepth, jsonPointerId, serializerContext);
+                        serializerContext.serializeQueue.add(jsonPointerWrapper);
+                    }
                 } else {
                     gen.writeStartObject();
                     // just serialize only the ID of the document bean and return : the bean does not get
