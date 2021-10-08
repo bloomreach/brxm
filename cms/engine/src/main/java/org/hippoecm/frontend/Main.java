@@ -94,7 +94,7 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener;
-import org.hippoecm.frontend.errors.NavAppExceptionMapper;
+import org.hippoecm.frontend.errors.SwallowExceptionMapper;
 import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -505,9 +505,11 @@ public class Main extends PluginApplication {
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
 
-            // Unexpected exceptions will be rendered by the nav-app
+            // Unexpected exceptions will be swallowed
+            // an error will be logged and the browser will show any
+            // javascript errors related to wicket exceptions
             getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_EXCEPTION_PAGE);
-            exceptionMapperProvider = NavAppExceptionMapper::new;
+            exceptionMapperProvider = SwallowExceptionMapper::new;
 
             final long timeout = NumberUtils.toLong(getConfigurationParameter(DEPLOYMENT_REQUEST_TIMEOUT_PARAM, null));
 
