@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,27 +114,6 @@ describe('ErrorHandlingService', () => {
     it('should forward the error to logger', () => {
       // @ts-ignore
       expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
-    });
-  });
-
-  describe('SnackBar notification based on a lenient client error', () => {
-    const snackBarConfig = { duration: 5000, horizontalPosition: 'right', verticalPosition: 'top' };
-
-    it('should show a snack-bar notification', () => {
-      service.setClientError(ClientErrorCodes.UnknownError, 'Optional message', 'lenient');
-
-      expect(snackBarMock.open).toHaveBeenCalledWith('ERROR_SNACK_BAR_MESSAGE', 'ERROR_SNACK_BAR_DISMISS', snackBarConfig);
-      expect(translateServiceMock.instant).toHaveBeenCalledWith('ERROR_SNACK_BAR_MESSAGE', {
-        error: 'Something went wrong',
-        cause: 'Optional message',
-      });
-      expect(translateServiceMock.instant).toHaveBeenCalledWith('ERROR_SNACK_BAR_DISMISS');
-    });
-
-    it('should allow message to be empty', () => {
-      service.setClientError(ClientErrorCodes.UnknownError, null, 'lenient');
-
-      expect(snackBarMock.open).toHaveBeenCalledWith('Something went wrong', 'ERROR_SNACK_BAR_DISMISS', snackBarConfig);
     });
   });
 
