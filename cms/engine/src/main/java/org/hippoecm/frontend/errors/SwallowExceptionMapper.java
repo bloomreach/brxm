@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ package org.hippoecm.frontend.errors;
 import org.apache.wicket.Application;
 import org.apache.wicket.DefaultExceptionMapper;
 import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.handler.EmptyRequestHandler;
 import org.apache.wicket.settings.ExceptionSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NavAppExceptionMapper extends DefaultExceptionMapper {
-    private static final Logger log = LoggerFactory.getLogger(NavAppExceptionMapper.class);
+public class SwallowExceptionMapper extends DefaultExceptionMapper {
+    private static final Logger log = LoggerFactory.getLogger(SwallowExceptionMapper.class);
 
     @Override
     protected IRequestHandler mapUnexpectedExceptions(final Exception e, final Application application) {
@@ -32,7 +33,7 @@ public class NavAppExceptionMapper extends DefaultExceptionMapper {
 
         if (ExceptionSettings.SHOW_EXCEPTION_PAGE.equals(unexpectedExceptionDisplay)) {
             log.error("Unexpected error occurred", e);
-            return new UnexpectedErrorRequestHandler(e);
+            return new EmptyRequestHandler();
         }
 
         return super.mapUnexpectedExceptions(e, application);
