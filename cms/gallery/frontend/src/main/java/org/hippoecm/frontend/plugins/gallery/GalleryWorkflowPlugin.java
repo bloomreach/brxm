@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -52,8 +51,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException;
-import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.multiple.JQueryFileUploadDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
@@ -64,6 +61,8 @@ import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.validation.SvgValidationException;
+import org.hippoecm.frontend.validation.SvgValidator;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -144,12 +143,11 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 final boolean svgScriptsEnabled = GalleryWorkflowPlugin.this.getPluginConfig()
                         .getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
-                    final String svgContent = new String(upload.getBytes());
-                    if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
-                        throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
+                    try {
+                        SvgValidator.validate(new String(upload.getBytes()));
                     }
-                    if (StringUtils.containsIgnoreCase(svgContent, "onload=")) {
-                        throw new SvgOnLoadGalleryException("SVG images with onload attribute are not supported.");
+                    catch ( SvgValidationException svgValidationException){
+                        throw svgValidationException.getGalleryException();
                     }
                 }
 
