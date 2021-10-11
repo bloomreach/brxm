@@ -187,9 +187,13 @@ class HippoIframeCtrl {
     this.CommunicationService.toggleContentsOverlay(this.showContentOverlay);
   }
 
-  _onNewHeadContributions(event, component) {
+  async _onNewHeadContributions(event, component, callback) {
     this.$log.info(`Updated '${component.getLabel()}' component needs additional head contributions.`);
-    this.HippoIframeService.reload();
+    await this.HippoIframeService.reload();
+
+    if (callback) {
+      callback(component);
+    }
   }
 
   _onComponentClick(event, componentId) {
