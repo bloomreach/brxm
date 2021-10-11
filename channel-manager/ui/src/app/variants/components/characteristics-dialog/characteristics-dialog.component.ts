@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,12 @@
 
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
 import { MatSelectionList } from '@angular/material/list';
+import { DomSanitizer } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 
+import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../../../services/ng1/config.ng1.service';
 import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
 import { Characteristic, TargetGroup, TargetGroupProperty } from '../../models/characteristic.model';
 
@@ -55,8 +59,12 @@ export class CharacteristicsDialogComponent implements OnInit {
   targetGroupsList?: MatSelectionList;
 
   constructor(
+      @Inject(NG1_CONFIG_SERVICE) private readonly configService: Ng1ConfigService,
       @Inject(NG1_TARGETING_SERVICE) private readonly targetingService: Ng1TargetingService,
       private readonly dialogRef: MatDialogRef<CharacteristicsDialogComponent>,
+      private readonly matIconRegistry: MatIconRegistry,
+      private readonly domSanitizer: DomSanitizer,
+      private readonly translateService: TranslateService,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -110,12 +118,28 @@ export class CharacteristicsDialogComponent implements OnInit {
       case 'tracking':
         return 'cookie-outline';
       default:
-        return '';
+        // return the SVG icon from the "targeting" resources
+        return `${characteristic.id}-characteristic-icon`;
     }
   }
 
   getPropertiesAsString(properties: TargetGroupProperty[]): string {
     return properties.map(p => p.value || p.name).join(', ');
+  }
+
+  getTranslation(characteristic: Characteristic): string {
+    const { resources } = this.targetingService.getCharacteristicConfig(characteristic.id);
+    if (resources && resources['characteristic-description']) {
+      return resources['characteristic-description'].replace('{0}', resources['characteristic-subject']);
+    }
+
+    // Keep the internal (no targeting resources) intact as a fallback mechanism
+    const subjectKey = `EXPRESSION_TARGET_GROUP_${characteristic.id.toUpperCase()}_SUBJECT`;
+    const groupKey = `EXPRESSION_TARGET_GROUP_${characteristic.id.toUpperCase()}`;
+
+    return this.translateService.instant(groupKey, {
+      name: this.translateService.instant(subjectKey),
+    });
   }
 
   private parseCharacteristics(characteristics: Characteristic[]): Characteristic[] {
@@ -139,6 +163,8 @@ export class CharacteristicsDialogComponent implements OnInit {
       } else if (c.id === 'tracking') {
         this.parseChoices(c);
       }
+
+      this.parseTargetingSvgIcon(c);
     });
 
     return characteristics;
@@ -192,5 +218,22 @@ export class CharacteristicsDialogComponent implements OnInit {
       .forEach((property: TargetGroupProperty) => {
         property.value = valueFn(property);
       });
+  }
+
+  /**
+   * Register the targeting SVG icon of the charateristic in the MAT icon registry
+   * with name ${charateristic.id}-characteristic-icon
+   */
+  private parseTargetingSvgIcon(charateristic: Characteristic): void {
+    const config = this.targetingService.getCharacteristicConfig(charateristic.id);
+
+    if (config.iconUrl) {
+      const url = `${this.configService.getCmsOrigin()}${this.configService.getCmsContextPath()}${config.iconUrl}`;
+
+      this.matIconRegistry.addSvgIcon(
+        `${charateristic.id}-characteristic-icon`,
+        this.domSanitizer.bypassSecurityTrustResourceUrl(url),
+      );
+    }
   }
 }
