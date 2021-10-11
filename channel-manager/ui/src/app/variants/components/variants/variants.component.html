@@ -70,7 +70,7 @@
       <div class="variant-expressions-list-item"
            *ngFor="let expression of currentVariant?.expressions; let last = last;">
         <span>
-          {{ getExpressionTranslation(expression) | translate: { name: expression.name } }}
+          {{ getExpressionTranslation(expression) }}
           {{ last ? '' : ('EXPRESSION_AND' | translate) }}
         </span>
 
