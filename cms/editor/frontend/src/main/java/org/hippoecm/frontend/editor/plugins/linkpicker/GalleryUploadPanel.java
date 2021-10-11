@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,8 +51,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException;
-import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
@@ -61,6 +59,8 @@ import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationS
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.validation.SvgValidationException;
+import org.hippoecm.frontend.validation.SvgValidator;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowException;
@@ -204,14 +204,11 @@ public abstract class GalleryUploadPanel extends Panel {
 
                 final boolean svgScriptsEnabled = pluginConfig.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
-                    final String svgContent = new String(upload.getBytes());
-                    if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
+                    try {
+                        SvgValidator.validate(new String(upload.getBytes()));
+                    } catch (SvgValidationException e) {
                         IOUtils.closeQuietly(istream);
-                        throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
-                    }
-                    if (StringUtils.containsIgnoreCase(svgContent, "onload=")) {
-                        IOUtils.closeQuietly(istream);
-                        throw new SvgOnLoadGalleryException("SVG images with onload attribute are not supported.");
+                        throw e.getGalleryException();
                     }
                 }
 
@@ -228,7 +225,7 @@ public abstract class GalleryUploadPanel extends Panel {
                 if (!node.getDisplayName().equals(localName)) {
                     defaultWorkflow.setDisplayName(localName);
                 }
-            } catch (WorkflowException | SvgScriptGalleryException | SvgOnLoadGalleryException | RepositoryException ex) {
+            } catch (WorkflowException | GalleryException  | RepositoryException ex) {
                 log.error(ex.getMessage());
                 error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, localName).getObject());
             }
