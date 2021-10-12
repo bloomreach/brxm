@@ -1,5 +1,5 @@
 <!--
-  Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -25,17 +25,16 @@
   <button mat-icon-button
           matPrefix
           disabled>
-    <mat-icon matPrefix>search</mat-icon>
+    <mat-icon svgIcon="search" matPrefix></mat-icon>
   </button>
   <button *ngIf="search$ | async"
           mat-icon-button
           matSuffix>
-    <mat-icon (click)="search$.next('')">close</mat-icon>
+    <mat-icon svgIcon="close" (click)="search$.next('')"></mat-icon>
   </button>
 </mat-form-field>
 
-<mat-tree #tree
-          [dataSource]="dataSource"
+<mat-tree [dataSource]="dataSource"
           [treeControl]="treeControl">
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodePadding
