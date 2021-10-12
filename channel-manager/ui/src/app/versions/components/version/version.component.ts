@@ -113,11 +113,11 @@ export class VersionComponent implements OnChanges {
 
   getIcon(version: Version): string {
     if (!!version.campaign?.to && this.hasCampaignEnded(version)) {
-      return 'info_outline';
+      return 'info-outline';
     }
 
     if (version.campaign && version.active && !this.versionsInfo.live) {
-      return 'remove_circle_outline';
+      return 'remove-circle-outline';
     }
 
     if (version.campaign) {
@@ -125,7 +125,7 @@ export class VersionComponent implements OnChanges {
     }
 
     if (version.published) {
-      return 'check_circle_outline';
+      return 'check-circle-outline';
     }
 
     return '';
