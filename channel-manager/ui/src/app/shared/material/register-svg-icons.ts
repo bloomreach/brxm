@@ -40,6 +40,8 @@ import lockOutline from '!!raw-loader!./icons/lock-outline.svg';
 import minusCircleOutline from '!!raw-loader!./icons/minus-circle-outline.svg';
 import monitor from '!!raw-loader!./icons/monitor.svg';
 import plus from '!!raw-loader!./icons/plus.svg';
+import schedule from '!!raw-loader!./icons/schedule.svg';
+import search from '!!raw-loader!./icons/search.svg';
 import sync from '!!raw-loader!./icons/sync.svg';
 import tablet from '!!raw-loader!./icons/tablet.svg';
 import trash from '!!raw-loader!./icons/trash.svg';
@@ -78,9 +80,11 @@ export function registerSvgIcons(iconRegistry: MatIconRegistry, domSanitizer: Do
   registerIcon('minus-circle-outline', minusCircleOutline);
   registerIcon('monitor', monitor);
   registerIcon('plus', plus);
+  registerIcon('schedule', schedule);
+  registerIcon('search', search);
+  registerIcon('sync', sync);
   registerIcon('tablet', tablet);
   registerIcon('trash', trash);
   registerIcon('web', web);
   registerIcon('xpage', xpage);
-  registerIcon('sync', sync);
 }

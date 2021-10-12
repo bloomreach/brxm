@@ -39,8 +39,8 @@
       <mat-icon [class.active]="version.active"
                 [class.offline]="!versionsInfo.live && !hasCampaignEnded(version)"
                 [class.scheduled]="version.campaign"
-                [matTooltip]="getTooltip(version)">
-        {{ getIcon(version) }}
+                [matTooltip]="getTooltip(version)"
+                [svgIcon]="getIcon(version)">
       </mat-icon>
 
       <span *ngIf="version.published">{{ 'PUBLISHED' | translate }}</span>
@@ -67,7 +67,7 @@
             matTooltip="{{ 'SCHEDULE' | translate }}"
             [disabled]="actionInProgress"
             (click)="isScheduleFormVisible = true; $event.stopPropagation()">
-      <mat-icon>schedule</mat-icon>
+      <mat-icon svgIcon="schedule"></mat-icon>
     </button>
 
     <button *ngIf="versionsInfo.restoreEnabled"
