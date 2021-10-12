@@ -83,7 +83,7 @@ export class ErrorHandlingService {
 
   setClientError(errorCode: ClientErrorCodes, message?: string, errorType?: string): void {
     const errorCodeAsText = this.translateService.instant(this.mapClientErrorCodeToText(errorCode));
-      this.error = new AppError(
+    this.error = new AppError(
         this.mapClientErrorCodeToHttpErrorCode(errorCode),
         errorCodeAsText,
         message,
