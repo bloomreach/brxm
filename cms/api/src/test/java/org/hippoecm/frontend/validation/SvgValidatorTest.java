@@ -19,6 +19,7 @@ import java.io.InputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 
 public class SvgValidatorTest {
@@ -36,6 +37,13 @@ public class SvgValidatorTest {
                 getFileFromResourceAsStream("org/hippoecm/frontend/validation/onload.svg"));
         Assert.assertTrue(validate.getOffendingAttributes().contains("onload"));
     }
+
+    @Test(expected = SAXException.class)
+    public void validateScriptInStyleUrl() throws Exception {
+        final SvgValidationResult validate = SvgValidator.validate(
+                getFileFromResourceAsStream("org/hippoecm/frontend/validation/scriptInStyleUrl.svg"));
+    }
+
 
     private InputStream getFileFromResourceAsStream(String fileName) {
         ClassLoader classLoader = getClass().getClassLoader();
