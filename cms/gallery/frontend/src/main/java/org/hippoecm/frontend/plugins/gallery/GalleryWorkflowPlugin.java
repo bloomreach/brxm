@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.Component;
@@ -51,6 +52,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.SvgGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.multiple.JQueryFileUploadDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
@@ -61,7 +63,7 @@ import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
-import org.hippoecm.frontend.validation.SvgValidationException;
+import org.hippoecm.frontend.validation.SvgValidationResult;
 import org.hippoecm.frontend.validation.SvgValidator;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
@@ -74,6 +76,7 @@ import org.hippoecm.repository.gallery.GalleryWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWorkflow> {
     private static final long serialVersionUID = 1L;
@@ -143,12 +146,18 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 final boolean svgScriptsEnabled = GalleryWorkflowPlugin.this.getPluginConfig()
                         .getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
+                    final SvgValidationResult svgValidationResult;
                     try {
-                        SvgValidator.validate(new String(upload.getBytes()));
+                        svgValidationResult = SvgValidator.validate(is);
+                        if (!(svgValidationResult.getOffendingAttributes()
+                                .isEmpty() && svgValidationResult.getOffendingElements().isEmpty())){
+                            throw new SvgGalleryException("Validation did not pass", svgValidationResult);
+                        }
+                    } catch (ParserConfigurationException | SAXException e) {
+                        log.error("Something went wrong during the upload of the svg", e);
+                        throw new GalleryException("Something went wrong during the validation", e);
                     }
-                    catch ( SvgValidationException svgValidationException){
-                        throw svgValidationException.getGalleryException();
-                    }
+
                 }
 
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
