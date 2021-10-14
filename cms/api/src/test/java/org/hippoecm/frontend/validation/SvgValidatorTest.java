@@ -17,32 +17,25 @@ package org.hippoecm.frontend.validation;
 
 import java.io.InputStream;
 
-import org.apache.tika.io.IOUtils;
-import org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException;
-import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
+import org.junit.Assert;
 import org.junit.Test;
 
 
 public class SvgValidatorTest {
 
-    @Test(expected=SvgScriptGalleryException.class)
+    @Test
     public void validate_onload() throws Exception {
-        try {
-            SvgValidator.validate(IOUtils.toString(getFileFromResourceAsStream("org/hippoecm/frontend/validation/script.svg")));
-        } catch (SvgValidationException e){
-            throw e.getGalleryException();
-        }
+        final SvgValidationResult validationResult = SvgValidator.validate(
+                getFileFromResourceAsStream("org/hippoecm/frontend/validation/script.svg"));
+        Assert.assertTrue(validationResult.getOffendingElements().contains("script"));
     }
 
-    @Test(expected = SvgOnLoadGalleryException.class)
+    @Test
     public void validate_script() throws Exception {
-        try {
-            SvgValidator.validate(IOUtils.toString(getFileFromResourceAsStream("org/hippoecm/frontend/validation/onload.svg")));
-        } catch (SvgValidationException e){
-            throw e.getGalleryException();
-        }
+        final SvgValidationResult validate = SvgValidator.validate(
+                getFileFromResourceAsStream("org/hippoecm/frontend/validation/onload.svg"));
+        Assert.assertTrue(validate.getOffendingAttributes().contains("onload"));
     }
-
 
     private InputStream getFileFromResourceAsStream(String fileName) {
         ClassLoader classLoader = getClass().getClassLoader();
