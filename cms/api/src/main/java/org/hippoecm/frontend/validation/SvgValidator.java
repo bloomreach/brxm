@@ -25,6 +25,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -89,9 +91,16 @@ public class SvgValidator {
 
         SvgValidationResult.SvgValidationResultBuilder builder = SvgValidationResult.builder();
         DefaultHandler handler = new DefaultHandler() {
+
+            private boolean inStyleElement;
+            private String styleContents = StringUtils.EMPTY;
+
             @Override
             public void startElement(final String uri, final String localName, final String qName,
                                      final Attributes attributes) {
+                if ("style".equals(qName)){
+                    inStyleElement = true;
+                }
                 if (!SVG_ELEMENTS.contains(qName)) {
                     builder.offendingElement(qName);
                 }
@@ -101,6 +110,26 @@ public class SvgValidator {
                         builder.offendingAttribute(attributeName);
                     }
                 }
+            }
+
+            @Override
+            public void endElement(final String uri, final String localName, final String qName) throws
+                    SAXException {
+                if (inStyleElement) {
+                    inStyleElement = false;
+                    styleContents = StringUtils.EMPTY;
+
+                }
+            }
+
+            @Override
+            public void characters(final char[] ch, final int start, final int length) throws
+                    SAXException {
+               if (inStyleElement){
+                   if (StringUtils.containsIgnoreCase(String.valueOf(ch),"javascript")){
+                       throw new SAXException("Javascript inside style element is not supported");
+                   }
+               }
             }
         };
 
