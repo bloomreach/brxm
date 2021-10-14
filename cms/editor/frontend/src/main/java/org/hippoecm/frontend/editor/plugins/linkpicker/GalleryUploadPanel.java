@@ -25,6 +25,7 @@ import java.util.Objects;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +49,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.model.SvgGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
@@ -58,7 +60,7 @@ import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationS
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
-import org.hippoecm.frontend.validation.SvgValidationException;
+import org.hippoecm.frontend.validation.SvgValidationResult;
 import org.hippoecm.frontend.validation.SvgValidator;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -68,6 +70,7 @@ import org.hippoecm.repository.gallery.GalleryWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
 
@@ -196,12 +199,19 @@ public abstract class GalleryUploadPanel extends Panel {
 
                 final boolean svgScriptsEnabled = pluginConfig.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
+                    final SvgValidationResult svgValidationResult;
                     try {
-                        SvgValidator.validate(new String(upload.getBytes()));
-                    } catch (SvgValidationException e) {
-                        IOUtils.closeQuietly(istream);
-                        throw e.getGalleryException();
+                        svgValidationResult = SvgValidator.validate(istream);
+                        if (!(svgValidationResult.getOffendingAttributes()
+                                .isEmpty() && svgValidationResult.getOffendingElements().isEmpty())){
+                            IOUtils.closeQuietly(istream);
+                            throw new SvgGalleryException("Validation did not pass", svgValidationResult);
+                        }
+                    } catch (ParserConfigurationException | SAXException e) {
+                        log.error("Something went wrong during the upload of the svg", e);
+                        throw new GalleryException("Something went wrong during the parsing of the svg", e);
                     }
+
                 }
 
                 //Get the selected folder from the folderReference Service

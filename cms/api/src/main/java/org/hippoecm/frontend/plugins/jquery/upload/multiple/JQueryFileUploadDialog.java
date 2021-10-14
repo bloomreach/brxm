@@ -18,13 +18,14 @@ package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.value.IValueMap;
@@ -34,11 +35,13 @@ import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.model.SvgGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.yui.upload.processor.DefaultFileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.processor.FileUploadPreProcessorService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
+import org.hippoecm.frontend.validation.SvgValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,7 +151,15 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             List<String> errors = new ArrayList<>();
             Throwable t = e;
             while(t != null) {
-                final String translatedMessage = (String) getExceptionTranslation(t, file.getClientFileName()).getObject();
+                Object[] parameters;
+                if (t instanceof SvgGalleryException) {
+                    SvgGalleryException svgGalleryException = (SvgGalleryException) t;
+                    final SvgValidationResult validationResult = svgGalleryException.getValidationResult();
+                    parameters = new Object[]{getCommaSeparatedList(validationResult)};
+                } else {
+                    parameters = new Object[]{file.getClientFileName()};
+                }
+                final String translatedMessage = (String) getExceptionTranslation(t, parameters).getObject();
                 if (translatedMessage != null && !errors.contains(translatedMessage)) {
                     errors.add(translatedMessage);
                 }
@@ -161,6 +172,11 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             }
             throw new FileUploadViolationException(errors);
         }
+    }
+
+    private String getCommaSeparatedList(final SvgValidationResult validationResult) {
+        return Stream.concat(validationResult.getOffendingElements().stream(),
+                validationResult.getOffendingAttributes().stream()).collect(Collectors.joining(","));
     }
 
     /**
