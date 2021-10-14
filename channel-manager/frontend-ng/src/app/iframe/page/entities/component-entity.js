@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,41 @@
 
 import { Container } from '../../../model/entities';
 import { EntityMixin } from './entity';
+
+function loadImage(image) {
+  return window.$Promise((resolve, reject) => {
+
+    function fulfill() {
+      if (image.naturalWidth) {
+        resolve(image);
+      } else {
+        reject(image);
+      }
+
+      image.removeEventListener('load', fulfill);
+      image.removeEventListener('error', fulfill);
+    }
+
+    if (image.naturalWidth) {
+      // If the browser can determine the naturalWidth the image is already loaded successfully
+      resolve(image);
+    } else if (image.complete) {
+      // If the image is complete but the naturalWidth is 0px it is probably broken
+      reject(image);
+    } else {
+      image.addEventListener('load', fulfill);
+      image.addEventListener('error', fulfill);
+    }
+  });
+}
+
+function loadImages(input) {
+  if (input.length === undefined || input.length === 0) {
+    return window.$Promise.resolve();
+  }
+
+  return window.$Promise.all(input.map((img) => loadImage(img).catch((error) => error)));
+}
 
 export function ComponentEntityMixin(BaseClass) {
   return class ComponentEntityMixed extends EntityMixin(BaseClass) {
@@ -39,15 +74,15 @@ export function ComponentEntityMixin(BaseClass) {
         this._removeSiblingsUntil(endComment[0].nextSibling); // Don't remove the end marker
       }
 
-      // Delay the onLoad callback until all images are fully downloaded. Called once per image.
-      const images = $newMarkup.find('img, [type="image"]').one('load', onLoadCallback);
+      // find all images in the new markup
+      const images = $newMarkup.find('img, [type="image"]');
 
       endComment.replaceWith($newMarkup);
 
-      // If no images are being loaded we can execute the onLoad callback right away.
-      if (!images.length) {
+      // wait for all images to be loaded (or errored)
+      loadImages(images.get()).finally(() => {
         onLoadCallback();
-      }
+      });
     }
 
     _removeSiblingsUntil(startNode, endNode) {
