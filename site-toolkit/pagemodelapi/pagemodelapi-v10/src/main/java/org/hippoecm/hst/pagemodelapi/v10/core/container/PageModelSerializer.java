@@ -238,11 +238,10 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
 
                     serializeBeanReference(gen, jsonPointerId);
 
-                    if (!serializerContext.handledPmaEntities.contains(object)) {
-                        serializerContext.handledPmaEntities.add(object);
-                        final JsonPointerWrapper jsonPointerWrapper = getJsonPointerWrapper(object, nextDepth, jsonPointerId, serializerContext);
-                        serializerContext.serializeQueue.add(jsonPointerWrapper);
-                    }
+                    serializerContext.handledPmaEntities.add(object);
+                    final JsonPointerWrapper jsonPointerWrapper = getJsonPointerWrapper(object, nextDepth, jsonPointerId, serializerContext);
+                    serializerContext.serializeQueue.add(jsonPointerWrapper);
+
                 } else {
                     gen.writeStartObject();
                     // just serialize only the ID of the document bean and return : the bean does not get
