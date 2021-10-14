@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ $link-hover-color: $darker-shade;
 $link-hover-decoration: none;
 
 // Typography
-$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
+$font-family-sans-serif: "Helvetica Neue", helvetica, arial, sans-serif;
+$font-family-monospace: menlo, monaco, consolas, "Courier New", monospace;
 $font-family-base: "Open Sans", $font-family-sans-serif;
 /* No need for a serif font in the CMS UI */
 $font-family-serif: $font-family-base;

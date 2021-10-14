@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 'use strict';
 
-const autoprefixer = require('autoprefixer');
 const sass = require('node-sass');
 const stylelintFormatter = require('stylelint-formatter-pretty');
 
@@ -88,8 +87,9 @@ module.exports = function (grunt) {
         map: {
           inline: false, // save all sourcemaps as separate files
         },
-
-        processors: [autoprefixer()]
+        processors: [
+          require('autoprefixer')(),
+        ]
       },
       dist: {
         src: '<%= build.skin %>/css/<%= build.file %>.css',
@@ -100,7 +100,8 @@ module.exports = function (grunt) {
     cssmin: {
       options: {
         report: 'min',
-        sourceMap: true
+        sourceMap: true,
+        rebaseTo: '<%= build.skin %>/css/'
       },
       theme: {
         files: {

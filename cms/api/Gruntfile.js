@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ module.exports = function (grunt) {
           livereload: false
         },
         files: ['<%= build.src %>/**/*.scss'],
-        tasks: ['sass', 'autoprefixer', 'csslint', 'concat:css', 'clean:tmp']
+        tasks: ['sass', 'postcss', 'csslint', 'concat:css', 'clean:tmp']
       },
       reloadCompiledCss: {
         files: ['<%= build.skin %>/**/*.css']
@@ -90,17 +90,13 @@ module.exports = function (grunt) {
       }
     },
 
-    // Autoprefix vendor prefixes
-    autoprefixer: {
-      theme: {
-        options: {
-          browsers: [
-            'last 1 Chrome versions',
-            'last 1 Edge versions',
-            'last 1 Firefox versions',
-            'last 1 Safari versions',
-          ]
-        },
+    postcss: {
+      options: {
+        processors: [
+          require('autoprefixer')(),
+        ]
+      },
+      dist: {
         src: '<%= build.tmp %>/css/<%= build.file %>.css',
         dest: '<%= build.tmp %>/css/<%= build.file %>.css'
       }
@@ -289,7 +285,7 @@ module.exports = function (grunt) {
     'clean:copies',
     'sass',
     'svgstore',
-    'autoprefixer',
+    'postcss',
     'csslint',
     'concat',
     'uglify',
