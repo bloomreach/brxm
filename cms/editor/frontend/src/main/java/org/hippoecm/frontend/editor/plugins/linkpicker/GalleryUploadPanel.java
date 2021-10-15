@@ -212,8 +212,7 @@ public abstract class GalleryUploadPanel extends Panel {
                     final SvgValidationResult svgValidationResult;
                     try {
                         svgValidationResult = SvgValidator.validate(istream);
-                        if (!(svgValidationResult.getOffendingAttributes()
-                                .isEmpty() && svgValidationResult.getOffendingElements().isEmpty())){
+                        if (!svgValidationResult.isValid()){
                             IOUtils.closeQuietly(istream);
                             throw new SvgGalleryException("Validation did not pass", svgValidationResult);
                         }
