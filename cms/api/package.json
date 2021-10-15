@@ -13,32 +13,39 @@
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "3.7.0",
-    "blueimp-file-upload": "9.18.0",
+    "blueimp-file-upload": "9.34.0",
     "blueimp-load-image": "2.12.2",
     "blueimp-tmpl": "3.8.0",
-    "bootstrap-sass": "3.3.7",
+    "bootstrap-sass": "3.4.1",
     "normalize.css": "6.0.0",
     "open-sans-fontface": "1.4.0",
     "retinajs": "2.1.0",
     "selectric": "1.11.1"
   },
   "devDependencies": {
-    "grunt": "1.0.1",
-    "grunt-autoprefixer": "3.0.4",
+    "autoprefixer": "9.8.8",
+    "grunt": "1.4.1",
     "grunt-contrib-clean": "1.1.0",
     "grunt-contrib-concat": "1.0.1",
     "grunt-contrib-copy": "1.0.0",
     "grunt-contrib-csslint": "2.0.0",
-    "grunt-contrib-cssmin": "2.1.0",
-    "grunt-contrib-uglify": "2.3.0",
-    "grunt-contrib-watch": "1.0.0",
+    "grunt-contrib-cssmin": "4.0.0",
+    "grunt-contrib-uglify": "5.0.1",
+    "grunt-contrib-watch": "1.1.0",
     "grunt-newer": "1.3.0",
+    "grunt-postcss": "0.9.0",
     "grunt-sass": "3.1.0",
     "grunt-shell": "2.1.0",
-    "grunt-svgmin": "4.0.0",
-    "grunt-svgstore": "1.0.0",
+    "grunt-svgmin": "6.0.1",
+    "grunt-svgstore": "2.0.0",
     "load-grunt-tasks": "3.5.2",
-    "node-sass": "4.12.0",
+    "node-sass": "6.0.1",
     "time-grunt": "1.4.0"
-  }
+  },
+  "browserslist": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version",
+    "last 1 edge version"
+  ]
 }
