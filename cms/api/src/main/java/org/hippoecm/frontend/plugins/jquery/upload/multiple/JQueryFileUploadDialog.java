@@ -19,7 +19,6 @@ package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -147,7 +146,11 @@ public abstract class JQueryFileUploadDialog extends Dialog {
                 if (t instanceof SvgGalleryException) {
                     SvgGalleryException svgGalleryException = (SvgGalleryException) t;
                     final SvgValidationResult validationResult = svgGalleryException.getValidationResult();
-                    parameters = new Object[]{getCommaSeparatedList(validationResult)};
+                    final String offendingElements = validationResult.getOffendingElements().stream()
+                            .collect(Collectors.joining(","));
+                    final String offendingAttributes = validationResult.getOffendingAttributes().stream()
+                            .collect(Collectors.joining(","));
+                    parameters = new Object[]{offendingElements, offendingAttributes};
                 } else {
                     parameters = new Object[]{file.getClientFileName()};
                 }
@@ -164,11 +167,6 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             }
             throw new FileUploadViolationException(errors);
         }
-    }
-
-    private String getCommaSeparatedList(final SvgValidationResult validationResult) {
-        return Stream.concat(validationResult.getOffendingElements().stream(),
-                validationResult.getOffendingAttributes().stream()).collect(Collectors.joining(","));
     }
 
     /**
