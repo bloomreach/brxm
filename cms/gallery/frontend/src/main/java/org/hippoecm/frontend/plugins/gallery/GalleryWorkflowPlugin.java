@@ -149,8 +149,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                     final SvgValidationResult svgValidationResult;
                     try {
                         svgValidationResult = SvgValidator.validate(is);
-                        if (!(svgValidationResult.getOffendingAttributes()
-                                .isEmpty() && svgValidationResult.getOffendingElements().isEmpty())){
+                        if (!svgValidationResult.isValid()){
                             throw new SvgGalleryException("Validation did not pass", svgValidationResult);
                         }
                     } catch (ParserConfigurationException | SAXException e) {
