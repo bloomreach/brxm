@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ public class HtmlProcessorConfig implements Serializable {
     private static final boolean DEFAULT_OMIT_DATA_PROTOCOL = true;
     private static final boolean DEFAULT_OMIT_JS_PROTOCOL = true;
     private static final boolean DEFAULT_CONVERT_LINE_ENDINGS = true;
+    private static final boolean DEFAULT_SECURE_TARGET_BLANK_LINKS = true;
     private static final HtmlSerializer DEFAULT_SERIALIZER = HtmlSerializer.SIMPLE;
 
     // repository property names
@@ -42,6 +43,7 @@ public class HtmlProcessorConfig implements Serializable {
     private static final String OMIT_COMMENTS = "omitComments";
     private static final String OMIT_DATA_PROTOCOL = "omitDataProtocol";
     private static final String OMIT_JS_PROTOCOL = "omitJavascriptProtocol";
+    private static final String SECURE_TARGET_BLANK_LINKS = "secureTargetBlankLinks";
     private static final String CONVERT_LINE_ENDINGS = "convertLineEndings";
     private static final String SERIALIZER = "serializer";
     private static final String FILTER = "filter";
@@ -52,6 +54,7 @@ public class HtmlProcessorConfig implements Serializable {
     private boolean omitComments;
     private boolean omitDataProtocol;
     private boolean omitJsProtocol;
+    private boolean secureTargetBlankLinks;
     private boolean filter;
     private boolean convertLineEndings;
     private List<Element> whitelistElements;
@@ -64,6 +67,7 @@ public class HtmlProcessorConfig implements Serializable {
         omitComments = DEFAULT_OMIT_COMMENTS;
         omitDataProtocol = DEFAULT_OMIT_DATA_PROTOCOL;
         omitJsProtocol = DEFAULT_OMIT_JS_PROTOCOL;
+        secureTargetBlankLinks = DEFAULT_SECURE_TARGET_BLANK_LINKS;
     }
 
     public void reconfigure(final Node node) throws RepositoryException {
@@ -73,6 +77,7 @@ public class HtmlProcessorConfig implements Serializable {
         omitComments = JcrUtils.getBooleanProperty(node, OMIT_COMMENTS, DEFAULT_OMIT_COMMENTS);
         omitDataProtocol = JcrUtils.getBooleanProperty(node, OMIT_DATA_PROTOCOL, DEFAULT_OMIT_DATA_PROTOCOL);
         omitJsProtocol = JcrUtils.getBooleanProperty(node, OMIT_JS_PROTOCOL, DEFAULT_OMIT_JS_PROTOCOL);
+        secureTargetBlankLinks = JcrUtils.getBooleanProperty(node, SECURE_TARGET_BLANK_LINKS, DEFAULT_SECURE_TARGET_BLANK_LINKS);
 
         final String serializerName = JcrUtils.getStringProperty(node, SERIALIZER, DEFAULT_SERIALIZER.name());
         serializer = HtmlSerializer.valueOfOrDefault(serializerName);
@@ -88,16 +93,19 @@ public class HtmlProcessorConfig implements Serializable {
     }
 
     private Element createElement(final Node node) throws RepositoryException {
-        final String[] attributes = JcrUtils.getMultipleStringProperty(node, ATTRIBUTES, new String[]{});
         final boolean omitJsForElement = JcrUtils.getBooleanProperty(node, OMIT_JS_PROTOCOL, omitJsProtocol);
         final boolean omitDataForElement = JcrUtils.getBooleanProperty(node, OMIT_DATA_PROTOCOL, omitDataProtocol);
+        final boolean secureTargetBlankLinksForElement = JcrUtils.getBooleanProperty(node, SECURE_TARGET_BLANK_LINKS, secureTargetBlankLinks);
+
+        final String[] attributes = JcrUtils.getMultipleStringProperty(node, ATTRIBUTES, new String[]{});
         final String configName = node.getName();
         final int offset = configName.lastIndexOf('.');
         final String elementName = offset != -1 ? configName.substring(offset + 1) : configName;
 
         return Element.create(elementName, attributes)
                 .setOmitJsProtocol(omitJsForElement)
-                .setOmitDataProtocol(omitDataForElement);
+                .setOmitDataProtocol(omitDataForElement)
+                .setSecureTargetBlankLinks(secureTargetBlankLinksForElement);
     }
 
     public void setSerializer(final HtmlSerializer serializer) {
@@ -151,6 +159,7 @@ public class HtmlProcessorConfig implements Serializable {
     public void setOmitDataProtocol(final boolean omitDataProtocol) {
         this.omitDataProtocol = omitDataProtocol;
     }
+
     public boolean isOmitDataProtocol() {
         return omitDataProtocol;
     }
@@ -163,4 +172,7 @@ public class HtmlProcessorConfig implements Serializable {
         return omitJsProtocol;
     }
 
+    public boolean isSecureTargetBlankLinks() {
+        return secureTargetBlankLinks;
+    }
 }
