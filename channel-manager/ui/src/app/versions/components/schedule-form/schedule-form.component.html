@@ -50,7 +50,7 @@
             mat-icon-button
             matTooltip="{{ 'RESET_DATE' | translate }}"
             (click)="resetFromDate()">
-      <mat-icon>sync</mat-icon>
+      <mat-icon svgIcon="sync"></mat-icon>
     </button>
 
     <mat-error *ngIf="scheduleForm.get('fromDateTime')?.hasError('matDatetimePickerParse')">
@@ -82,7 +82,7 @@
             mat-icon-button
             matTooltip="{{ 'RESET_DATE' | translate }}"
             (click)="resetToDate()">
-      <mat-icon>sync</mat-icon>
+      <mat-icon svgIcon="sync"></mat-icon>
     </button>
 
     <mat-error *ngIf="scheduleForm.get('toDateTime')?.hasError('matDatetimePickerMin')">
