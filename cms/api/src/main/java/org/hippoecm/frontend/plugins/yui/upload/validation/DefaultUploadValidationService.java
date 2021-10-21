@@ -24,8 +24,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.google.common.base.Strings;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -35,7 +33,6 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
-import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -68,7 +65,6 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     private ValidationResult result;
     private List<Validator> validators;
     private List<String> allowedExtensions;
-    private List<String> allowedMimeTypes;
     private boolean svgScriptsEnabled;
     private IValueMap values;
 
@@ -79,7 +75,6 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     public DefaultUploadValidationService(IValueMap params) {
         validators = new LinkedList<>();
         allowedExtensions = new LinkedList<>();
-        allowedMimeTypes = new LinkedList<>();
 
         if (params.containsKey(EXTENSIONS_ALLOWED)) {
             setAllowedExtensions(params.getStringArray(EXTENSIONS_ALLOWED));
@@ -87,7 +82,8 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
             setAllowedExtensions(getDefaultExtensionsAllowed());
         }
         if (params.containsKey(MIME_TYPES_ALLOWED)) {
-            setAllowedMimeTypes(params.getStringArray(MIME_TYPES_ALLOWED));
+            log.warn("Allowed mimetypes which was used to skip content mimetype validation of certain mimetypes is not" +
+                    "support any more. All mimetypes are checked for content mimetype validation");
         }
         svgScriptsEnabled = params.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
 
@@ -173,20 +169,19 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
     private void validateMimeType(final FileUpload upload) {
-        String mimeType = upload.getContentType();
-        if (allowedMimeTypes.contains(mimeType)) {
-            return;
-        }
-        try (InputStream is = upload.getInputStream()){
-            MimeTypeHelper.validateMimeType(is, mimeType);
+        try {
+            // this validates the browser provided mimetype (contentType) against the actual content its mimetype detected via
+            // Tika, see MagicMimeTypeFileItem#getContentType : in case the browser provided mimetype does not match
+            // the content detected mimetype, eg when a .exe is renamed to a .pdf, an InvalidMimeTypeException will be
+            // thrown
+            upload.getContentType();
         } catch (InvalidMimeTypeException e) {
-            addViolation("file.validation.mime.invalid", upload.getClientFileName(), mimeType);
+            addViolation("file.validation.mime.invalid", upload.getClientFileName(), e.getMimeType() == null ? "unknown" : e.getMimeType());
             if (log.isDebugEnabled()) {
                 log.debug("Invalid MIME type for " + upload.getClientFileName(), e);
             }
-        } catch (IOException e) {
-            log.error("Failed to get input stream from the uploaded file:" + upload.getClientFileName(), e);
         }
+
     }
 
     private void validateSvg(final FileUpload upload){
@@ -208,13 +203,13 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
 
+    /**
+     * @deprecated since 14.7.0 : setting allowed mime types does not do anything any more
+     */
+    @Deprecated
     public void setAllowedMimeTypes(final String[] mimeTypes) {
-        allowedMimeTypes.clear();
-        for (String type : mimeTypes) {
-            if (!Strings.isNullOrEmpty(type)) {
-                allowedMimeTypes.add(type);
-            }
-        }
+        log.warn("Allowed mimetypes which was used to skip content mimetype validation of certain mimetypes is not" +
+                "support any more. All mimetypes are checked for content mimetype validation");
     }
 
     @Override

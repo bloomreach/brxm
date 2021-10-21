@@ -160,7 +160,10 @@ import java.util.Vector;
  *   Karl von Randow. Released as 1.9.</li>
  * </ul>
  * @author Marco Schmidt
+ *
+ * @deprecated Not used any more, deprecated since 14.7.0, will be dropped in next major
  */
+@Deprecated
 public class ImageInfo {
     /**
      * Return value of {@link #getFormat()} for JPEG streams.
