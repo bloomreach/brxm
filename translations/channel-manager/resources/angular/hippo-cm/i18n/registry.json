@@ -2042,11 +2042,7 @@
     "MAX_VALUES_HINT" : {
       "status" : "ADDED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     }
   }
