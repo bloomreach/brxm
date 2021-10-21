@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,9 @@ public class MimeTypeHelper {
      * @param inputStream
      * @param mimeType
      * @throws org.hippoecm.frontend.editor.plugins.resource.ResourceException
+     * @deprecated Not used any more, deprecated since 14.7.0, will be dropped in next major
      */
+    @Deprecated
     public static void validateMimeType(final InputStream inputStream, final String mimeType) throws InvalidMimeTypeException {
         try {
             String sanitizedMimeType = sanitizeMimeType(mimeType);

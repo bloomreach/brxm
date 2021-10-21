@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MediaTypeRegistry;
 import org.apache.commons.fileupload.FileItem;
+import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.onehippo.repository.tika.TikaFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +66,35 @@ public class MagicMimeTypeFileItem implements FileItem {
         return fileItem.getContentType();
     }
 
+    /**
+     * <p>
+     *     Returns the content type (mime type) for this file item. In case the browser provided mimetype does not match
+     *     the content detected mimetype, eg when a .exe is renamed to a .pdf, an {@link InvalidMimeTypeException}
+     *     will be thrown
+     * </p>
+     * @return the content type for the file
+     * @throws InvalidMimeTypeException if the content type from the browser upload is different than
+     * the actual detected type of the content via Tika
+     */
     public String getContentType() {
         if (contentType == null) {
             contentType = resolveMimeType(delegate);
+        }
+        if (contentType == null) {
+            throw new InvalidMimeTypeException("Could not detect mimetype from content", delegate.getContentType());
+        }
+        if (!contentType.equalsIgnoreCase(delegate.getContentType())) {
+            // it might be that Tika returns a more specific child contentType or super contentType than the one provided
+            // by the browser. We now have to validate this and if this is the case, the mimetype check still passes
+            if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(delegate.getContentType(), MediaType.parse(contentType))) {
+                log.debug("Browser provided content type '{}' is a subtype of '{}'", delegate.getContentType(), contentType);
+            } else if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(contentType, MediaType.parse(delegate.getContentType()))) {
+                log.debug("Browser provided content type '{}' is a super type of '{}'", delegate.getContentType(), contentType);
+            } else {
+                log.info("Detected mimetype by Tika '{}' does not match the provided mimetype by the browser '{}'", contentType, delegate.getContentType());
+                throw new InvalidMimeTypeException(String.format("Could not detect mimetype or detected mimetype different than " +
+                        "request mimetype '%s'", delegate.getContentType()), contentType);
+            }
         }
         return contentType;
     }
