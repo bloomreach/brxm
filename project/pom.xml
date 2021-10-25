@@ -110,7 +110,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
     <snakeyaml.version>1.26</snakeyaml.version>
-
+    <eclipse.jetty.version>9.4.44.v20210927</eclipse.jetty.version>
     <!-- test dependencies -->
     <restassured.version>4.1.2</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
@@ -609,6 +609,49 @@
         <artifactId>org.apache.sling.javax.activation</artifactId>
         <version>${sling-javax-activation.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-io</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-security</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-continuation</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-http</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>websocket-client</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
