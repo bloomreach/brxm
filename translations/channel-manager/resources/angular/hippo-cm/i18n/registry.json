@@ -1253,16 +1253,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "PLACEHOLDER_EXPERIENCE_PAGE" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "NOTIFICATION_BAR_XPAGE_LABEL_EDITING_SHARED_CONTAINERS" : {
       "status" : "CLEAN",
       "locales" : null
