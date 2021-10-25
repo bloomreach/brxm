@@ -274,10 +274,8 @@
       "locales" : null
     },
     "ERROR_MENU_SAME_NAME_SIBLING" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "RESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ERROR_MENU_SAVE_FAILED" : {
       "status" : "CLEAN",
@@ -632,10 +630,8 @@
       "locales" : null
     },
     "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "RESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE" : {
       "status" : "CLEAN",
@@ -950,10 +946,8 @@
       "locales" : null
     },
     "ERROR_REQUEST_PUBLICATION_FAILED" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "RESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "DOCUMENT_NEW_TOOLTIP" : {
       "status" : "CLEAN",
@@ -1060,10 +1054,8 @@
       "locales" : null
     },
     "COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "RESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "FEEDBACK_UNKNOWN_ERROR" : {
       "status" : "CLEAN",
