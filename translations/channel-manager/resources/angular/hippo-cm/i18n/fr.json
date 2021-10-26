@@ -499,6 +499,7 @@
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "La liste des variantes globales n'a pas pu être récupérée",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Les informations sur les paramètres de canal n'ont pas pu être récupérées",
   "VIEWPORT_ANY_DEVICE": "Tout appareil",
+  "MAX_VALUES_HINT": "{{current}} de maximum {{max}}",
   "MOVE": "Déplacer",
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Annuler la demande de mise hors connexion programmée",
   "CREATE_DOCUMENT_LOCKED": "Impossible de créer le document (le composant est verrouillé)",
