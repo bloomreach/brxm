@@ -2022,10 +2022,8 @@
       "locales" : null
     },
     "MAX_VALUES_HINT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
