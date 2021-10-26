@@ -55,24 +55,6 @@ public class SvgValidatorTest {
                 getFileFromResourceAsStream("org/hippoecm/frontend/validation/scriptInStyleUrl.svg"));
     }
 
-    @Test()
-    public void validateSampleSvg() throws
-            Exception {
-        final SvgValidationResult validate = SvgValidator.validate(
-                getFileFromResourceAsStream("org/hippoecm/frontend/validation/sample_640×426.svg"));
-        Assert.assertTrue(validate.getOffendingAttributes().isEmpty());
-        Assert.assertTrue(validate.getOffendingElements().isEmpty());
-    }
-
-    @Test()
-    public void validateWorldMapSvg() throws
-            Exception {
-        final SvgValidationResult validate = SvgValidator.validate(
-                getFileFromResourceAsStream("org/hippoecm/frontend/validation/Worldmap.svg"));
-        Assert.assertTrue(validate.getOffendingAttributes().isEmpty());
-        Assert.assertTrue(validate.getOffendingElements().isEmpty());
-    }
-
     /**
      * Test svg's in bulk, e.g. against the sample set of apache batik ( 354 svg files )
      * See https://xmlgraphics.apache.org/batik/, https://github.com/apache/xmlgraphics-batik/tree/trunk/samples
