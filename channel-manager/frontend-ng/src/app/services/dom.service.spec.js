@@ -128,7 +128,7 @@ describe('DomService', () => {
   // Release 67 of Google Chrome introduced a failing test on comparing the copied computed style values,
   // specifically the '-webkit-app-region' property. A little investigation showed that we don't
   // depend on this property and as such can safely skip it during the validation.
-  const skipComputedStyleProperties = ['-webkit-app-region'];
+  const skipComputedStyleProperties = ['-webkit-app-region', 'app-region'];
   function expectEqualComputedStyle(elementsSource, elementsTarget) {
     expect(elementsSource.length).toEqual(elementsTarget.length);
 
