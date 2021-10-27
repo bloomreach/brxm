@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,7 +133,7 @@ describe('DomService', () => {
   // Release 67 of Google Chrome introduced a failing test on comparing the copied computed style values,
   // specifically the '-webkit-app-region' property. A little investigation showed that we don't
   // depend on this property and as such can safely skip it during the validation.
-  const skipComputedStyleProperties = ['-webkit-app-region'];
+  const skipComputedStyleProperties = ['-webkit-app-region', 'app-region'];
   function expectEqualComputedStyle(elementsSource, elementsTarget) {
     expect(elementsSource.length).toEqual(elementsTarget.length);
 
@@ -254,7 +254,7 @@ describe('DomService', () => {
 
   it('escapes HTML characters in strings', () => {
     expect(DomService.escapeHtml('&<>"\'/')).toEqual('&amp;&lt;&gt;&quot;&#x27;&#x2F;');
-    expect(DomService.escapeHtml('<script>alert("xss")</script>')).toEqual('&lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt;');
+    expect(DomService.escapeHtml('<script>alert("xss")</script>'))
+      .toEqual('&lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt;');
   });
 });
-
