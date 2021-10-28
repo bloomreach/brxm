@@ -18,11 +18,14 @@ package org.hippoecm.frontend.plugins.yui.upload.validation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Application;
@@ -36,6 +39,7 @@ import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.SvgValidationResult;
@@ -47,6 +51,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
+import static org.apache.commons.lang3.StringUtils.trim;
+
 public class DefaultUploadValidationService implements FileUploadValidationService {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultUploadValidationService.class);
@@ -57,6 +65,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     public static final String MAX_FILE_SIZE      = "max.file.size";
     public static final String EXTENSIONS_ALLOWED = "extensions.allowed";
+    public static final String EXTENSION_MIMETYPE_ALLOWED_MAPPINGS = "extension.mimetype.allowed.mappings";
     public static final String MIME_TYPES_ALLOWED = "mimetypes.allowed";
 
     private static final String SVG_MIME_TYPE = "image/svg+xml";
@@ -66,6 +75,8 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     private List<Validator> validators;
     private List<String> allowedExtensions;
     private boolean svgScriptsEnabled;
+    private Map<String, String> extensionMimeTypeAllowedMappings = new HashMap<>();
+
     private IValueMap values;
 
     public DefaultUploadValidationService() {
@@ -86,6 +97,15 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
                     "support any more. All mimetypes are checked for content mimetype validation");
         }
         svgScriptsEnabled = params.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
+
+        // default correct mapping from .psd and .ps : some browsers send a mimeType which is not a registered
+        // (sub/super) mimeType by tika. Hence we add these by default to the extensionMimeTypeAllowedMapping
+        extensionMimeTypeAllowedMappings.put(".psd", "image/vnd.adobe.photoshop");
+        extensionMimeTypeAllowedMappings.put(".ps", "application/x-font-type1");
+
+        if (params.containsKey(EXTENSION_MIMETYPE_ALLOWED_MAPPINGS)) {
+            addExtensionMimeTypeAllowedMapping(params.getStringArray(EXTENSION_MIMETYPE_ALLOWED_MAPPINGS));
+        }
 
         values = params;
 
@@ -174,12 +194,23 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
             // Tika, see MagicMimeTypeFileItem#getContentType : in case the browser provided mimetype does not match
             // the content detected mimetype, eg when a .exe is renamed to a .pdf, an InvalidMimeTypeException will be
             // thrown
+            // Unfortunately, we only want the upload#getContentType() to throw potentially a InvalidMimeTypeException
+            // during this check, but not otherwise. The only feasible way is unfortunately an thread local. Ideally,
+            // we could use the 'isExtensionMimeTypeAllowedMappings' below in the MagicMimeTypeFileItem but this is
+            // really not doable at the moment and would require a real service in the HippoServiceRegistry to have the
+            // extensionMimeTypeAllowedMappings available in MagicMimeTypeFileItem
+            MagicMimeTypeFileItem.mimetypeValidationContext.set(Boolean.TRUE);
             upload.getContentType();
         } catch (InvalidMimeTypeException e) {
-            addViolation("file.validation.mime.invalid", upload.getClientFileName(), e.getMimeType() == null ? "unknown" : e.getMimeType());
-            if (log.isDebugEnabled()) {
-                log.debug("Invalid MIME type for " + upload.getClientFileName(), e);
+            // check if there is an explicit hardcoded or configred configuration to allow the mapping nonetheless
+            if (isExtensionMimeTypeAllowedMappings(upload.getClientFileName(), e.getTikaDetectedContentType())) {
+                log.debug("Mimetype '{}' for extension file '{}' is explicitly allowed", e.getTikaDetectedContentType(), upload.getClientFileName());
+            } else {
+                addViolation("file.validation.mime.invalid", upload.getClientFileName(), e.getTikaDetectedContentType() == null ? "unknown" : e.getTikaDetectedContentType());
+                log.debug("Invalid MIME type for {}", upload.getClientFileName(), e);
             }
+        } finally {
+            MagicMimeTypeFileItem.mimetypeValidationContext.remove();
         }
 
     }
@@ -249,6 +280,76 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     protected String[] getDefaultExtensionsAllowed() {
         return DEFAULT_EXTENSIONS_ALLOWED;
+    }
+
+
+    private void addExtensionMimeTypeAllowedMapping(final String[] mappings) {
+        if (mappings == null) {
+            return;
+        }
+
+        Arrays.stream(mappings).forEach(mapping -> {
+            if (mapping.indexOf(".") != 0) {
+                logInvalidMapping(mapping);
+            } else if (mapping.indexOf(",") == -1) {
+                logInvalidMapping(mapping);
+            } else {
+                final String extension = trim(substringBefore(mapping,","));
+                final String mimeType = trim(substringAfter(mapping,","));
+                extensionMimeTypeAllowedMappings.put(extension, mimeType);
+            }
+        });
+    }
+
+    private void logInvalidMapping(final String mapping) {
+        log.warn("Incorrect extensionMimeTypeAllowedMappings entry found '{}' : the extension should " +
+                "start with a '.' and between the extension and mimeType there should be a ',', eg " +
+                ".psd,image/vnd.adobe.photoshop", mapping);
+    }
+
+    /**
+     * <p>
+     *     Some extensions are send as a different mimetype by some browsers than the detected mimetype by Tika. For
+     *     example firefox sends mimetype
+     * </p>
+     */
+    private boolean isExtensionMimeTypeAllowedMappings(final String fileName, final String tikaDetectedContentType) {
+        if (fileName == null || tikaDetectedContentType == null) {
+            return false;
+        }
+        try {
+            String lowercaseExtension = getLowercaseExtension(fileName);
+            if (tikaDetectedContentType.equalsIgnoreCase(extensionMimeTypeAllowedMappings.get(lowercaseExtension))) {
+                log.debug("Explicit matched mapping found for browser provided mimetype '{}' to Tika detected mimetype '{}'",
+                        fileName, tikaDetectedContentType);
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return false;
+    }
+
+
+    /**
+     * <p>
+     *     Returns lowercase extension include the dot (.)
+     * </p>
+     */
+    private String getLowercaseExtension(final String fileName) {
+        if (fileName == null) {
+            return null;
+        }
+        int extensionIndex = fileName.lastIndexOf(".");
+        if (extensionIndex == -1 ) {
+            String allowed = StringUtils.join(allowedExtensions.iterator(), ", ");
+            addViolation("file.validation.extension.unknown", fileName, allowed);
+            log.debug("File '{}' has no extension. Allowed extensions are {}.", fileName, allowed);
+            throw new IllegalArgumentException();
+        }
+
+        String lowercaseExtension = fileName.substring(extensionIndex).toLowerCase();
+        return lowercaseExtension;
     }
 
     /**

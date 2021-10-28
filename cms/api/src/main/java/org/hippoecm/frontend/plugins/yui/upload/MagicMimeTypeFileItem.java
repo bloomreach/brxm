@@ -20,12 +20,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MediaTypeRegistry;
 import org.apache.commons.fileupload.FileItem;
+import org.hippoecm.frontend.editor.plugins.resource.InvalidFileNameException;
 import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.onehippo.repository.tika.TikaFactory;
 import org.slf4j.Logger;
@@ -37,7 +40,9 @@ public class MagicMimeTypeFileItem implements FileItem {
     private static final Tika tika = TikaFactory.newTika();
 
     private final FileItem delegate;
-    private String contentType;
+    private String tikaDetectedContentType;
+
+    public static ThreadLocal<Boolean> mimetypeValidationContext = new ThreadLocal<>();
 
     public MagicMimeTypeFileItem(FileItem delegate) {
         this.delegate = delegate;
@@ -77,26 +82,38 @@ public class MagicMimeTypeFileItem implements FileItem {
      * the actual detected type of the content via Tika
      */
     public String getContentType() {
-        if (contentType == null) {
-            contentType = resolveMimeType(delegate);
+        if (tikaDetectedContentType == null) {
+            tikaDetectedContentType = resolveMimeType(delegate);
         }
-        if (contentType == null) {
-            throw new InvalidMimeTypeException("Could not detect mimetype from content", delegate.getContentType());
+        if (mimetypeValidationContext.get() == null || !mimetypeValidationContext.get().booleanValue()) {
+            log.debug("No mimetype validation against browser provide mimetype check needed");
+            return tikaDetectedContentType;
         }
-        if (!contentType.equalsIgnoreCase(delegate.getContentType())) {
+        log.debug("Mimetype validation against browser provide mimetype check needed");
+        if (tikaDetectedContentType == null) {
+            throw new InvalidMimeTypeException("Could not detect mimetype from content", "unknown");
+        }
+        // by default, executable files are not allowed
+        if (tikaDetectedContentType.equalsIgnoreCase("application/x-dosexec")) {
+            log.debug("Detected executable. Only if the extension is .exe and .exe is explicitly allowed as content type," +
+                    "the upload is allowed. Otherwise, an InvalidMimeTypeException will be thrown");
+            throw new InvalidMimeTypeException("Executable file upload not allowed", tikaDetectedContentType);
+        }
+        if (!tikaDetectedContentType.equalsIgnoreCase(delegate.getContentType())) {
             // it might be that Tika returns a more specific child contentType or super contentType than the one provided
             // by the browser. We now have to validate this and if this is the case, the mimetype check still passes
-            if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(delegate.getContentType(), MediaType.parse(contentType))) {
-                log.debug("Browser provided content type '{}' is a subtype of '{}'", delegate.getContentType(), contentType);
-            } else if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(contentType, MediaType.parse(delegate.getContentType()))) {
-                log.debug("Browser provided content type '{}' is a super type of '{}'", delegate.getContentType(), contentType);
+            if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(delegate.getContentType(), MediaType.parse(tikaDetectedContentType))) {
+                log.debug("Browser provided content type '{}' is a subtype of '{}'", delegate.getContentType(), tikaDetectedContentType);
+            } else if (MediaTypeRegistry.getDefaultRegistry().isInstanceOf(tikaDetectedContentType, MediaType.parse(delegate.getContentType()))) {
+                log.debug("Browser provided content type '{}' is a super type of '{}'", delegate.getContentType(), tikaDetectedContentType);
             } else {
-                log.info("Detected mimetype by Tika '{}' does not match the provided mimetype by the browser '{}'", contentType, delegate.getContentType());
+                log.debug("Detected mimetype by Tika '{}' does not match the provided mimetype by the browser '{}'", tikaDetectedContentType, delegate.getContentType());
                 throw new InvalidMimeTypeException(String.format("Could not detect mimetype or detected mimetype different than " +
-                        "request mimetype '%s'", delegate.getContentType()), contentType);
+                        "request mimetype '%s'. Tika detected mimetype was '%s'", delegate.getContentType(), tikaDetectedContentType),
+                        tikaDetectedContentType);
             }
         }
-        return contentType;
+        return tikaDetectedContentType;
     }
 
     public InputStream getInputStream() throws IOException {
