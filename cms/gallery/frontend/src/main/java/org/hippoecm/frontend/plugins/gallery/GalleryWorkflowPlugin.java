@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -152,7 +153,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
                     final SvgValidationResult svgValidationResult;
                     try {
-                        svgValidationResult = SvgValidator.validate(is);
+                        svgValidationResult = SvgValidator.validate(new ByteArrayInputStream(upload.getBytes()));
                         if (!svgValidationResult.isValid()){
                             throw new SvgGalleryException("Validation did not pass", svgValidationResult);
                         }
