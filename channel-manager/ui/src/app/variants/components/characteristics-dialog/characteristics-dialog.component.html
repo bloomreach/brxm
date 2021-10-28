@@ -40,7 +40,7 @@
             <mat-list-option *ngFor="let characteristic of characteristics"
                              [value]="characteristic"
                              class="icon-text">
-              <mat-icon svgIcon="{{ getCharacteristicIcon(characteristic) }}"></mat-icon>
+              <mat-icon [svgIcon]="getCharacteristicIcon(characteristic)"></mat-icon>
               {{ getTranslation(characteristic) }}
             </mat-list-option>
           </mat-selection-list>

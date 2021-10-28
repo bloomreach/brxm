@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import org.htmlcleaner.TagNode;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -249,6 +252,46 @@ public class WhitelistHtmlFilterTest {
 
         // tabs and CR
         expectEmptyAttributes(iframe, "<iframe src=\"dat\ta\t:\rtestData\"></iframe>");
+    }
+
+    @Test
+    public void testSecureTargetBlankLinks() {
+        final Element a = Element.create("a", "href", "target", "rel");
+        addToWhitelist(a);
+
+        final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\">test</a>");
+        final TagNode tag = result.findElementByName(a.getName(), true);
+
+        final String relAttribute = tag.getAttributeByName("rel");
+        assertThat("attribute 'rel' should contain value 'noopener'", relAttribute, containsString("noopener"));
+        assertThat("attribute 'rel' should contain value 'noreferrer'", relAttribute, containsString("noreferrer"));
+    }
+
+    @Test
+    public void testSecureTargetBlankLinksWithExistingRelAttribute() {
+        final Element a = Element.create("a", "href", "target", "rel");
+        addToWhitelist(a);
+
+        final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\" rel=\"pingback\">test</a>");
+        final TagNode tag = result.findElementByName(a.getName(), true);
+
+        final String relAttribute = tag.getAttributeByName("rel");
+        assertThat("attribute 'rel' should contain original value", relAttribute, containsString("pingback"));
+        assertThat("attribute 'rel' should contain value 'noopener'", relAttribute, containsString("noopener"));
+        assertThat("attribute 'rel' should contain value 'noreferrer'", relAttribute, containsString("noreferrer"));
+    }
+
+    @Test
+    public void testSecureTargetBlankLinksDisabled() {
+        final Element a = Element.create("a", "href", "target", "rel").setSecureTargetBlankLinks(false);
+        addToWhitelist(a);
+
+        final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\" rel=\"pingback\">test</a>");
+        final TagNode tag = result.findElementByName(a.getName(), true);
+
+        final String relAttribute = tag.getAttributeByName("rel");
+        assertThat("attribute 'rel' should not contain value 'noopener'", relAttribute, not(containsString("noopener")));
+        assertThat("attribute 'rel' should not contain value 'noreferrer'", relAttribute, not(containsString("noreferrer")));
     }
 
     private TagNode filterHtml(final String html) {
