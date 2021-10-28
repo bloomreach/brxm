@@ -201,9 +201,9 @@ public abstract class GalleryUploadPanel extends Panel {
                 final boolean svgScriptsEnabled = pluginConfig.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
                     final SvgValidationResult svgValidationResult;
-                    try {
-                        svgValidationResult = SvgValidator.validate(new ByteArrayInputStream(upload.getBytes()));
-                        if (!svgValidationResult.isValid()){
+                    try (final ByteArrayInputStream is = new ByteArrayInputStream(upload.getBytes())) {
+                        svgValidationResult = SvgValidator.validate(is);
+                        if (!svgValidationResult.isValid()) {
                             IOUtils.closeQuietly(istream);
                             throw new SvgGalleryException("Validation did not pass", svgValidationResult);
                         }
