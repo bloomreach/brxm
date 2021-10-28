@@ -20,15 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MediaTypeRegistry;
 import org.apache.commons.fileupload.FileItem;
-import org.hippoecm.frontend.editor.plugins.resource.InvalidFileNameException;
 import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.onehippo.repository.tika.TikaFactory;
 import org.slf4j.Logger;
