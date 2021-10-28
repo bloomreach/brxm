@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.filter;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import org.htmlcleaner.TagNode;
 import org.onehippo.cms7.services.htmlprocessor.serialize.CharacterReferenceNormalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class WhitelistHtmlFilter implements HtmlFilter {
 
@@ -63,7 +66,7 @@ public class WhitelistHtmlFilter implements HtmlFilter {
             return null;
         }
         if (nodeName != null) {
-            filterAttributes(node);
+            processAttributes(node);
         }
 
         for (final TagNode childNode : node.getChildTags()) {
@@ -74,7 +77,7 @@ public class WhitelistHtmlFilter implements HtmlFilter {
         return node;
     }
 
-    private void filterAttributes(final TagNode node) {
+    private void processAttributes(final TagNode node) {
         final Element allowedElement = elements.get(node.getName());
 
         final Map<String, String> attributes =
@@ -96,10 +99,43 @@ public class WhitelistHtmlFilter implements HtmlFilter {
 
                     return value;
                 }));
+
+        if (allowedElement.isSecureTargetBlankLinks()) {
+            secureTargetBlankLinks(node, attributes);
+        }
+
         node.setAttributes(attributes);
     }
 
     private static String cleanWhitespace(final String value) {
         return WHITESPACE.matcher(value).replaceAll("");
+    }
+
+    private void secureTargetBlankLinks(final TagNode node, final Map<String, String> attributes) {
+        if (!node.getName().equals("a")) {
+            return;
+        }
+
+        if (!attributes.containsKey("target")) {
+            return;
+        }
+
+        if (!attributes.get("target").equalsIgnoreCase("_blank")) {
+            return;
+        }
+
+        final List<String> relAttrValues = Lists.newArrayList("noopener", "noreferrer");
+
+        String currentValue = attributes.get("rel");
+        if (StringUtils.isNotBlank(currentValue)) {
+            final String[] existingValues = currentValue.trim().split("\\s+");
+            for (final String existingValue : existingValues) {
+                if (!relAttrValues.contains(existingValue)) {
+                    relAttrValues.add(existingValue);
+                }
+            }
+        }
+
+        attributes.put("rel", String.join(" ", relAttrValues));
     }
 }
