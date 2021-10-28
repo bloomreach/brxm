@@ -16,6 +16,16 @@
     "file.validation.extension.unknown" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "file.validation.svg.disallowed" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
