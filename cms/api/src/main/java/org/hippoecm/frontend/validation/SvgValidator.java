@@ -26,14 +26,15 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class SvgValidator {
+
+    public static final Logger log = LoggerFactory.getLogger(SvgValidator.class);
 
     /**
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element">
