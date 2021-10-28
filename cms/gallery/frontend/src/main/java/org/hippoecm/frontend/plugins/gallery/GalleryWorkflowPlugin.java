@@ -83,7 +83,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     private static final long serialVersionUID = 1L;
 
     private static final String SVG_MIME_TYPE = "image/svg+xml";
-    private final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
+    private static final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
@@ -148,16 +148,16 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                         .getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
                     final SvgValidationResult svgValidationResult;
-                    try {
-                        svgValidationResult = SvgValidator.validate(new ByteArrayInputStream(upload.getBytes()));
-                        if (!svgValidationResult.isValid()){
+                    try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                            upload.getBytes())) {
+                        svgValidationResult = SvgValidator.validate(byteArrayInputStream);
+                        if (!svgValidationResult.isValid()) {
                             throw new SvgGalleryException("Validation did not pass", svgValidationResult);
                         }
                     } catch (ParserConfigurationException | SAXException e) {
                         log.error("Something went wrong during the upload of the svg", e);
                         throw new GalleryException("Something went wrong during the validation", e);
                     }
-
                 }
 
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
