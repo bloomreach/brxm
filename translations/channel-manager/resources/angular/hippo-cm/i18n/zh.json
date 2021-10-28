@@ -356,6 +356,7 @@
   "TOOLBAR_MENU_XPAGE_VERSIONS": "版本",
   "SEARCH_COMPONENTS_NAME": "组件",
   "TOOLBAR_MENU_XPAGE_RENAME": "重命名",
+  "NEXT": "下一步...",
   "EXPRESSION_TARGET_GROUP_DOCUMENTTYPES_SUBJECT": "（内容类型）",
   "ERROR_DELETE_COMPONENT": "不能删除'{{component}}'",
   "NORMAL_SIZE": "正常尺寸",
@@ -501,10 +502,10 @@
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "检索全球变体清单失败",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "检索通道设置信息失败",
   "VIEWPORT_ANY_DEVICE": "任何设备",
+  "MAX_VALUES_HINT": "{{current}}，最大 {{max}}",
   "MOVE": "移动",
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "取消计划的设置为离线请求",
   "CREATE_DOCUMENT_LOCKED": "无法创建文档（组件被锁定）",
   "NOTIFICATION_PUBLICATION_REQUESTED": "针对 '{{documentName}}' 的发布请求",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "该页面没有可用的页面内容或版本历史记录。",
-  "NEXT": "下一步..."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "该页面没有可用的页面内容或版本历史记录。"
 }
