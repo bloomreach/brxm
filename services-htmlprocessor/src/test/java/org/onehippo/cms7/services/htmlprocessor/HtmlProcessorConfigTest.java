@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ public class HtmlProcessorConfigTest {
         configNode.setProperty("omitComments", true);
         configNode.setProperty("omitJavascriptProtocol", false);
         configNode.setProperty("omitDataProtocol", false);
+        configNode.setProperty("secureTargetBlankLinks", false);
         configNode.setProperty("convertLineEndings", false);
         configNode.setProperty("filter", true);
         configNode.setProperty("serializer", HtmlSerializer.COMPACT.name());
@@ -66,14 +67,17 @@ public class HtmlProcessorConfigTest {
         assertTrue(config.isOmitComments());
         assertFalse(config.isOmitJavascriptProtocol());
         assertFalse(config.isOmitDataProtocol());
+        assertFalse(config.isSecureTargetBlankLinks());
         assertFalse(config.isConvertLineEndings());
 
         final Element a = Element.create("a")
                 .setOmitJsProtocol(false)
-                .setOmitDataProtocol(false);
+                .setOmitDataProtocol(false)
+                .setSecureTargetBlankLinks(false);
         final Element div = Element.create("div", "class", "id")
                 .setOmitJsProtocol(false)
-                .setOmitDataProtocol(false);
+                .setOmitDataProtocol(false)
+                .setSecureTargetBlankLinks(false);
         assertThat(config.getWhitelistElements(), CoreMatchers.hasItems(a, div));
     }
 

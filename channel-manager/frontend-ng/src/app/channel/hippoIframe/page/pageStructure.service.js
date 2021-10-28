@@ -210,7 +210,9 @@ class PageStructureService {
     this._notifyChangeListeners();
 
     if (oldHeadContributionsSize !== this.headContributions.size) {
-      this.$rootScope.$emit('page:new-head-contributions', newContainer);
+      const deferred = this.$q.defer();
+      this.$rootScope.$emit('page:new-head-contributions', newContainer, () => deferred.resolve(newContainer));
+      return deferred.promise;
     }
 
     return newContainer;
