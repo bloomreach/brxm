@@ -24,7 +24,7 @@ package org.hippoecm.frontend.editor.plugins.resource;
  */
 public class InvalidMimeTypeException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-    private String mimeType;
+    private String tikaDetectedContentType;
 
     public InvalidMimeTypeException(String message) {
         super(message);
@@ -34,12 +34,12 @@ public class InvalidMimeTypeException extends RuntimeException {
         super(message, cause);
     }
 
-    public InvalidMimeTypeException(String message, String mimeType) {
+    public InvalidMimeTypeException(String message, String tikaDetectedContentType) {
         super(message);
-        this.mimeType = mimeType;
+        this.tikaDetectedContentType = tikaDetectedContentType;
     }
 
-    public String getMimeType() {
-        return mimeType;
+    public String getTikaDetectedContentType() {
+        return tikaDetectedContentType;
     }
 }
