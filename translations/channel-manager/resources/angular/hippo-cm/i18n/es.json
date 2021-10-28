@@ -356,6 +356,7 @@
   "TOOLBAR_MENU_XPAGE_VERSIONS": "Versiones",
   "SEARCH_COMPONENTS_NAME": "componentes",
   "TOOLBAR_MENU_XPAGE_RENAME": "Renombrar",
+  "NEXT": "Siguiente...",
   "EXPRESSION_TARGET_GROUP_DOCUMENTTYPES_SUBJECT": "(tipo de contenido)",
   "ERROR_DELETE_COMPONENT": "No se puede eliminar '{{component}}'",
   "NORMAL_SIZE": "Tamaño normal",
@@ -501,10 +502,10 @@
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "No se pudo recuperar la lista de variantes mundiales",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "No se pudo recuperar la información sobre la configuración del canal",
   "VIEWPORT_ANY_DEVICE": "Cualquier dispositivo",
+  "MAX_VALUES_HINT": "{{current}} de máximo {{max}}",
   "MOVE": "Mover",
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Cancelar solicitud de cancelación de publicación programada",
   "CREATE_DOCUMENT_LOCKED": "No es posible crear el documento (el componente está bloqueado)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publicación solicitada para '{{documentName}}'",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "No hay contenido de la página ni historial de versiones disponible para esta página.",
-  "NEXT": "Siguiente..."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "No hay contenido de la página ni historial de versiones disponible para esta página."
 }
