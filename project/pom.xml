@@ -53,7 +53,6 @@
     <javax.activation.version>1.1.1</javax.activation.version>
     <servlet-api.version>3.1.0</servlet-api.version>
     <javax.jcr.version>2.0</javax.jcr.version>
-    <xml-apis.version>1.0.b2</xml-apis.version>
     <jta.version>1.1.1</jta.version>
     <mail.version>1.4.7</mail.version>
     <slf4j.version>1.7.30</slf4j.version>
@@ -116,7 +115,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
     <snakeyaml.version>1.26</snakeyaml.version>
-
+    <eclipse.jetty.version>9.4.44.v20210927</eclipse.jetty.version>
     <!-- test dependencies -->
     <!-- restassured 4.3.0 and higher requires groovy 3.0 or higher-->
     <restassured.version>4.2.0</restassured.version>
@@ -170,7 +169,7 @@
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>9</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>9.0.48</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>9.0.54</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>https://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
@@ -303,12 +302,6 @@
         <artifactId>geronimo-jta_1.1_spec</artifactId>
         <version>${jta.version}</version>
         <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>xml-apis</groupId>
-        <artifactId>xml-apis</artifactId>
-        <version>${xml-apis.version}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>javax.jcr</groupId>
@@ -615,6 +608,49 @@
         <version>${sling-javax-activation.version}</version>
         <scope>test</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-io</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-security</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-continuation</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-http</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>websocket-client</artifactId>
+        <scope>test</scope>
+        <version>${eclipse.jetty.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -629,10 +665,6 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
@@ -1397,7 +1429,6 @@
                         <include>javax.mail:mail:*:*:provided</include>
                         <include>org.slf4j:slf4j-api:*:*:provided</include>
 
-                        <include>xml-apis:xml-apis:*:*:test</include>
                         <include>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:*:*:test</include>
                         <include>org.slf4j:jcl-over-slf4j:*:*:test</include>
                         <include>org.apache.logging.log4j:log4j-slf4j-impl:*:*:test</include>

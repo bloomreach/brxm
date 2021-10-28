@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ public class Element implements Serializable {
 
     private boolean omitJsProtocol = true;
     private boolean omitDataProtocol = true;
+    private boolean secureTargetBlankLinks = true;
 
     public static Element create(final String name) {
         return new Element(name, Collections.emptyList());
@@ -74,6 +75,15 @@ public class Element implements Serializable {
         return omitDataProtocol;
     }
 
+    public Element setSecureTargetBlankLinks(final boolean secureTargetBlankLinks) {
+        this.secureTargetBlankLinks = secureTargetBlankLinks;
+        return this;
+    }
+
+    public boolean isSecureTargetBlankLinks() {
+        return secureTargetBlankLinks;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -87,13 +97,20 @@ public class Element implements Serializable {
         final Element element = (Element) o;
         return isOmitJsProtocol() == element.isOmitJsProtocol() &&
                 isOmitDataProtocol() == element.isOmitDataProtocol() &&
+                isSecureTargetBlankLinks() == element.isSecureTargetBlankLinks() &&
                 Objects.equals(getName(), element.getName()) &&
                 Objects.equals(getAttributes(), element.getAttributes());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getAttributes(), isOmitJsProtocol(), isOmitDataProtocol());
+        return Objects.hash(
+                getName(),
+                getAttributes(),
+                isOmitJsProtocol(),
+                isOmitDataProtocol(),
+                isSecureTargetBlankLinks()
+        );
     }
 
     @Override
@@ -103,6 +120,7 @@ public class Element implements Serializable {
                 .append("attributes", attributes)
                 .append("omitJsProtocol", omitJsProtocol)
                 .append("omitDataProtocol", omitDataProtocol)
+                .append("secureTargetBlankLinks", secureTargetBlankLinks)
                 .toString();
     }
 }
