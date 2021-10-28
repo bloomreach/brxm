@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
@@ -201,7 +202,7 @@ public abstract class GalleryUploadPanel extends Panel {
                 if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
                     final SvgValidationResult svgValidationResult;
                     try {
-                        svgValidationResult = SvgValidator.validate(istream);
+                        svgValidationResult = SvgValidator.validate(new ByteArrayInputStream(upload.getBytes()));
                         if (!svgValidationResult.isValid()){
                             IOUtils.closeQuietly(istream);
                             throw new SvgGalleryException("Validation did not pass", svgValidationResult);
