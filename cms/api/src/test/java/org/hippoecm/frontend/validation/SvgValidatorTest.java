@@ -64,7 +64,7 @@ public class SvgValidatorTest {
     public void testAllSvgSampleFiles() throws
             Exception {
         // path to samples on local machine
-        final String pathToSampleSet = "/home/mrop/github.com/apache/xmlgraphics-batik/samples";
+        final String pathToSampleSet = "";
         Stream<Path> walk = Files.walk(Paths.get(pathToSampleSet));
 
         Set<String> offendingAttributes = new HashSet<>();
