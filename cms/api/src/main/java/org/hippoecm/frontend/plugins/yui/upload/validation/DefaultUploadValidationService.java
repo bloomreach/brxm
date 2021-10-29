@@ -94,7 +94,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         }
         if (params.containsKey(MIME_TYPES_ALLOWED)) {
             log.warn("Allowed mimetypes which was used to skip content mimetype validation of certain mimetypes is not" +
-                    "support any more. All mimetypes are checked for content mimetype validation");
+                    "supported any more. All mimetypes are checked for content mimetype validation");
         }
         svgScriptsEnabled = params.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
 
