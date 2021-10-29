@@ -1,4 +1,3 @@
-package org.hippoecm.frontend.plugins.yui.upload.validation;
 /*
  * Copyright 2021 Bloomreach Inc. (http://www.bloomreach.com)
  *
@@ -14,6 +13,8 @@ package org.hippoecm.frontend.plugins.yui.upload.validation;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.hippoecm.frontend.plugins.yui.upload.validation;
+
 import java.io.InputStream;
 
 import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
@@ -23,23 +24,23 @@ public class MimeTypeValidatorTest {
 
     @Test(expected = InvalidMimeTypeException.class)
     public void uploadExeAsPdf() {
-        final String fileNameRelativeToResourcesFolder = "org/hippoecm/frontend/plugins/yui/upload/validation/" + "helloWorld.pdf";
+        final String fileNameRelativeToResourcesFolder = "org/hippoecm/frontend/plugins/yui/upload/validation/helloWorld.pdf";
         MimeTypeValidator.validate(getFileFromResourceAsStream(fileNameRelativeToResourcesFolder), "application/pdf",
                 null, "helloWorld.pdf");
-    }
-
-    @Test()
-    public void uploadExeAllowedMimeType() {
-        final String fileNameRelativeToResourcesFolder = "org/hippoecm/frontend/plugins/yui/upload/validation/" + "helloWorld.pdf";
-        MimeTypeValidator.validate(getFileFromResourceAsStream(fileNameRelativeToResourcesFolder), "application/pdf",
-                "application/x-msdownload; format=pe32", "helloWorld.pdf");
     }
 
     @Test(expected = InvalidMimeTypeException.class)
     public void browserMimeTypeDoesNotMatchMimeType() {
-        final String fileNameRelativeToResourcesFolder = "org/hippoecm/frontend/plugins/yui/upload/validation/" + "dummy.pdf";
+        final String fileNameRelativeToResourcesFolder = "org/hippoecm/frontend/plugins/yui/upload/validation/dummy.pdf";
         MimeTypeValidator.validate(getFileFromResourceAsStream(fileNameRelativeToResourcesFolder), "application/ods",
                 null, "helloWorld.pdf");
+    }
+
+    @Test
+    public void browserMimeTypeDoesNotMatchMimeTypeButExplicitlyAllowed() {
+        final String fileNameRelativeToResourcesFolder = "org/hippoecm/frontend/plugins/yui/upload/validation/dummy.pdf";
+        MimeTypeValidator.validate(getFileFromResourceAsStream(fileNameRelativeToResourcesFolder), "application/ods",
+                "application/pdf", "helloWorld.pdf");
     }
 
     // get a file from the resources folder
