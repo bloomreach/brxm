@@ -26,14 +26,8 @@
       "locales" : null
     },
     "exception,type=org.hippoecm.frontend.plugins.gallery.model.SvgGalleryException" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
