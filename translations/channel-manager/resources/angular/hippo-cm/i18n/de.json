@@ -355,6 +355,7 @@
   "TOOLBAR_MENU_XPAGE_VERSIONS": "Versionen",
   "SEARCH_COMPONENTS_NAME": "Komponenten",
   "TOOLBAR_MENU_XPAGE_RENAME": "Umbenennen",
+  "NEXT": "Weiter...",
   "EXPRESSION_TARGET_GROUP_DOCUMENTTYPES_SUBJECT": "(Inhalts-Typ)",
   "ERROR_DELETE_COMPONENT": "{{component}}' kann nicht gelöscht werden",
   "NORMAL_SIZE": "Normale Größe",
@@ -500,10 +501,10 @@
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Liste globaler Varianten konnte nicht abgerufen werden",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Informationen über Channel-Einstellungen konnten nicht abgerufen werden",
   "VIEWPORT_ANY_DEVICE": "Jedes Gerät",
+  "MAX_VALUES_HINT": "{{current}} von maximal {{max}}",
   "MOVE": "Verschieben",
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Geplante Anfrage einer Offlinenahme abbrechen",
   "CREATE_DOCUMENT_LOCKED": "Kann Dokument nicht erstellen (Komponente ist gesperrt)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Veröffentlichung angefragt für '{{documentName}}'",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Kein Seiteninhalt oder Versionsverlauf für diese Seite verfügbar.",
-  "NEXT": "Weiter..."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Kein Seiteninhalt oder Versionsverlauf für diese Seite verfügbar."
 }
