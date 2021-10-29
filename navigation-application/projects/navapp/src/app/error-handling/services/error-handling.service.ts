@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,27 +83,11 @@ export class ErrorHandlingService {
 
   setClientError(errorCode: ClientErrorCodes, message?: string, errorType?: string): void {
     const errorCodeAsText = this.translateService.instant(this.mapClientErrorCodeToText(errorCode));
-
-    if (errorType === 'lenient') {
-      const errorMessage = message
-        ? this.translateService.instant('ERROR_SNACK_BAR_MESSAGE', {
-          error: errorCodeAsText,
-          cause: message,
-        })
-        : errorCodeAsText;
-
-      this.snackBar.open(errorMessage, this.translateService.instant('ERROR_SNACK_BAR_DISMISS'), {
-        duration: 5 * 1000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-      });
-    } else {
-      this.error = new AppError(
+    this.error = new AppError(
         this.mapClientErrorCodeToHttpErrorCode(errorCode),
         errorCodeAsText,
         message,
       );
-    }
   }
 
   clearError(): void {
