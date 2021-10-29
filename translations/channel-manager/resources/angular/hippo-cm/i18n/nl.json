@@ -356,6 +356,7 @@
   "TOOLBAR_MENU_XPAGE_VERSIONS": "Versies",
   "SEARCH_COMPONENTS_NAME": "componenten",
   "TOOLBAR_MENU_XPAGE_RENAME": "Naam wijzigen",
+  "NEXT": "Volgende...",
   "EXPRESSION_TARGET_GROUP_DOCUMENTTYPES_SUBJECT": "(type content)",
   "ERROR_DELETE_COMPONENT": "Kan component '{{component}}' niet verwijderen",
   "NORMAL_SIZE": "Normale grootte",
@@ -501,10 +502,10 @@
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Hit is niet gelukt de lijst met globale varianten op te halen",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Het is niet gelukt informatie over de channelsettings op te halen",
   "VIEWPORT_ANY_DEVICE": "Elk apparaat",
+  "MAX_VALUES_HINT": "{{current}} van maximum {{max}}",
   "MOVE": "Verplaats",
   "TOOLBAR_MENU_XPAGE_CANCEL_REQUEST_SCHEDULEDDEPUBLISH": "Geplande aanvraag 'Publicatie beëindigen' annuleren",
   "CREATE_DOCUMENT_LOCKED": "Kan document niet maken (component is vergrendeld).",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publicatieaanvraag voor '{{documentName}}'",
-  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Er is geen paginacontent of versiegeschiedenis beschikbaar voor deze pagina.",
-  "NEXT": "Volgende..."
+  "FEEDBACK_XPAGE_EDITING_UNAVAILABLE": "Er is geen paginacontent of versiegeschiedenis beschikbaar voor deze pagina."
 }

@@ -16,6 +16,10 @@
     "file.validation.extension.unknown" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "file.validation.svg.disallowed" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
