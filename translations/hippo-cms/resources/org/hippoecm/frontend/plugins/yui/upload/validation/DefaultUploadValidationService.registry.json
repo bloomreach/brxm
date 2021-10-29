@@ -10,8 +10,14 @@
       "locales" : null
     },
     "file.validation.mime.invalid" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "file.validation.extension.unknown" : {
       "status" : "CLEAN",
