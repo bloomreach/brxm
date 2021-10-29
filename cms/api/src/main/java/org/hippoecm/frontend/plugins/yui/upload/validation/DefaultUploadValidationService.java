@@ -16,6 +16,9 @@
 
 package org.hippoecm.frontend.plugins.yui.upload.validation;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -189,28 +192,15 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
     private void validateMimeType(final FileUpload upload) {
-        try {
-            // this validates the browser provided mimetype (contentType) against the actual content its mimetype detected via
-            // Tika, see MagicMimeTypeFileItem#getContentType : in case the browser provided mimetype does not match
-            // the content detected mimetype, eg when a .exe is renamed to a .pdf, an InvalidMimeTypeException will be
-            // thrown
-            // Unfortunately, we only want the upload#getContentType() to throw potentially a InvalidMimeTypeException
-            // during this check, but not otherwise. The only feasible way is unfortunately an thread local. Ideally,
-            // we could use the 'isExtensionMimeTypeAllowedMappings' below in the MagicMimeTypeFileItem but this is
-            // really not doable at the moment and would require a real service in the HippoServiceRegistry to have the
-            // extensionMimeTypeAllowedMappings available in MagicMimeTypeFileItem
-            MagicMimeTypeFileItem.mimetypeValidationContext.set(Boolean.TRUE);
-            upload.getContentType();
+        final String fileName = upload.getClientFileName();
+        try (InputStream inputStream = new BufferedInputStream(upload.getInputStream())){
+            MimeTypeValidator.validate(inputStream , upload.getContentType(), extensionMimeTypeAllowedMappings.get(
+                    getLowercaseExtension(fileName)), fileName);
         } catch (InvalidMimeTypeException e) {
-            // check if there is an explicit hardcoded or configred configuration to allow the mapping nonetheless
-            if (isExtensionMimeTypeAllowedMappings(upload.getClientFileName(), e.getTikaDetectedContentType())) {
-                log.debug("Mimetype '{}' for extension file '{}' is explicitly allowed", e.getTikaDetectedContentType(), upload.getClientFileName());
-            } else {
-                addViolation("file.validation.mime.invalid", upload.getClientFileName(), e.getTikaDetectedContentType() == null ? "unknown" : e.getTikaDetectedContentType());
-                log.debug("Invalid MIME type for {}", upload.getClientFileName(), e);
-            }
-        } finally {
-            MagicMimeTypeFileItem.mimetypeValidationContext.remove();
+                addViolation("file.validation.mime.invalid", fileName, e.getTikaDetectedContentType() == null ? "unknown" : e.getTikaDetectedContentType());
+                log.debug("Invalid MIME type for {}", fileName, e);
+        } catch (IOException e) {
+            log.warn("Could not read file '{}'", fileName);
         }
 
     }
@@ -306,30 +296,6 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
                 "start with a '.' and between the extension and mimeType there should be a ',', eg " +
                 ".psd,image/vnd.adobe.photoshop", mapping);
     }
-
-    /**
-     * <p>
-     *     Some extensions are send as a different mimetype by some browsers than the detected mimetype by Tika. For
-     *     example firefox sends mimetype
-     * </p>
-     */
-    private boolean isExtensionMimeTypeAllowedMappings(final String fileName, final String tikaDetectedContentType) {
-        if (fileName == null || tikaDetectedContentType == null) {
-            return false;
-        }
-        try {
-            String lowercaseExtension = getLowercaseExtension(fileName);
-            if (tikaDetectedContentType.equalsIgnoreCase(extensionMimeTypeAllowedMappings.get(lowercaseExtension))) {
-                log.debug("Explicit matched mapping found for browser provided mimetype '{}' to Tika detected mimetype '{}'",
-                        fileName, tikaDetectedContentType);
-                return true;
-            }
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-        return false;
-    }
-
 
     /**
      * <p>
