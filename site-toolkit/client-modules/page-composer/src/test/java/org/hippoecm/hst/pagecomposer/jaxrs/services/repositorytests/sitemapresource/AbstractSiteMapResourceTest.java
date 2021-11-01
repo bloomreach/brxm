@@ -101,6 +101,8 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/newsoverview");
 
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         createPreviewWithSiteMapWorkspace("localhost", "");
 
@@ -123,6 +125,8 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
             adminGroup.setProperty("hipposys:members", original);
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         } finally {
             super.tearDown();
         }
