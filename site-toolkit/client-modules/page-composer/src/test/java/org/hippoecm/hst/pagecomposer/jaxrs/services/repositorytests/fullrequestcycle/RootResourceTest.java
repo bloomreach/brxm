@@ -61,6 +61,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         createHstConfigBackup(session);
         session.save();
         session.logout();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
     }
 
     @After
@@ -132,6 +134,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         Session session = createSession("admin", "admin");
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         try {
             final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -157,6 +161,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         Session session = createSession("admin", "admin");
         session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         try {
             final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -197,6 +203,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         Node subInheritingConfig = session.getNode("/hst:hst/hst:configurations").addNode("subinheritingconfig", NODETYPE_HST_CONFIGURATION);
         subInheritingConfig.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestsubproject"});
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         try {
             final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -235,6 +243,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         configuration.getNode("hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
         configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         // skip the PrivilegesAllowedPreProcessor to make sure we hit the code we want to test below
         try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
@@ -272,6 +282,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         Node configuration = session.getNode("/hst:hst/hst:configurations/unittestsubproject");
         configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         // for the test below we want to pass the PrivilegesAllowedPreProcessor hence skip it
         try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
