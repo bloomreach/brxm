@@ -80,6 +80,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
         admin.getNode(hstXpageDocNode.getPath() + "/" + containerNodeName).remove();
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         experienceSiteMapItemId = getNodeId(admin, "/hst:hst/hst:configurations/unittestproject/hst:sitemap/experiences/_any_.html");
@@ -201,6 +203,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         final Node draftNode = getVariant(handle, HippoStdNodeType.DRAFT);
         draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         documentWorkflow.commitEditableInstance();
 
         assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json", "master");
@@ -235,6 +239,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         final Node draftNode = getVariant(handle, HippoStdNodeType.DRAFT);
         draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         documentWorkflow.commitEditableInstance();
 
         assertTrue("Expected that 'foo' branch has changes", (Boolean) documentWorkflow.hints("foo").get("publishBranch"));
@@ -280,6 +286,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         final Node draftNode = getVariant(handle, HippoStdNodeType.DRAFT);
         draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         documentWorkflow.commitEditableInstance();
 
         assertions(ADMIN_CREDENTIALS, "action_and_state_for_channel_foo_and_EXISTING_xpage_for_branch_foo_modified.json", "foo");
@@ -311,6 +319,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
         admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder").addMixin(NT_CM_XPAGE_FOLDER);
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         try {
             assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_cmxpagefolder.json", "master");
@@ -318,6 +328,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         } finally {
             admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder").removeMixin(NT_CM_XPAGE_FOLDER);
             admin.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         }
     }
 
@@ -343,6 +355,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
                 session.move(variant.getPath(), xpageWithoutCoreHandle.getPath() + "/xpageDocWithoutCore");
             }
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
 
             // change the hstXpageDocNode to point to the new node to test
             hstXpageDocNode = getVariant(xpageWithoutCoreHandle, "unpublished").getNode("hst:xpage");
@@ -353,6 +367,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
             if (xpageWithoutCoreHandle != null) {
                 xpageWithoutCoreHandle.remove();
                 handle.getSession().save();
+                // give time for jcr events to evict model
+                Thread.sleep(100);
             }
         }
     }
@@ -376,6 +392,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
                 session.move(variant.getPath(), xpageWithoutCoreHandle.getPath() + "/xpageDocWithoutCore");
             }
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
 
             // change the hstXpageDocNode to point to the new node to test
             hstXpageDocNode = getVariant(xpageWithoutCoreHandle, "unpublished").getNode("hst:xpage");
@@ -389,6 +407,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
             if (xpageWithoutCoreHandle != null) {
                 xpageWithoutCoreHandle.remove();
                 handle.getSession().save();
+                // give time for jcr events to evict model
+                Thread.sleep(100);
             }
         }
     }

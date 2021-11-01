@@ -98,6 +98,8 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
         } finally {
             cleanupContent(absRootContentPath, originalPrimaryType);
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         }
     }
 
@@ -135,6 +137,8 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
         } finally {
             cleanupContent(absRootContentPath, originalPrimaryType);
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         }
     }
 

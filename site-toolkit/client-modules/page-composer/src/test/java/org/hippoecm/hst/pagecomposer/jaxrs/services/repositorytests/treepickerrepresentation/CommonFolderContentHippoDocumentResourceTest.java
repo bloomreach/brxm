@@ -87,6 +87,8 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractTestTr
             final Node commonFolder = session.getNodeByIdentifier(getCommonFolderConfigIdentifier());
             commonFolder.removeMixin(NT_NAMED);
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         }
     }
 
