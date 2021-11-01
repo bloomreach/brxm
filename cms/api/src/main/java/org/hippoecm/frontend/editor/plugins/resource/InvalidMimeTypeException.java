@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,10 @@ package org.hippoecm.frontend.editor.plugins.resource;
  * @version $Id$
  * @since 2015-01-28
  */
-public class InvalidMimeTypeException extends Exception {
+public class InvalidMimeTypeException extends RuntimeException {
     private static final long serialVersionUID = 1L;
+    private String tikaDetectedContentType;
+
     public InvalidMimeTypeException(String message) {
         super(message);
     }
@@ -32,4 +34,12 @@ public class InvalidMimeTypeException extends Exception {
         super(message, cause);
     }
 
+    public InvalidMimeTypeException(String message, String tikaDetectedContentType) {
+        super(message);
+        this.tikaDetectedContentType = tikaDetectedContentType;
+    }
+
+    public String getTikaDetectedContentType() {
+        return tikaDetectedContentType;
+    }
 }
