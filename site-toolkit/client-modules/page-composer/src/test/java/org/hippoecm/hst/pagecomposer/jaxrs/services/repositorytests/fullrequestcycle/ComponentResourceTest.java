@@ -120,13 +120,15 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
     }
 
     @Test
-    public void test_actions_and_states_for_locked_page_component() throws RepositoryException, IOException, ServletException {
+    public void test_actions_and_states_for_locked_page_component() throws Exception {
 
         final String containerTestPageId = getNodeId("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/containertestpage");
         final Session session = createSession(ADMIN_CREDENTIALS);
         session.getNodeByIdentifier(getNodeId("/hst:hst/hst:configurations/unittestproject")).setProperty(HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
         session.logout();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         final MockHttpServletResponse response = getActionsAndStatesRequest(containerTestPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
@@ -157,7 +159,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
     }
 
     @Test
-    public void test_actions_and_states_for_published_xpage() throws RepositoryException, IOException, ServletException, WorkflowException {
+    public void test_actions_and_states_for_published_xpage() throws Exception {
 
         final String xpagePath = "/unittestcontent/documents/unittestproject/experiences/expPage1";
         final String handleId = getNodeId(xpagePath);
@@ -170,6 +172,8 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final String documentXPageId = getVariant(documentWorkflow.getNode(), UNPUBLISHED).getNode("hst:xpage").getIdentifier();
         hippoSession.save();
         hippoSession.logout();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         final MockHttpServletResponse response = getActionsAndStatesRequest(documentXPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());

@@ -81,6 +81,8 @@ public abstract class AbstractComponentResourceTest extends AbstractFullRequestC
         RepositoryTestCase.build(content, session);
 
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
     }
 

@@ -81,6 +81,8 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemenus",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus");
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         createPreviewWithSiteMenuWorkspace();
     }
 
@@ -100,6 +102,8 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
 
             adminGroup.setProperty("hipposys:members", original);
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         } finally {
             super.tearDown();
         }
