@@ -88,6 +88,8 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         RepositoryTestCase.build(content, admin);
 
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
     }
 
@@ -122,6 +124,8 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
             }
 
             admin.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         } finally {
             admin.logout();
             super.tearDown();
