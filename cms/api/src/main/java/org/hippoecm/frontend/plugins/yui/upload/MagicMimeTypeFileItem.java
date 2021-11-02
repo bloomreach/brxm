@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,6 +72,10 @@ public class MagicMimeTypeFileItem implements FileItem {
         return contentType;
     }
 
+    public String getBrowserProvidedContentType() {
+        return delegate.getContentType();
+    }
+
     public InputStream getInputStream() throws IOException {
         return delegate.getInputStream();
     }
@@ -135,4 +139,5 @@ public class MagicMimeTypeFileItem implements FileItem {
     public void setHeaders(FileItemHeaders headers) {
         delegate.setHeaders(headers);
     }
+
 }
