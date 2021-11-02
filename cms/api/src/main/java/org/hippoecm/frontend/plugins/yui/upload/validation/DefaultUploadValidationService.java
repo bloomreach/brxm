@@ -40,6 +40,7 @@ import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.plugins.yui.upload.MagicFileUpload;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.SvgValidationResult;
@@ -189,9 +190,14 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
     private void validateMimeType(final FileUpload upload) {
+        if (!(upload instanceof MagicFileUpload)) {
+            log.warn("Cannot validate mimetype of {} since not an instance of MagicFileUpload. Make sure to use " +
+                    "MagicFileUpload instead of FileUpload", upload);
+            return;
+        }
         final String fileName = upload.getClientFileName();
         try (InputStream inputStream = new BufferedInputStream(upload.getInputStream())){
-            MimeTypeValidator.validate(inputStream , upload.getContentType(), extensionMimeTypeAllowedMappings.get(
+            MimeTypeValidator.validate(inputStream , ((MagicFileUpload)upload).getBrowserProvidedContentType(), extensionMimeTypeAllowedMappings.get(
                     getLowercaseExtension(fileName)), fileName);
         } catch (InvalidMimeTypeException e) {
                 addViolation("file.validation.mime.invalid", fileName, e.getTikaDetectedContentType() == null ? "unknown" : e.getTikaDetectedContentType());
