@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.TemporaryFileItem;
+import org.hippoecm.frontend.plugins.yui.upload.MagicFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
 
                     onBeforeUpload(fileUploadInfo);
                     try {
-                        FileUpload fileUpload = new FileUpload(file);
+                        FileUpload fileUpload = new MagicFileUpload(file);
                         log.debug("Validating file: {}", file.getName());
                         validate(fileUpload);
                         log.debug("Pre-processing file: {}", file.getName());
