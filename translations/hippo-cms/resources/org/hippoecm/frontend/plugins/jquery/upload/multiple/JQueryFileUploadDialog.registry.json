@@ -33,11 +33,7 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "exception,type=org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "exception,type=org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException" : {
+    "exception,type=org.hippoecm.frontend.plugins.gallery.model.SvgGalleryException" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
