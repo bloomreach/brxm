@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.TemporaryFileItem;
+import org.hippoecm.frontend.plugins.yui.upload.MagicFileUpload;
 import org.hippoecm.frontend.plugins.yui.upload.model.IUploadPreProcessor;
 import org.hippoecm.frontend.plugins.yui.upload.model.UploadedFile;
 import org.slf4j.Logger;
@@ -126,7 +127,7 @@ public class DefaultFileUploadPreProcessorService implements FileUploadPreProces
                     uploadedFile.isFormField(), uploadedFile.getFileName());
             outputStream = newFileItem.getOutputStream();
             outputStream.write(Files.readAllBytes(tempFile.toPath()));
-            return new FileUpload(newFileItem);
+            return new MagicFileUpload(newFileItem);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();
