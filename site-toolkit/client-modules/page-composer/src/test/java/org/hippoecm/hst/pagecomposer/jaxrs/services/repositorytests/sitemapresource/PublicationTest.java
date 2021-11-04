@@ -309,6 +309,8 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         newsDefault.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
 
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         // now publish by 'admin'. 'news/_default_' contains not allowed lock. It should be removed
         mountResource.publish();
@@ -355,6 +357,8 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
 
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         // now publish by 'admin'. 'news' should keep lock by 'bob'
         mountResource.publish();
@@ -404,6 +408,8 @@ public class PublicationTest extends AbstractSiteMapResourceTest {
         news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
         session.move(news.getPath(), news.getPath() + "Renamed");
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         // now publish by 'admin'. Nothing should make it to live, only lock by 'admin' removed from 'newsRenamed/**
         mountResource.publish();

@@ -93,6 +93,8 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER, true);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);

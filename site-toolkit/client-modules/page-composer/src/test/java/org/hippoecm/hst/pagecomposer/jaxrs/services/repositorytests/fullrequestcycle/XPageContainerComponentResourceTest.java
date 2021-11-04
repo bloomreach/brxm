@@ -151,6 +151,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         Value[] before = privilegesProp.getValues();
         privilegesProp.remove();
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         try {
             // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
@@ -159,6 +161,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             // restore privileges
             admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
             admin.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         }
     }
 
@@ -176,6 +180,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         Value[] before = privilegesProp.getValues();
         privilegesProp.remove();
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         try {
             // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
@@ -184,6 +190,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             // restore privileges
             admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
             admin.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
         }
     }
 
@@ -540,6 +548,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         JcrUtils.copy(admin, unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner",
                 unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner2");
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
@@ -705,6 +715,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             // ******* SETUP FIXTURE ************ //
             JcrUtils.copy(admin, EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH, "/backupXPage");
             admin.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
 
             // make sure the unpublished variant exists (just by depublishing for now....)
             final WorkflowManager workflowManager = ((HippoSession) admin).getWorkspace().getWorkflowManager();
@@ -780,6 +792,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
                 admin.getNode(EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH).remove();
                 admin.move("/backupXPage", EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH);
                 admin.save();
+                // give time for jcr events to evict model
+                Thread.sleep(100);
             }
         }
     }
@@ -845,6 +859,8 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             RepositoryTestCase.build(content, session);
 
             session.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
 
             final String mountId = getNodeId(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 

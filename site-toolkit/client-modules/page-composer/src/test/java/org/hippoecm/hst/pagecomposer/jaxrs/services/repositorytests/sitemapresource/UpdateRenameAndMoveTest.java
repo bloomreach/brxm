@@ -550,6 +550,8 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
     public void test_rename_succeeds_when_no_non_workspace_sitemap() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         final SiteMapResource siteMapResource = createResource();
         try {
             final SiteMapItemRepresentation aboutUs = getSiteMapItemRepresentation(session, "about-us");
@@ -657,6 +659,8 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         final Node newsDefaultMatcherNode = session.getNodeByIdentifier(newsDefaultMatcher.getId());
         new LockHelper().acquireLock(newsDefaultMatcherNode, "bob", 0L);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         moveAndAssertHomeToNews(null, null);
     }
 
@@ -666,6 +670,8 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         final Node newsDefaultMatcherNode = session.getNodeByIdentifier(newsDefaultMatcher.getId());
         new LockHelper().acquireLock(newsDefaultMatcherNode, "bob", 0L);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         moveAndAssertHomeToNews(null, null);
     }
 
@@ -680,6 +686,8 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
         Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage");
         new LockHelper().acquireLock(homePageNode, "bob", 0L);
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         moveAndAssertHomeToNews(null, "bob");
     }
 
