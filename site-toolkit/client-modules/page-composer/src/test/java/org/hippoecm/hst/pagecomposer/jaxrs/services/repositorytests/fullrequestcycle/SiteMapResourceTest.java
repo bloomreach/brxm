@@ -62,6 +62,8 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
         Session session = backupHstAndCreateWorkspace();
         session.save();
         session.logout();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
     }
 
     @After
