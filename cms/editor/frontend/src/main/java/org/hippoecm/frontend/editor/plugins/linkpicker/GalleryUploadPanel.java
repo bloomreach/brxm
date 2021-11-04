@@ -19,11 +19,11 @@ package org.hippoecm.frontend.editor.plugins.linkpicker;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -238,7 +238,17 @@ public abstract class GalleryUploadPanel extends Panel {
                 }
             } catch (WorkflowException | GalleryException  | RepositoryException ex) {
                 log.error(ex.getMessage());
-                error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, localName).getObject());
+                Object[] parameters = new Object[]{localName};
+                if (ex instanceof SvgGalleryException) {
+                    SvgGalleryException svgGalleryException = (SvgGalleryException) ex;
+                    final SvgValidationResult validationResult = svgGalleryException.getValidationResult();
+                    final String offendingElements = validationResult.getOffendingElements().stream()
+                            .collect(Collectors.joining(","));
+                    final String offendingAttributes = validationResult.getOffendingAttributes().stream()
+                            .collect(Collectors.joining(","));
+                    parameters = new Object[]{offendingElements, offendingAttributes};
+                }
+                error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, parameters).getObject());
             }
             if (node != null) {
                 try {
