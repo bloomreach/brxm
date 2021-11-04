@@ -132,6 +132,8 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
     public void removeTranslations() throws Exception {
         session.getNode("/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests").remove();
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
     }
 
     protected List<PropertyRepresentationFactory> propertyPresentationFactories= new ArrayList<>();

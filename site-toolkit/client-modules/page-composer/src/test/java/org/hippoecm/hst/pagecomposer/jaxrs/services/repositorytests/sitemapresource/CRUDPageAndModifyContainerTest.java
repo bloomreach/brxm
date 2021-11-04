@@ -53,6 +53,8 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -125,6 +127,8 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -151,6 +155,8 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -185,6 +191,8 @@ public class CRUDPageAndModifyContainerTest extends AbstractSiteMapResourceTest 
         // add catalog item first
         Node catalogItem = addDefaultCatalogItem();
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
