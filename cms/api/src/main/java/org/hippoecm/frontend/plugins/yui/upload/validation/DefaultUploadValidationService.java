@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import com.google.common.base.Strings;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,11 +41,14 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.SvgValidationResult;
+import org.hippoecm.frontend.validation.SvgValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public class DefaultUploadValidationService implements FileUploadValidationService {
 
@@ -57,10 +62,14 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     public static final String EXTENSIONS_ALLOWED = "extensions.allowed";
     public static final String MIME_TYPES_ALLOWED = "mimetypes.allowed";
 
+    private static final String SVG_MIME_TYPE = "image/svg+xml";
+    private final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
+
     private ValidationResult result;
     private List<Validator> validators;
     private List<String> allowedExtensions;
     private List<String> allowedMimeTypes;
+    private boolean svgScriptsEnabled;
     private IValueMap values;
 
     public DefaultUploadValidationService() {
@@ -80,6 +89,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         if (params.containsKey(MIME_TYPES_ALLOWED)) {
             setAllowedMimeTypes(params.getStringArray(MIME_TYPES_ALLOWED));
         }
+        svgScriptsEnabled = params.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
 
         values = params;
 
@@ -88,6 +98,8 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         addValidator(this::validateMaxFileSize);
 
         addValidator(this::validateMimeType);
+
+        addValidator(this::validateSvg);
     }
 
     protected final void addValidator(Validator validator) {
@@ -174,6 +186,24 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
             }
         } catch (IOException e) {
             log.error("Failed to get input stream from the uploaded file:" + upload.getClientFileName(), e);
+        }
+    }
+
+    private void validateSvg(final FileUpload upload){
+        final String mimeType = upload.getContentType();
+        if (SVG_MIME_TYPE.equals(mimeType) && !svgScriptsEnabled){
+            try (InputStream is = upload.getInputStream()){
+                final SvgValidationResult svgValidationResult = SvgValidator.validate(is);
+                if (!svgValidationResult.isValid()){
+                    addViolation("file.validation.svg.disallowed", upload.getClientFileName()
+                    , svgValidationResult.getOffendingElements()
+                    , svgValidationResult.getOffendingAttributes());
+                }
+            } catch (ParserConfigurationException | SAXException e) {
+                log.error("Something went wrong during the upload of the svg", e);
+            } catch (IOException e){
+                log.error("Failed to get input stream from the uploaded file:" + upload.getClientFileName(), e);
+            }
         }
     }
 
