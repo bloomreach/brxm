@@ -692,6 +692,8 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
 
         admin.getNode(unpublishedExpPageVariant.getPath() + "/hst:xpage/430df2da-3dc8-40b5-bed5-bdc44b8445c6/banner").remove();
         admin.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         {
             final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -850,6 +852,8 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
             // ******* SETUP FIXTURE ************ //
             JcrUtils.copy(admin, EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH, "/backupXPage");
             admin.save();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
 
             // make sure the unpublished variant exists (just by depublishing for now....)
             final WorkflowManager workflowManager = ((HippoSession) admin).getWorkspace().getWorkflowManager();
@@ -911,6 +915,8 @@ public class XPageContainerItemComponentResourceTest extends AbstractXPageCompon
                 admin.getNode(EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH).remove();
                 admin.move("/backupXPage", EXPERIENCE_PAGE_WITH_STATIC_COMPONENTS_HANDLE_PATH);
                 admin.save();
+                // give time for jcr events to evict model
+                Thread.sleep(100);
             }
         }
     }

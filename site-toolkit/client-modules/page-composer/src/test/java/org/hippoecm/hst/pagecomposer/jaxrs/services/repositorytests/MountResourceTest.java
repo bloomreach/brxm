@@ -217,6 +217,8 @@ public class MountResourceTest extends AbstractMountResourceTest {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
 
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         mockNewRequest(session, "localhost", "");
 
@@ -242,6 +244,8 @@ public class MountResourceTest extends AbstractMountResourceTest {
         body3.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
 
         session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
         mockNewRequest(session, "localhost", "/home");
 
