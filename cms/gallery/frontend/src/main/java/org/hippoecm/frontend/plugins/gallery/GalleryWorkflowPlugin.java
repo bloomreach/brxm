@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +26,7 @@ import java.util.Objects;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,8 +56,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException;
-import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
+import org.hippoecm.frontend.plugins.gallery.model.SvgGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.multiple.JQueryFileUploadDialog;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
@@ -66,6 +67,8 @@ import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.validation.SvgValidationResult;
+import org.hippoecm.frontend.validation.SvgValidator;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -77,12 +80,13 @@ import org.hippoecm.repository.gallery.GalleryWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWorkflow> {
     private static final long serialVersionUID = 1L;
 
     private static final String SVG_MIME_TYPE = "image/svg+xml";
-    private final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
+    private static final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
@@ -114,6 +118,8 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             super.onClose();
         }
     }
+
+
     public String type;
     private List<String> newItems;
 
@@ -145,13 +151,18 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 final boolean svgScriptsEnabled = GalleryWorkflowPlugin.this.getPluginConfig()
                         .getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimeType, SVG_MIME_TYPE)) {
-                    final String svgContent = new String(upload.getBytes());
-                    if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
-                        throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
+                    final SvgValidationResult svgValidationResult;
+                    try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                            upload.getBytes())) {
+                        svgValidationResult = SvgValidator.validate(byteArrayInputStream);
+                        if (!svgValidationResult.isValid()) {
+                            throw new SvgGalleryException("Validation did not pass", svgValidationResult);
+                        }
+                    } catch (ParserConfigurationException | SAXException e) {
+                        log.error("Something went wrong during the upload of the svg", e);
+                        throw new GalleryException("Something went wrong during the validation", e);
                     }
-                    if (StringUtils.containsIgnoreCase(svgContent, "onload=")) {
-                        throw new SvgOnLoadGalleryException("SVG images with onload attribute are not supported.");
-                    }
+
                 }
 
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this

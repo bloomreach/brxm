@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,19 @@
 
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -53,8 +55,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.model.SvgOnLoadGalleryException;
-import org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException;
+import org.hippoecm.frontend.plugins.gallery.model.SvgGalleryException;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
@@ -63,6 +64,8 @@ import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationS
 import org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
+import org.hippoecm.frontend.validation.SvgValidationResult;
+import org.hippoecm.frontend.validation.SvgValidator;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowException;
@@ -72,6 +75,7 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * Panel of a single file upload form, which is used to upload image to the gallery.
@@ -81,7 +85,7 @@ public abstract class GalleryUploadPanel extends Panel {
     private static final Logger log = LoggerFactory.getLogger(GalleryUploadPanel.class);
 
     private static final String SVG_MIME_TYPE = "image/svg+xml";
-    private final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
+    private static final String SVG_SCRIPTS_ENABLED = "svg.scripts.enabled";
 
     private static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
     private final IPluginContext context;
@@ -206,14 +210,16 @@ public abstract class GalleryUploadPanel extends Panel {
 
                 final boolean svgScriptsEnabled = pluginConfig.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
                 if (!svgScriptsEnabled && Objects.equals(mimetype, SVG_MIME_TYPE)) {
-                    final String svgContent = new String(upload.getBytes());
-                    if (StringUtils.containsIgnoreCase(svgContent, "<script")) {
-                        IOUtils.closeQuietly(istream);
-                        throw new SvgScriptGalleryException("SVG images with embedded script are not supported.");
-                    }
-                    if (StringUtils.containsIgnoreCase(svgContent, "onload=")) {
-                        IOUtils.closeQuietly(istream);
-                        throw new SvgOnLoadGalleryException("SVG images with onload attribute are not supported.");
+                    final SvgValidationResult svgValidationResult;
+                    try (final ByteArrayInputStream is = new ByteArrayInputStream(upload.getBytes())) {
+                        svgValidationResult = SvgValidator.validate(is);
+                        if (!svgValidationResult.isValid()) {
+                            IOUtils.closeQuietly(istream);
+                            throw new SvgGalleryException("Validation did not pass", svgValidationResult);
+                        }
+                    } catch (ParserConfigurationException | SAXException e) {
+                        log.error("Something went wrong during the upload of the svg", e);
+                        throw new GalleryException("Something went wrong during the parsing of the svg", e);
                     }
                 }
 
@@ -230,9 +236,19 @@ public abstract class GalleryUploadPanel extends Panel {
                 if (!node.getDisplayName().equals(localName)) {
                     defaultWorkflow.setDisplayName(localName);
                 }
-            } catch (WorkflowException | SvgScriptGalleryException | SvgOnLoadGalleryException | RepositoryException ex) {
+            } catch (WorkflowException | GalleryException  | RepositoryException ex) {
                 log.error(ex.getMessage());
-                error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, localName).getObject());
+                Object[] parameters = new Object[]{localName};
+                if (ex instanceof SvgGalleryException) {
+                    SvgGalleryException svgGalleryException = (SvgGalleryException) ex;
+                    final SvgValidationResult validationResult = svgGalleryException.getValidationResult();
+                    final String offendingElements = validationResult.getOffendingElements().stream()
+                            .collect(Collectors.joining(","));
+                    final String offendingAttributes = validationResult.getOffendingAttributes().stream()
+                            .collect(Collectors.joining(","));
+                    parameters = new Object[]{offendingElements, offendingAttributes};
+                }
+                error(TranslatorUtils.getExceptionTranslation(GalleryUploadPanel.class, ex, parameters).getObject());
             }
             if (node != null) {
                 try {
