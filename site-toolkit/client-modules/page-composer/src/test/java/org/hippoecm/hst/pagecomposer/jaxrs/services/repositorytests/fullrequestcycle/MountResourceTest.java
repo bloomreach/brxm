@@ -55,6 +55,8 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         session.save();
         session.logout();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
 
     }
 

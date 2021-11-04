@@ -42,6 +42,8 @@ public class ConfigurationLockedTest extends MountResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
         session.logout();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
     }
 
     @Test
@@ -58,6 +60,8 @@ public class ConfigurationLockedTest extends MountResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(CONFIGURATION_PROPERTY_LOCKED, false);
         session.save();
         session.logout();
+        // give time for jcr events to evict model
+        Thread.sleep(100);
         HstManager manager = siteComponentManager.getComponent(HstManager.class);
         Channel unittestproject = manager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject");
         assertFalse(unittestproject.isConfigurationLocked());
