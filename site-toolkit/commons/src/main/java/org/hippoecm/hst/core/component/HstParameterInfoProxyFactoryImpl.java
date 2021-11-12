@@ -201,7 +201,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                             parameterValue = hstComponentParameter.get().getDefaultValue();
                         }
                         return converter.convert(parameterName, parameterValue, parameterConfiguration,
-                                hstComponentParameter.get().getValueType().getDefaultReturnType());
+                                method.getReturnType());
                     }
                 }
             }
