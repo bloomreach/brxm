@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 public class HtmlContentRewriter extends SimpleContentRewriter {
 
