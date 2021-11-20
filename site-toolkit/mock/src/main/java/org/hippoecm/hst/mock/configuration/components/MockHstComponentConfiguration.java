@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Bloomreach
+ *  Copyright 2008-2021 Bloomreach
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import org.hippoecm.hst.configuration.components.DynamicFieldGroup;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.parameters.FieldGroup;
-
 
 /**
  * Mock implementation of {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration}.
