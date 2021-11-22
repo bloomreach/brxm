@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standards.picker;
 
 import java.util.Iterator;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -274,16 +275,22 @@ public abstract class NodePickerController implements IDetachable {
             }
         }
 
-        if (settings.hasSelectableNodeTypes()) {
-            for (final String allowedNodeType : settings.getSelectableNodeTypes()) {
+        if (!settings.hasSelectableNodeTypes()) {
+            return isDocument;
+        }
+
+        for (final String allowedNodeType : settings.getSelectableNodeTypes()) {
+            try {
                 if (node.isNodeType(allowedNodeType)) {
                     return true;
                 }
+            } catch (NamespaceException ignore) {
+                // Checking for an unknown namespace is not an error in this context
+                log.info("Namespace of type '{}' is unknown", allowedNodeType);
             }
-            return false;
         }
+        return false;
 
-        return isDocument;
     }
 
     public IRenderService getRenderer() {
