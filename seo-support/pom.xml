@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
     <junit.version>4.13.1</junit.version>
-    <easymock.version>3.4</easymock.version>
+    <easymock.version>4.3</easymock.version>
   </properties>
 
   <repositories>

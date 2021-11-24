@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
     <junit.version>4.13.1</junit.version>
-    <easymock.version>3.4</easymock.version>
+    <easymock.version>4.3</easymock.version>
 
     <aspectj.version>1.8.10</aspectj.version>
 
@@ -70,7 +70,7 @@
   </repositories>
 
   <dependencyManagement>
-  
+
     <dependencies>
 
       <dependency>
@@ -79,9 +79,9 @@
         <version>${geronimo-annotation_1.1_spec.version}</version>
         <scope>provided</scope>
       </dependency>
-      
+
       <!-- Hippo CMS7 API dependency -->
-      
+
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
@@ -213,7 +213,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      
+
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-builtin</artifactId>
