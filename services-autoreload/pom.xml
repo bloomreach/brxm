@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@
     <javax.websocket-api.version>1.1</javax.websocket-api.version>
 
     <!-- test dependencies -->
-    <easymock.version>3.0</easymock.version>
+    <easymock.version>4.3</easymock.version>
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
     <junit.version>4.13.1</junit.version>
   </properties>
@@ -59,7 +59,7 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <dependencies>
 
     <!--
