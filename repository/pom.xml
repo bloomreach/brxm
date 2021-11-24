@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2021 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -92,8 +92,8 @@
     <pdfbox.version>2.0.24</pdfbox.version>
     <quartz.version>2.3.2</quartz.version>
     <json-lib.version>2.4</json-lib.version>
-    <easymock.version>4.0.2</easymock.version>
-    <powermock.version>2.0.2</powermock.version>
+    <easymock.version>4.3</easymock.version>
+    <powermock.version>2.0.9</powermock.version>
     <decentxml.version>1.4</decentxml.version>
     <mysql.version>8.0.17</mysql.version>
     <mssql.version>6.2.2.jre8</mssql.version>
