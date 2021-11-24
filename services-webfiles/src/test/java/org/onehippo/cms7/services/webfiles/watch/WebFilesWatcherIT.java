@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
 import org.easymock.Capture;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -165,7 +166,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
 
-        final Capture<WebFileEvent> event = new Capture<>();
+        final Capture<WebFileEvent> event = EasyMock.newCapture();
         eventBus.post(capture(event));
         expectLastCall();
 
@@ -209,7 +210,7 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("testbundle"), eq("css/style.css"), eq(styleCss));
         expectLastCall();
 
-        final Capture<WebFileEvent> event = new Capture<>();
+        final Capture<WebFileEvent> event = EasyMock.newCapture();
         eventBus.post(capture(event));
         expectLastCall();
 
