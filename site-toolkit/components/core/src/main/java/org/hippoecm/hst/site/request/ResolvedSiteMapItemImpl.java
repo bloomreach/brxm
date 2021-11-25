@@ -35,6 +35,7 @@ import org.hippoecm.hst.configuration.experiencepage.ExperiencePageService;
 import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,7 +207,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
                                 = HippoServiceRegistry.getService(ExperiencePageService.class);
 
                         final HstComponentConfiguration config = experiencePageService.loadExperiencePage(page, getHstSiteMapItem().getHstSiteMap().getSite(),
-                                this.getClass().getClassLoader());
+                                HippoWebappContextRegistry.get().getContext(resolvedMount.getMount().getContextPath()).getServletContext().getClassLoader());
                         hstComponentConfiguration = Optional.of(config);
                         experiencePage = true;
                         return;
