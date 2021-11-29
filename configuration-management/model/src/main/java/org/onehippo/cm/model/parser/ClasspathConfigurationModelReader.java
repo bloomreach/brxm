@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -179,7 +179,7 @@ public class ClasspathConfigurationModelReader {
 
                 // Jar-based FileSystems must remain open for the life of a ConfigurationModel, and must be closed when
                 //  processing is complete via ConfigurationModel.close()!
-                final FileSystem fs = FileSystems.newFileSystem(jarPath, null);
+                final FileSystem fs = FileSystems.newFileSystem(jarPath, (ClassLoader) null);
 
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
                 final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
