@@ -111,6 +111,7 @@
     <httpcore.version>4.4.10</httpcore.version>
     <snakeyaml.version>1.26</snakeyaml.version>
     <eclipse.jetty.version>9.4.44.v20210927</eclipse.jetty.version>
+    <jdom2.version>2.0.6.1</jdom2.version>
     <!-- test dependencies -->
     <restassured.version>4.1.2</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
@@ -594,6 +595,12 @@
         <groupId>javax.ws.rs</groupId>
         <artifactId>javax.ws.rs-api</artifactId>
         <version>${jaxrs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jdom</groupId>
+        <artifactId>jdom2</artifactId>
+        <version>${jdom2.version}</version>
       </dependency>
 
       <!-- test dependencies -->
