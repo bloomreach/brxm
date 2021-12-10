@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -455,11 +456,21 @@ public class PageModelAggregationValve extends AggregationValve {
         String[] variants = getVariants(compConfig);
         List<String> paramsInfoNames = getParamsInfoNames(compConfig);
 
-        return parameters.entrySet().stream()
+        return getResidualParametersMap(parameters, variants, paramsInfoNames);
+    }
+
+    static Map<String, String> getResidualParametersMap(final Map<String, String> parameters, final String[] variants,
+                                                         final List<String> paramsInfoNames) {
+
+        final Map<String, String> result = new HashMap<>();
+        parameters.entrySet().stream()
             .filter(entry -> !StringUtils.startsWithAny(entry.getKey(), variants))
             .filter(entry -> !paramsInfoNames.contains(entry.getKey()))
             .filter(entry -> !HIDE_PARAMETER_NAME.equals(entry.getKey()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                // do NOT use .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); since a value
+                // can be null resulting in an NPE, see https://bugs.openjdk.java.net/browse/JDK-8148463
+                .forEach(entry -> result.put(entry.getKey(), entry.getValue()));
+        return result;
     }
 
     private List<String> getParamsInfoNames(final ComponentConfiguration compConfig) {
