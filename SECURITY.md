@@ -4,8 +4,8 @@
 
 | Version | Maintained         |
 | ------- | ------------------ |
-| 14.6.x  | :white_check_mark: |
-| < 14.6  | :x:                |
+| 14.7.x  | :white_check_mark: |
+| < 14.7  | :x:                |
 | 13.4.x  | :white_check_mark: |
 | < 13.4  | :x:                |
 | 12.6.x  | :white_check_mark: |
