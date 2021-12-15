@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 package org.onehippo.cms7.logging.log4j;
+
+import java.util.Objects;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
@@ -45,9 +50,30 @@ import org.apache.logging.log4j.message.Message;
  * <p>
  * Note: the log4j2 LookupFilter replaces the now deprecated log4j1 {@link JndiPropertyFilter}.
  * </p>
+ * <p>
+ *  <br/>
+ *  <em>Note: As of log4j2 2.16+, jndi based lookups are now by default disabled!</em>
+ *  The most common usage thereof, for brXM, is specifically the lookup of the logging/contextName
+ *  to filter log events for specific contexts, as seen in the above example.
+ *  This specific jndi lookup is <b>not</b> a security vulnerability however, so to cater for log4j2 2.16+
+ *  with disabled jndi lookup, a custom (fixed) workaround has been implemented which <b>only</b> intercepts a filter
+ *  key="jndi:logging/contextName" and then do the jndi lookup directly, not via log4j2.
+ * </p>
  */
 @Plugin(name = "LookupFilter", category = Node.CATEGORY, elementType = Filter.ELEMENT_TYPE, printObject = true)
 public class LookupFilter extends AbstractFilter {
+
+    private static String JNDI_LOGGING_CONTEXT_NAME_FILTER_KEY = "jndi:logging/contextName";
+    private static String JNDI_LOGGING_CONTEXT_NAME_KEY = "java:comp/env/logging/contextName";
+
+    private static String jndiLookupLoggingContextName() {
+        try {
+            InitialContext ctx = new InitialContext();
+            return Objects.toString(ctx.lookup(JNDI_LOGGING_CONTEXT_NAME_KEY), null);
+        } catch (NamingException e) {
+            return null;
+        }
+    }
 
     /**
      * Extended Interpolator to intercept its lookup methods to guard against invocation from within the
@@ -64,6 +90,9 @@ public class LookupFilter extends AbstractFilter {
                 if (noContextClassLoader) {
                     Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 }
+                if (LookupFilter.this.loggingContentNameLookupWorkaround) {
+                    return jndiLookupLoggingContextName();
+                }
                 return super.lookup(event, var);
             } finally {
                 if (noContextClassLoader) {
@@ -78,6 +107,9 @@ public class LookupFilter extends AbstractFilter {
                 if (noContextClassLoader) {
                     Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 }
+                if (LookupFilter.this.loggingContentNameLookupWorkaround) {
+                    return jndiLookupLoggingContextName();
+                }
                 return super.lookup(key);
             } finally {
                 if (noContextClassLoader) {
@@ -89,11 +121,13 @@ public class LookupFilter extends AbstractFilter {
 
     private final String key;
     private final String value;
+    private final boolean loggingContentNameLookupWorkaround;
 
     protected LookupFilter(final String key, final String value, final Result onMatch, final Result onMismatch) {
         super(onMatch, onMismatch);
         this.key = key;
         this.value = value;
+        this.loggingContentNameLookupWorkaround = JNDI_LOGGING_CONTEXT_NAME_FILTER_KEY.equals(key);
     }
 
     protected Result filter() {
