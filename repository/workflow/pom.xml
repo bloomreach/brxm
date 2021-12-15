@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
-    <version>12.6.22-SNAPSHOT</version>
+    <version>12.6.22</version>
   </parent>
 
   <name>Repository workflow implementations</name>
