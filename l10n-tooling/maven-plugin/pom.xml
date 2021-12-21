@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms.l10n</groupId>
     <artifactId>hippo-cms-l10n-tooling-project</artifactId>
-    <version>14.7.0-SNAPSHOT</version>
+    <version>14.7.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms-l10n-maven-plugin</artifactId>
@@ -30,7 +30,7 @@
 
   <properties>
     <maven.version>3.8.1</maven.version>
-    <maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
+    <maven.plugin.plugin.version>3.6.2</maven.plugin.plugin.version>
     <maven.shared.dependency.tree.version>3.0.1</maven.shared.dependency.tree.version>
     <maven.plugin-annotations.version>3.5.2</maven.plugin-annotations.version>
     <junit.version>4.13.1</junit.version>

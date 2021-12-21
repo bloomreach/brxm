@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.7.0-SNAPSHOT</version>
+    <version>14.7.4-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -35,7 +35,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>14.7.0-SNAPSHOT</version>
+  <version>14.7.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -59,14 +59,14 @@
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
 
-    <jooq.version>0.9.12</jooq.version>
+    <jooq.version>0.9.14</jooq.version>
     <awaitility.version>3.1.6</awaitility.version>
     <junit.version>4.13.1</junit.version>
-    <easymock.version>4.0.2</easymock.version>
-    <mockito.version>3.3.3</mockito.version>
+    <easymock.version>4.3</easymock.version>
+    <mockito.version>4.1.0</mockito.version>
     <assertj.version>3.8.0</assertj.version>
     <!-- Make sure that powermock is compatible with easymock and mockito -->
-    <powermock.version>2.0.2</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
 
     <xalan.version>2.7.2</xalan.version>
 

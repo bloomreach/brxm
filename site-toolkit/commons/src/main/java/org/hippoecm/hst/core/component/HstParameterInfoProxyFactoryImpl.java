@@ -30,7 +30,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.DynamicParameter;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
@@ -201,7 +201,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                             parameterValue = hstComponentParameter.get().getDefaultValue();
                         }
                         return converter.convert(parameterName, parameterValue, parameterConfiguration,
-                                hstComponentParameter.get().getValueType().getDefaultReturnType());
+                                method.getReturnType());
                     }
                 }
             }
