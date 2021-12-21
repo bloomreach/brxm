@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2021 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>14.7.0-SNAPSHOT</version>
+  <version>14.7.4-SNAPSHOT</version>
 
   <name>Hippo CMS Project POM</name>
   <description>Hippo CMS Project POM</description>
@@ -28,12 +28,12 @@
   <url>https://www.onehippo.org/</url>
 
   <organization>
-    <name>Hippo B.V. (http://www.onehippo.com)</name>
-    <url>http://www.onehippo.com/</url>
+    <name>Bloomreach</name>
+    <url>https://www.bloomreach.com/</url>
   </organization>
 
   <properties>
-    <hippo.release.version>14.7.0-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>14.7.4-SNAPSHOT</hippo.release.version>
 
     <!-- use UTF-8 encoding for filtered file copy and test reports -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,7 +56,7 @@
     <jta.version>1.1.1</jta.version>
     <mail.version>1.4.7</mail.version>
     <slf4j.version>1.7.30</slf4j.version>
-    <log4j2.version>2.13.3</log4j2.version>
+    <log4j2.version>2.17.0</log4j2.version>
     <guava.version>30.1-jre</guava.version>
 
     <!-- Apache Commons -->
