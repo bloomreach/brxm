@@ -40,6 +40,8 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.internal.BranchSelectionService;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.document.DocumentValidityService;
+import org.onehippo.cms.channelmanager.content.document.DocumentValidityServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentVersionServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.NodeFieldService;
@@ -157,12 +159,14 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
         HippoServiceRegistry.register(branchSelectionService, BranchSelectionService.class);
 
-        // First create the branchSelectionService because doInitialize needs it to be non-null
-        super.doInitialize(session);
         documentsService.setHintsInspector(createHintsInspector(session));
         documentsService.setBranchingService(createBranchingService(session));
         documentsService.setNodeFieldService(createNodeFieldService(session));
+        documentsService.setDocumentValidityService(createDocumentValidityService(session));
         documentVersionService.setPageCampaignSupported(pageCampaignSupported);
+
+        // First create the branchSelectionService because doInitialize needs it to be non-null
+        super.doInitialize(session);
     }
 
     private NodeFieldService createNodeFieldService(final Session session) {
@@ -201,6 +205,10 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
+    }
+
+    private DocumentValidityService createDocumentValidityService(final Session session) {
+        return new DocumentValidityServiceImpl(session);
     }
 
     @Override

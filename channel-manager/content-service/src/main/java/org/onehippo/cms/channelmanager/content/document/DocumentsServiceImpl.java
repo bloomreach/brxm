@@ -105,6 +105,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
     private NodeFieldService nodeFieldService;
+    private DocumentValidityService documentValidityService;
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
@@ -116,6 +117,10 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     public void setNodeFieldService(final NodeFieldService nodeFieldService) {
         this.nodeFieldService = nodeFieldService;
+    }
+
+    public void setDocumentValidityService(final DocumentValidityService documentValidityService) {
+        this.documentValidityService = documentValidityService;
     }
 
     @Override
@@ -207,7 +212,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             return workflow.listBranches();
         } catch (WorkflowException e) {
-            log.error("Could not list branches for node: { path: {} }", JcrUtils.getNodePathQuietly(workflow.getNode()),
+            log.error("Could not list branches for node: { path: {} }", getNodePathQuietly(workflow.getNode()),
                     e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
@@ -244,6 +249,10 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Node draftNode = EditingUtils.getEditableDocumentNode(workflow, branchId, session)
                 .orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+
+        // always get an editable document first as that will ensure a draft and an unpublished variant exist
+        documentValidityService.handleDocumentTypeChanges(branchId, handle, docType);
+
         final Document document = assembleDocument(uuid, handle, draftNode, docType);
         FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
 
@@ -452,7 +461,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String channelId = JcrUtils.getStringProperty(folder, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null);
         if (StringUtils.isEmpty(channelId)) {
             log.error("Failed to retrieve XPageLayout[{}]. Could not read property {} on node {}",
-                    layoutId, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, JcrUtils.getNodePathQuietly(folder));
+                    layoutId, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, getNodePathQuietly(folder));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
@@ -469,7 +478,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     private static Document getCreatedDocument(final Node handle, final DocumentType documentType) throws RepositoryException {
         final Optional<Node> optionalDraftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT);
         if (!optionalDraftNode.isPresent()) {
-            log.error("Could not read draft variant for node : { path: {}}", JcrUtils.getNodePathQuietly(handle));
+            log.error("Could not read draft variant for node : { path: {}}", getNodePathQuietly(handle));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
         final Node draftNode = optionalDraftNode.get();
@@ -491,7 +500,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             return Boolean.TRUE.equals(hints.get(AbstractSaveDraftDocumentService.SAVE_DRAFT));
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.error("Failed to determine if save draft is allowed for document: { path : {}}"
-                    , JcrUtils.getNodePathQuietly(handle));
+                    , getNodePathQuietly(handle));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
@@ -659,7 +668,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             return draft.getPath();
         } catch (RepositoryException e) {
-            log.error("Could not get path for node : { path : {} }", JcrUtils.getNodePathQuietly(draft));
+            log.error("Could not get path for node : { path : {} }", getNodePathQuietly(draft));
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
         }
     }
@@ -669,7 +678,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             branchHandle = new BranchHandleImpl(branchId, handle);
         } catch (WorkflowException e) {
-            log.error("Could not get variant info for node node : { path : {} }", JcrUtils.getNodePathQuietly(handle), e);
+            log.error("Could not get variant info for node node : { path : {} }", getNodePathQuietly(handle), e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
         }
 
@@ -743,7 +752,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
         document.setUrlName(JcrUtils.getNodeNameQuietly(handle));
 
-        document.setRepositoryPath(JcrUtils.getNodePathQuietly(handle));
+        document.setRepositoryPath(getNodePathQuietly(handle));
 
         try {
             final DocumentVariant documentVariant = new DocumentVariant(variant);

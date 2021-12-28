@@ -142,6 +142,7 @@ public class DocumentsServiceImplTest {
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
     private PlatformServices platformServices;
+    private DocumentValidityService validityService;
 
     @Before
     public void setup() {
@@ -185,6 +186,9 @@ public class DocumentsServiceImplTest {
         documentsService.setHintsInspector(hintsInspector);
         branchingService = createMock(BranchingService.class);
         documentsService.setBranchingService(branchingService);
+
+        validityService = createMock(DocumentValidityService.class);
+        documentsService.setDocumentValidityService(validityService);
 
         platformServices = createMock(PlatformServices.class);
         HippoServiceRegistry.register(platformServices, PlatformServices.class);
@@ -497,6 +501,9 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
+        validityService.handleDocumentTypeChanges(MASTER_BRANCH_ID, handle, docType);
+        expectLastCall();
+
         replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
@@ -551,6 +558,10 @@ public class DocumentsServiceImplTest {
         expect(draft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
+
+        validityService.handleDocumentTypeChanges(MASTER_BRANCH_ID, handle, docType);
+        expectLastCall();
+
         replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
@@ -609,6 +620,10 @@ public class DocumentsServiceImplTest {
         expect(draft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
+
+        validityService.handleDocumentTypeChanges(MASTER_BRANCH_ID, handle, docType);
+        expectLastCall();
+
         replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
