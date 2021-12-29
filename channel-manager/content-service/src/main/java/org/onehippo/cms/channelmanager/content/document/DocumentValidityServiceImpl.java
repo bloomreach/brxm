@@ -37,14 +37,8 @@ import static org.onehippo.cms.channelmanager.content.document.util.FieldPath.SE
 @Slf4j
 public class DocumentValidityServiceImpl implements DocumentValidityService {
 
-    private final Session session;
-
-    public DocumentValidityServiceImpl(final Session session) {
-        this.session = session;
-    }
-
     @Override
-    public void handleDocumentTypeChanges(final String branchId, final Node documentHandle, final DocumentType documentType) {
+    public void handleDocumentTypeChanges(final Session workflowSession, final String branchId, final Node documentHandle, final DocumentType documentType) {
         final BranchHandle branchHandle;
         try {
             branchHandle = new BranchHandleImpl(branchId, documentHandle);
@@ -56,14 +50,12 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
         final Node draft = branchHandle.getDraft();
         final Node unpublished = branchHandle.getUnpublished();
 
-        final Node prototype = findPrototype(documentType.getId(), branchId, session);
+        final Node prototype = findPrototype(documentType.getId(), branchId, workflowSession);
         if (prototype == null) {
             log.warn("Unable to find prototype '{}' for branch '{}', skipping handling of document type changes",
                     documentType.getId(), branchId);
             return;
         }
-
-        boolean saveSession = false;
 
         for (final FieldType field : documentType.getFields()) {
             if (!(field instanceof NodeFieldType)) {
@@ -83,7 +75,7 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
                             numberOfMissingNodes, nodeName, field.getType(), getNodePathQuietly(draft));
                 }
 
-                final List<Node> missingPrototypeNodes = findMissingPrototypeNodes(branchId, prototype, field, nodeName);
+                final List<Node> missingPrototypeNodes = findMissingPrototypeNodes(workflowSession, branchId, prototype, field, nodeName);
                 if (missingPrototypeNodes.isEmpty()) {
                     final String message = String.format("Failed to find prototype nodes for field '%s' in document '%s' which is missing %d nodes",
                             nodeName, getNodePathQuietly(draft), numberOfMissingNodes);
@@ -92,24 +84,23 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
                             "reason", message));
                 }
 
-                addMissingPrototypeNodes(numberOfMissingNodes, nodeName, missingPrototypeNodes, draft, unpublished);
-                saveSession = true;
+                addMissingPrototypeNodes(workflowSession, numberOfMissingNodes, nodeName, missingPrototypeNodes, draft, unpublished);
             } catch (RepositoryException e) {
                 log.warn("An error occurred while checking the cardinality of field '{}': {}", field.getId(),  e.getMessage());
             }
         }
 
-        if (saveSession) {
-            try {
-                session.save();
-            } catch (RepositoryException e) {
-                log.error("Failed to save changes to draft node of document {}", getNodePathQuietly(documentHandle), e);
-                throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
+        try {
+            if (workflowSession.hasPendingChanges()) {
+                workflowSession.save();
             }
+        } catch (RepositoryException e) {
+            log.error("Failed to save changes to draft node of document {}", getNodePathQuietly(documentHandle), e);
+            throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.SERVER_ERROR));
         }
     }
 
-    private List<Node> findMissingPrototypeNodes(final String branchId, final Node documentPrototype, final FieldType field, final String nodeName) throws RepositoryException {
+    private List<Node> findMissingPrototypeNodes(final Session workflowSession, final String branchId, final Node documentPrototype, final FieldType field, final String nodeName) throws RepositoryException {
         List<Node> prototypeNodes = Collections.emptyList();
 
         // check if document prototype has nodes
@@ -118,7 +109,7 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
         }
 
         if (prototypeNodes.isEmpty()) {
-            final Node fieldPrototype = findPrototype(field.getJcrType(), branchId, session);
+            final Node fieldPrototype = findPrototype(field.getJcrType(), branchId, workflowSession);
             if (fieldPrototype != null) {
                 log.debug("Will use the prototype at {}", JcrUtils.getNodeParentQuietly(fieldPrototype));
                 prototypeNodes = Collections.singletonList(fieldPrototype);
@@ -128,7 +119,7 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
         return prototypeNodes;
     }
 
-    private void addMissingPrototypeNodes(long numberOfMissingNodes, final String nodeName, final List<Node> prototypeNodes, final Node... nodes) throws RepositoryException {
+    private void addMissingPrototypeNodes(final Session workflowSession,long numberOfMissingNodes, final String nodeName, final List<Node> prototypeNodes, final Node... docVariants) throws RepositoryException {
         int prototypeIndex = 0;
         int numberOfPrototypes = prototypeNodes.size();
         while (numberOfMissingNodes > 0) {
@@ -136,10 +127,10 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
             final String prototypePath = prototypeNode.getPath();
 
 
-            for (final Node node: nodes) {
-                if (node != null) {
-                    final String targetPath = node.getPath() + SEPARATOR + nodeName;
-                    final Node fieldNode = JcrUtils.copy(session, prototypePath, targetPath);
+            for (final Node variant: docVariants) {
+                if (variant != null) {
+                    final String targetPath = variant.getPath() + SEPARATOR + nodeName;
+                    final Node fieldNode = JcrUtils.copy(workflowSession, prototypePath, targetPath);
                     final String srcPath = fieldNode.getName() + "[" + fieldNode.getIndex() + "]";
                     final String destPath = StringUtils.substringAfterLast(targetPath, SEPARATOR);
                     final Node parent = fieldNode.getParent();

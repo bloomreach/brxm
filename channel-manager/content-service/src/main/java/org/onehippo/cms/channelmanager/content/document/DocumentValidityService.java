@@ -5,6 +5,7 @@
 package org.onehippo.cms.channelmanager.content.document;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
@@ -20,9 +21,10 @@ public interface DocumentValidityService {
      *
      * <p>It will try to add the missing nodes to both the "draft" and the "unpublished" version of the document.</p>
      *
+     * @param workflowSession   The workflow session which has more write access on jcr nodes than a user session
      * @param branchId          The project branch of the document
-     * @param documentHandle    The handle of the document
+     * @param documentHandle    The handle of the document backed by the workflow session
      * @param documentType      The type of the document
      */
-    void handleDocumentTypeChanges(String branchId, Node documentHandle, DocumentType documentType);
+    void handleDocumentTypeChanges(Session workflowSession, String branchId, Node documentHandle, DocumentType documentType);
 }
