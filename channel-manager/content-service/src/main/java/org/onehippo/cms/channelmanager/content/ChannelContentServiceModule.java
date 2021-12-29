@@ -162,7 +162,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         documentsService.setHintsInspector(createHintsInspector(session));
         documentsService.setBranchingService(createBranchingService(session));
         documentsService.setNodeFieldService(createNodeFieldService(session));
-        documentsService.setDocumentValidityService(createDocumentValidityService(session));
+        documentsService.setDocumentValidityService(new DocumentValidityServiceImpl());
         documentVersionService.setPageCampaignSupported(pageCampaignSupported);
 
         // First create the branchSelectionService because doInitialize needs it to be non-null
@@ -205,10 +205,6 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }
-    }
-
-    private DocumentValidityService createDocumentValidityService(final Session session) {
-        return new DocumentValidityServiceImpl(session);
     }
 
     @Override
