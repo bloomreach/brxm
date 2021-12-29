@@ -251,7 +251,8 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
 
         // always get an editable document first as that will ensure a draft and an unpublished variant exist
-        documentValidityService.handleDocumentTypeChanges(branchId, handle, docType);
+        final Session internalWorkflowSession = workflow.getWorkflowContext().getInternalWorkflowSession();
+        documentValidityService.handleDocumentTypeChanges(internalWorkflowSession, branchId, getHandle(uuid, internalWorkflowSession), docType);
 
         final Document document = assembleDocument(uuid, handle, draftNode, docType);
         FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
