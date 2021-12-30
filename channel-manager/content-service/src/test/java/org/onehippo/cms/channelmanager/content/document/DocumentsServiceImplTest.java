@@ -501,7 +501,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
-        validityService.handleDocumentTypeChanges(MASTER_BRANCH_ID, handle, docType);
+        validityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, handle, docType);
         expectLastCall();
 
         replayAll(draft);
@@ -559,7 +559,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
-        validityService.handleDocumentTypeChanges(MASTER_BRANCH_ID, handle, docType);
+        validityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, handle, docType);
         expectLastCall();
 
         replayAll(draft);
@@ -621,7 +621,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
-        validityService.handleDocumentTypeChanges(MASTER_BRANCH_ID, handle, docType);
+        validityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, handle, docType);
         expectLastCall();
 
         replayAll(draft);
