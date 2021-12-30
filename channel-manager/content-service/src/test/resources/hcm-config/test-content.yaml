@@ -1,0 +1,30 @@
+definitions:
+  config:
+    /docvalidation:
+      jcr:primaryType: hippostd:directory
+      jcr:mixinTypes: ['mix:referenceable']
+      hippostd:foldertype: [new-document, new-folder]
+      /documents:
+        jcr:primaryType: hippostd:folder
+        jcr:mixinTypes: ['mix:referenceable']
+        hippostd:foldertype: [new-folder, new-document]
+        /test:
+          jcr:primaryType: hippostd:folder
+          jcr:mixinTypes: ['mix:referenceable']
+          hippostd:foldertype: [new-folder, new-document]
+          /doc:
+            jcr:primaryType: hippo:handle
+            jcr:mixinTypes: [ 'mix:referenceable', 'hippo:named' ]
+            hippo:name: Home Page
+            /doc:
+              jcr:primaryType: test:document
+              jcr:mixinTypes: [ 'mix:versionable', "hippostdpubwf:document"]
+              hippo:availability: [ preview ]
+              hippostd:holder: admin
+              hippostd:state: unpublished
+              hippostdpubwf:createdBy: admin
+              hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+              hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+              hippostdpubwf:lastModifiedBy: admin
+              hippostdpubwf:publicationDate: 2010-01-22T12:34:11.055+02:00
+              test:title: This is the homepage
