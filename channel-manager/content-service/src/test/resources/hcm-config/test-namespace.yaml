@@ -1,0 +1,108 @@
+definitions:
+  config:
+    /hippo:namespaces/test:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /document:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /document[1]:
+          jcr:primaryType: hipposysedit:contenttype
+          jcr:mixinTypes: ['editor:editable', 'hippostdpubwf:document', 'mix:referenceable']
+          hippo:availability: [live, preview]
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-10-01T17:00:00+01:00
+          hippostdpubwf:lastModificationDate: 2020-10-01T17:00:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2020-10-01T17:00:00+01:00
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+            /link:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:link
+              hipposysedit:type: hippo:mirror
+          /editor:templates:
+            jcr:primaryType: editor:templateset
+            /_default_:
+              jcr:primaryType: frontend:plugincluster
+              frontend:properties: [mode]
+              frontend:references: [engine, wicket.model]
+              frontend:services: [wicket.id]
+              /root:
+                jcr:primaryType: frontend:plugin
+                item: ${cluster.id}.field
+                plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              /title:
+                jcr:primaryType: frontend:plugin
+                caption: Title
+                field: title
+                plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+                wicket.css: hippo-template-default-title
+                wicket.id: ${cluster.id}.field
+              /link:
+                jcr:primaryType: frontend:plugin
+                caption: Link
+                field: link
+                plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+                wicket.id: ${cluster.id}.field
+          /hipposysedit:prototype:
+            jcr:primaryType: test:document
+            test:title: title
+            /test:link:
+              jcr:primaryType: hippo:mirror
+              hippo:docbase: docbase-from-document-prototype
+        /document[2]:
+          jcr:primaryType: hipposysedit:contenttype
+          jcr:mixinTypes: ['editor:editable', 'hippostdpubwf:document', 'mix:referenceable']
+          hippo:availability: []
+          hippostd:state: draft
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2020-10-01T17:00:00+01:00
+          hippostdpubwf:lastModificationDate: 2020-10-01T17:00:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2020-10-01T17:00:00+01:00
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+            /link:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:link
+              hipposysedit:type: hippo:mirror
+          /editor:templates:
+            jcr:primaryType: editor:templateset
+            /_default_:
+              jcr:primaryType: frontend:plugincluster
+              frontend:properties: [mode]
+              frontend:references: [engine, wicket.model]
+              frontend:services: [wicket.id]
+              /root:
+                jcr:primaryType: frontend:plugin
+                item: ${cluster.id}.field
+                plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              /title:
+                jcr:primaryType: frontend:plugin
+                caption: Title
+                field: title
+                plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+                wicket.css: hippo-template-default-title
+                wicket.id: ${cluster.id}.field
+              /link:
+                jcr:primaryType: frontend:plugin
+                caption: Link
+                field: link
+                plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+                wicket.id: ${cluster.id}.field
+          /hipposysedit:prototype:
+            jcr:primaryType: test:document
+            test:title: title
+            /test:link:
+              jcr:primaryType: hippo:mirror
+              hippo:docbase: docbase-from-document-prototype
