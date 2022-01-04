@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,8 @@ export default class PageStructureService {
       .register(HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS, ({ json }) => new HeadContributions(json))
       .register(HstConstants.END_MARKER, ({ json }) => new EndMarker(json))
       .register(HstConstants.TYPE_PAGE_META, ({ json }) => new PageMeta(json));
+
+    this._emitSyncOverlay = this._emitSyncOverlay.bind(this);
   }
 
   _createComponent({ element: startComment, json }) {
@@ -179,7 +181,7 @@ export default class PageStructureService {
     const $newMarkup = $(newMarkup);
 
     this._removeEmbeddedLinksInComponent(oldComponent);
-    await this.$q(resolve => oldComponent.replaceDOM($newMarkup, resolve));
+    await this.$q(resolve => oldComponent.replaceDOM($newMarkup, resolve, this._emitSyncOverlay));
 
     const comments = Array.from(this.HstCommentsProcessorService.processFragment($newMarkup));
     let newComponent;
@@ -212,7 +214,7 @@ export default class PageStructureService {
     const $newMarkup = $(newMarkup);
 
     this._removeEmbeddedLinksInContainer(oldContainer);
-    await this.$q(resolve => oldContainer.replaceDOM($newMarkup, resolve));
+    await this.$q(resolve => oldContainer.replaceDOM($newMarkup, resolve, this._emitSyncOverlay));
 
     const comments = Array.from(this.HstCommentsProcessorService.processFragment($newMarkup));
     let container;
@@ -254,5 +256,9 @@ export default class PageStructureService {
       containerId: targetContainer.getId(),
       nextComponentId: targetContainerNextComponent && targetContainerNextComponent.getId(),
     });
+  }
+
+  _emitSyncOverlay() {
+    this.$rootScope.$emit('overlay:sync');
   }
 }
