@@ -1,0 +1,3 @@
+action-lists:
+      - 1.1:
+          /content/sitewithexistingcontent/contentnode: reload
