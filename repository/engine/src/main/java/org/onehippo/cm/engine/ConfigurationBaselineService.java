@@ -372,7 +372,11 @@ public class ConfigurationBaselineService {
      * @throws RepositoryException because always with JCR ...
      */
     private static Node getModuleNode(final Node baseline, final ModuleImpl module) throws RepositoryException {
-        Node groupNode = baseline.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName(), true));
+        Node rootNode = baseline;
+        if (module.isNotCore()) {
+            rootNode = rootNode.getNode(HCM_SITES).getNode(module.getSiteName());
+        }
+        Node groupNode = rootNode.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName(), true));
         Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName(), true));
         return projectNode.getNode(NodeNameCodec.encode(module.getName(), true));
     }
