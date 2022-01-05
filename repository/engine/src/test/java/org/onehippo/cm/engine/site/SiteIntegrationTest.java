@@ -38,7 +38,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -64,10 +63,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.engine.test.Validator.NOOP;
 
-@Ignore
 public class SiteIntegrationTest {
 
     static final String SITE_INTEGRATION_TEST = "SiteIntegrationTest";
@@ -90,12 +89,11 @@ public class SiteIntegrationTest {
         try {
             fixture.test(session -> {
                 IsolatedRepository repository = fixture.getRepository();
-
                 //Register site that bootstraps content at same content path
                 HippoWebappContext siteContext = createSiteApplicationContext(fixtureName, "sitewithcontent");
                 try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationServiceImpl.class).build()) {
                     hippoWebappContextRegistry.register(siteContext);
-                    assertEquals("Duplicate definition root paths '/content/sitewithexistingcontent/contentnode' in module 'site-with-content' in source files 'withcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode2.yaml]' and 'withcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode.yaml]'.",
+                    assertEquals("Duplicate definition root paths '/content/sitewithexistingcontent/contentnode' in module 'site-with-content' in source files 'sitewithcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode2.yaml]' and 'sitewithcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode.yaml]'.",
                             interceptor.getEvents().get(0).getThrown().getMessage());
                 }
                 hippoWebappContextRegistry.unregister(siteContext);
@@ -109,6 +107,14 @@ public class SiteIntegrationTest {
                 session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
                 try {
                     session.getNode("/content/sitewithexistingcontent/contentnode").getProperty("property");
+                    final String lastAction = session.getNode(
+                                    "/hcm:hcm/hcm:baseline/hcm:sites/sitewithcontent/hippo-cms-test/site-with-content-project/site-with-content")
+                            .getProperty("hcm:lastexecutedaction").getString();
+                    assertEquals("1.1", lastAction);
+                    final String lastExecutedModuleAction = repository.getRuntimeConfigurationModel().getModulesStream()
+                            .filter(m -> m.getName().equals("site-with-content") && m.isNotCore()).findFirst()
+                            .orElseThrow(IllegalArgumentException::new).getLastExecutedAction();
+                    assertEquals("1.1", lastExecutedModuleAction);
                 } catch (PathNotFoundException ex) {
                     fail("Initial bootstrap failed");
                 }
@@ -117,14 +123,23 @@ public class SiteIntegrationTest {
                 repository.stop();
 
                 //Register site that bootstraps content at a previously loaded content path
+                System.setProperty(SYSTEM_PARAMETER_REPO_BOOTSTRAP, "full");
                 HippoWebappContext siteContext3 = createSiteApplicationContext(fixture3Name, "sitewithcontent");
                 hippoWebappContextRegistry.register(siteContext3);
                 repository.startRepository();
                 session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
                 try {
                     Property property = session.getNode("/content/sitewithexistingcontent/contentnode").getProperty("property");
-                    //property shouldn't have changed value
-                    assertEquals("propertyValue", property.getString());
+                    //property should be reloaded
+                    assertEquals("propertyValue4", property.getString());
+                    final String lastAction = session.getNode(
+                                    "/hcm:hcm/hcm:baseline/hcm:sites/sitewithcontent/hippo-cms-test/site-with-content-project/site-with-content")
+                            .getProperty("hcm:lastexecutedaction").getString();
+                    assertEquals("1.6", lastAction);
+                    final String lastExecutedModuleAction = repository.getRuntimeConfigurationModel().getModulesStream()
+                            .filter(m -> m.getName().equals("site-with-content") && m.isNotCore()).findFirst()
+                            .orElseThrow(IllegalArgumentException::new).getLastExecutedAction();
+                    assertEquals("1.6", lastExecutedModuleAction);
                 } catch (PathNotFoundException ex) {
                     fail("Unexpected exception");
                 }
