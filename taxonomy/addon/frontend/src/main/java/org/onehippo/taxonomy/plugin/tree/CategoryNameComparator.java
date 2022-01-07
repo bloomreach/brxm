@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,11 @@ import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 
 /**
- * DefaultCategoryComparator.
+ * Category Comparator activated by setting "category.sort.options=name" in both the TaxonomyBrowser as the
+ * TaxonomyEditorPlugin.
  * <p>
- * By default, this compares two <code>Category</code> instances by its localized name.
+ * By default, this compares two <code>Category</code> instances by its localized name, or, as a fallback if the locale
+ * is absent, by key.
  * </p>
  */
 public class CategoryNameComparator implements Comparator<Category> {
@@ -45,6 +47,10 @@ public class CategoryNameComparator implements Comparator<Category> {
 
     @Override
     public int compare(Category category1, Category category2) {
+        if (locale == null) {
+            return category1.getKey().compareTo(category2.getKey());
+        }
+
         String name1 = category1.getInfo(locale).getName();
         String name2 = category2.getInfo(locale).getName();
         return name1.compareTo(name2);
