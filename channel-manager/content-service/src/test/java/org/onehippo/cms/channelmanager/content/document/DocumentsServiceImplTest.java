@@ -34,6 +34,7 @@ import org.hippoecm.hst.platform.api.PlatformServices;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -468,6 +469,8 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final Node unpublished = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final WorkflowContext workflowContext = createMock(WorkflowContext.class);
+        final Session workflowSession = createMock(Session.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
 
@@ -478,6 +481,9 @@ public class DocumentsServiceImplTest {
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap());
+        expect(workflow.getWorkflowContext()).andReturn(workflowContext);
+        expect(workflowContext.getInternalWorkflowSession()).andReturn(workflowSession);
+        expect(DocumentUtils.getHandle(uuid, workflowSession)).andReturn(Optional.of(handle));
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
@@ -501,7 +507,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
-        validityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, handle, docType);
+        validityService.handleDocumentTypeChanges(workflowSession, MASTER_BRANCH_ID, handle, docType);
         expectLastCall();
 
         replayAll(draft);
@@ -529,6 +535,8 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final Node unpublished = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final WorkflowContext workflowContext = createMock(WorkflowContext.class);
+        final Session workflowSession = createMock(Session.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
 
@@ -539,6 +547,9 @@ public class DocumentsServiceImplTest {
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap());
+        expect(workflow.getWorkflowContext()).andReturn(workflowContext);
+        expect(workflowContext.getInternalWorkflowSession()).andReturn(workflowSession);
+        expect(DocumentUtils.getHandle(uuid, workflowSession)).andReturn(Optional.of(handle));
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
@@ -559,7 +570,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
-        validityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, handle, docType);
+        validityService.handleDocumentTypeChanges(workflowSession, MASTER_BRANCH_ID, handle, docType);
         expectLastCall();
 
         replayAll(draft);
@@ -587,6 +598,8 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final Node unpublished = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final WorkflowContext workflowContext = createMock(WorkflowContext.class);
+        final Session workflowSession = createMock(Session.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
 
@@ -598,6 +611,9 @@ public class DocumentsServiceImplTest {
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
+        expect(workflow.getWorkflowContext()).andReturn(workflowContext);
+        expect(workflowContext.getInternalWorkflowSession()).andReturn(workflowSession);
+        expect(DocumentUtils.getHandle(uuid, workflowSession)).andReturn(Optional.of(handle));
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
@@ -621,7 +637,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
-        validityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, handle, docType);
+        validityService.handleDocumentTypeChanges(workflowSession, MASTER_BRANCH_ID, handle, docType);
         expectLastCall();
 
         replayAll(draft);

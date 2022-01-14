@@ -1,5 +1,17 @@
 /*
- * Copyright 2021 Bloomreach (http://www.bloomreach.com)
+ * Copyright 2022 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.onehippo.cms.channelmanager.content.document;
@@ -7,7 +19,6 @@ package org.onehippo.cms.channelmanager.content.document;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -16,29 +27,25 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NodeUtils;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.project.Project;
-import org.onehippo.cms7.services.project.ProjectService;
 import org.onehippo.repository.branch.BranchHandle;
-import org.onehippo.repository.contenttypeworkflow.ContentTypeHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import lombok.extern.slf4j.Slf4j;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.cms.channelmanager.content.document.util.FieldPath.SEPARATOR;
+import static org.onehippo.cms.channelmanager.content.document.util.PrototypeUtils.findFirstPrototypeNode;
 
-@Slf4j
 public class DocumentValidityServiceImpl implements DocumentValidityService {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentValidityServiceImpl.class);
 
     @Override
     public void handleDocumentTypeChanges(final Session workflowSession, final String branchId,
@@ -59,7 +66,7 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
         }
 
         // The document prototype contains the prototype nodes of the fields that where created with the doc-type editor
-        final Node prototype = findPrototypeNode(workflowSession, branchHandle, documentType.getId());
+        final Node prototype = findFirstPrototypeNode(workflowSession, documentType.getId());
         if (prototype == null) {
             log.warn("Unable to find prototype '{}' for branch '{}', skipping handling of document type changes",
                     documentType.getId(), branchId);
@@ -96,7 +103,7 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
                         numberOfMissingNodes, field.getId(), field.getType(), getNodePathQuietly(draft));
             }
 
-            final List<Node> missingPrototypeNodes = findMissingPrototypeNodes(workflowSession, branchHandle, documentPrototype, field);
+            final List<Node> missingPrototypeNodes = findMissingPrototypeNodes(workflowSession, documentPrototype, field);
             if (missingPrototypeNodes.isEmpty()) {
                 log.error("Failed to find prototype nodes for field '{}' in document '{}' which is missing {} nodes",
                         field.getId(), getNodePathQuietly(draft), numberOfMissingNodes);
@@ -113,8 +120,8 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
         }
     }
 
-    private List<Node> findMissingPrototypeNodes(final Session workflowSession, final BranchHandle branchHandle,
-                                                 final Node documentPrototype, final FieldType field) throws RepositoryException {
+    private List<Node> findMissingPrototypeNodes(final Session workflowSession, final Node documentPrototype,
+                                                 final FieldType field) throws RepositoryException {
         List<Node> prototypeNodes = Collections.emptyList();
 
         // check if document prototype has nodes
@@ -124,44 +131,14 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
 
         // otherwise, do a ContentTypeHandle lookup by JCR type
         if (prototypeNodes.isEmpty()) {
-            final Node fieldPrototype = findPrototypeNode(workflowSession, branchHandle, field.getJcrType());
+            final Node fieldPrototype = findFirstPrototypeNode(workflowSession, field.getJcrType());
             if (fieldPrototype != null) {
-                log.debug("Will use the prototype at {}", JcrUtils.getNodeParentQuietly(fieldPrototype));
+                log.debug("Will use the prototype at {}", getNodePathQuietly(fieldPrototype));
                 prototypeNodes = Collections.singletonList(fieldPrototype);
             }
         }
 
         return prototypeNodes;
-    }
-
-    private Node findPrototypeNode(final Session session, final BranchHandle branchHandle, final String type) {
-        ContentTypeHandle contentTypeHandle = null;
-        try {
-            contentTypeHandle = ContentTypeHandle.createContentTypeHandle(type, session).orElse(null);
-        } catch (final RepositoryException | WorkflowException e) {
-            log.error("An error occurred while looking up ContentTypeHandle for type '{}'", type, e);
-        }
-
-        if (contentTypeHandle == null) {
-            return null;
-        }
-
-        final List<WorkflowUtils.Variant> candidates = isDeveloperProjectWithDocumentTypes(branchHandle)
-            ? Lists.newArrayList(UNPUBLISHED, PUBLISHED)
-            : Lists.newArrayList(PUBLISHED);
-
-        try {
-            for (WorkflowUtils.Variant candidate : candidates) {
-                final Optional<Node> variantPrototypeNode = contentTypeHandle.getVariantPrototypeNode(candidate);
-                if (variantPrototypeNode.isPresent()) {
-                    return variantPrototypeNode.get();
-                }
-            }
-        } catch (final RepositoryException e) {
-            log.error("An error occurred while looking up the prototype node for type '{}'", type, e);
-        }
-
-        return null;
     }
 
     private void copyMissingPrototypeNodes(final Session workflowSession, final FieldType field,
@@ -185,23 +162,6 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
             }
             numberOfMissingNodes--;
         }
-    }
-
-    private boolean isDeveloperProjectWithDocumentTypes(final BranchHandle branchHandle) {
-        if (branchHandle.isMaster()) {
-            return false;
-        }
-
-        final ProjectService projectService = HippoServiceRegistry.getService(ProjectService.class);
-        if (projectService == null) {
-            log.warn("Unable to get 'ProjectService' from service registry while checking if project '{}' is a " +
-                    "developer project with document types.", branchHandle.getBranchId());
-            return false;
-        }
-
-        return projectService.getProject(branchHandle.getBranchId())
-                .filter(Project::isIncludeDocumentTypes)
-                .isPresent();
     }
 
     private long getNumberOfMissingNodes(final Node node, final FieldType field) throws RepositoryException {
