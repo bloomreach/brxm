@@ -70,6 +70,10 @@ ckeditor {
         margin-bottom: 0;
       }
     }
+
+    .cke_editable img {
+      max-width: 100%;
+    }
   }
 
   .md-resize-handle {
