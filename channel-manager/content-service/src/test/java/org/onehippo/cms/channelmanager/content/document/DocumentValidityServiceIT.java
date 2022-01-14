@@ -28,6 +28,7 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -43,7 +44,6 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
     private static final String TEST_DOC_BACKUP = "/backup-document";
 
     private static final String TEST_DOCTYPE = "/hippo:namespaces/test/document";
-    private static final String TEST_DOCTYPE_PUBLISHED = TEST_DOCTYPE + "/document[1]";
     private static final String TEST_DOCTYPE_BACKUP = "/backup-doctype";
 
     private DocumentValidityServiceImpl documentValidityService;
@@ -86,6 +86,9 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
 
         final Session internalWorkflowSession = workflow.getWorkflowContext().getInternalWorkflowSession();
         workflowSessionHandle = getHandle(uuid, internalWorkflowSession);
+
+        // ensure the DocumentType is fresh for every test run
+        DocumentTypesService.get().invalidateCache();
     }
 
     @Test
@@ -103,8 +106,7 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
     public void logs_a_warning_if_the_document_has_no_prototype_node() throws Exception {
         // remove the prototype nodes from the doc-type
         final Node doctype = session.getNode(TEST_DOCTYPE);
-        doctype.getNode("document[1]").getNode(HIPPO_PROTOTYPE).remove();
-        doctype.getNode("document[2]").getNode(HIPPO_PROTOTYPE).remove();
+        doctype.getNode(HIPPO_PROTOTYPES).remove();
 
         // create draft
         EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
@@ -137,7 +139,7 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
     @Test
     public void adds_a_missing_field_node_from_content_type_if_not_in_document_prototype() throws Exception {
         // delete test:link prototype from the published document prototype
-        session.getNode(TEST_DOCTYPE_PUBLISHED + "/" + HIPPO_PROTOTYPE + "/test:link").remove();
+        session.getNode(TEST_DOCTYPE + "/" + HIPPO_PROTOTYPES + "/" + HIPPO_PROTOTYPE + "/test:link").remove();
 
         final DocumentType documentType = getDocumentType("test:document");
         EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
@@ -202,7 +204,7 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
     @Test
     public void copies_prototype_nodes_in_cyclic_order() throws Exception {
         // add a second prototype in the published document prototype for field "test:link"
-        final String linkPath = TEST_DOCTYPE_PUBLISHED + "/" + HIPPO_PROTOTYPE + "/test:link";
+        final String linkPath = TEST_DOCTYPE + "/" + HIPPO_PROTOTYPES + "/" + HIPPO_PROTOTYPE + "/test:link";
         JcrUtils.copy(session, linkPath, linkPath).setProperty("hippo:docbase", "second-docbase");
 
         EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
@@ -239,7 +241,7 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
 
     private DocumentType getDocumentType(final String type) {
         final UserContext userContext = new TestUserContext(session);
-        return DocumentTypesService.get().getDocumentType(type, MASTER_BRANCH_ID, userContext);
+        return DocumentTypesService.get().getDocumentType(type, userContext);
     }
 
     private static void assertLinkExists(final String expected, final int position, final Node... variants) throws RepositoryException {
