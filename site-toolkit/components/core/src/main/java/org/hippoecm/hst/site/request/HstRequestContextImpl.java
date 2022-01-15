@@ -247,6 +247,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public void setSession(Session session) {
         checkStateValidity();
+        // first logout potentially already set session, aka its effect is returning it to the session pool for pooled
+        // sessions
+        if (this.session != null && this.session != session) {
+            this.session.logout();
+        }
         this.session = session;
     }
 
