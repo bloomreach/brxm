@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -161,8 +161,8 @@ public class FolderTreePlugin extends RenderPlugin {
                                 final StringValue x = requestParameters.getParameterValue(MOUSE_X_PARAM);
                                 final StringValue y = requestParameters.getParameterValue(MOUSE_Y_PARAM);
                                 final String renderScript = x != null && y != null
-                                    ? String.format("Hippo.ContextMenu.renderAtPosition('%s', %s, %s);",
-                                        content.getMarkupId(), x, y)
+                                    ? String.format("Hippo.ContextMenu.renderAtPosition('%s', %d, %d);",
+                                        content.getMarkupId(), x.toInt(), y.toInt())
                                     : String.format("Hippo.ContextMenu.renderInTree('%s');",
                                         content.getMarkupId());
 
