@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,9 +83,7 @@ import org.slf4j.LoggerFactory;
 
 public class BrowserPlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
 
     private static final JavaScriptResourceReference NAVIGATION_JS = new JavaScriptResourceReference(BrowserPlugin.class, "navigation.js");
 
@@ -253,8 +251,9 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                             final IRequestParameters requestParameters = getRequestParameters();
                             StringValue x = requestParameters.getParameterValue(MOUSE_X_PARAM);
                             StringValue y = requestParameters.getParameterValue(MOUSE_Y_PARAM);
-                            target.appendJavaScript(
-                                    "Hippo.ContextMenu.renderAtPosition('" + menu.getMarkupId() + "', " + x + ", " + y + ");");
+                            final String renderScript = String.format("Hippo.ContextMenu.renderAtPosition('%s', %d, %d);",
+                                    menu.getMarkupId(), x.toInt(), y.toInt());
+                            target.appendJavaScript(renderScript);
                         }
                     }
                 });
