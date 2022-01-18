@@ -46,6 +46,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -77,6 +79,9 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 })
 @PrepareForTest({JcrUtils.class, FieldTypeUtils.class, NamespaceUtils.class})
 public class PropertyFieldTypeTest {
+
+    // WORKAROUND ENT-4370 : trigger log4j initialization to avoid power mock triggered deadlock in log4j
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private static final String PROPERTY = "test:id";
     private PropertyFieldType fieldType;
