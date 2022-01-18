@@ -33,7 +33,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "javax.net.ssl.*", "com.sun.org.apache.xerces.*"})
 @PrepareForTest(ClassWithStaticMembers.class)
 public class TestCompatibilityWithPowerMock extends CXFTest {
 
