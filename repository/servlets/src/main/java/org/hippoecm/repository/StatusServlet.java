@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.hippoecm.repository.util.RepoUtils;
 
 public class StatusServlet extends HttpServlet {
@@ -136,18 +138,15 @@ public class StatusServlet extends HttpServlet {
                 writer.print("<pre>");
                 ByteArrayOutputStream tmpStream = new ByteArrayOutputStream();
                 manifest.write(tmpStream);
-                writer.print(tmpStream.toString());
+                writer.print(tmpStream);
                 writer.println("</pre>");
             }
 
             if (manifestSource == null) {
                 writer.println("-->");
             }
-        } catch(Throwable ex) {
-            writer.print("Error occured:<br/><pre>");
-            writer.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(writer);
-            writer.println("</pre>");
+        } catch (Throwable ex) {
+            writer.println(getThrowableAsHtml(ex));
         } finally {
             IOUtils.closeQuietly(istream);
         }
@@ -155,26 +154,23 @@ public class StatusServlet extends HttpServlet {
         writer.println("  <h3>Repository descriptors</h3>");
         try {
             hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
-            if(hippoRepository != null) {
+            if (hippoRepository != null) {
                 Repository repository = hippoRepository.getRepository();
                 writer.println("    <table style=\"params\" summary=\"request parameters\">");
                 writer.println("    <tr><td>Repository</td><td>: " + repository.getDescriptor(Repository.REP_NAME_DESC) + "&nbsp;" + repository.getDescriptor(Repository.REP_VERSION_DESC) + "</td></tr>");
-                writer.println("    <tr><td>Vendor</td><td>: " + repository.getDescriptor(Repository.REP_VENDOR_DESC) + "&nbsp;<a href=\""+repository.getDescriptor(Repository.REP_VENDOR_URL_DESC) +"\">" + repository.getDescriptor(Repository.REP_VENDOR_URL_DESC) + "</a>" + "</td></tr>");
+                writer.println("    <tr><td>Vendor</td><td>: " + repository.getDescriptor(Repository.REP_VENDOR_DESC) + "&nbsp;<a href=\"" + repository.getDescriptor(Repository.REP_VENDOR_URL_DESC) + "\">" + repository.getDescriptor(Repository.REP_VENDOR_URL_DESC) + "</a>" + "</td></tr>");
                 writer.println("    <tr><td>Specification</td><td>: " + repository.getDescriptor(Repository.SPEC_NAME_DESC) + "&nbsp;" + repository.getDescriptor(Repository.SPEC_VERSION_DESC) + "</td></tr>");
                 writer.println("    </table>");
             } else {
                 writer.println("No Hippo repository obtained");
             }
-        } catch(Throwable ex) {
-            writer.print("Error occured:<br/><pre>");
-            writer.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(writer);
-            writer.println("</pre>");
+        } catch (Throwable ex) {
+            writer.println(getThrowableAsHtml(ex));
         }
 
         writer.println("  <h3>Repository basic access</h3>");
         try {
-            if(hippoRepository != null) {
+            if (hippoRepository != null) {
                 try {
                     Session session = hippoRepository.login();
                     if(session.isLive()) {
@@ -187,27 +183,21 @@ public class StatusServlet extends HttpServlet {
             } else {
                 writer.println("No hippo repository present - skipped.");
             }
-        } catch(Throwable ex) {
-            writer.print("Error occured:<br/><pre>");
-            writer.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(writer);
-            writer.println("</pre>");
+        } catch (Throwable ex) {
+            writer.println(getThrowableAsHtml(ex));
         }
 
         try {
             writer.println("  <h3>Resource usage</h3>");
             Runtime runtime = Runtime.getRuntime();
             writer.println("    <table style=\"params\" summary=\"request parameters\">");
-            writer.println("    <tr><td>Memory limit</td><td align=\"right\">: " + runtime.maxMemory() + "</td><td align=\"right\">&nbsp;(&nbsp;" + ((runtime.maxMemory()+24288)/1048576) + "&nbsp;Mbyte )</td></tr>");
-            writer.println("    <tr><td>Memory in use</td><td align=\"right\">: " + runtime.totalMemory() + "</td><td align=\"right\">&nbsp;(&nbsp;" + ((runtime.totalMemory()+24288)/1048576) + "&nbsp;Mbyte )</td></tr>");
-            writer.println("    <tr><td>Memory available</td><td align=\"right\">: " + runtime.freeMemory() + "</td><td align=\"right\">&nbsp;(&nbsp;" + ((runtime.freeMemory()+24288)/1048576) + "&nbsp;Mbyte )</td></tr>");
+            writer.println("    <tr><td>Memory limit</td><td align=\"right\">: " + runtime.maxMemory() + "</td><td align=\"right\">&nbsp;(&nbsp;" + ((runtime.maxMemory() + 24288) / 1048576) + "&nbsp;Mbyte )</td></tr>");
+            writer.println("    <tr><td>Memory in use</td><td align=\"right\">: " + runtime.totalMemory() + "</td><td align=\"right\">&nbsp;(&nbsp;" + ((runtime.totalMemory() + 24288) / 1048576) + "&nbsp;Mbyte )</td></tr>");
+            writer.println("    <tr><td>Memory available</td><td align=\"right\">: " + runtime.freeMemory() + "</td><td align=\"right\">&nbsp;(&nbsp;" + ((runtime.freeMemory() + 24288) / 1048576) + "&nbsp;Mbyte )</td></tr>");
             writer.println("    <tr><td>Processors</td><td align=\"right\">: " + runtime.availableProcessors() + "</td><td>&nbsp;</td></tr>");
             writer.println("    </table>");
-        } catch(Throwable ex) {
-            writer.print("Error occured:<br/><pre>");
-            writer.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(writer);
-            writer.println("</pre>");
+        } catch (Throwable ex) {
+            writer.println(getThrowableAsHtml(ex));
         }
 
         writer.println("</body></html>");
@@ -216,5 +206,12 @@ public class StatusServlet extends HttpServlet {
     @Override
     public void destroy() {
         super.destroy();
+    }
+
+    private static String getThrowableAsHtml(final Throwable ex) {
+        return String.format("Error occurred:<br/><pre>%s: %s\n%s\n</pre>\n",
+                ex.getClass().getName(),
+                StringEscapeUtils.escapeHtml4(ex.getMessage()),
+                StringEscapeUtils.escapeHtml4(ExceptionUtils.getStackTrace(ex)));
     }
 }
