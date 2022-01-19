@@ -28,6 +28,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -43,7 +45,11 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.internal.*", "javax.xml.parsers.*", "org.w3c.dom.*", "org.xml.sax.*", "javax.net.ssl.*"})
 @PrepareForTest({ValueListServiceImpl.class, JcrUtils.class})
 public class ValueListServiceImplTest {
-    
+
+    // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
+    // After CMS-14948 has been done this workaround can be removed again
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
+
     private ValueListService valueListService = ValueListService.get();
 
     @Before

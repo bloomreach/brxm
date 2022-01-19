@@ -32,6 +32,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -44,6 +46,10 @@ import static org.powermock.api.easymock.PowerMock.verify;
 @PrepareForTest(DigestBundleResolver.class)
 @PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*"})
 public class ConfigurationConfigServiceBundleTest {
+
+    // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
+    // After CMS-14948 has been done this workaround can be removed again
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private ConfigurationBaselineService baselineService;
 
