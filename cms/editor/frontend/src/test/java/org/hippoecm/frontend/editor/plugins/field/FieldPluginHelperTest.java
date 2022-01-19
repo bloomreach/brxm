@@ -31,6 +31,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,6 +40,9 @@ import static org.junit.Assert.assertEquals;
 @PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({FieldPluginHelper.class})
 public class FieldPluginHelperTest {
+
+    // WORKAROUND ENT-4370 : trigger log4j initialization to avoid power mock triggered deadlock in log4j
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private static final String BUNDLE_FIELD_CAPTION_KEY_VALUE = "Bundle Field Caption Key Value";
     private static final String BUNDLE_CAPTION_KEY_VALUE = "Bundle Caption Key Value";

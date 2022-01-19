@@ -36,6 +36,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtDataField;
 
 import static org.easymock.EasyMock.anyObject;
@@ -56,6 +58,9 @@ import static org.junit.Assert.assertFalse;
 @PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 
 public class ChannelStoreTest {
+
+    // WORKAROUND ENT-4370 : trigger log4j initialization to avoid power mock triggered deadlock in log4j
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private ChannelService mockedChannelService;
     private PlatformServices platformServices;
