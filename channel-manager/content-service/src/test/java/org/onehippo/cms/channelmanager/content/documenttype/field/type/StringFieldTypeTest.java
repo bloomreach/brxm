@@ -57,7 +57,8 @@ import static org.onehippo.cms.channelmanager.content.ValidateAndWrite.validateA
 @PrepareForTest({JcrUtils.class, NamespaceUtils.class})
 public class StringFieldTypeTest {
 
-    // WORKAROUND ENT-4370 : trigger log4j initialization to avoid power mock triggered deadlock in log4j
+    // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
+    // After CMS-14948 has been done this workaround can be removed again
     private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private static final String PROPERTY = "test:id";
