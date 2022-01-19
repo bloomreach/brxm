@@ -39,6 +39,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMETER_PREFIX;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
@@ -50,6 +52,9 @@ import static org.easymock.EasyMock.expect;
 @PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*"})
 @PrepareForTest(ResourceBundleUtils.class)
 public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTestParametersInfoProcessor {
+
+    // WORKAROUND ENT-4370 : trigger log4j initialization to avoid power mock triggered deadlock in log4j
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     @Test
     public void get_unpopulated_properties() throws RepositoryException {
