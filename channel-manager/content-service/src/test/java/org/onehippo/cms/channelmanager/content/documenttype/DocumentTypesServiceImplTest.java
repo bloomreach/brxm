@@ -39,6 +39,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
@@ -63,6 +65,9 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PrepareForTest({ContentTypeContext.class, DocumentTypesServiceImpl.class, FieldTypeUtils.class,
         LocalizationUtils.class})
 public class DocumentTypesServiceImplTest {
+
+    // WORKAROUND ENT-4370 : trigger log4j initialization to avoid power mock triggered deadlock in log4j
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private final DocumentTypesService documentTypesService = DocumentTypesService.get();
 
