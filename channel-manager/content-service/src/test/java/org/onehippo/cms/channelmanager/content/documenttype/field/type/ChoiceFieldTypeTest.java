@@ -47,6 +47,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -71,6 +73,10 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({CompoundFieldType.class, FieldTypeUtils.class, LocalizationUtils.class, ChoiceFieldUtils.class})
 public class ChoiceFieldTypeTest {
+
+    // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
+    // After CMS-14948 has been done this workaround can be removed again
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private final ChoiceFieldType choice = new ChoiceFieldType();
     private final CompoundFieldType compound1 = createMock(CompoundFieldType.class);
