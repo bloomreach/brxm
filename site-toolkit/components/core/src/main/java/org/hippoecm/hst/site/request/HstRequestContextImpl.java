@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
+import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -62,6 +63,7 @@ import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.jcr.pool.MultipleRepository;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -250,7 +252,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         // first logout potentially already set session, aka its effect is returning it to the session pool for pooled
         // sessions
         if (this.session != null && this.session != session) {
-            this.session.logout();
+            if (repository instanceof MultipleRepository) {
+                final ResourceLifecycleManagement[] resourceLifecycleManagements = ((MultipleRepository) repository).getResourceLifecycleManagements();
+                for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
+                    if (resourceLifecycleManagement.containsResource(this.session)) {
+                        resourceLifecycleManagement.disposeResource(this.session);
+                    }
+                }
+            }
         }
         this.session = session;
     }
