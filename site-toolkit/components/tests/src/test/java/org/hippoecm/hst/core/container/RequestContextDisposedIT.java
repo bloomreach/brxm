@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,10 +80,16 @@ public class RequestContextDisposedIT extends AbstractPipelineTestCase {
                 if (isGetter(method)) {
                     try {
                         method.invoke(requestContext);
-                    } catch (Exception e) {
-                        fail(String.format("Getters on request context should not throw exception for '%s' during default pipeline invocation",
+                    } catch (IllegalStateException e) {
+                        fail(String.format("Getters on request context should not throw IllegalStateException for '%s' during default pipeline invocation",
                                 method.getName()));
 
+                    } catch (Exception e) {
+                        if (e.getCause() instanceof IllegalStateException) {
+                            fail(String.format("Getters on request context should throw exception with cause 'IllegalStateException' for '%s' direct after pipeline cleanup invocation",
+                                    method.getName()));
+                        }
+                        // safely ignore other errors like a session not being live any more, not what this test is about
                     }
                 }
             }
@@ -97,10 +104,22 @@ public class RequestContextDisposedIT extends AbstractPipelineTestCase {
             if (isGetter(method)) {
                 try {
                     method.invoke(requestContext);
-                } catch (Exception e) {
-                    fail(String.format("Getters on request context should not throw exception for '%s' direct after pipeline cleanup invocation",
+                } catch (IllegalStateException e) {
+                    fail(String.format("Getters on request context should not throw IllegalStateException for '%s' direct after pipeline cleanup invocation",
                             method.getName()));
 
+                } catch (Exception e) {
+                    if (e.getCause() instanceof IllegalStateException) {
+                        if ("Invalid session which is already returned to the pool!".equals(e.getCause().getMessage())) {
+                            // after cleanup valve for this test the resource lifecycle management returns the session to the ppool,
+                            // see ResourceLifeCycleManagementValve.xml hence will throw IllegalStateException
+                            // safely ignore, expected
+                        } else {
+                            fail(String.format("Getters on request context should throw exception with cause 'IllegalStateException' for '%s' direct after pipeline cleanup invocation",
+                                    method.getName()));
+                        }
+                    }
+                    // safely ignore other errors like a session not being live any more, not what this test is about
                 }
             }
         }
@@ -113,9 +132,17 @@ public class RequestContextDisposedIT extends AbstractPipelineTestCase {
                     method.invoke(requestContext);
                     fail(String.format("Getters on request context should throw exception 'IllegalStateException' for '%s' after disposal",
                             method.getName()));
+                } catch (InvocationTargetException e) {
+                    if (e.getCause() instanceof IllegalStateException) {
+                        assertTrue(e.getCause() instanceof IllegalStateException);
+                        assertTrue(e.getCause().getMessage().contains("Invocation on an invalid HstRequestContext instance"));
+                    } else {
+                        fail(String.format("Getters on request context should throw exception with cause 'IllegalStateException' for '%s' after disposal",
+                                method.getName()));
+                    }
                 } catch (Exception e) {
-                    assertTrue(e.getCause() instanceof IllegalStateException);
-                    assertTrue(e.getCause().getMessage().contains("Invocation on an invalid HstRequestContext instance"));
+                    fail(String.format("Getters on request context should throw exception with cause 'IllegalStateException' for '%s' after disposal",
+                            method.getName()));
                 }
             }
         }
