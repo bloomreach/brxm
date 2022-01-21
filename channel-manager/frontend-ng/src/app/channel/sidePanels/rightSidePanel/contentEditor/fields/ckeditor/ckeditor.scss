@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
 // sass-lint:disable class-name-format, no-qualifying-elements
 @import 'variables';
 
+.field-type-html {
+  max-width: 100%;
+}
+
 .cke_screen_reader_only {
   &.cke_copyformatting_notification {
     height: 0 !important;
@@ -29,6 +33,10 @@ ckeditor {
       border-color: var(--invalid-border-color) !important;
       color: var(--invalid-color);
     }
+  }
+
+  .md-resize-wrapper {
+    max-width: 100%;
   }
 
   .cke {
@@ -52,6 +60,7 @@ ckeditor {
     // CKEditor input area (:not is required to exclude toolbars)
     &[class*='cke_editor_input_']:not(.cke_shared) {
       margin-bottom: 1px;
+      max-width: 100%;
 
       &.cke_focus {
         background-color: var(--focus-background-color);
@@ -60,6 +69,10 @@ ckeditor {
         color: var(--focus-color);
         margin-bottom: 0;
       }
+    }
+
+    .cke_editable img {
+      max-width: 100%;
     }
   }
 
