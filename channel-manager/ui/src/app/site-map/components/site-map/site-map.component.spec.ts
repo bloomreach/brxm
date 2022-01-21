@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,17 +139,16 @@ describe('SiteMapComponent', () => {
       expect(componentEl.querySelector('mat-tree')).toMatchSnapshot();
     });
 
-    it('should scroll selected node into view', () => {
-      scrollIntoViewMock.mockClear();
-
+    it('should scroll selected node into view', fakeAsync(() => {
       component.renderPathInfo = '/idTest4';
       component.ngOnChanges({
         renderPathInfo: {  } as SimpleChange,
       });
+      tick(500);
       fixture.detectChanges();
 
       expect(scrollIntoViewMock).toHaveBeenCalled();
-    });
+    }));
 
     it('should load page on node click', () => {
       const rootNode = componentEl.querySelector<HTMLElement>('.qa-tree-node-name-root');
