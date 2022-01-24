@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,7 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderTreePlugin extends RenderPlugin {
-    static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
     protected final CmsJcrTree tree;
     protected JcrTreeModel treeModel;
@@ -78,8 +78,8 @@ public class FolderTreePlugin extends RenderPlugin {
 
     public FolderTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        
-        String startingPath = config.getString("path", DEFAULT_START_PATH);
+
+        final String startingPath = config.getString("path", DEFAULT_START_PATH);
         boolean canAccessPath = true;
         try {
             final Session session = getSession().getJcrSession();
@@ -111,17 +111,17 @@ public class FolderTreePlugin extends RenderPlugin {
      * <P>
      * By default, this method creates a folder tree node without specifying any subfolder comparator.
      * </P>
-     * @param folderTreeConfig document list filter configuration
-     * @return
+     * @param documentListFilter document list filter configuration
+     * @return The root folder of the tree
      */
-    protected FolderTreeNode createRootFolderTreeNode(DocumentListFilter documentListFilter) {
+    protected FolderTreeNode createRootFolderTreeNode(final DocumentListFilter documentListFilter) {
         return new FolderTreeNode(rootModel, documentListFilter, null);
     }
 
     private CmsJcrTree initializeTree(final IPluginContext context, final IPluginConfig config, final String startingPath) {
         rootModel = new JcrNodeModel(startingPath);
 
-        DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
+        final DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         final boolean workflowEnabled = getPluginConfig().getAsBoolean("workflow.enabled", true);
 
         this.rootNode = createRootFolderTreeNode(folderTreeConfig);
@@ -129,15 +129,14 @@ public class FolderTreePlugin extends RenderPlugin {
         treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
         final CmsJcrTree cmsJcrTree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config), newTreeNodeIconProvider(context, config)) {
-            private static final long serialVersionUID = 1L;
 
             @Override
-            protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
-                IPluginConfig workflowConfig = config.getPluginConfig("module.workflow");
+            protected MarkupContainer newContextContent(final MarkupContainer parent, final String id, final TreeNode node) {
+                final IPluginConfig workflowConfig = config.getPluginConfig("module.workflow");
                 if (workflowConfig != null && (node instanceof IJcrTreeNode)) {
-                    ContextWorkflowManagerPlugin content = new ContextWorkflowManagerPlugin(context, workflowConfig);
+                    final ContextWorkflowManagerPlugin content = new ContextWorkflowManagerPlugin(context, workflowConfig);
                     content.bind(FolderTreePlugin.this, id);
-                    IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
+                    final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
                     content.setModel(nodeModel);
                     return content;
                 }
@@ -145,37 +144,36 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             @Override
-            protected MarkupContainer newContextLink(final MarkupContainer parent, String id, final TreeNode node,
+            protected MarkupContainer newContextLink(final MarkupContainer parent, final String id, final TreeNode node,
                                                      final MarkupContainer content) {
 
                 if (getPluginConfig().getBoolean("contextmenu.rightclick.enabled")) {
                     parent.add(new RightClickBehavior(content, parent) {
-                        private static final long serialVersionUID = 1L;
 
                         @Override
-                        protected void respond(AjaxRequestTarget target) {
+                        protected void respond(final AjaxRequestTarget target) {
                             updateTree(target);
                             getContextmenu().setVisible(true);
                             target.add(getComponentToUpdate());
-                            IContextMenuManager menuManager = findParent(IContextMenuManager.class);
+                            final IContextMenuManager menuManager = findParent(IContextMenuManager.class);
                             if (menuManager != null) {
                                 menuManager.showContextMenu(this);
                                 final IRequestParameters requestParameters = RequestCycle.get().getRequest().getRequestParameters();
-                                StringValue x = requestParameters.getParameterValue(MOUSE_X_PARAM);
-                                StringValue y = requestParameters.getParameterValue(MOUSE_Y_PARAM);
-                                if (x != null && y != null) {
-                                    target.appendJavaScript("Hippo.ContextMenu.renderAtPosition('"
-                                            + content.getMarkupId() + "', " + x + ", " + y + ");");
-                                } else {
-                                    target.appendJavaScript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId()
-                                            + "');");
-                                }
+                                final StringValue x = requestParameters.getParameterValue(MOUSE_X_PARAM);
+                                final StringValue y = requestParameters.getParameterValue(MOUSE_Y_PARAM);
+                                final String renderScript = x != null && y != null
+                                    ? String.format("Hippo.ContextMenu.renderAtPosition('%s', %d, %d);",
+                                        content.getMarkupId(), x.toInt(), y.toInt())
+                                    : String.format("Hippo.ContextMenu.renderInTree('%s');",
+                                        content.getMarkupId());
+
+                                target.appendJavaScript(renderScript);
                             }
                         }
                     });
 
                 }
-                MarkupContainer container = super.newContextLink(parent, id, node, content);
+                final MarkupContainer container = super.newContextLink(parent, id, node, content);
                 if (!workflowEnabled) {
                     container.setEnabled(false);
                 }
@@ -183,12 +181,13 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             @Override
-            protected void onContextLinkClicked(MarkupContainer content, AjaxRequestTarget target) {
-                target.appendJavaScript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
+            protected void onContextLinkClicked(final MarkupContainer content, final AjaxRequestTarget target) {
+                final String renderScript = String.format("Hippo.ContextMenu.renderInTree('%s');", content.getMarkupId());
+                target.appendJavaScript(renderScript);
             }
 
             @Override
-            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
+            protected void onNodeLinkClicked(final AjaxRequestTarget target, final TreeNode clickedNode) {
                 Task nodeClickedTask = null;
                 try {
                     if (HDC.isStarted()) {
@@ -205,7 +204,7 @@ public class FolderTreePlugin extends RenderPlugin {
                             }
                         }
                         FolderTreePlugin.this.setDefaultModel(treeNodeModel.getNodeModel());
-                        ITreeState state = getTreeState();
+                        final ITreeState state = getTreeState();
                         if (state.isNodeExpanded(clickedNode)) {
                             // super has already switched selection.
                             if (!state.isNodeSelected(clickedNode)) {
@@ -224,12 +223,12 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             @Override
-            protected void onJunctionLinkClicked(AjaxRequestTarget target, TreeNode node) {
+            protected void onJunctionLinkClicked(final AjaxRequestTarget target, final TreeNode node) {
                 updateTree(target);
             }
 
             @Override
-            public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
+            public void onTargetRespond(final AjaxRequestTarget target, final boolean dirty) {
                 if (dirty) {
                     rootNode.ensureChildrenSorted();
                     tree.setDefaultModelObject(treeModel);
@@ -247,7 +246,6 @@ public class FolderTreePlugin extends RenderPlugin {
 
 
         cmsJcrTree.add(treeHelperBehavior = new WicketTreeHelperBehavior(new WicketTreeHelperSettings(config)) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected String getWicketId() {
@@ -260,11 +258,11 @@ public class FolderTreePlugin extends RenderPlugin {
         return cmsJcrTree;
     }
 
-    protected ITreeNodeTranslator newTreeNodeTranslator(IPluginConfig config) {
+    protected ITreeNodeTranslator newTreeNodeTranslator(final IPluginConfig config) {
         return new TreeNodeTranslator();
     }
 
-    public static ITreeNodeIconProvider newTreeNodeIconProvider(IPluginContext context, IPluginConfig config) {
+    public static ITreeNodeIconProvider newTreeNodeIconProvider(final IPluginContext context, final IPluginConfig config) {
         final List<ITreeNodeIconProvider> providers = new LinkedList<>();
         providers.add(new DefaultTreeNodeIconProvider());
         providers.addAll(context.getServices(ITreeNodeIconProvider.class.getName(), ITreeNodeIconProvider.class));
@@ -274,8 +272,6 @@ public class FolderTreePlugin extends RenderPlugin {
         Collections.reverse(providers);
 
         return new ITreeNodeIconProvider() {
-            private static final long serialVersionUID = 1L;
-
             public Component getNodeIcon(final String id, final TreeNode treeNode, final ITreeState state) {
                 for (ITreeNodeIconProvider provider : providers) {
                     final Component icon = provider.getNodeIcon(id, treeNode, state);
@@ -289,7 +285,7 @@ public class FolderTreePlugin extends RenderPlugin {
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         super.render(target);
         if (tree != null) {
             if (target != null && isActive() && isVisible()) {
@@ -313,12 +309,12 @@ public class FolderTreePlugin extends RenderPlugin {
         if (tree == null) {
             return;
         }
-        JcrNodeModel model = (JcrNodeModel) getDefaultModel();
-        ITreeState treeState = tree.getTreeState();
-        TreePath treePath = treeModel.lookup(model);
+        final JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+        final ITreeState treeState = tree.getTreeState();
+        final TreePath treePath = treeModel.lookup(model);
         if (treePath != null) {
-            for (Object component : treePath.getPath()) {
-                TreeNode treeNode = (TreeNode) component;
+            for (final Object component : treePath.getPath()) {
+                final TreeNode treeNode = (TreeNode) component;
                 if (!treeState.isNodeExpanded(treeNode)) {
                     treeState.expandNode(treeNode);
                 }
