@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -170,8 +170,8 @@ public class TabbedPanel extends WebMarkupContainer {
                                 final StringValue x = queryParameters.getParameterValue(MOUSE_X_PARAM);
                                 final StringValue y = queryParameters.getParameterValue(MOUSE_Y_PARAM);
                                 final String renderContextMenu = String.format(
-                                        "Hippo.ContextMenu.renderAtPosition('%s', %s, %s);",
-                                        menu.getMarkupId(), x, y);
+                                        "Hippo.ContextMenu.renderAtPosition('%s', %d, %d);",
+                                        menu.getMarkupId(), x.toInt(), y.toInt());
 
                                 target.appendJavaScript(renderContextMenu);
                             }
