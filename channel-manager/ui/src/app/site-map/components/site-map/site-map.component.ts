@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,15 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { AfterViewChecked, Component, ElementRef, Input, NgZone, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, pluck } from 'rxjs/operators';
@@ -33,7 +41,7 @@ interface SiteMapItemNode extends SiteMapItem {
   templateUrl: './site-map.component.html',
   styleUrls: ['./site-map.component.scss'],
 })
-export class SiteMapComponent implements OnChanges, OnDestroy, AfterViewChecked {
+export class SiteMapComponent implements OnChanges, OnDestroy {
   @Input() siteMap: SiteMapItem[] = [];
   @Input() renderPathInfo?: string;
 
@@ -80,11 +88,7 @@ export class SiteMapComponent implements OnChanges, OnDestroy, AfterViewChecked 
     }
 
     this.expandSelected();
-  }
-
-  ngAfterViewChecked(): void {
-    const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
-    selectedNode?.scrollIntoView();
+    setTimeout(() => this.scrollToSelectedNode(), 500);
   }
 
   ngOnDestroy(): void {
@@ -161,5 +165,10 @@ export class SiteMapComponent implements OnChanges, OnDestroy, AfterViewChecked 
           this.visible.add(child);
         });
       });
+  }
+
+  private scrollToSelectedNode(): void {
+    const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
+    selectedNode?.scrollIntoView();
   }
 }
