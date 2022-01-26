@@ -16,48 +16,14 @@
 
 import { Container } from '../../../model/entities';
 import { EntityMixin } from './entity';
-
-function loadImage(image) {
-  return window.$Promise((resolve, reject) => {
-
-    function fulfill() {
-      if (image.naturalWidth) {
-        resolve(image);
-      } else {
-        reject(image);
-      }
-
-      image.removeEventListener('load', fulfill);
-      image.removeEventListener('error', fulfill);
-    }
-
-    if (image.naturalWidth) {
-      // If the browser can determine the naturalWidth the image is already loaded successfully
-      resolve(image);
-    } else if (image.complete) {
-      // If the image is complete but the naturalWidth is 0px it is probably broken
-      reject(image);
-    } else {
-      image.addEventListener('load', fulfill);
-      image.addEventListener('error', fulfill);
-    }
-  });
-}
-
-function loadImages(input) {
-  if (input.length === undefined || input.length === 0) {
-    return window.$Promise.resolve();
-  }
-
-  return window.$Promise.all(input.map((img) => loadImage(img).catch((error) => error)));
-}
+import { waitForImagesToLoad } from '../../utils/dom.utils';
 
 export function ComponentEntityMixin(BaseClass) {
   return class ComponentEntityMixed extends EntityMixin(BaseClass) {
     /**
      * Replace container DOM elements with the given markup
      */
-    replaceDOM($newMarkup, onLoadCallback) {
+    replaceDOM($newMarkup, onLoadCallback, onLazyLoadCallback) {
       const startComment = this.getStartComment();
       const endComment = this.getEndComment();
 
@@ -79,10 +45,7 @@ export function ComponentEntityMixin(BaseClass) {
 
       endComment.replaceWith($newMarkup);
 
-      // wait for all images to be loaded (or errored)
-      loadImages(images.get()).finally(() => {
-        onLoadCallback();
-      });
+      waitForImagesToLoad(images, onLoadCallback, onLazyLoadCallback);
     }
 
     _removeSiblingsUntil(startNode, endNode) {
