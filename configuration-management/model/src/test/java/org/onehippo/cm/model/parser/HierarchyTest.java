@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2021 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class HierarchyTest extends AbstractBaseTest {
     @Test
     public void test_hst_root_node_mapping() throws IOException, ParserException {
         final Path jarPath = Paths.get("target/test-classes.jar");
-        try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
+        try (FileSystem fs = FileSystems.newFileSystem(jarPath, (ClassLoader) null)) {
             final Path moduleConfig = fs.getPath("/parser/hierarchy_test/" + Constants.HCM_MODULE_YAML);
             final ModuleContext moduleContext =
                     new ModuleReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig, false,
