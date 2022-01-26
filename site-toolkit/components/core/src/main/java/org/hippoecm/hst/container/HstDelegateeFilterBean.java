@@ -527,13 +527,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                     finishMatchingPhase(requestContext, renderingHost);
 
-                    final HippoBean primaryContentBean = requestContext.getContentBean();
-                    if (primaryContentBean != null) {
-                        final String renderFrozenNodeId = HstRequestUtils.getRenderFrozenNodeId(requestContext, primaryContentBean.getNode(),
-                                HstRequestUtils.getBranchIdFromContext(requestContext));
-                        if (renderFrozenNodeId != null) {
-                            // the request is for rendering a specific history version of the primary document
-                            requestContext.setRenderingHistory(true);
+                    if (requestContext.isChannelManagerPreviewRequest()) {
+                        final HippoBean primaryContentBean = requestContext.getContentBean();
+                        if (primaryContentBean != null) {
+                            final String renderFrozenNodeId = HstRequestUtils.getRenderFrozenNodeId(requestContext, primaryContentBean.getNode(),
+                                    HstRequestUtils.getBranchIdFromContext(requestContext));
+                            if (renderFrozenNodeId != null) {
+                                // the request is for rendering a specific history version of the primary document
+                                requestContext.setRenderingHistory(true);
+                            }
                         }
                     }
                 }

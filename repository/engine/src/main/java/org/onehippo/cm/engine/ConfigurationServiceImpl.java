@@ -98,6 +98,7 @@ import com.google.common.io.Files;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
@@ -277,6 +278,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 applyWebfiles(runtimeConfigurationModel, siteName);
 
                 log.debug("applying model content for sites: {}", siteNames);
+                setLastExecutedAction(newBaselineModel, newRuntimeConfigModel);
                 success = applyContent(newRuntimeConfigModel);
             }
 
@@ -448,6 +450,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         if (configAppliedSuccessfully) {
                             log.info("ConfigurationService: apply bootstrap content");
                             // use bootstrap modules, because that's the only place content sources really exist
+                            setLastExecutedAction(baselineModel, bootstrapModel);
                             contentAppliedSuccessfully = applyContent(bootstrapModel);
                         }
 
@@ -506,6 +509,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 lockManager.unlock();
             } catch (Exception e) {
                 log.error("Failed to release the configuration lock", e);
+            }
+        }
+    }
+
+    /**
+     * Copy the last applied version from source to target modules
+     * @param baselineModel source model containing modules
+     * @param bootstrapModel target model containing modules
+     */
+    private void setLastExecutedAction(final ConfigurationModelImpl baselineModel, final ConfigurationModelImpl bootstrapModel) {
+        final Map<String, String> modulesWithLastActions =
+                baselineModel.getModulesStream().filter(m -> m.getLastExecutedAction() != null)
+                        .collect(toMap(ModuleImpl::getFullName, ModuleImpl::getLastExecutedAction));
+        for (ModuleImpl module : bootstrapModel.getModules()) {
+            if (modulesWithLastActions.containsKey(module.getFullName())) {
+                module.setLastExecutedAction(modulesWithLastActions.get(module.getFullName()));
             }
         }
     }
