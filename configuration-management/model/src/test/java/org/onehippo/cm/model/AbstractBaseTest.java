@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2021 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public abstract class AbstractBaseTest {
 
     protected ModuleContext readFromTestJar(final String resourceName) throws IOException, ParserException {
         final Path jarPath = Paths.get("target/test-classes.jar");
-        try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
+        try (FileSystem fs = FileSystems.newFileSystem(jarPath, (ClassLoader) null)) {
             final Path moduleConfig = fs.getPath(resourceName);
             return new ModuleReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig, false);
         }
