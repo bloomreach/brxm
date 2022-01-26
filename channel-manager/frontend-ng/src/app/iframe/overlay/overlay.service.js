@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 import MutationSummary from 'mutation-summary';
+
+import { waitForImagesToLoad } from '../utils/dom.utils';
 
 import contentLinkSvg from '../../../images/html/edit-document.svg?sprite';
 import flaskSvg from '../../../images/html/flask.svg?sprite';
@@ -65,6 +67,7 @@ export default class OverlayService {
   }
 
   async initialize() {
+    this.$rootScope.$on('overlay:sync', () => this.sync());
     this.$rootScope.$on('page:change', this._onPageChange);
 
     await this.$q(this.$document.ready);
@@ -96,7 +99,8 @@ export default class OverlayService {
       this._updateOverlayClasses();
     }
 
-    this.sync();
+    const images = this.$document.find('img, [type="image"]');
+    await waitForImagesToLoad(images, () => this.sync(), () => this.sync());
   }
 
   _onOverlayClick(event) {

@@ -43,6 +43,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
@@ -57,6 +59,10 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({JcrUtils.class, NamespaceUtils.class, LocalizationUtils.class, FieldTypeUtils.class})
 public class BooleanRadioGroupFieldTypeTest {
+
+    // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
+    // After CMS-14948 has been done this workaround can be removed again
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private static final String PROPERTY = "test:id";
 
