@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2021 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <jdom2.version>2.0.6</jdom2.version>
     <jaxen.version>1.1.6</jaxen.version>
 
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
@@ -54,7 +53,7 @@
     <taglibs.version>1.2.5</taglibs.version>
 
     <junit.version>4.13.1</junit.version>
-    <easymock.version>3.4</easymock.version>
+    <easymock.version>4.3</easymock.version>
 
   </properties>
 
@@ -92,12 +91,6 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson2-databind.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>jdom2</artifactId>
-        <version>${jdom2.version}</version>
       </dependency>
 
       <dependency>
