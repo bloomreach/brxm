@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService
 import org.onehippo.cms.channelmanager.content.serialization.CampaignSerializationMixin;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowServiceImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.channelmanager.ChannelManagerDocumentUpdateService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.campaign.Campaign;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
@@ -97,6 +98,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
     private BranchSelectionService branchSelectionService;
     private DocumentVersionServiceImpl documentVersionService;
+    private final ChannelManagerDocumentUpdateService channelManagerDocumentUpdateService;
 
     private static final String PAGE_CAMPAIGN_SUPPORTED = "page.campaign.supported";
     private boolean pageCampaignSupported;
@@ -118,6 +120,17 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
                 DocumentTypesService.get().invalidateCache();
             }
         });
+
+        this.channelManagerDocumentUpdateService = new ChannelManagerDocumentUpdateServiceImpl();
+
+        HippoServiceRegistry.register(channelManagerDocumentUpdateService, ChannelManagerDocumentUpdateService.class);
+
+    }
+
+    @Override
+    protected void doShutdown() {
+        HippoServiceRegistry.unregister(channelManagerDocumentUpdateService, ChannelManagerDocumentUpdateService.class);
+        super.doShutdown();
     }
 
     @Override
@@ -162,6 +175,9 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         documentsService.setHintsInspector(createHintsInspector(session));
         documentsService.setBranchingService(createBranchingService(session));
         documentsService.setNodeFieldService(createNodeFieldService(session));
+        final ChannelManagerDocumentUpdateService service = HippoServiceRegistry
+                .getService(ChannelManagerDocumentUpdateService.class);
+        documentsService.setChannelManagerDocumentUpdateService(service);
         documentVersionService.setPageCampaignSupported(pageCampaignSupported);
     }
 
