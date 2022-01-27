@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.onehippo.cms.channelmanager.content.UserContext;
+import org.onehippo.cms.channelmanager.content.command.UpdateEditableFieldChannelManagerCommand;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -71,6 +72,7 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.channelmanager.ChannelManagerDocumentUpdateService;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
@@ -105,6 +107,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
     private NodeFieldService nodeFieldService;
+    private ChannelManagerDocumentUpdateService channelManagerDocumentUpdateService;
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
@@ -272,7 +275,12 @@ public class DocumentsServiceImpl implements DocumentsService {
         SaveDraftDocumentService jcrSaveDraftDocumentService =
                 getJcrSaveDraftDocumentService(uuid, branchId, userContext);
         if (jcrSaveDraftDocumentService.shouldSaveDraft(document)) {
-            return jcrSaveDraftDocumentService.saveDraft(document);
+            final Document draft = jcrSaveDraftDocumentService.saveDraft(document);
+            // Remove the document from the cms session context
+            // At this point there are no pending changes
+            // so the document does not have to be replayed on the unpublished variant of the preview session
+            channelManagerDocumentUpdateService.removeCommand(uuid, userContext.getCmsSessionContext());
+            return draft;
         }
         final Session session = userContext.getSession();
         final Node handle = getHandle(uuid, session);
@@ -314,6 +322,12 @@ public class DocumentsServiceImpl implements DocumentsService {
                     errorInfoFromHintsOrNoHolder(branchId, HintsUtils.getHints(workflow, branchId),
                             session));
         }
+        // Remove the document from the cms session context
+        // At this point there are no pending changes
+        // so the document does not have to be replayed on the unpublished variant of the preview session
+        // Cleans up the content map, because the save/discard dialog in the cm
+        // also calls this method ( and then closes the document ).
+        channelManagerDocumentUpdateService.removeCommand(uuid, userContext.getCmsSessionContext());
 
         // Get the workflow hints before obtaining an editable instance again, see the class level javadoc.
         final DocumentWorkflow newWorkflow = getDocumentWorkflow(handle);
@@ -345,29 +359,61 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Map<String, Serializable> hints = HintsUtils.getHints(workflow, branchId);
         if (!hintsInspector.canUpdateDocument(branchId, hints)) {
+            // Refresh the session, so the changes made in (1) are not left pending
+            refresh(session);
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(branchId, hints, session));
         }
 
         final DocumentType docType = getDocumentType(handle, userContext);
         if (docType.isReadOnlyDueToUnsupportedValidator()) {
+            // Refresh the session, so the changes made in (1) are not left pending
+            refresh(session);
             throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
         }
 
         // Write field value to draft node
         final CompoundContext documentContext = new CompoundContext(draftNode, draftNode, userContext.getLocale(),
                 userContext.getTimeZone());
-        if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(), documentContext)) {
-            try {
-                session.save();
-            } catch (final RepositoryException e) {
-                log.error("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
-                throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
-            }
+        // 2.
+        // Write the field values to the cms user session
+        if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(),
+                documentContext) && hasOtherVariantThanDraft(handle)) {
+
+            final UpdateEditableFieldChannelManagerCommand command = UpdateEditableFieldChannelManagerCommand.builder()
+                    .uuid(uuid)
+                    .fieldPath(fieldPath)
+                    .fieldValues(fieldValues)
+                    .fieldTypes(docType.getFields())
+                    .timeZone(userContext.getTimeZone())
+                    .locale(userContext.getLocale())
+                    .build();
+            channelManagerDocumentUpdateService.storeCommand(uuid, userContext.getCmsSessionContext(), command);
+
         } else {
+            // Refresh the session, so the changes made in (1) are not left pending
+            refresh(session);
             throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
         }
 
+        // 5.
+        // Refresh the session, so that the session can
+        // be closed without a warning ( org/onehippo/repository/jaxrs/api/ManagedUserSessionInvoker.java:138 )
+        refresh(session);
+
         return fieldValues;
+    }
+
+    private boolean hasOtherVariantThanDraft(final Node handle) {
+        return WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED).isPresent() ||
+                WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED).isPresent();
+    }
+
+    private void refresh(final Session session) {
+        try {
+            session.refresh(false);
+        } catch (RepositoryException e) {
+            log.warn("Something went wrong during refreshing the session: { userId: {} }", session.getUserID());
+        }
     }
 
     @Override
@@ -385,6 +431,14 @@ public class DocumentsServiceImpl implements DocumentsService {
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.error("Failed to dispose of editable instance", e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        } finally {
+            // Remove the document from the cms session context
+            // The persisted document does not have any changes
+            // so there is no need to replay any of these changes
+            // on the unpublished variant of the preview session
+            // note that even if the discard of the document fails we'd better remove
+            // potentially present content from the user context
+            channelManagerDocumentUpdateService.removeCommand(uuid, userContext.getCmsSessionContext());
         }
     }
 
@@ -777,6 +831,10 @@ public class DocumentsServiceImpl implements DocumentsService {
     private ErrorInfo errorInfoFromHintsOrNoHolder(String branchId, Map<String, Serializable> hints, Session session) {
         return hintsInspector.determineEditingFailure(branchId, hints, session)
                 .orElseGet(() -> new ErrorInfo(Reason.NO_HOLDER));
+    }
+
+    public void setChannelManagerDocumentUpdateService(final ChannelManagerDocumentUpdateService service) {
+        this.channelManagerDocumentUpdateService = service;
     }
 
 }
