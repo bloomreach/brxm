@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 
 class FieldService {
-  constructor($timeout, $q, ContentService) {
+  constructor($timeout, $rootScope, $q, ContentService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.$q = $q;
     this.ContentService = ContentService;
@@ -89,10 +90,10 @@ class FieldService {
     values,
     throttle = false,
   }) {
-    const wasThrottled = this._abortThrottled(documentId, name);
+    this._abortThrottled(documentId, name);
 
     if (throttle) {
-      return this._throttle(documentId, name, values, !wasThrottled);
+      return this._throttle(documentId, name, values);
     }
 
     try {
@@ -103,35 +104,33 @@ class FieldService {
   }
 
   _save(documentId, name, values) {
-    return this.ContentService.saveField(documentId, name, this.cleanValues(values));
+    return this.ContentService.saveField(documentId, name, this.cleanValues(values), this.context)
+      .then((result) => {
+        this.$rootScope.$emit('field:change');
+        return result;
+      });
   }
 
-  _throttle(documentId, name, values, immediate) {
+  _throttle(documentId, name, values) {
     if (!this.throttled[documentId]) {
       this.throttled[documentId] = {};
     }
 
     const deferred = this.$q.defer();
     this.throttled[documentId][name] = this.$timeout(() => {
-      if (!immediate) {
-        this._save(documentId, name, values)
-          .then(deferred.resolve)
-          .catch(deferred.reject);
-      }
+      this._save(documentId, name, values)
+        .then(deferred.resolve)
+        .catch(deferred.reject);
 
       this._abortThrottled(documentId, name);
     }, this.AUTOSAVE_DELAY);
 
-    if (!immediate) {
-      return deferred.promise;
-    }
-
-    return this._save(documentId, name, values);
+    return deferred.promise;
   }
 
   _abortThrottled(documentId, name) {
     if (!this._isThrottled(documentId, name)) {
-      return false;
+      return;
     }
 
     this.$timeout.cancel(this.throttled[documentId][name]);
@@ -139,8 +138,6 @@ class FieldService {
     if (!Object.keys(this.throttled[documentId] || {}).length) {
       delete this.throttled[documentId];
     }
-
-    return true;
   }
 
   _isThrottled(documentId, name) {
