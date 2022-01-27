@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.function.Function;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
@@ -55,6 +56,7 @@ import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.cms.channelmanager.content.templatequery.DocumentTemplateQueryService;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
 @Produces("application/json")
@@ -314,9 +316,7 @@ public class ContentResource {
                                  final CacheControl cacheControl,
                                  final EndPointTask task) {
         final Session session = sessionRequestContextProvider.getJcrSession(servletRequest);
-        final Locale locale = sessionRequestContextProvider.getLocale(servletRequest);
-        final TimeZone timeZone = sessionRequestContextProvider.getTimeZone(servletRequest);
-        final UserContext userContext = new UserContext(session, locale, timeZone);
+        final UserContext userContext = new UserContext(session, getCmsSessionContext(servletRequest));
         try {
             final Object result = task.execute(userContext);
             return Response.status(successStatus).cacheControl(cacheControl).entity(result).build();
@@ -327,6 +327,14 @@ public class ContentResource {
 
     private String getBranchId(final HttpServletRequest servletRequest) {
         return branchSelectionService.getSelectedBranchId(contextPayloadService.apply(servletRequest));
+    }
+
+    private CmsSessionContext getCmsSessionContext(final HttpServletRequest servletRequest) {
+        final HttpSession session = servletRequest.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        return CmsSessionContext.getContext(session);
     }
 
     @FunctionalInterface
