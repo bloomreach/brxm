@@ -35,7 +35,7 @@ class EditContentMainCtrl {
   ) {
     'ngInject';
 
-    this.$interval = this.$interval;
+    this.$interval = $interval;
     this.$log = $log;
     this.$q = $q;
     this.$scope = $scope;
