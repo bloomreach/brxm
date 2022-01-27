@@ -1,0 +1,15 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:templates/new-taxonomy-document" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    }
+  }
+}
