@@ -86,9 +86,11 @@ export class AuthService {
     const beforeLogoutAppPromises = this.clientAppService.apps
       .filter(app => !!app.api.beforeLogout)
       .map(app => app.api.beforeLogout());
-    await Promise.all(beforeLogoutAppPromises).then(
-      () => this.logout('UserLoggedOut'),
-    );
+    await Promise.all(beforeLogoutAppPromises).then(() => {
+      this.logout('UserLoggedOut');
+    }).catch(() => {
+      this.logger.debug('UserLoggedOut canceled!');
+    });
   }
 
   async logout(loginMessageKey: string): Promise<void> {
