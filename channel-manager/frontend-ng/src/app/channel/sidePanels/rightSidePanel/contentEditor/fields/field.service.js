@@ -76,9 +76,8 @@ class FieldService {
     }
   }
 
-  setup(documentId, context) {
+  setup(documentId) {
     this.documentId = documentId;
-    this.context = context;
   }
 
   getDocumentId() {
@@ -105,7 +104,7 @@ class FieldService {
   }
 
   _save(documentId, name, values) {
-    return this.ContentService.saveField(documentId, name, this.cleanValues(values), this.context)
+    return this.ContentService.saveField(documentId, name, this.cleanValues(values))
       .then((result) => {
         this.$rootScope.$emit('field:change');
         return result;
