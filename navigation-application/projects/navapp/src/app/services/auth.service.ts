@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2022 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,9 +86,11 @@ export class AuthService {
     const beforeLogoutAppPromises = this.clientAppService.apps
       .filter(app => !!app.api.beforeLogout)
       .map(app => app.api.beforeLogout());
-    await Promise.all(beforeLogoutAppPromises).then(
-      () => this.logout('UserLoggedOut'),
-    );
+    await Promise.all(beforeLogoutAppPromises).then(() => {
+      this.logout('UserLoggedOut');
+    }).catch(() => {
+      this.logger.debug('UserLoggedOut canceled!');
+    });
   }
 
   async logout(loginMessageKey: string): Promise<void> {
