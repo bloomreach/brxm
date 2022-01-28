@@ -718,6 +718,20 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
+    public static Node getUnpublished(final Node handle) {
+        return WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED)
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
+    }
+
+    public static String getAbsolutePath(final Node draft) {
+        try {
+            return draft.getPath();
+        } catch (RepositoryException e) {
+            log.error("Could not get path for node : { path : {} }", JcrUtils.getNodePathQuietly(draft));
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
+    }
+
     private static Node getDraft(final Node handle, final String branchId) {
         final BranchHandle branchHandle;
         try {
