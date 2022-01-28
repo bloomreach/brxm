@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
     private Repository repository;
     private Credentials previewCredentials;
     private Credentials liveCredentials;
-    private boolean securityDelegationEnabled;
 
 
     public void setRepository(Repository repository) {
@@ -60,15 +59,6 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
     public void setLiveCredentials(final Credentials credentials) {
         this.liveCredentials = credentials;
-    }
-
-    public void setSecurityDelegationEnabled(boolean securityDelegationEnabled) {
-        this.securityDelegationEnabled = securityDelegationEnabled;
-    }
-
-    @Override
-    public boolean sessionSecurityDelegationEnabled() {
-        return securityDelegationEnabled;
     }
 
     @Override
@@ -153,9 +143,6 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
                                                 final boolean autoLogout,
                                                 final boolean keepDelegateSession,
                                                 final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
-        if (!securityDelegationEnabled) {
-            throw new IllegalStateException("Security delegation is not enabled");
-        }
 
         final HstRequestContext requestContext = RequestContextProvider.get();
 
