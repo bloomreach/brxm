@@ -65,17 +65,17 @@ public class DateTimePrinterTest extends PluginTest {
 
     @Test
     public void testDate() {
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(dateEpoch).print());
+        assertEquals("01.01.1970, 00:00", DateTimePrinter.of(dateEpoch).print());
     }
 
     @Test
     public void testCalendar() {
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(calendarEpoch).print());
+        assertEquals("01.01.1970, 00:00", DateTimePrinter.of(calendarEpoch).print());
     }
 
     @Test
     public void testInstant() {
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(instantEpoch).print());
+        assertEquals("01.01.1970, 00:00", DateTimePrinter.of(instantEpoch).print());
     }
 
     @Test
@@ -87,43 +87,43 @@ public class DateTimePrinterTest extends PluginTest {
     @Test
     public void testTimeZone() {
         timeZone = TimeZone.getTimeZone("America/Aruba"); // -4
-        assertEquals("31.12.1969 20:00", DateTimePrinter.of(dateEpoch).print());
+        assertEquals("31.12.1969, 20:00", DateTimePrinter.of(dateEpoch).print());
     }
 
     @Test
     public void testStyleShort() {
-        assertEquals("01.01.70 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT));
+        assertEquals("01.01.70, 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT));
     }
 
     @Test
     public void testStyleMedium() {
-        assertEquals("01.01.1970 00:00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.MEDIUM));
+        assertEquals("01.01.1970, 00:00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.MEDIUM));
     }
 
     @Test
     public void testStyleLong() {
-        assertEquals("1. Januar 1970 00:00:00 UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.LONG));
+        assertEquals("1. Januar 1970 um 00:00:00 UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.LONG));
     }
 
     @Test
     public void testStyleFull() {
-        assertEquals("Donnerstag, 1. Januar 1970 00:00 Uhr UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.FULL));
+        assertEquals("Donnerstag, 1. Januar 1970 um 00:00:00 Koordinierte Weltzeit", DateTimePrinter.of(dateEpoch).print(FormatStyle.FULL));
     }
 
     @Test
     public void testDateStyle() {
-        assertEquals("01.01.70 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.SHORT));
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.MEDIUM, FormatStyle.SHORT));
-        assertEquals("1. Januar 1970 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.LONG, FormatStyle.SHORT));
-        assertEquals("Donnerstag, 1. Januar 1970 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.FULL, FormatStyle.SHORT));
+        assertEquals("01.01.70, 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.SHORT));
+        assertEquals("01.01.1970, 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.MEDIUM, FormatStyle.SHORT));
+        assertEquals("1. Januar 1970, 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.LONG, FormatStyle.SHORT));
+        assertEquals("Donnerstag, 1. Januar 1970, 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.FULL, FormatStyle.SHORT));
     }
 
     @Test
     public void testTimeStyle() {
-        assertEquals("01.01.70 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.SHORT));
-        assertEquals("01.01.70 00:00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.MEDIUM));
-        assertEquals("01.01.70 00:00:00 UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.LONG));
-        assertEquals("01.01.70 00:00 Uhr UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.FULL));
+        assertEquals("01.01.70, 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.SHORT));
+        assertEquals("01.01.70, 00:00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.MEDIUM));
+        assertEquals("01.01.70, 00:00:00 UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.LONG));
+        assertEquals("01.01.70, 00:00:00 Koordinierte Weltzeit", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.FULL));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class DateTimePrinterTest extends PluginTest {
         timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final LocalDate dstInNL = LocalDate.of(2016, Month.MAY, 1);
         final Date dstDate = Date.from(dstInNL.atStartOfDay(timeZone.toZoneId()).toInstant());
-        assertEquals("01.05.16 00:00", DateTimePrinter.of(dstDate).print(FormatStyle.SHORT, FormatStyle.SHORT));
-        assertEquals("01.05.16 00:00 (DST)", DateTimePrinter.of(dstDate).appendDST().print(FormatStyle.SHORT, FormatStyle.SHORT));
+        assertEquals("01.05.16, 00:00", DateTimePrinter.of(dstDate).print(FormatStyle.SHORT, FormatStyle.SHORT));
+        assertEquals("01.05.16, 00:00 (DST)", DateTimePrinter.of(dstDate).appendDST().print(FormatStyle.SHORT, FormatStyle.SHORT));
     }
 }

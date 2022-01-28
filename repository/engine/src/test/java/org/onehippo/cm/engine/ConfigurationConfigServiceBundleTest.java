@@ -44,7 +44,7 @@ import static org.powermock.api.easymock.PowerMock.verify;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DigestBundleResolver.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*"})
+@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 public class ConfigurationConfigServiceBundleTest {
 
     // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
