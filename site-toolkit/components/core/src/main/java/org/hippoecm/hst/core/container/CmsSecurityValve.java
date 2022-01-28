@@ -24,10 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegationImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.channelmanager.ChannelManagerDocumentUpdateService;
@@ -134,26 +134,22 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 try {
                     // request preview website, for example in channel manager. The request is not
                     // a REST call
-                    if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                        previewCmsUserSession = getOrCreateHttpSessionBoundJcrSession(httpSession, cmsUserCredentials,
-                                HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION,
-                                credentials -> sessionSecurityDelegation.createPreviewSecurityDelegate(credentials, false));
-                    } else {
-                        // do not yet create a session. just use the one that the HST container will create later
-                    }
+
+                    previewCmsUserSession = getOrCreateHttpSessionBoundJcrSession(httpSession, cmsUserCredentials,
+                            HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION,
+                            credentials -> sessionSecurityDelegation.createPreviewSecurityDelegate(credentials, false));
 
                     cmsUserSession = getOrCreateHttpSessionBoundJcrSession(httpSession, cmsUserCredentials,
                             HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_SESSION, credentials -> delegatingRepository.login(credentials));
                     requestContext.setAttribute(CMS_USER_SESSION_ATTR_NAME, cmsUserSession);
 
-                    if (previewCmsUserSession != null) {
-                        ((HstMutableRequestContext) requestContext).setSession(previewCmsUserSession);
-                        final ChannelManagerDocumentUpdateService service = HippoServiceRegistry
-                                .getService(ChannelManagerDocumentUpdateService.class);
-                        if (service != null) {
-                            service.update(cmsSessionContext, previewCmsUserSession);
-                        }
+                    ((HstMutableRequestContext) requestContext).setSession(previewCmsUserSession);
+                    final ChannelManagerDocumentUpdateService service = HippoServiceRegistry
+                            .getService(ChannelManagerDocumentUpdateService.class);
+                    if (service != null) {
+                        service.update(cmsSessionContext, previewCmsUserSession);
                     }
+
                     context.invokeNext();
 
                 } catch (LoginException e) {
@@ -166,8 +162,19 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     log.warn("RepositoryException : {}", e.toString());
                     throw new ContainerException(e);
                 } finally {
-                    validatePristine(previewCmsUserSession, false);
-                    validatePristine(cmsUserSession, true);
+                    // previewCmsUserSession can have pending changes as a result of service.update(cmsSessionContext, previewCmsUserSession);
+                    // hence discard these changes: a local refresh is not cluster wide so if possible, we use
+                    // local refresh as much more efficient
+                    if (previewCmsUserSession instanceof HippoSession) {
+                        ((HippoSession) previewCmsUserSession).localRefresh();
+                    } else {
+                        try {
+                            previewCmsUserSession.refresh(false);
+                        } catch (RepositoryException e) {
+                            log.error("Exception while refreshing preview cms user session", e);
+                        }
+                    }
+                    validatePristine(cmsUserSession);
                 }
             }
         }
@@ -188,17 +195,17 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private void validatePristine(final Session previewCmsUserSession, final boolean logErrorOnPendingChanges) throws ContainerException {
-        if (previewCmsUserSession != null) {
+    private void validatePristine(final Session cmsUserSession) throws ContainerException {
+        if (cmsUserSession != null) {
             try {
-                if (previewCmsUserSession.isLive() && previewCmsUserSession.hasPendingChanges() && logErrorOnPendingChanges) {
+                if (cmsUserSession.isLive() && cmsUserSession.hasPendingChanges()) {
                     log.error("Session '{}' had pending changes at the end of the request. This should never be " +
-                            "the case. Removing the changes now because the session will be reused.", previewCmsUserSession.getUserID());
+                            "the case. Removing the changes now because the session will be reused.", cmsUserSession.getUserID());
                 }
-                if (previewCmsUserSession instanceof HippoSession) {
-                    ((HippoSession) previewCmsUserSession).localRefresh();
+                if (cmsUserSession instanceof HippoSession) {
+                    ((HippoSession) cmsUserSession).localRefresh();
                 } else {
-                    previewCmsUserSession.refresh(false);
+                    cmsUserSession.refresh(false);
                 }
             } catch (RepositoryException e) {
                 log.error("RepositoryException while checking / clearing jcr session.", e);

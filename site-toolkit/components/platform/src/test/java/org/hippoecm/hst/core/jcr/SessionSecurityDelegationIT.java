@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,6 @@ public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
         sessionSecurityDelegation = new SessionSecurityDelegationImpl();
-        sessionSecurityDelegation.setSecurityDelegationEnabled(true);
         sessionSecurityDelegation.setRepository(server.getRepository());
         sessionSecurityDelegation.setPreviewCredentials(JvmCredentials.getCredentials("previewuser"));
         sessionSecurityDelegation.setLiveCredentials(JvmCredentials.getCredentials("liveuser"));
@@ -79,7 +78,6 @@ public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
 
     @Test(expected = IllegalStateException.class)
     public void securityDelegationDisabled() throws RepositoryException {
-        sessionSecurityDelegation.setSecurityDelegationEnabled(false);
         Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
         sessionSecurityDelegation.getOrCreateLiveSecurityDelegate(creds, "test123");
     }

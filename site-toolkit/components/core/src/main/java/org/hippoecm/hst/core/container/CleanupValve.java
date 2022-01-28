@@ -48,9 +48,7 @@ public class CleanupValve extends AbstractBaseOrderableValve {
             clearSubjectSession(context, requestContext, sessionStateful);
         }
 
-        if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-            sessionSecurityDelegation.cleanupSessionDelegates(requestContext);
-        }
+        sessionSecurityDelegation.cleanupSessionDelegates(requestContext);
 
         final HstComponentRegistry componentRegistry = resolvedMount.getMount().getVirtualHost().getVirtualHosts().getComponentRegistry();
         if (componentRegistry.isAwaitingTermination()) {
