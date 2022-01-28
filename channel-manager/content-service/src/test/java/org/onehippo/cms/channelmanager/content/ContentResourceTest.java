@@ -120,7 +120,7 @@ public class ContentResourceTest extends CXFTest {
         expect(sessionRequestContextProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
         expect(sessionRequestContextProvider.getLocale(anyObject())).andReturn(locale).anyTimes();
         expect(sessionRequestContextProvider.getTimeZone(anyObject())).andReturn(timeZone).anyTimes();
-        expectNew(UserContext.class, userSession, locale, timeZone).andReturn(userContext);
+        expectNew(UserContext.class, userSession, null).andReturn(userContext);
 
         expect(contextPayloadService.apply(anyObject())).andStubReturn(emptyMap());
         expect(branchSelectionService.getSelectedBranchId(anyObject())).andStubReturn("master");
@@ -480,4 +480,3 @@ public class ContentResourceTest extends CXFTest {
         return document;
     }
 }
-
