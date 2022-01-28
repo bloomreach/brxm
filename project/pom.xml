@@ -41,6 +41,13 @@
 
     <notice.project.name>${project.name}</notice.project.name>
 
+    <!--Java 11 related libs -->
+    <activation.version>1.2.2</activation.version>
+    <jaxb-api.version>2.3.3</jaxb-api.version>
+    <annotation-api.version>1.3.1</annotation-api.version>
+    <jaxb-runtime.version>2.3.2</jaxb-runtime.version>
+    <ws-api.version>2.3.3</ws-api.version>
+
     <!--
       Note on upgrading dependencies and plugins:
       Always check the apache pom for guidance before upgrading.
@@ -123,6 +130,7 @@
     <restassured.version>4.2.0</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
+    <javassist.version>3.24.1-GA</javassist.version>
 
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.3.9</maven.required.version>
@@ -595,6 +603,11 @@
         <artifactId>javax.ws.rs-api</artifactId>
         <version>${jaxrs.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.jdom</groupId>
@@ -616,12 +629,41 @@
         <version>${sling-javax-activation.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>${jaxb-api.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.ws</groupId>
+        <artifactId>jakarta.xml.ws-api</artifactId>
+        <version>${ws-api.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>${annotation-api.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+        <version>${activation.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>${jaxb-runtime.version}</version>
+        <scope>runtime</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
 
   <dependencies>
-
     <!-- all shared third party dependencies -->
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -670,6 +712,27 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
+    </dependency>
+    <!--Java 11 related libs-->
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.activation</groupId>
+      <artifactId>jakarta.activation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
     </dependency>
   </dependencies>
 
@@ -795,6 +858,9 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven.plugin.surefire.version}</version>
           <inherited>true</inherited>
+          <configuration>
+            <argLine>-Xmx1024m</argLine>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -814,11 +880,10 @@
           <version>${maven.plugin.compiler.version}</version>
           <inherited>true</inherited>
           <configuration>
+            <release>11</release>
             <fork>true</fork>
             <meminitial>128m</meminitial>
             <maxmem>256m</maxmem>
-            <target>1.8</target>
-            <source>1.8</source>
           </configuration>
         </plugin>
         <plugin>
