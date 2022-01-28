@@ -184,7 +184,7 @@ class ContentEditorService {
 
   _setDocumentId(id) {
     this.documentId = id;
-    this.FieldService.setDocumentId(this.documentId);
+    this.FieldService.setup(this.documentId, ['documents']);
   }
 
   getDocumentId() {
