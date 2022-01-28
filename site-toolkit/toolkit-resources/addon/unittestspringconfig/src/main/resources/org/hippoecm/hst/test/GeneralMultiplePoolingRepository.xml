@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -297,7 +297,6 @@
 
 
   <bean id="org.hippoecm.hst.core.jcr.SessionSecurityDelegation" class="org.hippoecm.hst.core.jcr.SessionSecurityDelegationImpl">
-    <property name="securityDelegationEnabled" value="${cms.preview.security.delegation.enabled}"/>
     <property name="repository" ref="javax.jcr.Repository.delegating"/>
     <property name="previewCredentials" ref="javax.jcr.Credentials.preview.delegating"/>
     <property name="liveCredentials" ref="javax.jcr.Credentials.default.delegating"/>
