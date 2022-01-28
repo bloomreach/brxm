@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static java.lang.annotation.ElementType.METHOD;
@@ -34,6 +35,9 @@ import static org.junit.Assert.assertTrue;
 
 public class TestAnnotationsScanner {
 
+
+    private static final Map<Method, Set<Annotation>> objectClassMethodAnnotations =
+        AnnotationsScanner.getMethodAnnotations(Object.class);
 
     @Target(METHOD)
     @Retention(RetentionPolicy.RUNTIME)
@@ -60,7 +64,7 @@ public class TestAnnotationsScanner {
     public void testDirectAnnotations() throws NoSuchMethodException {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(DirectAnnotations.class);
 
-        assertEquals(1, methodAnnotations.size());
+        assertEquals(1, methodAnnotations.size() - objectClassMethodAnnotations.size());
         Method method = DirectAnnotations.class.getMethod("annotated");
         assertTrue(methodAnnotations.containsKey(method));
         final Set<Annotation> annotations = methodAnnotations.get(method);
@@ -87,7 +91,7 @@ public class TestAnnotationsScanner {
     @Test
     public void testOnlyPublicMethodAnnotations() throws NoSuchMethodException {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(DirectPublicAndNonPublicMethodAnnotations.class);
-        assertEquals(1, methodAnnotations.size());
+        assertEquals(1, methodAnnotations.size() - objectClassMethodAnnotations.size());
         Method method = DirectPublicAndNonPublicMethodAnnotations.class.getMethod("annotated");
         assertTrue(methodAnnotations.containsKey(method));
         final Set<Annotation> annotations = methodAnnotations.get(method);
@@ -118,7 +122,7 @@ public class TestAnnotationsScanner {
     @Test
     public void testOverrideAnnotationSkipped() {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(OverrideMeImpl.class);
-        assertEquals(0, methodAnnotations.size());
+        assertEquals(0, methodAnnotations.size() - objectClassMethodAnnotations.size());
     }
 
     public interface OverrideMe {
@@ -134,7 +138,7 @@ public class TestAnnotationsScanner {
     @Test
     public void testSuperInterfaceAnnotations() throws NoSuchMethodException {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(AnnotatedImpl.class);
-        assertEquals(1, methodAnnotations.size());
+        assertEquals(1, methodAnnotations.size() - objectClassMethodAnnotations.size());
         Method method = AnnotatedImpl.class.getMethod("annotated");
         assertTrue(methodAnnotations.containsKey(method));
         final Set<Annotation> annotations = methodAnnotations.get(method);
@@ -147,7 +151,7 @@ public class TestAnnotationsScanner {
     @Test 
     public void testMethodAnnotationsDoesNotContainMethodInstanceFromSuper() throws NoSuchMethodException {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(AnnotatedImpl.class);
-        assertEquals(1, methodAnnotations.size());
+        assertEquals(1, methodAnnotations.size() - objectClassMethodAnnotations.size());
         // FETCH METHOD FROM INTERFACE 'Annotated': this is a different instance than the method from 'AnnotatedImpl'
         Method method = Annotated.class.getMethod("annotated");
         assertFalse(methodAnnotations.containsKey(method));
@@ -171,7 +175,7 @@ public class TestAnnotationsScanner {
     @Test
     public void testSuperInterfaceAndClassAnnotations() throws NoSuchMethodException {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(AnnotatedSubImpl.class);
-        assertEquals(1, methodAnnotations.size());
+        assertEquals(1, methodAnnotations.size() - objectClassMethodAnnotations.size());
         Method method = AnnotatedSubImpl.class.getMethod("annotated");
         assertTrue(methodAnnotations.containsKey(method));
         final Set<Annotation> annotations = methodAnnotations.get(method);
@@ -193,7 +197,7 @@ public class TestAnnotationsScanner {
     @Test
     public void testOverloadMethodAnnotationsAreNOTCombined() throws NoSuchMethodException {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(ClassWithMethodOverloading.class);
-        assertEquals(3,methodAnnotations.size() );
+        assertEquals(3,methodAnnotations.size() - objectClassMethodAnnotations.size());
         {
             Method method1 = ClassWithMethodOverloading.class.getMethod("annotated");
             assertTrue(methodAnnotations.containsKey(method1));
@@ -229,7 +233,7 @@ public class TestAnnotationsScanner {
     @Test
     public void testOverloadMethodsAndSuperClassAnnotationsAreNOTCombined() throws NoSuchMethodException {
         final Map<Method, Set<Annotation>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(ClassWithMethodOverloadingAndSuperClass.class);
-        assertEquals(4, methodAnnotations.size());
+        assertEquals(4, methodAnnotations.size() - objectClassMethodAnnotations.size());
         Method method = ClassWithMethodOverloadingAndSuperClass.class.getMethod("annotated");
         assertTrue(methodAnnotations.containsKey(method));
         final Set<Annotation> annotations = methodAnnotations.get(method);
