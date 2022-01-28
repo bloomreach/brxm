@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Bloomreach
+ * Copyright 2021-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -226,7 +226,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
         }
     }
 
-    private static FieldType getFieldType(final FieldPath fieldPath, final List<FieldType> fields) {
+    static FieldType getFieldType(final FieldPath fieldPath, final List<FieldType> fields) {
         final FieldType fieldType = findFieldType(fieldPath, fields);
         if (fieldType == null) {
             log.warn("Failed to find field with path '{}'", fieldPath);
