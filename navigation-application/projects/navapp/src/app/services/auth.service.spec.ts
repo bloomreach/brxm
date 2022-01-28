@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2022 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,12 +60,9 @@ describe('AuthService', () => {
     connectionServiceMock.onError$ = errorMock$;
     connectionServiceMock.onSessionExpired$ = sessionExpiredMock$;
 
-    child1ApiMock = jasmine.createSpyObj('Child1Api', [
-      'logout',
-    ]);
-    child2ApiMock = jasmine.createSpyObj('Child2Api', [
-      'logout',
-    ]);
+    child1ApiMock = jasmine.createSpyObj('Child1Api', ['logout', 'beforeLogout']);
+    child2ApiMock = jasmine.createSpyObj('Child2Api', ['logout', 'beforeLogout']);
+
     clientAppServiceMock = {} as any;
     (clientAppServiceMock as any).apps = [
       new ClientAppMock({ url: 'http://test.com', api: child1ApiMock }),
@@ -90,9 +87,7 @@ describe('AuthService', () => {
       'prepareExternalUrl',
     ]);
 
-    loggerMock = jasmine.createSpyObj('NGXLogger', [
-      'error',
-    ]);
+    loggerMock = jasmine.createSpyObj('NGXLogger', ['error', 'debug']);
 
     const appSettingsMock = new AppSettingsMock();
     numberOfLoginApps = appSettingsMock.loginResources.length;
@@ -241,5 +236,52 @@ describe('AuthService', () => {
         expect(documentMock.location.replace).toHaveBeenCalledWith('https://some-domain.com/base/path');
       });
     });
+  });
+
+  describe('active logout', () => {
+    let promise1: { resolve(): void, reject(): void };
+    let promise2: { resolve(): void, reject(): void };
+
+    beforeEach(() => {
+      child1ApiMock.beforeLogout.and.returnValue(new Promise((resolve, reject) => {
+        promise1 = { resolve, reject };
+      }));
+
+      child2ApiMock.beforeLogout.and.returnValue(new Promise((resolve, reject) => {
+        promise2 = { resolve, reject };
+      }));
+
+      service.activeLogout();
+
+      spyOn(service, 'logout');
+      spyOn(service, 'activeLogout');
+    });
+
+    it('should logout if all promises are resolved', fakeAsync(() => {
+      promise1.resolve();
+      promise2.resolve();
+      tick();
+
+      expect(service.logout).toHaveBeenCalledTimes(1);
+      expect(service.activeLogout).not.toThrowError();
+    }));
+
+    it('should not logout if first promise is rejected', fakeAsync(() => {
+      promise1.reject();
+      promise2.resolve();
+      tick();
+
+      expect(service.logout).toHaveBeenCalledTimes(0);
+      expect(service.activeLogout).not.toThrowError();
+    }));
+
+    it('should not logout if second promise is rejected', fakeAsync(() => {
+      promise1.resolve();
+      promise2.reject();
+      tick();
+
+      expect(service.logout).toHaveBeenCalledTimes(0);
+      expect(service.activeLogout).not.toThrowError();
+    }));
   });
 });
