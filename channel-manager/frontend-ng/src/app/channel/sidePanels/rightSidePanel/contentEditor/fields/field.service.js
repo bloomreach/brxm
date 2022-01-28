@@ -76,8 +76,9 @@ class FieldService {
     }
   }
 
-  setDocumentId(documentId) {
+  setup(documentId, context) {
     this.documentId = documentId;
+    this.context = context;
   }
 
   getDocumentId() {
