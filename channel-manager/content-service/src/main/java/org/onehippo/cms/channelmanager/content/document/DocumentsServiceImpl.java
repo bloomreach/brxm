@@ -44,6 +44,8 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.command.AddNodeFieldCommand;
+import org.onehippo.cms.channelmanager.content.command.RemoveNodeFieldCommand;
+import org.onehippo.cms.channelmanager.content.command.ReorderNodeFieldCommand;
 import org.onehippo.cms.channelmanager.content.command.UpdateEditableFieldChannelManagerCommand;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
@@ -713,6 +715,16 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String documentPath = getDocumentPath(draft);
 
         nodeFieldService.reorderNodeField(documentPath, fieldPath, position);
+
+        if (hasOtherVariantThanDraft(handle)){
+            channelManagerDocumentUpdateService.storeCommand(uuid, userContext.getCmsSessionContext(),
+                    ReorderNodeFieldCommand.builder()
+                            .uuid(uuid)
+                            .fieldPath(fieldPath)
+                            .position(position)
+                            .build());
+        }
+
     }
 
     @Override
@@ -731,6 +743,15 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentType documentType = getDocumentType(handle, userContext);
 
         nodeFieldService.removeNodeField(documentPath, fieldPath, documentType.getFields());
+        if (hasOtherVariantThanDraft(handle)){
+            channelManagerDocumentUpdateService.storeCommand(uuid, userContext.getCmsSessionContext(),
+                    RemoveNodeFieldCommand.builder()
+                            .uuid(uuid)
+                            .fieldPath(fieldPath)
+                            .fieldTypes(documentType.getFields())
+                            .build());
+        }
+
     }
 
     private static Map<String, List<FieldValue>> findFieldValues(final FieldPath path,
