@@ -77,12 +77,6 @@ public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void securityDelegationDisabled() throws RepositoryException {
-        Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
-        sessionSecurityDelegation.getOrCreateLiveSecurityDelegate(creds, "test123");
-    }
-
-    @Test(expected = IllegalStateException.class)
     public void securityDelegationFailureWhenNoRequestContext() throws RepositoryException {
         ModifiableRequestContextProvider.set(null);
         Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
