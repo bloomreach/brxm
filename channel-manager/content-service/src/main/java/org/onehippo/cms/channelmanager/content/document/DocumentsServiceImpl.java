@@ -43,6 +43,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.onehippo.cms.channelmanager.content.UserContext;
+import org.onehippo.cms.channelmanager.content.command.AddNodeFieldCommand;
 import org.onehippo.cms.channelmanager.content.command.UpdateEditableFieldChannelManagerCommand;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
@@ -644,6 +645,17 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Document document = assembleDocument(uuid, handle, draft, documentType);
         FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
+
+        if (hasOtherVariantThanDraft(handle)){
+            channelManagerDocumentUpdateService.storeCommand(uuid, userContext.getCmsSessionContext(),
+                    AddNodeFieldCommand.builder()
+                            .uuid(uuid)
+                            .type(type)
+                            .fieldTypes(documentType.getFields())
+                            .fieldPath(fieldPath)
+                            .build());
+        }
+
 
         return findFieldValues(fieldPath, document.getFields());
     }
