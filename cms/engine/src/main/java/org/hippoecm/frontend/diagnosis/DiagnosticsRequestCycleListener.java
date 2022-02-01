@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.diagnosis;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.Main;
@@ -30,9 +29,9 @@ import org.slf4j.LoggerFactory;
 /**
  * The default {@link IRequestCycleListener} implementation to set diagnosis context and report monitoring logs.
  */
-public class DiagnosticsRequestCycleListener extends AbstractRequestCycleListener {
+public class DiagnosticsRequestCycleListener implements IRequestCycleListener {
 
-    private static Logger log = LoggerFactory.getLogger(DiagnosticsRequestCycleListener.class);
+    private static final Logger log = LoggerFactory.getLogger(DiagnosticsRequestCycleListener.class);
 
     @Override
     public void onBeginRequest(RequestCycle cycle) {
