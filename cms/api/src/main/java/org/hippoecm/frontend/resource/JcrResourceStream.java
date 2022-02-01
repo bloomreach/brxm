@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.hippoecm.frontend.resource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
+import java.time.Instant;
 import java.util.Locale;
 
 import javax.jcr.Node;
@@ -28,10 +28,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.util.JcrConstants.JCR_LAST_MODIFIED;
 
 public class JcrResourceStream extends NodeModelWrapper<Void> implements IResourceStream {
 
@@ -127,16 +128,13 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
     }
 
     @Override
-    public Time lastModifiedTime() {
+    public Instant lastModifiedTime() {
         try {
             Node node = getNode();
-            Calendar date;
-            if (node != null) {
-                date = node.getProperty("jcr:lastModified").getDate();
-            } else {
-                date = Calendar.getInstance();
-            }
-            return Time.valueOf(date.getTime());
+            return node != null
+                ? node.getProperty(JCR_LAST_MODIFIED).getDate().toInstant()
+                : Instant.now();
+
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

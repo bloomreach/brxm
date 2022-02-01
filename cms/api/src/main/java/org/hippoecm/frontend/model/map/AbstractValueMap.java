@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.hippoecm.frontend.model.map;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -25,20 +27,19 @@ import java.util.Map;
 
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
-import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.util.DurationUtils;
 
 public abstract class AbstractValueMap extends AbstractMap<String, Object> implements IValueMap {
 
-    private static final long serialVersionUID = 1L;
-
     private boolean immutable = false;
 
+    @Override
     public boolean isImmutable() {
         return immutable;
     }
 
+    @Override
     public IValueMap makeImmutable() {
         return null;
     }
@@ -52,6 +53,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getBoolean(String)
      */
+    @Override
     public boolean getBoolean(final String key) throws StringValueConversionException {
         return getStringValue(key).toBoolean();
     }
@@ -59,6 +61,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getDouble(String)
      */
+    @Override
     public double getDouble(final String key) throws StringValueConversionException {
         return getStringValue(key).toDouble();
     }
@@ -66,6 +69,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getDouble(String, double)
      */
+    @Override
     public double getDouble(String key, double defaultValue) throws StringValueConversionException {
         return getStringValue(key).toDouble(defaultValue);
     }
@@ -73,13 +77,15 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getDuration(String)
      */
+    @Override
     public Duration getDuration(String key) throws StringValueConversionException {
-        return getStringValue(key).toDuration();
+        return DurationUtils.parse(getString(key));
     }
 
     /**
      * @see IValueMap#getInt(String)
      */
+    @Override
     public int getInt(String key) throws StringValueConversionException {
         return getStringValue(key).toInt();
     }
@@ -87,6 +93,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getInt(String, int)
      */
+    @Override
     public int getInt(String key, int defaultValue) throws StringValueConversionException {
         return getStringValue(key).toInt(defaultValue);
     }
@@ -94,6 +101,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getLong(String)
      */
+    @Override
     public long getLong(String key) throws StringValueConversionException {
         return getStringValue(key).toLong();
     }
@@ -101,6 +109,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getLong(String, long)
      */
+    @Override
     public long getLong(String key, long defaultValue) throws StringValueConversionException {
         return getStringValue(key).toLong(defaultValue);
     }
@@ -108,6 +117,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getString(String, String)
      */
+    @Override
     public String getString(String key, String defaultValue) {
         String value = getString(key);
         return value != null ? value : defaultValue;
@@ -116,6 +126,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getString(String)
      */
+    @Override
     public String getString(String key) {
         Object o = get(key);
         if (o == null) {
@@ -137,6 +148,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getCharSequence(String)
      */
+    @Override
     public CharSequence getCharSequence(String key) {
         Object o = get(key);
         if (o == null) {
@@ -164,6 +176,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getStringArray(String)
      */
+    @Override
     public String[] getStringArray(String key) {
         Object o = get(key);
         if (o == null) {
@@ -187,15 +200,17 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getStringValue(String)
      */
+    @Override
     public StringValue getStringValue(String key) {
         return StringValue.valueOf(getString(key));
     }
 
     /**
-     * @see IValueMap#getTime(String)
+     * @see IValueMap#getInstant(String)
      */
-    public Time getTime(String key) throws StringValueConversionException {
-        return getStringValue(key).toTime();
+    @Override
+    public Instant getInstant(String key) throws StringValueConversionException {
+        return getStringValue(key).toInstant();
     }
 
     /**
@@ -217,7 +232,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
             return put(key, value);
         } else if (o.getClass().isArray()) {
             int length = Array.getLength(o);
-            String destArray[] = new String[length + 1];
+            String[] destArray = new String[length + 1];
             for (int i = 0; i < length; i++) {
                 Object arrayValue = Array.get(o, i);
                 if (arrayValue != null) {
@@ -250,10 +265,9 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
         return super.remove(key);
     }
 
+    @Override
     public String getKey(String key) {
-        Iterator<String> iter = keySet().iterator();
-        while (iter.hasNext()) {
-            String keyString = iter.next();
+        for (final String keyString : keySet()) {
             if (key.equalsIgnoreCase(keyString)) {
                 return keyString;
             }
@@ -270,7 +284,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
      */
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         for (Iterator<Map.Entry<String, Object>> iterator = entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<String, Object> entry = iterator.next();
             buffer.append(entry.getKey());
@@ -309,6 +323,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
      * @see IValueMap#getAsBoolean(String)
      * 
      */
+    @Override
     public Boolean getAsBoolean(String key) {
         if (!containsKey(key)) {
             return null;
@@ -325,6 +340,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
      * @see IValueMap#getAsBoolean(String, boolean)
      * 
      */
+    @Override
     public boolean getAsBoolean(String key, boolean defaultValue) {
         if (!containsKey(key)) {
             return defaultValue;    
@@ -340,6 +356,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsInteger(String)
      */
+    @Override
     public Integer getAsInteger(String key) {
         if (!containsKey(key)) {
             return null;
@@ -355,6 +372,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsInteger(String, int)
      */
+    @Override
     public int getAsInteger(String key, int defaultValue) {
         try {
             return getInt(key, defaultValue);
@@ -366,6 +384,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsLong(String)
      */
+    @Override
     public Long getAsLong(String key) {
         if (!containsKey(key)) {
             return null;
@@ -381,6 +400,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsLong(String, long)
      */
+    @Override
     public long getAsLong(String key, long defaultValue) {
         try {
             return getLong(key, defaultValue);
@@ -392,6 +412,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsDouble(String)
      */
+    @Override
     public Double getAsDouble(String key) {
         if (!containsKey(key)) {
             return null;
@@ -407,6 +428,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsDouble(String, double)
      */
+    @Override
     public double getAsDouble(String key, double defaultValue) {
         try {
             return getDouble(key, defaultValue);
@@ -418,6 +440,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsDuration(String)
      */
+    @Override
     public Duration getAsDuration(String key) {
         return getAsDuration(key, null);
     }
@@ -425,6 +448,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see IValueMap#getAsDuration(String, Duration)
      */
+    @Override
     public Duration getAsDuration(String key, Duration defaultValue) {
         if (!containsKey(key)) {
             return defaultValue;
@@ -438,22 +462,24 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     }
 
     /**
-     * @see IValueMap#getAsTime(String)
+     * @see IValueMap#getAsInstant(String)
      */
-    public Time getAsTime(String key) {
+    @Override
+    public Instant getAsInstant(String key) {
         return getAsTime(key, null);
     }
 
     /**
-     * @see IValueMap#getAsTime(String, Time)
+     * @see IValueMap#getAsTime(String, Instant)
      */
-    public Time getAsTime(String key, Time defaultValue) {
+    @Override
+    public Instant getAsTime(String key, Instant defaultValue) {
         if (!containsKey(key)) {
             return defaultValue;
         }
 
         try {
-            return getTime(key);
+            return getInstant(key);
         } catch (StringValueConversionException ignored) {
             return defaultValue;
         }
@@ -462,6 +488,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see org.apache.wicket.util.value.IValueMap#getAsEnum(java.lang.String, java.lang.Class)
      */
+    @Override
     public <T extends Enum<T>> T getAsEnum(String key, Class<T> eClass) {
         return getEnumImpl(key, eClass, (T) null);
     }
@@ -469,6 +496,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     /**
      * @see org.apache.wicket.util.value.IValueMap#getAsEnum(java.lang.String, java.lang.Enum)
      */
+    @Override
     public <T extends Enum<T>> T getAsEnum(String key, T defaultValue) {
         if (defaultValue == null) {
             throw new IllegalArgumentException("Default value cannot be null");
@@ -481,6 +509,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
      * @see org.apache.wicket.util.value.IValueMap#getAsEnum(java.lang.String, java.lang.Class,
      *      java.lang.Enum)
      */
+    @Override
     public <T extends Enum<T>> T getAsEnum(String key, Class<T> eClass, T defaultValue) {
         return getEnumImpl(key, eClass, defaultValue);
     }
@@ -505,7 +534,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
             return defaultValue;
         }
 
-        Method valueOf = null;
+        Method valueOf;
         try {
             valueOf = eClass.getMethod("valueOf", String.class);
         } catch (NoSuchMethodException e) {
