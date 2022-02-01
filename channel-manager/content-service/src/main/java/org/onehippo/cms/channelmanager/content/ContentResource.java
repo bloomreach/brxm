@@ -115,6 +115,15 @@ public class ContentResource {
     }
 
     @PUT
+    @Path("documents/{documentId}/variants/draft")
+    public Response updateDraft(@PathParam("documentId") final String id,
+                                final Document document,
+                                @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                userContext -> documentService.updateDraft(id, document, userContext));
+    }
+
+    @PUT
     @Path("documents/{documentId}/editable/{fieldPath:.*}")
     public Response updateEditableField(@PathParam("documentId") final String documentId,
                                         @PathParam("fieldPath") final String fieldPath,
