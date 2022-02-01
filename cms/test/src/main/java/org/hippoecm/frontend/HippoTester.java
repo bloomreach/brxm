@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -65,10 +63,6 @@ public class HippoTester extends WicketTester {
         Behavior behavior = new TestExecutorBehavior();
         home.add(behavior);
         return home;
-    }
-
-    public IPageManagerContext getPageManagerContext() {
-        return ((Main) Application.get()).getPageManagerContext();
     }
 
     public void runInAjax(Home page, Runnable callback) {
