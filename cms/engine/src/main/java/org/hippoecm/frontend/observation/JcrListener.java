@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.jcr.ItemNotFoundException;
@@ -46,7 +47,6 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
@@ -77,7 +77,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private final Queue<Event> jcrEvents = new ConcurrentLinkedQueue<>();
 
     // events not the result of jcr changes but of manually created ChangeEvents
-    private final Set<ChangeEvent> dispatchedEvents = new ConcurrentHashSet<>();
+    private final Set<ChangeEvent> dispatchedEvents = ConcurrentHashMap.newKeySet();
     private Session session;
     private FacetRootsObserver fro;
     private WeakReference<UserSession> sessionRef;
@@ -90,10 +90,11 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 final InternalCmsEventDispatcherService cmsEventDispatcherService) {
         super(upstream, listenerQueue);
         this.stateCache = stateCache;
-        sessionRef = new WeakReference<UserSession>(userSession);
+        sessionRef = new WeakReference<>(userSession);
         this.cmsEventDispatcherService = cmsEventDispatcherService;
     }
 
+    @Override
     public void onEvent(EventIterator events) {
         while (events.hasNext()) {
             this.jcrEvents.add(events.nextEvent());
@@ -163,7 +164,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             log.error("No jcr session bound to wicket session");
         }
 
-        parents = new ArrayList<String>();
+        parents = new ArrayList<>();
         if (!isDeep) {
             parents.add(absPath);
         } else if (uuids != null) {
@@ -307,7 +308,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
      * @return nodes with absolute paths and if the node finds update the uuid list.
      */
     private List<Node> checkReferencedNodesWithAbsolutePath() {
-        final List<Node> nodes = new ArrayList<Node>();
+        final List<Node> nodes = new ArrayList<>();
         if (parents != null) {
             final List<String> ids = new ArrayList<>();
             for (final String absPath : parents) {
@@ -329,8 +330,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private List<Node> getReferencedNodes() {
         if (uuids != null) {
             Session jcrSession = getSession().getJcrSession();
-            List<Node> list = new ArrayList<Node>(uuids.size());
-            List<String> validUuids = new ArrayList<String>(uuids.size());
+            List<Node> list = new ArrayList<>(uuids.size());
+            List<String> validUuids = new ArrayList<>(uuids.size());
             for (String id : uuids) {
                 try {
                     list.add(jcrSession.getNodeByIdentifier(id));
@@ -380,7 +381,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private void expandNew(final Set<Node> nodes) {
-        for (Node node : new ArrayList<Node>(nodes)) {
+        for (Node node : new ArrayList<>(nodes)) {
             if (node.isNew()) {
                 ItemVisitor visitor = new TraversingItemVisitor() {
                     @Override
@@ -528,6 +529,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         if (size > 0) {
             EventIterator iter = new EventIterator() {
 
+                @Override
                 public Event nextEvent() {
                     Event event = upstream.next();
                     if (log.isDebugEnabled()) {
@@ -536,22 +538,27 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                     return event;
                 }
 
+                @Override
                 public long getPosition() {
                     throw new UnsupportedOperationException("getPosition() is not implemented yet");
                 }
 
+                @Override
                 public long getSize() {
                     return size;
                 }
 
+                @Override
                 public void skip(long skipNum) {
                     throw new UnsupportedOperationException("skip() is not implemented yet");
                 }
 
+                @Override
                 public boolean hasNext() {
                     return upstream.hasNext();
                 }
 
+                @Override
                 public Object next() {
                     return nextEvent();
                 }
@@ -616,7 +623,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private Set<Node> getExternallyModifiedNodes(final List<Event> events) {
-        final Set<Node> nodes = new TreeSet<Node>(new NodePathComparator());
+        final Set<Node> nodes = new TreeSet<>(new NodePathComparator());
         for (Event jcrEvent : events) {
             try {
                 String eventPath = getEventParentPath(jcrEvent.getPath());
@@ -654,7 +661,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private Set<Node> getLocallyModifiedNodes() throws RepositoryException {
-        final Set<Node> locallyModifiedNodes = new TreeSet<Node>(new NodePathComparator());
+        final Set<Node> locallyModifiedNodes = new TreeSet<>(new NodePathComparator());
         Node root = getRoot();
         if (nodeTypes == null) {
             if ((root.isModified() || root.isNew()) && isVisible(root)) {
@@ -674,7 +681,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                             break;
                         }
                     } catch (RepositoryException e) {
-                        log.debug("Unable to determine if node is of type " + type, e);
+                        log.debug("Unable to determine if node is of type {}", type, e);
                     }
                 }
             }
@@ -753,8 +760,11 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", path)
-                .append("isDeep", isDeep).append("UUIDs", uuids).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("path", path)
+                .append("isDeep", isDeep)
+                .append("UUIDs", uuids)
+                .toString();
     }
     
     private static boolean isAncestor(String candidate, String path) {
@@ -784,6 +794,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
     static class NodePathComparator implements Comparator<Node> {
 
+        @Override
         public int compare(Node o1, Node o2) {
             try {
                 return o1.getPath().compareTo(o2.getPath());
