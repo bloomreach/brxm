@@ -32,7 +32,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -50,8 +49,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.util.MaxLengthStringFormatter;
 import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadcrumbWidget;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated This plugin is deprecated since 10.0.x and replaced by the {@link NodeBreadcrumbWidget}. This widget is
@@ -63,9 +60,6 @@ import org.slf4j.LoggerFactory;
 
 @Deprecated
 public class BreadcrumbPlugin extends RenderPlugin<Node> {
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(BreadcrumbPlugin.class);
 
     private final Set<String> roots;
     private final AjaxButton up;
@@ -85,7 +79,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
             throw new IllegalArgumentException("Expected model.folder configuration key");
         }
 
-        roots = new HashSet<String>();
+        roots = new HashSet<>();
         String[] paths = config.getStringArray("root.paths");
         if (paths != null) {
             for (String path : paths) {
@@ -95,8 +89,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
             roots.add("/");
         }
 
-        context.registerTracker(new ServiceTracker<IModelReference>(IModelReference.class) {
-            private static final long serialVersionUID = 1L;
+        context.registerTracker(new ServiceTracker<>(IModelReference.class) {
 
             IObserver folderServiceObserver = null;
 
@@ -105,7 +98,6 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
                 if (folderServiceObserver == null) {
                     folderReference = service;
                     context.registerService(folderServiceObserver = new IObserver<IModelReference<Node>>() {
-                        private static final long serialVersionUID = 1L;
 
                         public IModelReference<Node> getObservable() {
                             return folderReference;
@@ -133,8 +125,6 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
         add(getListView(null));
 
         up = new AjaxButton("up") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
                 JcrNodeModel model = (JcrNodeModel) folderReference.getModel();
@@ -177,7 +167,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
     }
 
     private ListView<NodeItem> getListView(JcrNodeModel model) {
-        nodeitems = new LinkedList<NodeItem>();
+        nodeitems = new LinkedList<>();
         if (model != null) {
             //add current folder as disabled
             nodeitems.add(new NodeItem(model, false));
@@ -194,14 +184,11 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
             }
         }
         Collections.reverse(nodeitems);
-        ListView<NodeItem> listview = new ListView<NodeItem>("crumbs", nodeitems) {
-            private static final long serialVersionUID = 1L;
+        ListView<NodeItem> listview = new ListView<>("crumbs", nodeitems) {
 
             @Override
             protected void populateItem(final ListItem<NodeItem> item) {
-                AjaxLink<NodeItem> link = new AjaxLink<NodeItem>("link", item.getModel()) {
-                    private static final long serialVersionUID = 1L;
-
+                AjaxLink<NodeItem> link = new AjaxLink<>("link", item.getModel()) {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         folderReference.setModel(getModelObject().model);
@@ -209,15 +196,9 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
 
                 };
 
-                link.add(new Label("name", new AbstractReadOnlyModel<String>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public String getObject() {
+                link.add(new Label("name", () -> {
                         NodeItem nodeItem = item.getModelObject();
                         return (nodeItem.name != null ? format.parse(nodeItem.name) : null);
-                    }
-
                 }));
                 link.add(TitleAttribute.append(() -> item.getModelObject().getName()));
 
@@ -246,7 +227,6 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
     }
 
     private static class NodeItem implements IDetachable {
-        private static final long serialVersionUID = 1L;
 
         boolean enabled;
         JcrNodeModel model;
