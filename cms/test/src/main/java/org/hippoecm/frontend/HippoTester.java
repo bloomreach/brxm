@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.Locale;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
@@ -38,6 +40,10 @@ import org.hippoecm.repository.HippoRepository;
 import org.onehippo.repository.mock.MockNode;
 
 public class HippoTester extends WicketTester {
+
+    static {
+        Locale.setDefault(Locale.ENGLISH);
+    }
 
     public HippoTester() {
         this(new HippoTesterApplication());
@@ -73,10 +79,12 @@ public class HippoTester extends WicketTester {
 
     static class TestApplicationFactory implements IApplicationFactory {
 
+        @Override
         public IPluginConfigService getDefaultApplication() {
             return getApplication(null);
         }
 
+        @Override
         public IPluginConfigService getApplication(String name) {
             JavaConfigService configService = new JavaConfigService("test");
             JavaClusterConfig plugins = new JavaClusterConfig();
@@ -133,9 +141,7 @@ public class HippoTester extends WicketTester {
 
         @Override
         public UserSession newSession(Request request, Response response) {
-            return new AccessiblePluginUserSession(request, new LoadableDetachableModel<Session>() {
-                private static final long serialVersionUID = 1L;
-
+            return new AccessiblePluginUserSession(request, new LoadableDetachableModel<>() {
                 @Override
                 protected Session load() {
                     try {
@@ -145,7 +151,6 @@ public class HippoTester extends WicketTester {
                         throw new RuntimeException("Unable to create mock session");
                     }
                 }
-
             });
         }
 
