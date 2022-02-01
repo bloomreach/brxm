@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import java.time.Duration;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxChannel;
@@ -31,7 +33,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.repository.api.StringCodec;
 
@@ -39,7 +40,7 @@ import java.util.Optional;
 
 public class NameUriField extends Panel {
 
-    private static final Duration NAME_COMPONENT_THROTTLE_DURATION = Duration.milliseconds(500);
+    private static final Duration NAME_COMPONENT_THROTTLE_DURATION = Duration.ofMillis(500);
 
     private final IModel<String> nameModel;
     private final IModel<String> urlModel;
@@ -75,7 +76,7 @@ public class NameUriField extends Panel {
         nameModel = Model.of(name);
         add(nameComponent = createNameComponent());
 
-        urlModel = new Model<String>(url) {
+        urlModel = new Model<>(url) {
             @Override
             public String getObject() {
                 return encode(urlIsEditable ? super.getObject() : getName());
@@ -111,7 +112,7 @@ public class NameUriField extends Panel {
     }
 
     private FormComponent<String> createUrlComponent() {
-        final FormComponent<String> newUrlComponent = new TextField<String>("url", urlModel) {
+        final FormComponent<String> newUrlComponent = new TextField<>("url", urlModel) {
             @Override
             public boolean isEnabled() {
                 return urlIsEditable;
@@ -130,7 +131,7 @@ public class NameUriField extends Panel {
     }
 
     private Component createUrlAction() {
-        final AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
+        final AjaxLink<Boolean> uriAction = new AjaxLink<>("uriAction") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 urlIsEditable = !urlIsEditable;

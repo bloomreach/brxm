@@ -17,6 +17,7 @@ package org.hippoecm.frontend;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -92,7 +93,6 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener;
 import org.hippoecm.frontend.errors.SwallowExceptionMapper;
 import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
@@ -484,7 +484,7 @@ public class Main extends PluginApplication {
 
             if (timeout > 0L) {
                 log.info("Setting wicket request timeout to {} ms.", timeout);
-                getRequestCycleSettings().setTimeout(Duration.milliseconds(timeout));
+                getRequestCycleSettings().setTimeout(Duration.ofMillis(timeout));
             }
 
             // render comments with component class names
@@ -515,7 +515,7 @@ public class Main extends PluginApplication {
 
             if (timeout > 0L) {
                 log.info("Setting wicket request timeout to {} ms.", timeout);
-                getRequestCycleSettings().setTimeout(Duration.milliseconds(timeout));
+                getRequestCycleSettings().setTimeout(Duration.ofMillis(timeout));
             }
         }
 
