@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.head.HeaderItem;
-import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -40,10 +39,6 @@ public abstract class HippoHeaderItem extends HeaderItem {
 
     protected static UrlResourceReference getUniqueResourceReference(final String path) {
         return WebApplicationHelper.createUniqueUrlResourceReference(Url.parse(path)).setContextRelative(true);
-    }
-
-    protected int getBrowserVersion() {
-        return WebSession.get().getClientInfo().getProperties().getBrowserVersionMajor();
     }
 
     protected boolean isDevelopmentMode() {
