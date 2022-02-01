@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class JcrImage extends Image {
             sb.append((lastModified.getMilliseconds() / 1000));
             if (MD != null) {
                 sb.append("&h:pathmd=");
-                final String path = JcrUtils.getNodePathQuietly(stream.getChainedModel().getObject());
+                final String path = JcrUtils.getNodePathQuietly(stream.getNodeModel().getObject());
                 sb.append(new BigInteger(1, MD.digest(path.getBytes())).toString(16));
             }
             tag.put("src", sb.toString());
