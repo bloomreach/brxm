@@ -349,6 +349,41 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
+    public Document updateDraft(final String uuid, final Document document, final UserContext userContext) {
+        final Session session = userContext.getSession();
+        final Node handle = getHandle(uuid, session);
+        final EditableWorkflow workflow = getEditableWorkflow(handle);
+        final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
+
+        final Map<String, Serializable> hints = HintsUtils.getHints(workflow, document.getBranchId());
+        if (!hintsInspector.canUpdateDocument(document.getBranchId(), hints)) {
+            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(document.getBranchId(), hints,
+                    session));
+        }
+
+        final DocumentType docType = getDocumentType(handle, userContext);
+        if (docType.isReadOnlyDueToUnsupportedValidator()) {
+            throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
+        }
+
+        // 1.
+        // Push fields onto draft node
+        FieldTypeUtils.writeFieldValues(document.getFields(), docType.getFields(), draftNode);
+
+        // 2.
+        // Persist changes to repository
+        try {
+            session.save();
+        } catch (final RepositoryException e) {
+            log.error("Failed to save changes to draft node of document {}", uuid, e);
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
+        }
+
+        return document;
+    }
+
+    @Override
     public List<FieldValue> updateEditableField(final String uuid, final String branchId, final FieldPath fieldPath,
                                                 final List<FieldValue> fieldValues, final UserContext userContext) {
 
@@ -403,6 +438,8 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         return fieldValues;
     }
+
+
 
     private boolean hasOtherVariantThanDraft(final Node handle) {
         return WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED).isPresent() ||
