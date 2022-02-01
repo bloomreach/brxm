@@ -116,6 +116,8 @@
     <wicket-extjs.version>0.29.0</wicket-extjs.version>
     <wicket15-tree.version>8.0.0</wicket15-tree.version>
 
+    <yauaa.version>6.8</yauaa.version>
+
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.4</json-lib.version>
 
@@ -371,6 +373,11 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson2-databind.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.basjes.parse.useragent</groupId>
+        <artifactId>yauaa</artifactId>
+        <version>${yauaa.version}</version>
       </dependency>
 
       <!-- test dependencies -->
