@@ -51,7 +51,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -119,11 +118,13 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
             super(id);
         }
 
+        @Override
         public String getCacheKey(final MarkupContainer container, final Class containerClass) {
             return cacheKeyProvider.getCacheKey(AbstractDialog.this, AbstractDialog.this.getClass());
         }
 
         // implement IMarkupResourceStreamProvider.
+        @Override
         public IResourceStream getMarkupResourceStream(final MarkupContainer container, final Class containerClass) {
             return streamProvider.getMarkupResourceStream(AbstractDialog.this, AbstractDialog.this.getClass());
         }
@@ -181,7 +182,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
                 super(id);
                 setOutputMarkupId(true);
 
-                final Link<String> link = new Link<String>("message") {
+                final Link<String> link = new Link<>("message") {
                     @Override
                     public void onClick() {
                         RequestCycle.get().scheduleRequestHandlerAfterCurrent(new ErrorDownloadRequestTarget(ex));
@@ -261,7 +262,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
         add(feedback);
 
         buttons = new LinkedList<>();
-        final ListView<ButtonWrapper> buttonsView = new ListView<ButtonWrapper>("buttons", buttons) {
+        final ListView<ButtonWrapper> buttonsView = new ListView<>("buttons", buttons) {
             @Override
             protected void populateItem(final ListItem<ButtonWrapper> item) {
                 final Button button = item.getModelObject().getButton();
@@ -319,13 +320,10 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
         buttons.add(ok);
 
         if (isFullscreenEnabled()) {
-            final AjaxButton goFullscreen = new AjaxButton(DialogConstants.BUTTON,
-                    new AbstractReadOnlyModel<String>() {
-                        @Override
-                        public String getObject() {
-                            return getString(fullscreen ? "exit-fullscreen" : "fullscreen");
-                        }
-                    }) {
+            final AjaxButton goFullscreen = new AjaxButton(
+                    DialogConstants.BUTTON,
+                    () -> getString(fullscreen ? "exit-fullscreen" : "fullscreen")
+            ) {
                 @Override
                 protected void onSubmit(final AjaxRequestTarget target) {
                     target.appendJavaScript(getFullscreenScript());
@@ -427,6 +425,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
      *
      * @return the markup id of the ajax indicator
      */
+    @Override
     public String getAjaxIndicatorMarkupId() {
         if (indicator != null) {
             return indicator.getMarkupId();
@@ -498,6 +497,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDialogService(final IDialogService dialogService) {
         this.dialogService = dialogService;
     }
@@ -650,9 +650,8 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
             for (final ButtonWrapper bw : buttons) {
                 if (bw.getKeyType() != null) {
                     // the input behavior does not support removal, so we need to do this manually
-                    ajaxRequestTarget.prependJavaScript("if (window['shortcut']) { shortcut.remove('" +
-                            bw.getKeyType() +
-                            "'); }\n");
+                    final String script = String.format("if (window['shortcut']) { shortcut.remove('%s'); }\n", bw.getKeyType());
+                    ajaxRequestTarget.prependJavaScript(script);
                 }
             }
         });
