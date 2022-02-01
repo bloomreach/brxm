@@ -15,62 +15,42 @@
  */
 package org.hippoecm.frontend;
 
-import java.io.Serializable;
-
 import org.apache.wicket.page.IManageablePage;
-import org.apache.wicket.pageStore.IDataStore;
+import org.apache.wicket.pageStore.IPageContext;
 import org.apache.wicket.pageStore.IPageStore;
 
 public class AmnesicPageStore implements IPageStore {
 
-    private final IDataStore dataStore;
+    @Override
+    public boolean canBeAsynchronous(final IPageContext context) {
+        // Suppress Wicket warning
+        return true;
+    }
 
-    public AmnesicPageStore(final IDataStore dataStore) {
-        this.dataStore = dataStore;
+    @Override
+    public boolean supportsVersioning() {
+        return false;
+    }
+
+    @Override
+    public void addPage(final IPageContext context, final IManageablePage page) {
+    }
+
+    @Override
+    public void removePage(final IPageContext context, final IManageablePage page) {
+    }
+
+    @Override
+    public void removeAllPages(final IPageContext context) {
+    }
+
+    @Override
+    public IManageablePage getPage(final IPageContext context, final int id) {
+        return null;
     }
 
     @Override
     public void destroy() {
-        dataStore.destroy();
     }
 
-    @Override
-    public IManageablePage getPage(final String sessionId, final int pageId) {
-        return null;
-    }
-
-    @Override
-    public void removePage(final String sessionId, final int pageId) {
-
-    }
-
-    @Override
-    public void storePage(final String sessionId, final IManageablePage page) {
-
-    }
-
-    @Override
-    public void unbind(final String sessionId) {
-
-    }
-
-    @Override
-    public Serializable prepareForSerialization(final String sessionId, final Serializable page) {
-        return null;
-    }
-
-    @Override
-    public Object restoreAfterSerialization(final Serializable serializable) {
-        return null;
-    }
-
-    @Override
-    public IManageablePage convertToPage(final Object page) {
-        return null;
-    }
-
-    @Override
-    public boolean canBeAsynchronous() {
-        return false;
-    }
 }
