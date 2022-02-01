@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import java.time.Duration;
 
 import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,6 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -122,7 +122,7 @@ public class RootPlugin extends RenderPlugin {
 
     private String getPageTitle(IPluginConfig config) {
         StringBuilder pageTitle = new StringBuilder(config.getString("page.title", "Bloomreach Console"));
-        if(config.getAsBoolean("page.title.showservername", false)) {
+        if (config.getAsBoolean("page.title.showservername", false)) {
             pageTitle.append(config.getString("page.title.separator", "@"));
             pageTitle.append(getServerName());
         }
@@ -131,7 +131,7 @@ public class RootPlugin extends RenderPlugin {
 
     private String getServerName() {
         final Object request = getRequest().getContainerRequest();
-        if(request instanceof HttpServletRequest) {
+        if (request instanceof HttpServletRequest) {
             return ((HttpServletRequest) request).getServerName();
         }
         return StringUtils.EMPTY;
