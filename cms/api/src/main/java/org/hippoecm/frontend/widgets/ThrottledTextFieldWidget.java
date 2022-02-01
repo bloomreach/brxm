@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import java.time.Duration;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.time.Duration;
 
 public class ThrottledTextFieldWidget extends TextFieldWidget {
 
-    public static final Duration THROTTLE_DELAY = Duration.milliseconds(750);
+    public static final Duration THROTTLE_DELAY = Duration.ofMillis(750);
 
     public ThrottledTextFieldWidget(String id, IModel<String> model) {
         super(id, model, null, THROTTLE_DELAY);
