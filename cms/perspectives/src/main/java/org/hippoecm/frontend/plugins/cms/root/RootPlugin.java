@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
@@ -114,14 +114,14 @@ public class RootPlugin extends TabsPlugin {
 
         services = new LinkedList<>();
 
-        final IDataProvider<IRenderService> provider = new ListDataProvider<IRenderService>(services) {
+        final IDataProvider<IRenderService> provider = new ListDataProvider<>(services) {
             @Override
             public IModel<IRenderService> model(IRenderService object) {
                 return new RenderServiceModel(object);
             }
         };
 
-        view = new AbstractView<IRenderService>("view", provider) {
+        view = new AbstractView<>("view", provider) {
 
             @Override
             protected void populateItem(Item<IRenderService> item) {
@@ -143,12 +143,11 @@ public class RootPlugin extends TabsPlugin {
 
         String itemId = getItemId();
         if (itemId != null) {
-            tracker = new ServiceTracker<IRenderService>(IRenderService.class) {
-                private static final long serialVersionUID = 1L;
+            tracker = new ServiceTracker<>(IRenderService.class) {
 
                 @Override
                 public void onServiceAdded(IRenderService service, String name) {
-                    log.debug("adding " + service + " to ListViewService at " + name);
+                    log.debug("adding {} to ListViewService at {}", service, name);
                     services.add(service);
                 }
 
@@ -158,7 +157,7 @@ public class RootPlugin extends TabsPlugin {
 
                 @Override
                 public void onRemoveService(IRenderService service, String name) {
-                    log.debug("removing " + service + " from ListViewService at " + name);
+                    log.debug("removing {} from ListViewService at {}", service, name);
                     services.remove(service);
                 }
             };
