@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
  */
 package org.hippoecm.frontend.model.nodetypes;
 
-import org.apache.wicket.model.IChainingModel;
+import javax.jcr.nodetype.NodeType;
+
 import org.apache.wicket.model.IModel;
 
-public abstract class NodeTypeModelWrapper implements IChainingModel {
-    private static final long serialVersionUID = 1L;
-
+public abstract class NodeTypeModelWrapper implements IModel<NodeType> {
 
     protected JcrNodeTypeModel itemModel;
 
@@ -36,26 +35,17 @@ public abstract class NodeTypeModelWrapper implements IChainingModel {
         return itemModel;
     }
 
-    // Implement IChainingModel
-
-    public IModel getChainedModel() {
-        return itemModel;
-    }
-
-    public void setChainedModel(IModel model) {
-        if (model instanceof JcrNodeTypeModel) {
-            itemModel = (JcrNodeTypeModel) model;
-        }
-    }
-
-    public Object getObject() {
+    @Override
+    public NodeType getObject() {
         return itemModel.getObject();
     }
 
-    public void setObject(Object object) {
+    @Override
+    public void setObject(NodeType object) {
         throw new UnsupportedOperationException("Cannot alter the item of an " + getClass());
     }
 
+    @Override
     public void detach() {
         itemModel.detach();
     }
