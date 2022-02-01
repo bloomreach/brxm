@@ -58,8 +58,6 @@ import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.apache.wicket.markup.head.filter.OppositeHeaderResponseFilter;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
-import org.apache.wicket.page.IPageManagerContext;
-import org.apache.wicket.pageStore.IDataStore;
 import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -499,8 +497,8 @@ public class Main extends PluginApplication {
             setPageManagerProvider(new DefaultPageManagerProvider(this) {
 
                 @Override
-                protected IPageStore newPageStore(final IDataStore dataStore) {
-                    return new AmnesicPageStore(dataStore);
+                protected IPageStore newPersistentStore() {
+                    return new AmnesicPageStore();
                 }
             });
 
@@ -655,12 +653,6 @@ public class Main extends PluginApplication {
     @Override
     public Class<PluginPage> getHomePage() {
         return org.hippoecm.frontend.PluginPage.class;
-    }
-
-    // ease testing by making page manager context available in the package
-    @Override
-    protected IPageManagerContext getPageManagerContext() {
-        return super.getPageManagerContext();
     }
 
     @Override
