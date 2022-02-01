@@ -163,7 +163,7 @@ export class PageService implements OnDestroy {
   private matchWorkflowRequest(pageStates: PageStates): XPageStatusInfo | undefined {
     const xPageState = pageStates.xpage;
     const xPageWorkflowRequests = pageStates.workflow && pageStates.workflow.requests;
-    const xPageWorkflowRequest = xPageWorkflowRequests && xPageWorkflowRequests.length && xPageWorkflowRequests[0];
+    const xPageWorkflowRequest = xPageWorkflowRequests && xPageWorkflowRequests.length && xPageWorkflowRequests.slice(-1)[0];
 
     if (!xPageState || !xPageWorkflowRequest) {
       return;
