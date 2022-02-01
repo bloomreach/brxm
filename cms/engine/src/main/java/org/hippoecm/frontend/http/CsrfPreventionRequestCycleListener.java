@@ -34,7 +34,6 @@ import org.apache.wicket.core.request.handler.IPageRequestHandler;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.component.IRequestablePage;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
@@ -55,7 +54,7 @@ import static org.hippoecm.frontend.util.RequestUtils.getFarthestRequestScheme;
  * <h3>Installation</h3>
  * <p>
  * You can enable this CSRF prevention filter by adding it to the request cycle listeners in your
- * {@link WebApplication#init() application's init method}:
+ * {@link WebApplication#init()}  application's init method:
  *
  * <pre>
  * &#064;Override
@@ -96,17 +95,14 @@ import static org.hippoecm.frontend.util.RequestUtils.getFarthestRequestScheme;
  * conflict and the request should be suppressed</li>
  * </ul>
  */
-public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleListener
-        implements
-        IRequestCycleListener
-{
-    private static final Logger log = LoggerFactory
-            .getLogger(CsrfPreventionRequestCycleListener.class);
+public class CsrfPreventionRequestCycleListener implements IRequestCycleListener {
+
+    private static final Logger log = LoggerFactory.getLogger(CsrfPreventionRequestCycleListener.class);
 
     /**
      * The action to perform when a missing or conflicting Origin header is detected.
      */
-    public static enum CsrfAction {
+    public enum CsrfAction {
         /** Aborts the request and throws an exception when a CSRF request is detected. */
         ABORT {
             @Override
@@ -163,7 +159,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
      * A white list of accepted origins (host names/domain names) presented as
      * &lt;domainname&gt;.&lt;TLD&gt;. The domain part can contain subdomains.
      */
-    private Collection<String> acceptedOrigins = new ArrayList<String>();
+    private Collection<String> acceptedOrigins = new ArrayList<>();
 
     /**
      * Sets the action when no Origin header is present in the request. Default {@code ALLOW}.
@@ -653,7 +649,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     {
         onAborted(request, origin, page);
         log.debug("Possible CSRF attack, client request location: {}, Origin: {}, action: aborted with error {} {}",
-                new Object[] {getLocationHeaderOrigin(request), origin, errorCode, errorMessage });
+                getLocationHeaderOrigin(request), origin, errorCode, errorMessage);
         throw new AbortWithHttpErrorCodeException(errorCode, errorMessage);
     }
 

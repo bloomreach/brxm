@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.lang.Exceptions;
@@ -37,9 +36,9 @@ import org.slf4j.LoggerFactory;
  * If a {@link RepositoryRuntimeException} occurs, then this listener redirects to either home page
  * or {@link NoRepositoryAvailablePage} depending on the exception type.
  */
-public class RepositoryRuntimeExceptionHandlingRequestCycleListener extends AbstractRequestCycleListener {
+public class RepositoryRuntimeExceptionHandlingRequestCycleListener implements IRequestCycleListener {
 
-    private static Logger log = LoggerFactory.getLogger(RepositoryRuntimeExceptionHandlingRequestCycleListener.class);
+    private static final Logger log = LoggerFactory.getLogger(RepositoryRuntimeExceptionHandlingRequestCycleListener.class);
 
     @Override
     public IRequestHandler onException(RequestCycle cycle, Exception ex) {
@@ -66,10 +65,10 @@ public class RepositoryRuntimeExceptionHandlingRequestCycleListener extends Abst
         IRequestHandler handler = null;
 
         if (rrEx instanceof InvalidSessionException) {
-            log.error("Creating RequestHandler for InvalidSessionException: {}", rrEx.toString(), rrEx);
-            handler = new RenderPageRequestHandler(new PageProvider(WebApplication.get().getHomePage()), RedirectPolicy.AUTO_REDIRECT); 
+            log.error("Creating RequestHandler for InvalidSessionException: {}", rrEx, rrEx);
+            handler = new RenderPageRequestHandler(new PageProvider(WebApplication.get().getHomePage()), RedirectPolicy.AUTO_REDIRECT);
         } else if (rrEx instanceof RepositoryUnavailableException) {
-            log.error("Creating RequestHandler for RepositoryUnavailableException: {}", rrEx.toString(), rrEx);
+            log.error("Creating RequestHandler for RepositoryUnavailableException: {}", rrEx, rrEx);
             handler = new RenderPageRequestHandler(new PageProvider(NoRepositoryAvailablePage.class), RedirectPolicy.AUTO_REDIRECT);
         }
 
