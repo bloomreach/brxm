@@ -839,7 +839,7 @@ public class Main extends PluginApplication {
         final FilteringHeaderResponse.IHeaderResponseFilter oppositeFilter = new OppositeHeaderResponseFilter(DEFAULT_HEADER_FILTER_NAME, navAppFilter);
         final List<FilteringHeaderResponse.IHeaderResponseFilter> filters = Arrays.asList(navAppFilter, oppositeFilter);
 
-        setHeaderResponseDecorator(response -> new ResourceAggregator(new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters)) {
+        getHeaderResponseDecorators().add(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
 
             final Predicate<HeaderItem> shouldRender =
                     isCmsApplication() && hasNoIFrameParameter()
