@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.frontend.model;
 
 import javax.jcr.Item;
 
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
 /**
@@ -25,9 +24,7 @@ import org.apache.wicket.model.IModel;
  *
  * @param <T> the model object type
  */
-public abstract class ItemModelWrapper<T> implements IChainingModel<T> {
-    private static final long serialVersionUID = 1L;
-
+public abstract class ItemModelWrapper<T> implements IModel<T> {
 
     private JcrItemModel itemModel;
 
@@ -47,15 +44,7 @@ public abstract class ItemModelWrapper<T> implements IChainingModel<T> {
         return itemModel;
     }
 
-    // Implement IChainingModel
-
-    @Override
-    public IModel<Item> getChainedModel() {
-        return itemModel;
-    }
-
-    @Override
-    public void setChainedModel(IModel<?> model) {
+    public void setItemModel(IModel<?> model) {
         if (model instanceof JcrItemModel) {
             itemModel = (JcrItemModel) model;
         }
