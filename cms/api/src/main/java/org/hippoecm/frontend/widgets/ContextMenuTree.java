@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.extensions.markup.html.tree.LinkType;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.behaviors.IContextMenu;
@@ -173,13 +172,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
         item.add(nodeLink);
 
         nodeLink.add(newNodeIcon(nodeLink, "icon", node));
-
-        nodeLink.add(new Label("label", new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return renderNode(node, level);
-            }
-        }));
+        nodeLink.add(new Label("label", () -> renderNode(node, level)));
 
         decorateNodeLink(nodeLink, node, level);
 

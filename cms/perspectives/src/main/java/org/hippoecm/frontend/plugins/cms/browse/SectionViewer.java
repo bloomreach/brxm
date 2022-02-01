@@ -32,7 +32,6 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -62,7 +61,7 @@ public class SectionViewer extends Panel implements ICardView {
         setOutputMarkupId(true);
         add(ClassAttribute.append("section-viewer"));
 
-        final IDataProvider<String> sectionProvider = new IDataProvider<String>() {
+        final IDataProvider<String> sectionProvider = new IDataProvider<>() {
 
             private transient List<String> names;
 
@@ -94,7 +93,7 @@ public class SectionViewer extends Panel implements ICardView {
             }
         };
 
-        add(new AbstractView<String>("list", sectionProvider) {
+        add(new AbstractView<>("list", sectionProvider) {
 
             @Override
             protected void populateItem(final Item<String> item) {
@@ -131,24 +130,24 @@ public class SectionViewer extends Panel implements ICardView {
 
         final IModel<String> selectModel = new SelectedSectionModel();
         select = new DropDownChoice<>("select", selectModel, sectionNamesModel,
-            new IChoiceRenderer<String>() {
-                @Override
-                public Object getDisplayValue(final String sectionId) {
-                    final IBrowserSection section = sections.getSection(sectionId);
-                    return section.getTitle().getObject();
-                }
+                new IChoiceRenderer<>() {
+                    @Override
+                    public Object getDisplayValue(final String sectionId) {
+                        final IBrowserSection section = sections.getSection(sectionId);
+                        return section.getTitle().getObject();
+                    }
 
-                @Override
-                public String getIdValue(final String sectionId, final int index) {
-                    return sectionId;
-                }
+                    @Override
+                    public String getIdValue(final String sectionId, final int index) {
+                        return sectionId;
+                    }
 
-                @Override
-                public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
-                    final List<? extends String> choices = choicesModel.getObject();
-                    return choices.contains(id) ? id : null;
+                    @Override
+                    public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                        final List<? extends String> choices = choicesModel.getObject();
+                        return choices.contains(id) ? id : null;
+                    }
                 }
-            }
         );
         select.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
@@ -239,7 +238,7 @@ public class SectionViewer extends Panel implements ICardView {
         return cardView == null || cardView.isActive(this);
     }
 
-    private class SectionNamesModel extends AbstractReadOnlyModel<List<String>> implements IChangeListener {
+    private class SectionNamesModel implements IModel<List<String>>, IChangeListener {
 
         private ArrayList<String> names;
 
