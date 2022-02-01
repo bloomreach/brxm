@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -40,8 +42,6 @@ import javax.jcr.observation.EventIterator;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
-import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -54,6 +54,7 @@ import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
+import org.hippoecm.frontend.util.DurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +66,6 @@ import org.slf4j.LoggerFactory;
  * these.
  */
 public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, IDetachable {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrPluginConfig.class);
 
@@ -96,7 +95,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     @SuppressWarnings("unchecked")
     private class SerializableList extends AbstractList implements Serializable {
-        private static final long serialVersionUID = 1L;
 
         private List upstream;
 
@@ -127,21 +125,22 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         @Override
         public Set<java.util.Map.Entry<String, Object>> entrySet() {
             final Set<Map.Entry<String, Object>> base = upstream.entrySet();
-            return new AbstractSet<Map.Entry<String, Object>>() {
+            return new AbstractSet<>() {
 
                 @Override
                 public Iterator<Map.Entry<String, Object>> iterator() {
                     final Iterator<Map.Entry<String, Object>> iter = base.iterator();
-                    return new Iterator<Map.Entry<String, Object>>() {
+                    return new Iterator<>() {
 
                         @Override
                         public boolean hasNext() {
                             return iter.hasNext();
                         }
 
+                        @Override
                         public Map.Entry<String, Object> next() {
                             final Map.Entry<String, Object> entry = iter.next();
-                            return new Map.Entry<String, Object>() {
+                            return new Map.Entry<>() {
 
                                 @Override
                                 public String getKey() {
@@ -178,17 +177,21 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
         }
 
+        @Override
         public List<String> getMixinTypes() {
             return Collections.emptyList();
         }
 
+        @Override
         public String getPrimaryType() {
             return FrontendNodeType.NT_PLUGINCONFIG;
         }
 
+        @Override
         public void reset() {
         }
 
+        @Override
         public void save() {
         }
 
@@ -207,7 +210,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         }
         this.nodeModel = nodeModel;
         this.map = new JcrMap(nodeModel);
-        this.childConfigs = new HashMap<JcrNodeModel, JcrPluginConfig>();
+        this.childConfigs = new HashMap<>();
     }
 
     protected void sync() {
@@ -389,7 +392,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     @Override
     public Set<IPluginConfig> getPluginConfigSet() {
-        Set<IPluginConfig> configs = new LinkedHashSet<IPluginConfig>();
+        Set<IPluginConfig> configs = new LinkedHashSet<>();
         try {
             NodeIterator children = nodeModel.getNode().getNodes();
             while (children.hasNext()) {
@@ -411,12 +414,12 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     @Override
     public Duration getDuration(String key) throws StringValueConversionException {
-        return StringValue.valueOf(getKey(key)).toDuration();
+        return DurationUtils.parse(getKey(key));
     }
 
     @Override
-    public Time getTime(String key) throws StringValueConversionException {
-        return StringValue.valueOf(getKey(key)).toTime();
+    public Instant getInstant(String key) throws StringValueConversionException {
+        return StringValue.valueOf(getKey(key)).toInstant();
     }
 
     @Override
@@ -478,7 +481,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
     public Set<Map.Entry<String, Object>> entrySet() {
         if (entries == null) {
             final Set<Map.Entry<String, Object>> orig = map.entrySet();
-            entries = new LinkedHashSet<Map.Entry<String, Object>>();
+            entries = new LinkedHashSet<>();
             for (final Map.Entry<String, Object> entry : orig) {
                 entries.add(new EntryDecorator(entry));
             }
@@ -544,7 +547,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         if (value instanceof IPluginConfig) {
             return unwrapConfig((IPluginConfig) value);
         } else if (value instanceof List) {
-            List<IHippoMap> list = new ArrayList<IHippoMap>(((List<IPluginConfig>) value).size());
+            List<IHippoMap> list = new ArrayList<>(((List<IPluginConfig>) value).size());
             for (IPluginConfig entry : (List<IPluginConfig>) value) {
                 list.add(unwrapConfig(entry));
             }
@@ -571,13 +574,11 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         int events = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED
                 | Event.PROPERTY_REMOVED;
         listener = new JcrEventListener(obContext, events, path, true, null, null) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onEvent(EventIterator events) {
                 IObservationContext obContext = getObservationContext();
                 sync();
-                EventCollection<PluginConfigEvent> coll = new EventCollection<PluginConfigEvent>();
+                EventCollection<PluginConfigEvent> coll = new EventCollection<>();
                 coll.add(new PluginConfigEvent(JcrPluginConfig.this, PluginConfigEvent.EventType.CONFIG_CHANGED));
                 obContext.notifyObservers(coll);
             }
