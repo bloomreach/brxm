@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2021 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2022 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -29,14 +29,18 @@
   <packaging>jar</packaging>
 
   <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms7-commons</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -48,15 +52,16 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms7-commons</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-jaxrs</artifactId>
     </dependency>
+
     <dependency>
-      <groupId>com.bloomreach.xm</groupId>
-      <artifactId>navigation-application</artifactId>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
     </dependency>
 
     <dependency>
@@ -65,6 +70,12 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.bloomreach.xm</groupId>
+      <artifactId>navigation-application</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -96,17 +107,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
+      <groupId>nl.basjes.parse.useragent</groupId>
+      <artifactId>yauaa</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-commons</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
@@ -134,7 +140,6 @@
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
-      <version>1.10</version>
       <scope>test</scope>
     </dependency>
 
