@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -56,8 +57,32 @@ public abstract class ClusterUtilitiesTest {
      * isolation all access to the repository internals must be done using reflection.
      */
     protected static Object createRepository(final String repoPath, final String repoConfig) throws Exception {
-        URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        URLClassLoader classLoader = new ClusterUtilitiesTest.RepositoryClassLoader(contextClassLoader.getURLs(), contextClassLoader);
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        URL[] contextClassLoaderURLs;
+        if (contextClassLoader instanceof URLClassLoader) {
+            contextClassLoaderURLs = ((URLClassLoader)contextClassLoader).getURLs();
+        } else {
+            // Java 11 no longer uses URLClassLoader... build URLs from current class path entries
+            String[] classPathEntries = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+            contextClassLoaderURLs = new URL[classPathEntries.length];
+            for (int i = 0; i < classPathEntries.length; i++) {
+                try {
+                    if (classPathEntries[i].endsWith(".jar") || classPathEntries[i].endsWith("/")) {
+                        contextClassLoaderURLs[i] = new URL("file:"+classPathEntries[i]);
+                    } else {
+                        // make sure to postfix classpath folders with a /
+                        contextClassLoaderURLs[i] = new URL("file:"+classPathEntries[i]+"/");
+                    }
+                } catch (MalformedURLException unexpected) {
+                    // should never happen
+                    throw new RuntimeException(unexpected);
+                }
+            }
+        }
+        ClassLoader classLoader = new ClusterUtilitiesTest.RepositoryClassLoader(
+                contextClassLoaderURLs, contextClassLoader);
+
+
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
             return Class.forName("org.hippoecm.repository.LocalHippoRepository", true, classLoader).
@@ -184,16 +209,18 @@ public abstract class ClusterUtilitiesTest {
      */
     private static class RepositoryClassLoader extends URLClassLoader {
 
-        private final URLClassLoader shared;
+        private final ClassLoader shared;
 
-        public RepositoryClassLoader(final URL[] urls, final URLClassLoader shared) {
+        RepositoryClassLoader(final URL[] urls, final ClassLoader shared) {
             super(urls, null);
             this.shared = shared;
         }
 
         @Override
         public Class<?> loadClass(final String name, boolean resolve) throws ClassNotFoundException {
-            if (name.startsWith("javax.jcr")) {
+            if (name.startsWith("javax.jcr") || name.startsWith("java.sql.") || name.startsWith("javax.sql.") ||
+                    name.startsWith("org.onehippo.cm.model") || name.startsWith("javax.servlet"))
+            {
                 return shared.loadClass(name);
             }
             return super.loadClass(name, resolve);
