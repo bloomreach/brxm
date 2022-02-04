@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2021-2022 Bloomreach Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class AddNodeFieldCommand implements ChannelManagerCommand {
     }
 
     public String toString() {
-        return "AddNodeFieldCommand(uuid=" + this.uuid + ", fieldPath=" + this.fieldPath + ", type=" + this.type;
+        return "AddNodeFieldCommand{uuid='" + this.uuid + "', fieldPath='" + this.fieldPath + "', type='" + this.type + "'}";
     }
 
     public static class AddNodeFieldCommandBuilder {
@@ -96,8 +96,8 @@ public class AddNodeFieldCommand implements ChannelManagerCommand {
         }
 
         public String toString() {
-            return "AddNodeFieldCommand.AddNodeFieldCommandBuilder(uuid=" + this.uuid + ", fieldPath=" + this.fieldPath
-                    + ", type=" + this.type + ", fieldTypes=" + this.fieldTypes + ")";
+            return "AddNodeFieldCommand.AddNodeFieldCommandBuilder{uuid='" + this.uuid + "', fieldPath='" + this.fieldPath
+                    + "', type='" + this.type + "', fieldTypes='" + this.fieldTypes + "'}";
         }
     }
 }
