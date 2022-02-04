@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Bloomreach
+ * Copyright 2021-2022 Bloomreach Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,12 +55,7 @@ public class NodeFieldAddition {
         this.session = session;
     }
 
-    private static String stripSuffix(final String path) {
-        if (path.endsWith("]")) {
-            return StringUtils.substringBeforeLast(path, "[");
-        }
-        return path;
-    }
+
 
     @Override
     public String toString() {
@@ -110,12 +105,19 @@ public class NodeFieldAddition {
         }
     }
 
-    public static String getTypePrefix(final String type) {
-        return org.apache.commons.lang3.StringUtils.contains(type, ":") ? org.apache.commons.lang3.StringUtils.substringBefore(type, ":") : "system";
+    private static String getTypePrefix(final String type) {
+        return StringUtils.contains(type, ":") ? org.apache.commons.lang3.StringUtils.substringBefore(type, ":") : "system";
     }
 
-    public static String getTypeName(String type) {
-        return org.apache.commons.lang3.StringUtils.defaultIfEmpty(
+    private static String getTypeName(String type) {
+        return StringUtils.defaultIfEmpty(
                 org.apache.commons.lang3.StringUtils.substringAfter(type, ":"), type);
+    }
+
+    private static String stripSuffix(final String path) {
+        if (path.endsWith("]")) {
+            return StringUtils.substringBeforeLast(path, "[");
+        }
+        return path;
     }
 }
