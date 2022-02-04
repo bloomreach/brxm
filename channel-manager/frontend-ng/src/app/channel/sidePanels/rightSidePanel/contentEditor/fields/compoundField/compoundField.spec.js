@@ -23,6 +23,7 @@ describe('CompoundField', () => {
   let $scope;
   let FeedbackService;
   let FieldService;
+  let HippoIframeService;
 
   const fieldType = { jcrType: 'jcrType' };
   const fieldValues = [];
@@ -30,17 +31,19 @@ describe('CompoundField', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _FieldService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _FieldService_,_HippoIframeService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       FieldService = _FieldService_;
+      HippoIframeService = _HippoIframeService_;
     });
 
     FeedbackService = { showError: jasmine.createSpy('showError') };
     $scope = $rootScope.$new();
     $element = angular.element('<div>');
-    $ctrl = $componentController('compoundField', { $element, $scope, FeedbackService }, {
+    spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
+    $ctrl = $componentController('compoundField', { $element, $scope, FeedbackService, HippoIframeService }, {
       fieldType,
       fieldValues,
       name: 'test-name',
