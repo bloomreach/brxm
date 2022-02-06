@@ -1,0 +1,56 @@
+definitions:
+  config:
+    /hippo:namespaces/test:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /document:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogogreen/2.0
+            hipposysedit:node: true
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+            /link:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:link
+              hipposysedit:type: hippo:mirror
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /title:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              field: title
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+            /link:
+              jcr:primaryType: frontend:plugin
+              caption: Link
+              field: link
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:document
+            test:title: title
+            /test:link:
+              jcr:primaryType: hippo:mirror
+              hippo:docbase: docbase-from-document-prototype
