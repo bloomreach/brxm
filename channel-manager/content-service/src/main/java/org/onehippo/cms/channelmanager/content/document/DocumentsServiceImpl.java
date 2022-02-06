@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -252,7 +253,28 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         // always get an editable document first as that will ensure a draft and an unpublished variant exist
         final Session internalWorkflowSession = workflow.getWorkflowContext().getInternalWorkflowSession();
-        documentValidityService.handleDocumentTypeChanges(internalWorkflowSession, branchId, getHandle(uuid, internalWorkflowSession), docType);
+        final List<Node> documentVariants = new LinkedList<>();
+        try {
+            final BranchHandle branchHandle = new BranchHandleImpl(branchId, getHandle(uuid, internalWorkflowSession));
+            if (branchHandle.getDraft() != null) {
+                documentVariants.add(branchHandle.getDraft());
+            }
+            if (branchHandle.getUnpublished() != null) {
+                documentVariants.add(branchHandle.getUnpublished());
+            }
+        } catch (WorkflowException e) {
+            log.error("Could not load variants of document '{}', skipping document-validity check",
+                    getNodePathQuietly(handle), e);
+        }
+        try {
+            documentValidityService.handleDocumentTypeChanges(internalWorkflowSession, docType, documentVariants);
+        } catch (Exception e) {
+            log.error("Failed to update document type changes to document {}", getNodePathQuietly(handle), e);
+        } finally {
+            // if any exception happened and there are pending changes on the internalWorkflowSession,
+            // make sure to discard those
+            discardPendingChanges(internalWorkflowSession);
+        }
 
         final Document document = assembleDocument(uuid, handle, draftNode, docType);
         FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
@@ -269,6 +291,16 @@ public class DocumentsServiceImpl implements DocumentsService {
         jcrSaveDraftDocumentService.addDocumentInfo(document);
 
         return document;
+    }
+
+    private void discardPendingChanges(final Session internalWorkflowSession) {
+        try {
+            if (internalWorkflowSession.hasPendingChanges()) {
+                internalWorkflowSession.refresh(false);
+            }
+        } catch (RepositoryException e) {
+            log.error("Exception trying to refresh the internalWorkflowSession", e);
+        }
     }
 
     SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final String branchId
