@@ -25,21 +25,15 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NodeUtils;
-import org.onehippo.repository.branch.BranchHandle;
-import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
 import static org.onehippo.cms.channelmanager.content.document.util.FieldPath.SEPARATOR;
 import static org.onehippo.cms.channelmanager.content.document.util.PrototypeUtils.findFirstPrototypeNode;
 
@@ -48,75 +42,54 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
     private static final Logger log = LoggerFactory.getLogger(DocumentValidityServiceImpl.class);
 
     @Override
-    public void handleDocumentTypeChanges(final Session workflowSession, final String branchId,
-                                          final Node documentHandle, final DocumentType documentType) {
-
-        // The BranchHandle provides access to the document's variants for the specified branch
-        final BranchHandle branchHandle;
-        try {
-            branchHandle = new BranchHandleImpl(branchId, documentHandle);
-        } catch (WorkflowException e) {
-            log.error("Could not load variants of document '{}'", getNodePathQuietly(documentHandle), e);
-            return;
-        }
-
-        if (branchHandle.getDraft() == null) {
-            log.error("Could not find '{}' variant for document {}", DRAFT, getNodePathQuietly(documentHandle));
+    public void handleDocumentTypeChanges(final Session workflowSession, final DocumentType documentType, final List<Node> variants) throws RepositoryException {
+        if (variants.isEmpty()) {
             return;
         }
 
         // The document prototype contains the prototype nodes of the fields that where created with the doc-type editor
         final Node prototype = findFirstPrototypeNode(workflowSession, documentType.getId());
         if (prototype == null) {
-            log.warn("Unable to find prototype '{}' for branch '{}', skipping handling of document type changes",
-                    documentType.getId(), branchId);
+            log.warn("Unable to find prototype '{}', skipping handling of document type changes", documentType.getId());
             return;
         }
 
         for (final FieldType field : documentType.getFields()) {
             if (field instanceof NodeFieldType) {
-                checkFieldChanges(workflowSession, branchHandle, prototype, field);
+                checkFieldChanges(workflowSession, variants, prototype, field);
             }
         }
 
-        try {
-            if (workflowSession.hasPendingChanges()) {
-                workflowSession.save();
-            }
-        } catch (RepositoryException e) {
-            log.error("Failed to save changes to draft node of document {}", getNodePathQuietly(documentHandle), e);
+        if (workflowSession.hasPendingChanges()) {
+            workflowSession.save();
         }
     }
 
-    private void checkFieldChanges(final Session workflowSession, final BranchHandle branchHandle,
+    private void checkFieldChanges(final Session workflowSession, final List<Node> variants,
                                    final Node documentPrototype, final FieldType field) {
 
-        final Node draft = branchHandle.getDraft();
+        final Node variant = variants.get(0);
         try {
-            long numberOfMissingNodes = getNumberOfMissingNodes(draft, field);
+            long numberOfMissingNodes = getNumberOfMissingNodes(variant, field);
             if (numberOfMissingNodes == 0) {
                 return;
             }
 
             if (log.isDebugEnabled()) {
                 log.debug("Found {} missing node(s) for field '{}' of type '{}' in document node {}",
-                        numberOfMissingNodes, field.getId(), field.getType(), getNodePathQuietly(draft));
+                        numberOfMissingNodes, field.getId(), field.getType(), getNodePathQuietly(variant));
             }
 
             final List<Node> missingPrototypeNodes = findMissingPrototypeNodes(workflowSession, documentPrototype, field);
             if (missingPrototypeNodes.isEmpty()) {
                 log.error("Failed to find prototype nodes for field '{}' in document '{}' which is missing {} nodes",
-                        field.getId(), getNodePathQuietly(draft), numberOfMissingNodes);
+                        field.getId(), getNodePathQuietly(variant), numberOfMissingNodes);
                 return;
             }
 
-            final List<Node> variants = Lists.newArrayList(branchHandle.getDraft());
-            if (branchHandle.getUnpublished() != null) {
-                variants.add(branchHandle.getUnpublished());
-            }
             copyMissingPrototypeNodes(workflowSession, field, numberOfMissingNodes, missingPrototypeNodes, variants);
         } catch (RepositoryException e) {
-            log.warn("An error occurred while checking the cardinality of field '{}': {}", field.getId(),  e.getMessage());
+            log.warn("An error occurred while checking the cardinality of field '{}': {}", field.getId(), e.getMessage());
         }
     }
 
