@@ -18,12 +18,14 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.assertj.core.api.Assertions;
+import org.assertj.core.util.Lists;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
@@ -104,17 +106,6 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
     }
 
     @Test
-    public void logs_error_and_returns_if_draft_is_null() {
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(DocumentValidityServiceImpl.class).build()) {
-
-            documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, null);
-
-            Assertions.assertThat(interceptor.messages())
-                    .containsExactly("Could not find 'DRAFT' variant for document /docvalidation/documents/test/doc");
-        }
-    }
-
-    @Test
     public void logs_a_warning_if_the_document_has_no_prototype_node() throws Exception {
         // remove the prototype nodes from the doc-type
         final Node doctype = session.getNode(TEST_DOCTYPE);
@@ -125,10 +116,10 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(DocumentValidityServiceImpl.class).build()) {
             final DocumentType documentType = getDocumentType("test:document");
-            documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
+            documentValidityService.handleDocumentTypeChanges(session, documentType, Collections.singletonList(session.getNode(TEST_DOC_DRAFT)));
 
             Assertions.assertThat(interceptor.messages())
-                    .containsExactly("Unable to find prototype 'test:document' for branch 'master', skipping handling of document type changes");
+                    .containsExactly("Unable to find prototype 'test:document', skipping handling of document type changes");
         }
     }
 
@@ -143,7 +134,7 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
         assertFalse(draft.hasNode("test:link"));
         assertFalse(unpublished.hasNode("test:link"));
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Lists.newArrayList(draft, unpublished));
 
         assertLinkExists("docbase-from-document-prototype", 1, draft, unpublished);
     }
@@ -156,10 +147,10 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
         final DocumentType documentType = getDocumentType("test:document");
         EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
-
         final Node draft = session.getNode(TEST_DOC_DRAFT);
         final Node unpublished = session.getNode(TEST_DOC_UNPUBLISHED);
+
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Lists.newArrayList(draft, unpublished));
 
         assertLinkExists("cafebabe-cafe-babe-cafe-babecafebabe", 1, draft, unpublished);
     }
@@ -174,10 +165,10 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
 
         EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
-
         final Node draft = session.getNode(TEST_DOC_DRAFT);
         final Node unpublished = session.getNode(TEST_DOC_UNPUBLISHED);
+
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Lists.newArrayList(draft, unpublished));
 
         assertLinkExists("docbase-from-document-prototype", 1, draft, unpublished);
         assertLinkExists("docbase-from-document-prototype", 2, draft, unpublished);
@@ -191,10 +182,10 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
         final DocumentType documentType = getDocumentType("test:document");
         EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
-
         final Node draft = session.getNode(TEST_DOC_DRAFT);
         final Node unpublished = session.getNode(TEST_DOC_UNPUBLISHED);
+
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Lists.newArrayList(draft, unpublished));
 
         assertLinkExists("docbase-from-document-prototype", 1, draft, unpublished);
         assertFalse(draft.hasNode("test:link[2]"));
@@ -205,7 +196,7 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
                 .findFirst()
                 .ifPresent(fieldType -> fieldType.setMinValues(2));
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Lists.newArrayList(draft, unpublished));
 
         assertLinkExists("docbase-from-document-prototype", 2, draft, unpublished);
     }
@@ -227,10 +218,11 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
                 .findFirst()
                 .ifPresent(fieldType -> fieldType.setMinValues(4));
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
-
         final Node draft = session.getNode(TEST_DOC_DRAFT);
         final Node unpublished = session.getNode(TEST_DOC_UNPUBLISHED);
+
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Lists.newArrayList(draft, unpublished));
+
         assertLinkExists("docbase-from-document-prototype", 1, draft, unpublished);
         assertLinkExists("second-docbase", 2, draft, unpublished);
         assertLinkExists("docbase-from-document-prototype", 3, draft, unpublished);
@@ -241,11 +233,12 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
     public void does_not_change_document_if_no_missing_fields() throws Exception {
         final DocumentType documentType = getDocumentType("test:document");
         EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
+        final Node draft = session.getNode(TEST_DOC_DRAFT);
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Collections.singletonList(draft));
         final String handleBefore = snapshot(documentHandle);
 
-        documentValidityService.handleDocumentTypeChanges(session, MASTER_BRANCH_ID, workflowSessionHandle, documentType);
+        documentValidityService.handleDocumentTypeChanges(session, documentType, Collections.singletonList(draft));
         final String handleAfter = snapshot(documentHandle);
 
         assertEquals(handleBefore, handleAfter);
