@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.validation.ValidatorUtils;
+
+import java.util.Optional;
 
 import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
 import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
@@ -86,10 +88,8 @@ public class FieldEditor extends Panel {
 
             private void showError(final String msg) {
                 error(msg);
-                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target != null) {
-                    target.add(FieldEditor.this);
-                }
+                final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(FieldEditor.this));
             }
 
             @Override

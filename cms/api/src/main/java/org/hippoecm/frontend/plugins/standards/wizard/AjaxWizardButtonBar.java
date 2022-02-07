@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package org.hippoecm.frontend.plugins.standards.wizard;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.wizard.IWizard;
 import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.extensions.wizard.IWizardStep;
 import org.apache.wicket.extensions.wizard.Wizard;
-import org.apache.wicket.extensions.wizard.WizardButtonBar;
-import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.extensions.wizard.WizardButton;
 
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
-public class AjaxWizardButtonBar extends WizardButtonBar {
+public class AjaxWizardButtonBar extends org.apache.wicket.extensions.wizard.AjaxWizardButtonBar {
 
     private final Wizard wizard;
 
@@ -41,18 +41,33 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-
-        addOrReplace(new CancelButton(wizard));
-        addOrReplace(new NextButton(wizard));
-        addOrReplace(new PreviousButton(wizard));
-        addOrReplace(new FinishButton(wizard));
     }
 
-    private class CancelButton extends AjaxWizardButton {
+    @Override
+    protected WizardButton newPreviousButton(String id, IWizard wizard) {
+        return new PreviousButton(id, wizard);
+    }
 
-        public CancelButton(final Wizard wizard) {
-            super("cancel", wizard, "cancel");
+    @Override
+    protected WizardButton newNextButton(String id, IWizard wizard) {
+        return new NextButton(id, wizard);
+    }
 
+    @Override
+    protected WizardButton newFinishButton(String id, IWizard wizard) {
+        return new FinishButton(id, wizard);
+    }
+
+    @Override
+    protected WizardButton newCancelButton(String id, IWizard wizard) {
+        return new CancelButton(id, wizard);
+    }
+
+    private static class CancelButton extends WizardButton {
+
+        public CancelButton(final String id, final IWizard wizard) {
+            super(id, wizard, () -> "cancel");
+            add(ClassAttribute.append("btn btn-default"));
             add(new InputBehavior(new KeyType[] {KeyType.Escape}, EventType.click));
 
             // Skip form validation on cancel button
@@ -65,18 +80,19 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             IWizardModel wizardModel = getWizardModel();
             wizardModel.cancel();
         }
     }
 
-    private class NextButton extends AjaxWizardButton {
+    private static class NextButton extends WizardButton {
 
-        private final Wizard wizard;
+        private final IWizard wizard;
 
-        public NextButton(final Wizard wizard) {
-            super("next", wizard, "next");
+        public NextButton(final String id, final IWizard wizard) {
+            super(id, wizard, () -> "next");
+            add(ClassAttribute.append("btn btn-default"));
             this.wizard = wizard;
         }
 
@@ -86,7 +102,7 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             IWizardModel wizardModel = getWizardModel();
             IWizardStep step = wizardModel.getActiveStep();
 
@@ -100,17 +116,16 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
                 error(getLocalizer().getString(
                         "org.apache.wicket.extensions.wizard.NextButton.step.did.not.complete", this));
             }
-
-            target.add(wizard);
         }
     }
 
-    private static class PreviousButton extends AjaxWizardButton {
+    private static class PreviousButton extends WizardButton {
 
-        private final Wizard wizard;
+        private final IWizard wizard;
 
-        public PreviousButton(final Wizard wizard) {
-            super("previous", wizard, "prev");
+        public PreviousButton(final String id, final IWizard wizard) {
+            super(id, wizard, () -> "prev");
+            add(ClassAttribute.append("btn btn-default"));
             this.wizard = wizard;
 
             // Skip form validation on previous button
@@ -123,16 +138,16 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             getWizardModel().previous();
-            target.add(wizard);
         }
     }
 
-    private class FinishButton extends AjaxWizardButton {
+    private static class FinishButton extends WizardButton {
 
-        public FinishButton(final Wizard wizard) {
-            super("finish", wizard, "finish");
+        public FinishButton(final String id, final IWizard wizard) {
+            super(id, wizard, () -> "finish");
+            add(ClassAttribute.append("btn btn-default"));
         }
 
         @Override
@@ -142,12 +157,13 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             IWizardModel wizardModel = getWizardModel();
             IWizardStep step = wizardModel.getActiveStep();
 
             // let the step apply any state
             step.applyState();
+
 
             // if the step completed after applying the state, notify the wizard
             if (step.isComplete()) {

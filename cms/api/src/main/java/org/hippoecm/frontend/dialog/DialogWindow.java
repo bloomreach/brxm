@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@ package org.hippoecm.frontend.dialog;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.openjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -35,7 +37,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
@@ -120,20 +121,27 @@ public class DialogWindow extends ModalWindow implements IDialogService {
      * Adds the full dialog title for use in a tooltip.
      * This value shouldn't be HTML-escaped, but requires JavaScript quote-escaping.
      *
-     * @param settings buffer containing a JS snippet
-     * @return modified buffer
+     * @param settings JSONObject
      */
     @Override
-    protected AppendingStringBuffer postProcessSettings(final AppendingStringBuffer settings) {
+    protected void postProcessSettings(JSONObject settings) {
         final String title = new StringWithoutLineBreaksModel(dialog.getTitle()).getObject();
         final String jsEscapedTitle = StringUtils.replace(title, "\"", "\\\"");
-
-        settings.append("settings.titleTooltip = \"");
-        settings.append(jsEscapedTitle);
-        settings.append("\";\n");
-
-        return settings;
+        settings.append("titleTooltip", jsEscapedTitle);
     }
+
+    //TODO SS: Compare the code above with the commented one and compare if they're functionally the same.
+//    @Override
+//    protected AppendingStringBuffer postProcessSettings(final AppendingStringBuffer settings) {
+//        final String title = new StringWithoutLineBreaksModel(dialog.getTitle()).getObject();
+//        final String jsEscapedTitle = StringUtils.replace(title, "\"", "\\\"");
+//
+//        settings.append("settings.titleTooltip = \"");
+//        settings.append(jsEscapedTitle);
+//        settings.append("\";\n");
+//
+//        return settings;
+//    }
 
     public void show(final Dialog dialog) {
         if (isShown()) {
@@ -165,15 +173,15 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
     public void close() {
         if (isShown()) {
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target.isPresent()) {
                 clear();
                 final String javascript = String.format(
                         "var el = document.getElementById('%s'); if (el) { el.parentNode.removeChild(el); };",
                         getContent().getMarkupId());
-                target.appendJavaScript(javascript);
-                target.add(this);
-                close(target);
+                target.get().appendJavaScript(javascript);
+                target.get().add(this);
+                close(target.get());
             } else {
                 closeDialog(dialog);
             }
@@ -249,11 +257,11 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         }
         setCssClassName(cssClasses);
 
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            show(target);
-            focusContent(target);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
+            show(ajaxRequestTarget);
+            focusContent(ajaxRequestTarget);
+        });
     }
 
     private void focusContent(final AjaxRequestTarget target) {

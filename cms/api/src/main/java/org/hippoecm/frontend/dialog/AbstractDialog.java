@@ -18,6 +18,7 @@ package org.hippoecm.frontend.dialog;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -326,7 +327,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
                         }
                     }) {
                 @Override
-                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     target.appendJavaScript(getFullscreenScript());
                     target.add(this); //update button label
                     fullscreen = !fullscreen;
@@ -644,17 +645,17 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
      */
     @Override
     public void onClose() {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
             for (final ButtonWrapper bw : buttons) {
                 if (bw.getKeyType() != null) {
                     // the input behavior does not support removal, so we need to do this manually
-                    target.prependJavaScript("if (window['shortcut']) { shortcut.remove('" +
+                    ajaxRequestTarget.prependJavaScript("if (window['shortcut']) { shortcut.remove('" +
                             bw.getKeyType() +
                             "'); }\n");
                 }
             }
-        }
+        });
     }
 
     /**

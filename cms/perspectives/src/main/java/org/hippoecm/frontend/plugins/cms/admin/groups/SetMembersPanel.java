@@ -137,7 +137,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
         // add a cancel/back button
         form.add(new AjaxButton("back-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 // one up
                 final List<IBreadCrumbParticipant> all = breadCrumbModel.allBreadCrumbParticipants();
                 breadCrumbModel.setActive(all.get(all.size() - 2));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,7 +133,7 @@ public abstract class GalleryUploadPanel extends Panel {
             }
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 uploadSelected = false;
                 target.add(this);
             }

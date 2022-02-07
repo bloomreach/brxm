@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package org.hippoecm.frontend.attributes;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
-import org.hippoecm.frontend.model.SerializableSupplier;
 
 /**
  * Utility to set, add and remove style attributes of Wicket components.
@@ -39,20 +37,12 @@ public class StyleAttribute {
         return AttributeModifier.append(STYLE_ATTRIBUTE, styleModel).setSeparator(SEPARATOR);
     }
 
-    public static AttributeModifier append(final SerializableSupplier<String> supplier) {
-        return append(ReadOnlyModel.of(supplier));
-    }
-
     public static AttributeModifier set(final String style) {
         return AttributeModifier.replace(STYLE_ATTRIBUTE, style);
     }
 
     public static AttributeModifier set(final IModel<String> styleModel) {
         return AttributeModifier.replace(STYLE_ATTRIBUTE, styleModel);
-    }
-
-    public static AttributeModifier set(final SerializableSupplier<String> supplier) {
-        return set(ReadOnlyModel.of(supplier));
     }
 
     public static AttributeModifier clear() {

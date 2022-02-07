@@ -34,7 +34,6 @@ import org.apache.wicket.model.util.ListModel;
 import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.standardworkflow.JcrTemplateNode;
@@ -66,7 +65,7 @@ public class AddDocumentDialogTest extends AbstractDocumentDialogTest {
         EasyMock.expect(localeProvider.getLocales()).andReturn(Collections.emptyList());
         EasyMock.replay(localeProvider);
 
-        final IModel<StringCodec> stringCodecModel = ReadOnlyModel.of(() -> stringCodec);
+        final IModel<StringCodec> stringCodecModel = () -> stringCodec;
         final AddDocumentDialog dialog = new AddDocumentDialog(
                 new AddDocumentArguments(),
                 Model.of("Add document dialog title"),

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,8 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class MoveDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
@@ -104,10 +106,8 @@ public class MoveDialog extends LookupDialog {
                 log.error(e.getMessage());
             }
         }
-        AjaxRequestTarget requestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (requestTarget != null) {
-            requestTarget.add(targetLabel);
-        }
+        final Optional<AjaxRequestTarget> requestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
+        requestTarget.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(targetLabel));
     }
 
     @Override

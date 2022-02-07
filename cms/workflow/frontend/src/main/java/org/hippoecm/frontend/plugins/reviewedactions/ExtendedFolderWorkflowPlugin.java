@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -250,7 +251,8 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             onOk();
             affectedComponent.setDefaultModel(new Model<>(Integer.toString(processed)));
             affectedComponent.setVisible(true);
-            RequestCycle.get().find(AjaxRequestTarget.class).add(this);
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
         }
     }
 }

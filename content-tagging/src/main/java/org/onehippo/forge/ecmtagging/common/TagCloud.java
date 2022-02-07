@@ -16,6 +16,7 @@
 package org.onehippo.forge.ecmtagging.common;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -77,10 +78,10 @@ public abstract class TagCloud extends Panel {
         protected void populateItem(Item item) {
             final Tag tag = (Tag) item.getModelObject();
             Fragment fragment = new Fragment("fragment", "linkfragment", this);
-            AjaxFallbackLink link = new AjaxFallbackLink("link") {
+            AjaxFallbackLink<Void> link = new AjaxFallbackLink<>("link") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
-                    TagCloud.this.onClick(target, tag);
+                public void onClick(final Optional<AjaxRequestTarget> optional) {
+                    optional.ifPresent(target -> TagCloud.this.onClick(target, tag));
                 }
             };
             Label label = new Label("link-text", tag.getName());

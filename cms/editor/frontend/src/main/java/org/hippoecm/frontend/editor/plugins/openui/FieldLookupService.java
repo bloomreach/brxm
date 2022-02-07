@@ -25,7 +25,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.collections4.IteratorUtils;
-import org.apache.wicket.ajax.json.JSONObject;
+import com.github.openjson.JSONObject;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
