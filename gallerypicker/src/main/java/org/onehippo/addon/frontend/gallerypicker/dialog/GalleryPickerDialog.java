@@ -34,6 +34,8 @@ import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 public class GalleryPickerDialog extends LinkPickerDialog {
 
     private static Logger log = LoggerFactory.getLogger(GalleryPickerDialog.class);
@@ -60,10 +62,8 @@ public class GalleryPickerDialog extends LinkPickerDialog {
                     super.createGalleryItem(upload, galleryType);
 
                     // manually refresh feedback panel on an ajax request
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null){
-                        target.add(feedback);
-                    }
+                    Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(feedback));
                 }
             };
             fragment.add(uploadPanel);
@@ -109,11 +109,8 @@ public class GalleryPickerDialog extends LinkPickerDialog {
 
         // function is called by parent constructor, when our constructor hasn't run yet...
         if (uploadPanel != null) {
-
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.add(uploadPanel);
-            }
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(uploadPanel));
         }
     }
 }

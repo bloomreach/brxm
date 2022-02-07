@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,23 +20,22 @@ import java.util.Date;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 
 public class DateTimeLabel extends Label {
 
     public DateTimeLabel(final String id, final IModel<Date> model) {
-        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print()));
+        super(id, () -> DateTimePrinter.of(model.getObject()).print());
     }
 
     public DateTimeLabel(final String id, final IModel<Date> model, final FormatStyle style) {
-        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print(style)));
+        super(id, () -> DateTimePrinter.of(model.getObject()).print(style));
     }
 
     public DateTimeLabel(final String id, final IModel<Date> model, final FormatStyle dateStyle, final FormatStyle timeStyle) {
-        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print(dateStyle, timeStyle)));
+        super(id, () -> DateTimePrinter.of(model.getObject()).print(dateStyle, timeStyle));
     }
 
     public DateTimeLabel(final String id, final IModel<Date> model, final String pattern) {
-        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print(pattern)));
+        super(id, () -> DateTimePrinter.of(model.getObject()).print(pattern));
     }
 }

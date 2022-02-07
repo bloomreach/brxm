@@ -17,6 +17,7 @@ package org.hippoecm.frontend.behaviors;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -64,28 +65,29 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
      * Activate (show) the context menu.  Other open menus will be closed.
      */
     public void activate(IContextMenu active) {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
             for (IContextMenu menu : getMenus(false)) {
                 if (menu != active) {
-                    menu.collapse(target);
+                    menu.collapse(ajaxRequestTarget);
                 }
             }
-            show(target);
-        }
+            show(ajaxRequestTarget);
+
+        });
     }
 
     /**
      * Close all open context menu's.
      */
     public void collapseAll() {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        for (IContextMenu menu : getMenus(false)) {
-            menu.collapse(target);
-        }
-        if (target != null) {
-            hide(target);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
+            for (IContextMenu menu : getMenus(false)) {
+                menu.collapse(ajaxRequestTarget);
+            }
+            hide(ajaxRequestTarget);
+        });
     }
 
     /**

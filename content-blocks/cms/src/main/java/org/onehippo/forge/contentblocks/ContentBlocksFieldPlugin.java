@@ -672,7 +672,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
             final AjaxSubmitLink link = new AjaxSubmitLink("addItem", form) {
                 @Override
-                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     final String selectedValue = selectedOption != null ? selectedOption.getValue() : null;
                     log.debug("Selected value '{}' from dropdown", selectedValue);
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -61,10 +62,8 @@ class ListCell extends Panel {
             IObserver observer = new Observer(observable) {
 
                 public void onEvent(Iterator events) {
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null) {
-                        target.add(ListCell.this);
-                    }
+                    Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(ListCell.this));
                 }
 
             };
@@ -88,10 +87,8 @@ class ListCell extends Panel {
                             }
 
                             public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-                                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                                if (target != null) {
-                                    target.add(ListCell.this);
-                                }
+                                Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                                target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(ListCell.this));
                             }
 
                         };

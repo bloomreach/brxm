@@ -55,7 +55,6 @@ import org.hippoecm.frontend.attributes.StyleAttribute;
 import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
@@ -138,7 +137,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
         setOutputMarkupId(true);
 
-        final IModel<Integer> tabCount = ReadOnlyModel.of(TabbedPanel.this.tabs::size);
+        final IModel<Integer> tabCount = TabbedPanel.this.tabs::size;
 
         // add the loop used to generate tab names
         tabsContainer.add(new Loop("tabs", tabCount) {

@@ -23,7 +23,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -50,6 +52,7 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectP
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.ResourceAggregator;
 import org.apache.wicket.markup.head.filter.AbstractHeaderResponseFilter;
 import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
@@ -81,11 +84,10 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
+import org.apache.wicket.resource.JQueryResourceReference;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.settings.ResourceSettings;
-import org.apache.wicket.util.IContextProvider;
-import org.apache.wicket.util.IProvider;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -203,7 +205,7 @@ public class Main extends PluginApplication {
     protected String repositoryFallbackUsername;
     protected String repositoryFallbackPassword;
     private WicketFaviconService wicketFaviconService;
-    private IProvider<IExceptionMapper> exceptionMapperProvider;
+    private Supplier<IExceptionMapper> exceptionMapperProvider;
 
     protected void initializeFallBackCredentials() {
         repositoryFallbackUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
@@ -232,7 +234,7 @@ public class Main extends PluginApplication {
 //        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
 
         // LatestBundledJQueryResourceReference to be removed when upgrading to Wicket 8.x
-        getJavaScriptLibrarySettings().setJQueryReference(new LatestBundledJQueryResourceReference());
+        getJavaScriptLibrarySettings().setJQueryReference(JQueryResourceReference.getV3());
 
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
@@ -521,17 +523,18 @@ public class Main extends PluginApplication {
 
         String outputWicketpaths = obtainOutputWicketPathsParameter();
 
-        if (outputWicketpaths != null && "true".equalsIgnoreCase(outputWicketpaths)) {
-            getDebugSettings().setOutputComponentPath(true);
+        //TODO SS: Fix this
+        if ("true".equalsIgnoreCase(outputWicketpaths)) {
+            getDebugSettings().setComponentPathAttributeName("path");
         }
 
-        final IContextProvider<AjaxRequestTarget, Page> ajaxRequestTargetProvider = getAjaxRequestTargetProvider();
-        setAjaxRequestTargetProvider(context -> new PluginRequestTarget(ajaxRequestTargetProvider.get(context)));
+        final Function<Page, AjaxRequestTarget> ajaxRequestTargetProvider = getAjaxRequestTargetProvider();
+
+        setAjaxRequestTargetProvider(context -> new PluginRequestTarget(ajaxRequestTargetProvider.apply(context)));
 
         setPageRendererProvider(new IPageRendererProvider() {
-
             @Override
-            public PageRenderer get(final RenderPageRequestHandler context) {
+            public PageRenderer apply(final RenderPageRequestHandler context) {
                 return new WebPageRenderer(context) {
 
                     @Override
@@ -563,7 +566,7 @@ public class Main extends PluginApplication {
     }
 
     @Override
-    public IProvider<IExceptionMapper> getExceptionMapperProvider() {
+    public Supplier<IExceptionMapper> getExceptionMapperProvider() {
         return exceptionMapperProvider != null
             ? exceptionMapperProvider
             : super.getExceptionMapperProvider();
@@ -844,7 +847,7 @@ public class Main extends PluginApplication {
         final FilteringHeaderResponse.IHeaderResponseFilter oppositeFilter = new OppositeHeaderResponseFilter(DEFAULT_HEADER_FILTER_NAME, navAppFilter);
         final List<FilteringHeaderResponse.IHeaderResponseFilter> filters = Arrays.asList(navAppFilter, oppositeFilter);
 
-        setHeaderResponseDecorator(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
+        setHeaderResponseDecorator(response -> new ResourceAggregator(new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters)) {
 
             final Predicate<HeaderItem> shouldRender =
                     isCmsApplication() && hasNoIFrameParameter()

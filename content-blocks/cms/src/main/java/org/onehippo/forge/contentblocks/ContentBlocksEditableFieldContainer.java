@@ -154,7 +154,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
         @Override
         protected void onOk() {
-            plugin.onRemoveItem(model, getRequestCycle().find(AjaxRequestTarget.class));
+            plugin.onRemoveItem(model, getRequestCycle().find(AjaxRequestTarget.class).orElse(null));
             plugin.removeCollapsedItem(itemIndex);
             plugin.redraw();
         }

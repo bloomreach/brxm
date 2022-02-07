@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2021 Bloomreach
+  Copyright 2007-2022 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -109,9 +109,10 @@
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
 
-    <wicket.version>7.18.0</wicket.version>
+    <wicket.version>8.9.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
-    <wicket15-tree.version>7.1.0</wicket15-tree.version>
+    <wicket15-tree.version>8.0.0</wicket15-tree.version>
+    <wicket-datetime.version>8.0.0-M7</wicket-datetime.version>
 
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.4</json-lib.version>
@@ -303,6 +304,11 @@
         <version>${wicket.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.wicketstuff</groupId>
+        <artifactId>wicketstuff-lambda-components</artifactId>
+        <version>${wicket.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.wicket</groupId>
         <artifactId>wicket-extensions</artifactId>
         <version>${wicket.version}</version>
@@ -310,7 +316,7 @@
       <dependency>
         <groupId>org.apache.wicket</groupId>
         <artifactId>wicket-datetime</artifactId>
-        <version>${wicket.version}</version>
+        <version>${wicket-datetime.version}</version>
       </dependency>
       <dependency>
         <!-- code is maintained in https://code.onehippo.org -->

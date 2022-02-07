@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,19 +20,18 @@ import java.util.Date;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 
 public class DateLabel extends Label {
 
     public DateLabel(final String id, final IModel<Date> model) {
-        super(id, ReadOnlyModel.of(() -> DatePrinter.of(model.getObject()).print()));
+        super(id, () -> DatePrinter.of(model.getObject()).print());
     }
 
     public DateLabel(final String id, final IModel<Date> model, final FormatStyle style) {
-        super(id, ReadOnlyModel.of(() -> DatePrinter.of(model.getObject()).print(style)));
+        super(id, () -> DatePrinter.of(model.getObject()).print(style));
     }
 
     public DateLabel(final String id, final IModel<Date> model, final String pattern) {
-        super(id, ReadOnlyModel.of(() -> DatePrinter.of(model.getObject()).print(pattern)));
+        super(id, () -> DatePrinter.of(model.getObject()).print(pattern));
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.yui.layout;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -141,10 +142,11 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
 
     @Override
     public boolean isRendered() {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+
+        if (target.isPresent()) {
             Component parent = getComponent();
-            while (parent != null && !target.getComponents().contains(parent)) {
+            while (parent != null && !target.get().getComponents().contains(parent)) {
                 parent = parent.getParent();
             }
             if (parent != null) {
@@ -306,12 +308,12 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         }
 
         boolean expand = !unitSettings.isExpanded();
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
             String jsMethod = expand ? "YAHOO.hippo.LayoutManager.expandUnit" : "YAHOO.hippo.LayoutManager.collapseUnit";
-            target.appendJavaScript(
+            ajaxRequestTarget.appendJavaScript(
                     jsMethod + "('" + this.settings.getRootId().getElementId() + "', '" + position + "');");
-        }
+        });
         unitSettings.setExpanded(expand);
         onToggle(expand, position);
         return expand;
@@ -343,12 +345,12 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         }
 
         if (!settings.hasExpandedUnit()) {
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
+            Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> {
                 final String jsMethod = String.format("YAHOO.hippo.LayoutManager.expandUnit('%s', '%s');",
                         settings.getRootId().getElementId(), defaultExpandedUnitSettings.getPosition());
-                target.appendJavaScript(jsMethod);
-            }
+                ajaxRequestTarget.appendJavaScript(jsMethod);
+            });
             defaultExpandedUnitSettings.setExpanded(true);
         }
         onExpandDefault();

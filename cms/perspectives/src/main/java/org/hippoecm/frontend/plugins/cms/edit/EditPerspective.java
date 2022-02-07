@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.jcr.ValueFormatException;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -99,14 +100,14 @@ public class EditPerspective extends Perspective {
                 }
 
                 public void onValidation(IValidationResult result) {
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null) {
+                    final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxRequestTarget -> {
                         boolean hasMessage = false;
                         if (result != null && result.getViolations() != null) {
                             hasMessage = !result.getViolations().isEmpty();
                         }
-                        renderFeedbackIfNeeded(target, hasMessage);
-                    }
+                        renderFeedbackIfNeeded(ajaxRequestTarget, hasMessage);
+                    });
                 }
 
             }, config.getString(IValidationService.VALIDATE_ID));

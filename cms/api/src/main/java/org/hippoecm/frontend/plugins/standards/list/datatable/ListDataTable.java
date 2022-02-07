@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -241,12 +242,10 @@ public class ListDataTable<T> extends DataTable<T, String> {
             final IModel selected = ListDataTable.this.getDefaultModel();
             if (selected != null && selected.equals(model)) {
                 if (scrollSelectedIntoView) {
-                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null) {
-                        target.appendJavaScript(
-                                String.format("document.getElementById('%s').scrollIntoView(%s);",
-                                        item.getMarkupId(), scrollSelectedTopAlign));
-                    }
+                    final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.appendJavaScript(
+                            String.format("document.getElementById('%s').scrollIntoView(%s);",
+                                    item.getMarkupId(), scrollSelectedTopAlign)));
                 }
                 return "hippo-list-selected";
             } else {
