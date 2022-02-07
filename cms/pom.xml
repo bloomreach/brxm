@@ -108,7 +108,6 @@
     <!-- Project Dependencies -->
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
-
     <wicket.version>8.9.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>8.0.0</wicket15-tree.version>
