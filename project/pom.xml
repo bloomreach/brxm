@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2021 Bloomreach
+  Copyright 2007-2022 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>14.7.3-SNAPSHOT</version>
+  <version>14.7.4-SNAPSHOT</version>
 
   <name>Hippo CMS Project POM</name>
   <description>Hippo CMS Project POM</description>
@@ -33,7 +33,7 @@
   </organization>
 
   <properties>
-    <hippo.release.version>14.7.3-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>14.7.4-SNAPSHOT</hippo.release.version>
 
     <!-- use UTF-8 encoding for filtered file copy and test reports -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,7 +56,7 @@
     <jta.version>1.1.1</jta.version>
     <mail.version>1.4.7</mail.version>
     <slf4j.version>1.7.30</slf4j.version>
-    <log4j2.version>2.17.0</log4j2.version>
+    <log4j2.version>2.17.1</log4j2.version>
     <guava.version>30.1-jre</guava.version>
 
     <!-- Apache Commons -->
@@ -99,15 +99,15 @@
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.13.1</jackson2.version>
     <jackson2-databind.version>2.13.1</jackson2-databind.version>
-    <spring.version>5.3.12</spring.version>
-    <spring-boot.version>2.4.12</spring-boot.version>
+    <spring.version>5.3.15</spring.version>
+    <spring-boot.version>2.5.9</spring-boot.version>
     <!-- spring-data-redis version is not in sync with spring, caching module needs to be updated. See ENT-2061 -->
     <spring-data-redis.version>1.8.23.RELEASE</spring-data-redis.version>
-    <spring-integration-ftp.version>5.4.5</spring-integration-ftp.version>
-    <spring-integration-sftp.version>5.4.5</spring-integration-sftp.version>
-    <spring-security.version>5.5.3</spring-security.version>
+    <spring-integration-ftp.version>5.5.8</spring-integration-ftp.version>
+    <spring-integration-sftp.version>5.5.8</spring-integration-sftp.version>
+    <spring-security.version>5.6.1</spring-security.version>
     <spring-security-oauth2.version>2.5.1.RELEASE</spring-security-oauth2.version>
-    <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
+    <aspectjweaver.version>1.9.7</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.5.14</groovy.version>
     <freemarker.version>2.3.28</freemarker.version>
     <nodejs.version>v14.16.1</nodejs.version>
@@ -117,6 +117,7 @@
     <snakeyaml.version>1.26</snakeyaml.version>
     <eclipse.jetty.version>9.4.44.v20210927</eclipse.jetty.version>
     <nimbus-jose-jwt.version>8.22.1</nimbus-jose-jwt.version>
+    <jdom2.version>2.0.6.1</jdom2.version>
     <!-- test dependencies -->
     <!-- restassured 4.3.0 and higher requires groovy 3.0 or higher-->
     <restassured.version>4.2.0</restassured.version>
@@ -598,6 +599,12 @@
         <groupId>javax.ws.rs</groupId>
         <artifactId>javax.ws.rs-api</artifactId>
         <version>${jaxrs.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jdom</groupId>
+        <artifactId>jdom2</artifactId>
+        <version>${jdom2.version}</version>
       </dependency>
 
       <!-- test dependencies -->

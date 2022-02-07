@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,7 +70,16 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
             sessions.remove(session);
         }
     }
-    
+
+    @Override
+    public boolean containsResource(final Object resource) {
+        final Set<Session> sessions = tlPooledSessions.get();
+        if (sessions == null) {
+            return false;
+        }
+        return sessions.contains(resource);
+    }
+
     public void disposeResource(Object sessionObject) {
         try {
             Session session = (Session) sessionObject;

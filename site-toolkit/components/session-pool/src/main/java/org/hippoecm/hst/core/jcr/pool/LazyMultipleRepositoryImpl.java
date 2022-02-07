@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -330,6 +330,19 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             if (resourceLifecycleManagement != null) {
                 resourceLifecycleManagement.disposeResource(resource);
             }
+        }
+
+        public boolean containsResource(Object resource) {
+            if (!(resource instanceof PooledSession)) {
+                return false;
+            }
+            PooledSession session = (PooledSession) resource;
+            ResourceLifecycleManagement resourceLifecycleManagement = getResourceLifecycleManagementBySession(session);
+
+            if (resourceLifecycleManagement != null) {
+                return resourceLifecycleManagement.containsResource(resource);
+            }
+            return false;
         }
         
         public void disposeAllResources() {
