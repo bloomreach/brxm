@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -71,12 +72,9 @@ public class CssClassAppender extends AttributeModifier implements IObservable {
                 }
 
                 public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null) {
-                        target.add(component);
-                    }
+                    Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxTargetRequest -> ajaxTargetRequest.add(component));
                 }
-                
             });
         }
     }

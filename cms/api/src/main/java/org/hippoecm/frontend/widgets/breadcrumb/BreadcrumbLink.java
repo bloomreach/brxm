@@ -29,7 +29,7 @@ public class BreadcrumbLink extends Breadcrumb {
 
         setCssClass("breadcrumb-link");
 
-        AjaxLink link = new AjaxLink("link") {
+        final AjaxLink<Void> link = new AjaxLink<Void>("link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 if (onClickHandler != null) {

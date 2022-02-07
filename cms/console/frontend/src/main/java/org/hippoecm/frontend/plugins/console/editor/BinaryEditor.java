@@ -103,7 +103,8 @@ public class BinaryEditor extends Panel {
         contentIdentityValueLabel.setOutputMarkupPlaceholderTag(true);
         contentIdentityValueLabel.setVisible(false);
         add(contentIdentityValueLabel);
-        final AjaxLink contentIdentityShowLink = new AjaxLink("content-identity-show-link") {
+
+        final AjaxLink<?> contentIdentityShowLink = new AjaxLink<Void>("content-identity-show-link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 setContentIdentity(retrieveJackrabbitContentIdentity());

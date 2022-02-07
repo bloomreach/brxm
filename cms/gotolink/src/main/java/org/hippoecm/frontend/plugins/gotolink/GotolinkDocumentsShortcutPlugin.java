@@ -35,7 +35,7 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
     public GotolinkDocumentsShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        AjaxLink link = new AjaxLink("link") {
+        final AjaxLink<Void> link = new AjaxLink<Void>("link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 final String browserId = config.getString("browser.id");

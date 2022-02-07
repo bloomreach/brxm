@@ -63,7 +63,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
         // add a button that can be used to submit the form via ajax
         final AjaxButton saveButton = new AjaxButton("save-button", form) {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 final User user = model.getObject();
                 final String username = user.getUsername();
                 try {
@@ -79,7 +79,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
             }
 
             @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
+            protected void onError(AjaxRequestTarget target) {
                 // make sure the feedback panel is shown
                 target.add(EditUserPanel.this);
             }
@@ -90,7 +90,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
         // add a cancel/back button
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));

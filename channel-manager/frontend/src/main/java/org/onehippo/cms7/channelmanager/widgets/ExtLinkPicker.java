@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -254,8 +255,8 @@ public class ExtLinkPicker extends ExtObservable {
     }
 
     private static void fireLinkPickerFactoryEvent(final String eventName, final String... params) {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target == null) {
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (!target.isPresent()) {
             log.info("Cannot invoke callback for event '{}': no Ajax request target available", eventName);
             return;
         }
@@ -268,7 +269,7 @@ public class ExtLinkPicker extends ExtObservable {
         final String script = String.format("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('%s'%s);",
                 StringEscapeUtils.escapeJavaScript(eventName), args);
 
-        target.prependJavaScript(script);
+        target.get().prependJavaScript(script);
     }
 
     /**

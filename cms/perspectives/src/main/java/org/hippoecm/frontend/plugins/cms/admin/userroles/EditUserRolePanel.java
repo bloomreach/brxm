@@ -61,7 +61,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
         final AjaxButton saveButton = new AjaxButton("save-button", form) {
 
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 String description = descriptionField.getDefaultModelObjectAsString();
                 if (StringUtils.isBlank(description)) {
                     description = null;
@@ -90,7 +90,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
 
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));

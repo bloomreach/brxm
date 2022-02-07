@@ -31,6 +31,7 @@ public class EditableCollapsibleFieldContainer extends EditableNodeFieldContaine
 
     @Override
     protected void onConfigure() {
+        super.onConfigure();
         get("field-title").setVisible(true);
     }
 

@@ -40,7 +40,6 @@ import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
@@ -178,7 +177,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 };
 
                 try {
-                    IModel<StringCodec> codec = ReadOnlyModel.of(() -> getNodeNameCodec(getModelNode(), getFolder().getNode()));
+                    IModel<StringCodec> codec = () -> getNodeNameCodec(getModelNode(), getFolder().getNode());
 
                     final CopyNameHelper copyNameHelper = new CopyNameHelper(codec, translate("copyof"));
                     final Node destinationNode = destination.getChainedModel().getObject();

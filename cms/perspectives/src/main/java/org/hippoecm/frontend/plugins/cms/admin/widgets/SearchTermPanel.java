@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class SearchTermPanel extends Panel {
 
         browseLink = new AjaxSubmitLink("toggle") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 // when searchActive this link is the remove link
                 if (searchActive) {
                     searchTerm = null;
@@ -79,7 +79,7 @@ public class SearchTermPanel extends Panel {
 
     private Component createSearchIcon() {
         final IModel<Icon> iconModel =
-                ReadOnlyModel.of(() -> StringUtils.isNotBlank(searchTerm) ? Icon.TIMES : Icon.SEARCH);
+                () -> StringUtils.isNotBlank(searchTerm) ? Icon.TIMES : Icon.SEARCH;
         return HippoIcon.fromSprite("search-icon", iconModel);
     }
 }

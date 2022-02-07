@@ -25,8 +25,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.ILinkListener;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -193,7 +193,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             // set by parent class DownloadLink are ignored or overridden.
             final PageParameters parameters = new PageParameters();
             parameters.set("v", UUID.randomUUID());
-            return urlFor(ILinkListener.INTERFACE, parameters);
+            return urlForListener(parameters);
         }
 
         @Override

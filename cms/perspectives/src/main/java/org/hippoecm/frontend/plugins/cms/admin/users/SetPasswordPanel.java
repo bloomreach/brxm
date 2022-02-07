@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         final AjaxButton setButton = new AjaxButton("set-button", form) {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 final String username = user.getUsername();
                 try {
                     user.savePassword(password);
@@ -89,7 +89,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
             }
 
             @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
+            protected void onError(AjaxRequestTarget target) {
                 // make sure the feedback panel is shown
                 target.add(SetPasswordPanel.this);
             }
@@ -101,7 +101,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         queue(new AjaxButton("cancel-button") {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));
