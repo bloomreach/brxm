@@ -54,7 +54,7 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
         final AjaxButton saveButton = new AjaxButton("save-button", form) {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 final Group group = model.getObject();
                 final String groupname = group.getGroupname();
                 try {
@@ -74,7 +74,7 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
 
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));

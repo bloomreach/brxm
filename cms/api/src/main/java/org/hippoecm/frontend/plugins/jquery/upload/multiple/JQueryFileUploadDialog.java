@@ -52,7 +52,7 @@ import wicket.contrib.input.events.key.KeyType;
 /**
  * The multi-files upload dialog using jQuery File Upload plugin
  */
-public abstract class JQueryFileUploadDialog extends Dialog {
+public abstract class JQueryFileUploadDialog extends Dialog<Void> {
     private static final Logger log = LoggerFactory.getLogger(JQueryFileUploadDialog.class);
 
     public static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
@@ -81,7 +81,7 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             }
 
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 setCancelEnabled(false);
                 isUploadButtonEnabled = false;
                 target.add(this);

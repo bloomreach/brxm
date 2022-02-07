@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.apache.wicket.model.Model;
 import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -45,7 +44,7 @@ public class RenameDocumentDialogTest extends AbstractDocumentDialogTest {
         final WorkflowDescriptorModel workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
         final IWorkflowInvoker invoker = mockWorkflowInvoker();
         final StringCodec stringCodec = new StringCodecFactory.UriEncoding();
-        final IModel<StringCodec> stringCodecModel = ReadOnlyModel.of(() -> stringCodec);
+        final IModel<StringCodec> stringCodecModel = () -> stringCodec;
 
         // rename the 'news' folder
         final RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER);

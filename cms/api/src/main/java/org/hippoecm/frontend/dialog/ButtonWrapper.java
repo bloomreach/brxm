@@ -23,7 +23,6 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
@@ -36,6 +35,8 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
+
+import java.util.Optional;
 
 public class ButtonWrapper implements IClusterable {
 
@@ -86,7 +87,7 @@ public class ButtonWrapper implements IClusterable {
                 }
 
                 @Override
-                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     ButtonWrapper.this.onSubmit();
                 }
 
@@ -153,11 +154,9 @@ public class ButtonWrapper implements IClusterable {
                 @Override
                 public void onRemove(final Component component) {
                     super.onRemove(component);
-                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null) {
-                        target.appendJavaScript(String.format("if (window['shortcut']) { shortcut.remove('%s'); }",
-                                getKeyType().getKeyCode()));
-                    }
+                    final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxRequestTarget-> ajaxRequestTarget.appendJavaScript(String.format("if (window['shortcut']) { shortcut.remove('%s'); }",
+                            getKeyType().getKeyCode())));
                 }
             });
         }
@@ -169,10 +168,8 @@ public class ButtonWrapper implements IClusterable {
         if (button != null && button.isEnabled() != isEnabled && WebApplicationHelper.isPartOfPage(button)) {
             button.setEnabled(isEnabled);
             if (ajax) {
-                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target != null) {
-                    target.add(button);
-                }
+                final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                target.ifPresent(ajaxRequestTarget-> ajaxRequestTarget.add(button));
             }
         }
     }
@@ -182,10 +179,8 @@ public class ButtonWrapper implements IClusterable {
         if (button != null && button.isVisible() != isVisible) {
             button.setVisible(isVisible);
             if (ajax) {
-                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target != null) {
-                    target.add(button);
-                }
+                final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                target.ifPresent(ajaxRequestTarget-> ajaxRequestTarget.add(button));
             }
         }
     }

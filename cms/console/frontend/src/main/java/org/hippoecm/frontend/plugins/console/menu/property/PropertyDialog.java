@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -55,7 +56,6 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
@@ -178,7 +178,7 @@ public class PropertyDialog extends Dialog<Node> {
         add(checkBox);
 
         // dropdown for property type
-        final IModel<List<String>> typeChoicesModel = ReadOnlyModel.of(() -> {
+        final IModel<List<String>> typeChoicesModel = () -> {
             if (PropertyDialog.this.name != null) {
                 List<PropertyDefinition> propdefs = choiceModel.getObject().get(PropertyDialog.this.name);
                 if (propdefs != null) {
@@ -190,7 +190,7 @@ public class PropertyDialog extends Dialog<Node> {
                 }
             }
             return ALL_TYPES;
-        });
+        };
 
         final IModel<String> typeChoiceModel = new Model<String>() {
             @Override
@@ -241,14 +241,12 @@ public class PropertyDialog extends Dialog<Node> {
                 item.add(textField);
 
                 if (focusOnLatestValue && item.getIndex() == (values.size() - 1)) {
-                    AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (ajax != null) {
-                        ajax.focusComponent(textField);
-                    }
+                    Optional<AjaxRequestTarget> ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+                    ajax.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.focusComponent(textField));
                     focusOnLatestValue = false;
                 }
 
-                final AjaxLink deleteLink = new AjaxLink("removeLink") {
+                final AjaxLink deleteLink = new AjaxLink<Void>("removeLink") {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         values.remove(item.getIndex());
@@ -272,7 +270,7 @@ public class PropertyDialog extends Dialog<Node> {
             }
         });
 
-        final AjaxLink addLink = new AjaxLink("addLink") {
+        final AjaxLink addLink = new AjaxLink<Void>("addLink") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 values.add("");

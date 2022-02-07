@@ -27,7 +27,7 @@ import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
-abstract class MenuLink extends Link {
+abstract class MenuLink extends Link<Void> {
 
     public MenuLink(final String id) {
         super(id);

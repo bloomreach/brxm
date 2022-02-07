@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
+
+import java.util.Optional;
 
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
@@ -214,10 +216,10 @@ public class RootPanel extends ExtPanel {
      */
     void activateCard(final CardId cardId) {
         setActiveCard(cardId);
-        final AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
-        if (ajaxRequestTarget != null) {
+        final Optional<AjaxRequestTarget> target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
             selectActiveItem(ajaxRequestTarget);
             redraw = false;
-        }
+        });
     }
 }
