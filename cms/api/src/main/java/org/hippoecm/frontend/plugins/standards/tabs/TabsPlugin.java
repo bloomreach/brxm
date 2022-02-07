@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -658,7 +658,7 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    private class CloseAllDialog extends Dialog {
+    private class CloseAllDialog extends Dialog<Void> {
 
         public static final String MODIFIED_DOCS_VIEW_ID = "modified-docs-view";
 
@@ -676,7 +676,7 @@ public class TabsPlugin extends RenderPlugin {
 
             final AjaxButton discardAllButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("discard-all")) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     final Consumer<Tab> discardAndClose = currentTab -> {
                         final IEditor editor = currentTab.getEditor();
                         if (editor != null) {
@@ -701,7 +701,7 @@ public class TabsPlugin extends RenderPlugin {
 
             final AjaxButton saveAllButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save-all")) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     final Consumer<Tab> saveAndClose = currentTab -> {
                         final IEditor editor = currentTab.getEditor();
                         if (editor != null) {
@@ -794,7 +794,7 @@ public class TabsPlugin extends RenderPlugin {
                     : new ResourceModel("discard-invalid");
             final AjaxButton discardButton = new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     try {
                         actions.revert();
                         actions.close();
@@ -817,7 +817,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     try {
                         actions.save();
                         actions.close();

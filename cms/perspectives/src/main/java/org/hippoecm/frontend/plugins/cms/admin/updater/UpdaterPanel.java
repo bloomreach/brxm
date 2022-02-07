@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
@@ -50,7 +51,6 @@ import org.hippoecm.frontend.ajax.BrSubmit;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
@@ -193,7 +193,7 @@ public class UpdaterPanel extends SystemPanel {
         form = new HippoForm("new-form");
         final AjaxButton newButton = new BrSubmit("new-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 newUpdater();
             }
         };
@@ -237,7 +237,7 @@ public class UpdaterPanel extends SystemPanel {
         editor.setOutputMarkupId(true);
         add(editor);
 
-        title = new Label("updater-title", ReadOnlyModel.of(this::getUpdaterTitle));
+        title = new Label("updater-title", this::getUpdaterTitle);
         title.setOutputMarkupId(true);
         add(title);
 
@@ -286,10 +286,13 @@ public class UpdaterPanel extends SystemPanel {
     }
 
     private void updateUI() {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        expandAndSelectNodeInTree(target);
-        updateEditor(target);
-        target.add(title);
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
+            expandAndSelectNodeInTree(ajaxRequestTarget);
+            updateEditor(ajaxRequestTarget);
+            ajaxRequestTarget.add(title);
+        });
+
         path = null;
     }
 

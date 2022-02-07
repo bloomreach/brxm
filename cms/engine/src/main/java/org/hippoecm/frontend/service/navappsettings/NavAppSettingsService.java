@@ -26,11 +26,11 @@ import java.util.stream.Stream;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.filter.NavAppRedirectFilter;
-import org.hippoecm.frontend.model.SerializableSupplier;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -65,12 +65,12 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
     private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
     // To make unit testing easier (needs to be serializable )
-    private final SerializableSupplier<PluginUserSession> pluginUserSessionSupplier;
-    private final SerializableSupplier<SessionAttributeStore> sessionAttributeStoreSupplier;
+    private final IModel<PluginUserSession> pluginUserSessionSupplier;
+    private final IModel<SessionAttributeStore> sessionAttributeStoreSupplier;
 
     private final transient NavAppResourceService navAppResourceService;
 
-    NavAppSettingsService(IPluginContext context, IPluginConfig config, SerializableSupplier<PluginUserSession> pluginUserSessionSupplier, SerializableSupplier<SessionAttributeStore> sessionAttributeStoreSupplier, NavAppResourceService navAppResourceService) {
+    NavAppSettingsService(IPluginContext context, IPluginConfig config, IModel<PluginUserSession> pluginUserSessionSupplier, IModel<SessionAttributeStore> sessionAttributeStoreSupplier, NavAppResourceService navAppResourceService) {
         super(context, config);
         this.pluginUserSessionSupplier = pluginUserSessionSupplier;
         this.navAppResourceService = navAppResourceService;
@@ -90,7 +90,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     @Override
     public NavAppSettings getNavAppSettings(final Request request) {
 
-        final PluginUserSession pluginUserSession = pluginUserSessionSupplier.get();
+        final PluginUserSession pluginUserSession = pluginUserSessionSupplier.getObject();
         final UserSettings userSettings = createUserSettings(pluginUserSession);
 
         final IRequestParameters queryParameters = request.getQueryParameters();
@@ -99,11 +99,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
         final StringValue loginTypeStringValue = queryParameters.getParameterValue(LOGIN_TYPE_QUERY_PARAMETER);
         if (loginTypeStringValue.toString(EMPTY).equals("local")) {
-            this.sessionAttributeStoreSupplier.get().setAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
+            this.sessionAttributeStoreSupplier.getObject().setAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
         }
 
         final boolean localLogin = (boolean) Optional
-                .ofNullable(this.sessionAttributeStoreSupplier.get().getAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME))
+                .ofNullable(this.sessionAttributeStoreSupplier.getObject().getAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME))
                 .orElse(false);
 
         final String logLevelString = queryParameters.getParameterValue(LOG_LEVEL).toString(EMPTY);

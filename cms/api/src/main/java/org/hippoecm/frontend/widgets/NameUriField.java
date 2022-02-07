@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.repository.api.StringCodec;
+
+import java.util.Optional;
 
 public class NameUriField extends Panel {
 
@@ -155,16 +156,14 @@ public class NameUriField extends Panel {
         };
 
         uriAction.add(new Label("uriActionLabel",
-                ReadOnlyModel.of(() -> getString(urlIsEditable ? "url-reset" : "url-edit"))));
+                () -> getString(urlIsEditable ? "url-reset" : "url-edit")));
         return uriAction;
     }
 
     @Override
     protected void onBeforeRender() {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.focusComponent(nameComponent);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.focusComponent(nameComponent));
         super.onBeforeRender();
     }
 
@@ -199,10 +198,12 @@ public class NameUriField extends Panel {
     // the intended codec is applied (mostly the codec model is detached so that upon the next usage it will load a
     // different StringCodec).
     public void onCodecModelDetached() {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (!urlIsEditable) {
-            target.add(urlComponent);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
+            if (!urlIsEditable) {
+                ajaxRequestTarget.add(urlComponent);
+            }
+        });
     }
 
     public void setAjaxChannel(final AjaxChannel ajaxChannel) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -272,13 +272,13 @@ public class ChannelEditor extends ExtPanel {
     }
 
     public void viewChannel(final String channelId, final String initialPath, final String branchId) {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
             final String loadChannelScript = String.format("Ext.getCmp('%s').initChannel('%s', '%s', '%s');",
                     getMarkupId(), channelId, initialPath, branchId);
-            target.appendJavaScript(loadChannelScript);
+            ajaxRequestTarget.appendJavaScript(loadChannelScript);
             // N.B. actually loading the channel is triggered by the activation of the ChannelManagerPerspective
-        }
+        });
     }
 
     private static Optional<String> getUuid(final String path) {
@@ -340,16 +340,16 @@ public class ChannelEditor extends ExtPanel {
     private class EditorOpenListener implements IEditorOpenListener, Serializable {
         @Override
         public void onOpen(final IModel<Node> model) {
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> {
                 try {
                     final String killEditorScript = String.format("Ext.getCmp('%s').killEditor('%s');",
                             getMarkupId(), model.getObject().getIdentifier());
-                    target.appendJavaScript(killEditorScript);
+                    ajaxRequestTarget.appendJavaScript(killEditorScript);
                 } catch (RepositoryException e) {
                     log.warn("Failed to retrieve UUID from editor's node model", e);
                 }
-            }
+            });
         }
     }
 }
