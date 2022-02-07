@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.7.3-SNAPSHOT</version>
+    <version>14.7.4-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>14.7.3-SNAPSHOT</version>
+  <version>14.7.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.org/</url>
   <inceptionYear>2017</inceptionYear>
@@ -41,7 +41,6 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <jdom2.version>2.0.6</jdom2.version>
     <jaxen.version>1.1.6</jaxen.version>
 
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
@@ -86,12 +85,6 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson2-databind.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>jdom2</artifactId>
-        <version>${jdom2.version}</version>
       </dependency>
 
       <dependency>

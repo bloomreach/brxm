@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2021 Bloomreach
+  Copyright 2010-2022 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>14.7.3-SNAPSHOT</version>
+    <version>14.7.4-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -35,7 +35,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>14.7.3-SNAPSHOT</version>
+  <version>14.7.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -88,7 +88,7 @@
 
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
-    <mime4j.version>0.6</mime4j.version>
+    <mime4j.version>0.8.4</mime4j.version>
 
     <!-- Before updating the swagger version verify swagger yaml works. See HSTTWO-4537 -->
     <swagger-core.version>1.6.2</swagger-core.version>
@@ -463,7 +463,7 @@
 
       <dependency>
         <groupId>org.apache.james</groupId>
-        <artifactId>apache-mime4j</artifactId>
+        <artifactId>apache-mime4j-core</artifactId>
         <version>${mime4j.version}</version>
         <exclusions>
           <exclusion>
