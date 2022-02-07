@@ -480,6 +480,24 @@ describe('PageService', () => {
         'username',
       ),
     ],
+    [
+      'PublicationRequest if the latest element in workflow.requests is WorkflowRequestType.Publish',
+      {
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
+        workflow: {
+          requests: [
+            { type: WorkflowRequestType.Depublish, name: 'page name' },
+            { type: WorkflowRequestType.Publish, name: 'page name' },
+          ],
+        },
+      },
+      undefined,
+      new XPageStatusInfo(
+        XPageStatus.PublicationRequest,
+        DocumentState.Live,
+        'page name',
+      ),
+    ],
   ])('getXPageStatus if page states represent "%s" state', (expectedStatusName, pageStates, project, expectedStatusInfo) => {
     test(`should return ${expectedStatusName} status info`, async () => {
       ng1PageService.states = pageStates as PageStates;
