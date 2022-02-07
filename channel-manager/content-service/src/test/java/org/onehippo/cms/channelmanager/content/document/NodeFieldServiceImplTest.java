@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Bloomreach
+ * Copyright 2021-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -65,6 +67,10 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
         JcrUtils.class,
 })
 public class NodeFieldServiceImplTest {
+
+    // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
+    // After CMS-14948 has been done this workaround can be removed again
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private Session session;
     private NodeFieldServiceImpl nodeFieldService;

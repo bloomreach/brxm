@@ -23,6 +23,8 @@ import org.powermock.api.support.membermodification.MemberMatcher;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -31,9 +33,13 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"org.apache.logging.log4j.*", "javax.management.*", "javax.net.ssl.*", "com.sun.org.apache.xerces.*"})
 @PrepareForTest(ClassWithStaticMembers.class)
 public class TestCompatibilityWithPowerMock extends CXFTest {
+
+    // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
+    // After CMS-14948 has been done this workaround can be removed again
+    private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     @Before
     public void setup() {

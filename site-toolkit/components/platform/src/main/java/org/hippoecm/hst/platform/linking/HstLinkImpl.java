@@ -265,7 +265,7 @@ public class HstLinkImpl implements HstLink {
 
         // check if we need to set an explicit contextPath 
         String explicitContextPath = null;
-        if (requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest()) {
+        if (requestContext.isChannelManagerRestRequest() || (requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest())) {
             if (mount != null) {
                 explicitContextPath = mount.getContextPath();
             } else {
@@ -304,7 +304,7 @@ public class HstLinkImpl implements HstLink {
             // for requests that are a channel manager preview request, we always return absolute links (starting with
             // a '/') and never fully qualified links UNLESS the request is a channel mgr preview Page Model API request:
             // Since these requests are consumed by an SPA, they will need to follow the 'normal' URL procssing
-            if (requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest()) {
+            if (requestContext.isChannelManagerRestRequest() || (requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest())) {
                 if (requestContext.getRenderHost() == null) {
                     // TODO See HSTTWO-4587 : Because we still have the issue HSTTWO-4587, the render host can be null
                     // TODO HSTTWO-4587 needs to be fixed for that, for now, do not throw IllegalStateException
