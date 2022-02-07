@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <scope>provided</scope>
-    </dependency> 
+    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
@@ -106,10 +106,10 @@
       <artifactId>guava</artifactId>
     </dependency>
     <!-- Exclude commons-logging explicitly by a provided dependency. -->
-    <dependency> 
-      <groupId>commons-logging</groupId> 
-      <artifactId>commons-logging</artifactId> 
-      <scope>provided</scope> 
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -138,15 +138,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.james</groupId>
-      <artifactId>apache-mime4j</artifactId>
+      <artifactId>apache-mime4j-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-utilities</artifactId>
     </dependency>
-    
+
     <!-- Test dependencies -->
-    
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -185,33 +185,33 @@
       <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
       <artifactId>hst-addon-cnd</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>   
+      <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-repository</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>      
+      <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-unittestcontents</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>      
+      <scope>test</scope>
     </dependency>
     <!-- HST Core must be used only as a 'test' scope. It may not be provided at runtime. -->
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>      
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <scope>test</scope>      
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
