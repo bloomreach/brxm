@@ -88,7 +88,7 @@
 
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
-    <mime4j.version>0.8.6</mime4j.version>
+    <mime4j.version>0.8.4</mime4j.version>
 
     <!-- Before updating the swagger version verify swagger yaml works. See HSTTWO-4537 -->
     <swagger-core.version>1.6.2</swagger-core.version>
