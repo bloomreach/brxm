@@ -26,7 +26,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.form.PostOnlyForm;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
