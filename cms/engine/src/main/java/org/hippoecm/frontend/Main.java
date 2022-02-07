@@ -83,7 +83,6 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
-import org.apache.wicket.resource.JQueryResourceReference;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.settings.ResourceSettings;
@@ -231,11 +230,6 @@ public class Main extends PluginApplication {
 
         getPageSettings().setVersionPagesByDefault(false);
 //        getPageSettings().setAutomaticMultiWindowSupport(false);
-
-//        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
-
-        // LatestBundledJQueryResourceReference to be removed when upgrading to Wicket 8.x
-        getJavaScriptLibrarySettings().setJQueryReference(JQueryResourceReference.getV3());
 
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
