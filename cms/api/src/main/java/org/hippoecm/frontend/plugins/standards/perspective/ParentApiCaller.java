@@ -17,8 +17,8 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 
 import java.util.function.Supplier;
 
+import com.github.openjson.JSONObject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
 
@@ -32,7 +32,7 @@ public class ParentApiCaller implements ParentApi {
     private Supplier<IPartialPageRequestHandler> targetSupplier;
 
     public ParentApiCaller() {
-        setTargetSupplier(() -> RequestCycle.get().find(AjaxRequestTarget.class));
+        setTargetSupplier(() -> RequestCycle.get().find(AjaxRequestTarget.class).orElse(null));
     }
 
     // For testing purposes

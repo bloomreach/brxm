@@ -474,10 +474,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                         public void onValidation(final IValidationResult result) {
                             final boolean valid = itemRenderer.isValid();
                             if (valid != this.isValid()) {
-                                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                                if (target != null) {
-                                    target.add(item);
-                                }
+                                final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                                target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(item));
                                 setValid(valid);
                             }
                         }

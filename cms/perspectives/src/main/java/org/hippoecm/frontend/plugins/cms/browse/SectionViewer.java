@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.browse;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -202,10 +203,8 @@ public class SectionViewer extends Panel implements ICardView {
             sections.setActiveSectionByName(sectionName);
             onSectionChange(sectionName);
 
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.add(this);
-            }
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
         }
     }
 

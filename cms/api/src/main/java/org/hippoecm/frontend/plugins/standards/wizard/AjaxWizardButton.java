@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ public abstract class AjaxWizardButton extends AjaxButton {
     }
 
     @Override
-    protected final void onSubmit(AjaxRequestTarget target, Form form) {
-        onClick(target, form);
+    protected final void onSubmit(AjaxRequestTarget target) {
+        onClick(target);
     }
 
-    protected abstract void onClick(AjaxRequestTarget target, Form form);
+    protected abstract void onClick(AjaxRequestTarget target);
 }

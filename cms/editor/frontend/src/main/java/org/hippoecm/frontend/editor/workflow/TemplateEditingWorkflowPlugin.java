@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -205,7 +205,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }
     }
 
-    private class OnCloseDialog extends AbstractDialog {
+    private class OnCloseDialog extends AbstractDialog<Void> {
         private static final long serialVersionUID = 1L;
 
         public OnCloseDialog() {
@@ -223,7 +223,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 }
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     try {
                         doSave();
                         closeDialog();
@@ -239,7 +239,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             final AjaxButton discardButton = new AjaxButton(DialogConstants.BUTTON) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     try {
                         doRevert();
                         closeDialog();

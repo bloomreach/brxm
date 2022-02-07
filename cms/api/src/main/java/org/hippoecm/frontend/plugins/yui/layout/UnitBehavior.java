@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.hippoecm.frontend.plugins.yui.layout;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.wicket.Component;
@@ -50,25 +51,23 @@ public class UnitBehavior extends Behavior {
         super.bind(component);
 
         // re-render complete wireframe during the render phase
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.addListener(new AbstractListener() {
-                public void onBeforeRespond(Map map, AjaxRequestTarget target) {
-                    if (target.getPage() != component.findParent(Page.class)) {
-                        return;
-                    }
-                    IWireframe wireframe = WireframeUtils.getParentWireframe(component);
-                    if (wireframe != null) {
-                        wireframe.render(target);
-                    } else {
-                        log.warn("Unable to find parent wireframe-behavior");
-                    }
+        Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.addListener(new AbstractListener() {
+            public void onBeforeRespond(Map map, AjaxRequestTarget target) {
+                if (target.getPage() != component.findParent(Page.class)) {
+                    return;
                 }
+                IWireframe wireframe = WireframeUtils.getParentWireframe(component);
+                if (wireframe != null) {
+                    wireframe.render(target);
+                } else {
+                    log.warn("Unable to find parent wireframe-behavior");
+                }
+            }
 
-                public void onAfterRespond(Map map, AjaxRequestTarget.IJavaScriptResponse response) {
-                }
-            });
-        }
+            public void onAfterRespond(Map map, AjaxRequestTarget.IJavaScriptResponse response) {
+            }
+        }));
     }
 
     public String getPosition() {

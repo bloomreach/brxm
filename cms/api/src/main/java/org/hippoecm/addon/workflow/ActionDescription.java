@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.addon.workflow;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -114,16 +115,13 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
         if (promise) {
             promise = false;
 
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target == null) {
-                return;
-            }
-
-            if (result == null || result.equals("null")) {
-                target.appendJavaScript("Hippo.Workflow.resolve();");
-            } else {
-                target.appendJavaScript(String.format("Hippo.Workflow.resolve('%s');", result));
-            }
+            RequestCycle.get().find(AjaxRequestTarget.class).ifPresent(target -> {
+                if (result == null || result.equals("null")) {
+                    target.appendJavaScript("Hippo.Workflow.resolve();");
+                } else {
+                    target.appendJavaScript(String.format("Hippo.Workflow.resolve('%s');", result));
+                }
+            });
         }
     }
 
@@ -132,10 +130,9 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
         if (promise) {
             promise = false;
 
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.appendJavaScript(String.format("Hippo.Workflow.reject('%s');", reason));
-            }
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget ->
+                    ajaxRequestTarget.appendJavaScript(String.format("Hippo.Workflow.reject('%s');", reason)));
         }
     }
 }

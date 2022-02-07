@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.time.Duration;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class UpdaterOutput extends Panel {
@@ -36,7 +35,7 @@ public class UpdaterOutput extends Panel {
     public UpdaterOutput(final String id, final Component container, final boolean updating) {
         super(id);
 
-        final Label output = new Label("output", ReadOnlyModel.of(() -> parseOutput(container.getDefaultModelObject())));
+        final Label output = new Label("output", () -> parseOutput(container.getDefaultModelObject()));
         if (updating) {
             output.setOutputMarkupId(true);
             output.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));

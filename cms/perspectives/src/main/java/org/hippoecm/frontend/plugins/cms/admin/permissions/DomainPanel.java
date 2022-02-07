@@ -101,7 +101,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         // add a cancel/back button
         form.add(new AjaxButton("back-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 // one up
                 final List<IBreadCrumbParticipant> all = breadCrumbModel.allBreadCrumbParticipants();
                 breadCrumbModel.setActive(all.get(all.size() - 2));
@@ -241,7 +241,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
 
             final AjaxButton submit = new AjaxButton("submit", hippoForm) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     final HippoSession hippoSession = UserSession.get().getJcrSession();
@@ -268,7 +268,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
                 }
 
                 @Override
-                protected void onError(AjaxRequestTarget target, Form form) {
+                protected void onError(AjaxRequestTarget target) {
                     // make sure the feedback panel is shown
                     target.add(DomainPanel.this);
                 }
