@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@
 
       always: function (e, data) {
         var that = $(this).data('blueimp-fileupload') || $(this).data('fileupload');
-        that.element.find('button').prop('disabled', true);
+        that.enable();
         // sorting error uploading files to top
         if (that.hasError) {
           that.element.find('.files').prepend(that.element.find('.files .error').parents('tr'));
