@@ -372,11 +372,7 @@ public class ConfigurationBaselineService {
      * @throws RepositoryException because always with JCR ...
      */
     private static Node getModuleNode(final Node baseline, final ModuleImpl module) throws RepositoryException {
-        Node rootNode = baseline;
-        if (module.isNotCore()) {
-            rootNode = rootNode.getNode(HCM_SITES).getNode(module.getSiteName());
-        }
-        Node groupNode = rootNode.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName(), true));
+        Node groupNode = baseline.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName(), true));
         Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName(), true));
         return projectNode.getNode(NodeNameCodec.encode(module.getName(), true));
     }
@@ -1113,7 +1109,9 @@ public class ConfigurationBaselineService {
         if (latestAction.isPresent() && StringUtils.isNotBlank(latestAction.get())) {
             module.setLastExecutedAction(latestAction.get());
 
-            Node moduleNode = getModuleNode(session.getNode(HCM_BASELINE_PATH), module);
+            final Node baselineNode = session.getNode(HCM_BASELINE_PATH);
+            final Node moduleNode = getModuleNode(module.isNotCore() ? baselineNode.getNode(HCM_SITES).getNode(module.getSiteName())
+                    : baselineNode, module);
             moduleNode.setProperty(HCM_LAST_EXECUTED_ACTION, latestAction.get());
         }
         session.save();
