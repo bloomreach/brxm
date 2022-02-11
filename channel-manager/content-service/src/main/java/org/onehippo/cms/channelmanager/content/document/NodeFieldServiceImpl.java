@@ -18,16 +18,12 @@ package org.onehippo.cms.channelmanager.content.document;
 import java.util.List;
 import java.util.Objects;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.JcrConstants;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
@@ -39,9 +35,8 @@ import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPES;
-import static org.hippoecm.repository.api.HippoNodeType.NAMESPACES_PATH;
 import static org.onehippo.cms.channelmanager.content.document.util.FieldPath.SEPARATOR;
+import static org.onehippo.cms.channelmanager.content.document.util.PrototypeUtils.findFirstPrototypeNode;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type.CHOICE;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type.COMPOUND;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.DOES_NOT_EXIST;
@@ -145,7 +140,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
     }
 
     private String getPrototypePath(final String jcrType) {
-        final Node prototypeNode = findPrototype(jcrType);
+        final Node prototypeNode = findFirstPrototypeNode(session, jcrType);
         if (prototypeNode == null) {
             log.warn("Failed to find prototype node for field of type '{}'", jcrType);
             throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "prototype", jcrType));
@@ -158,59 +153,6 @@ public class NodeFieldServiceImpl implements NodeFieldService {
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
     }
-
-    private Node findPrototype(final String type) {
-        try {
-            final String path = getPrototypeLocation(type);
-            if (!session.itemExists(path) || !session.getItem(path).isNode()) {
-                return null;
-            }
-            final NodeIterator iter = ((Node) session.getItem(path)).getNodes(HippoNodeType.HIPPO_PROTOTYPE);
-
-            while (iter.hasNext()) {
-                final Node node = iter.nextNode();
-                if (!node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
-                    return node;
-                }
-            }
-        } catch (final RepositoryException e) {
-            log.error("An error occurred while looking up the prototype node for type '{}'", type, e);
-        }
-
-        return null;
-    }
-
-    private String getPrototypeLocation(final String type) throws RepositoryException {
-        String prefix = SYSTEM_PREFIX;
-        String subType = type;
-
-        final int separatorIndex = type.indexOf(':');
-        if (separatorIndex > 0) {
-            prefix = type.substring(0, separatorIndex);
-            subType = type.substring(separatorIndex + 1);
-        }
-
-        final String uri = getNamespaceURI(prefix);
-        final String nsVersion = "_" + uri.substring(uri.lastIndexOf('/') + 1);
-
-        final int prefixLength = prefix.length();
-        final int nsVersionLength = nsVersion.length();
-
-        if (prefixLength > nsVersionLength && nsVersion.equals(prefix.substring(prefixLength - nsVersionLength))) {
-            prefix = prefix.substring(0, prefixLength - nsVersionLength);
-        }
-
-        return String.format("/%s/%s/%s/%s", NAMESPACES_PATH, prefix, subType, HIPPO_PROTOTYPES);
-    }
-
-    private String getNamespaceURI(final String prefix) throws RepositoryException {
-        if (SYSTEM_PREFIX.equals(prefix)) {
-            return "internal";
-        }
-
-        final NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
-        return nsReg.getURI(prefix);
-}
 
     private void copyPrototype(final String prototypePath, final String targetPath) {
         try {
