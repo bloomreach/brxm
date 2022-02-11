@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.james.mime4j.codec.DecodeMonitor;
 import org.apache.james.mime4j.codec.DecoderUtil;
 import org.hippoecm.hst.servlet.utils.ContentDispositionUtils;
 import org.junit.Before;
@@ -116,12 +117,12 @@ public class ContentDispositionUtilsTest {
         fileName = "file name.pdf";
         expected = "file name.pdf";
         assertEquals(expected, DecoderUtil.decodeEncodedWords(ContentDispositionUtils.encodeFileName(request, response,
-                fileName, encoding)));
+                fileName, encoding), DecodeMonitor.SILENT));
 
         fileName = "filenam\u00EB.pdf";
         expected = "filenam\u00EB.pdf";
         assertEquals(expected, DecoderUtil.decodeEncodedWords(ContentDispositionUtils.encodeFileName(request, response,
-                fileName, encoding)));
+                fileName, encoding), DecodeMonitor.SILENT));
     }
 
     @Test
