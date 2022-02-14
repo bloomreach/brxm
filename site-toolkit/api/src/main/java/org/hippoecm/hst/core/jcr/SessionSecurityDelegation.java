@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +37,6 @@ public interface SessionSecurityDelegation {
      * @param requestContext
      */
     void cleanupSessionDelegates(HstRequestContext requestContext);
-
-    /**
-     * @return <code>true</code> when session security delegation is enabled
-     */
-    boolean sessionSecurityDelegationEnabled();
 
     /**
      * @return A non pooled jcr session which is <b>not</b> automatically logged out and is <b>NOT</b> combined with

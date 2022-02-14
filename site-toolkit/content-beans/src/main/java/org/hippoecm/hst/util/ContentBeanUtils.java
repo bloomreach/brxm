@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -805,12 +805,6 @@ public class ContentBeanUtils {
                 return previewSecurityDelegate;
             }
             SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
-            if (!sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                log.debug("Security Delegation was expected to be enabled for cms request with non proxied session but it was not enabled. " +
-                        "Return session from request context instead of new security delegated one");
-                return requestContext.getSession(true);
-
-            }
 
             final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(requestContext.getServletRequest());
 
