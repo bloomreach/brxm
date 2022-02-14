@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ import java.util.TimeZone;
 
 import javax.jcr.Session;
 
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+
 /**
  * Properties of the CMS user.
  */
 public class UserContext {
 
     private final Session session;
-    private final Locale locale;
-    private final TimeZone timeZone;
+    private CmsSessionContext cmsSessionContext;
 
-    public UserContext(final Session session, final Locale locale, final TimeZone timeZone) {
+    public UserContext(final Session session, final CmsSessionContext cmsSessionContext) {
         this.session = session;
-        this.locale = locale;
-        this.timeZone = timeZone;
+        this.cmsSessionContext = cmsSessionContext;
     }
 
     /**
@@ -46,13 +46,17 @@ public class UserContext {
      * @return Locale of the CMS user
      */
     public Locale getLocale() {
-        return locale;
+        return cmsSessionContext.getLocale();
     }
 
     /**
      * @return Time zone of the CMS user
      */
     public TimeZone getTimeZone() {
-        return timeZone;
+        return cmsSessionContext.getTimeZone();
+    }
+
+    public CmsSessionContext getCmsSessionContext() {
+        return cmsSessionContext;
     }
 }

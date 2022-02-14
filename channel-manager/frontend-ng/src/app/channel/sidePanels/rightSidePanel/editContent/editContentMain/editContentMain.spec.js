@@ -15,6 +15,7 @@
  */
 
 describe('EditContentMainCtrl', () => {
+  let $interval;
   let $q;
   let $scope;
   let $translate;
@@ -31,7 +32,8 @@ describe('EditContentMainCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($componentController, _$q_, $rootScope, _$translate_, _DialogService_) => {
+    inject(($componentController, _$interval_, _$q_, $rootScope, _$translate_, _DialogService_) => {
+      $interval = _$interval_;
       $q = _$q_;
       $translate = _$translate_;
 
@@ -54,6 +56,7 @@ describe('EditContentMainCtrl', () => {
         'keepDraft',
         'publish',
         'save',
+        'saveDraftIfDirty',
       ]);
       DialogService = _DialogService_;
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing', 'isEditingXPage']);
@@ -93,6 +96,12 @@ describe('EditContentMainCtrl', () => {
     $ctrl.loading = false;
     $scope.$digest();
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+  });
+
+  it('should save a draft version every 30 seconds', () => {
+    $interval.flush(30 * 1000);
+
+    expect (ContentEditor.saveDraftIfDirty).toHaveBeenCalled();
   });
 
   it('knows when not all fields are shown', () => {
@@ -335,7 +344,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
           expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
-          expect(HippoIframeService.reload).not.toHaveBeenCalled();
+          expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
         });
         $scope.$digest();
@@ -349,7 +358,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
           expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
-          expect(HippoIframeService.reload).not.toHaveBeenCalled();
+          expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
         });
         $scope.$digest();
