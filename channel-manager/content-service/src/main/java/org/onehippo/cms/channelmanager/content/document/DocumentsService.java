@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,6 +92,21 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException If updating the editable document failed
      */
     Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext);
+
+
+    /**
+     * Updates the draft variant of a document.
+     *
+     * @param uuid          UUID of the document to be updated
+     * @param document      Document containing the to-be-persisted content
+     * @param userContext   Properties of the user that executes the request
+     *
+     * @return JSON-serializable representation of the persisted document.
+     *
+     * @throws ErrorWithPayloadException If updating the editable document failed
+     */
+    Document updateDraft(final String uuid, final Document document, final UserContext userContext);
+
 
     /**
      * Update a single field value in the editable version of a document.

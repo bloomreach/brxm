@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,15 +28,15 @@ public class TestUserContext extends UserContext {
     public static final TimeZone TEST_TIME_ZONE = TimeZone.getTimeZone("Europe/Amsterdam");
 
     public TestUserContext() {
-        super(createMock(Session.class), TEST_LOCALE, TEST_TIME_ZONE);
+        super(createMock(Session.class), new MockCmsSessionContext(TEST_LOCALE, TEST_TIME_ZONE));
     }
 
     public TestUserContext(final Locale locale) {
-        super(createMock(Session.class), locale, TEST_TIME_ZONE);
+        super(createMock(Session.class), new MockCmsSessionContext(locale, TEST_TIME_ZONE));
     }
 
     public TestUserContext(final Session session) {
-        super(session, TEST_LOCALE, TEST_TIME_ZONE);
+        super(session, new MockCmsSessionContext(TEST_LOCALE, TEST_TIME_ZONE));
     }
 
 }

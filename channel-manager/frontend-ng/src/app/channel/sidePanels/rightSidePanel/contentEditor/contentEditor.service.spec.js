@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,10 +103,10 @@ describe('ContentEditorService', () => {
     };
 
     ContentService = jasmine.createSpyObj('ContentService', [
-      'getEditableDocument', 'getDocumentType', 'saveDocument', 'discardChanges', 'deleteDocument',
+      'getEditableDocument', 'getDocumentType', 'saveDocument', 'discardChanges', 'deleteDocument', 'saveDraft',
     ]);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
-    FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
+    FieldService = jasmine.createSpyObj('FieldService', ['setup']);
     DocumentWorkflowService = jasmine.createSpyObj('DocumentWorkflowService', [
       'cancelRequest',
       'publish',
@@ -1388,6 +1388,23 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.getDocumentFieldValue('choice', 0)).toBe('value');
       expect(ContentEditor.getDocumentFieldValue('choice', 1)).toEqual({ string: 'value' });
       expect(ContentEditor.getDocumentFieldValue('choice', 1, 'string')).toBe('value');
+    });
+  });
+
+  describe('saveDraftIfDirty', () => {
+    it('should not save-draft if document is not dirty', () => {
+      ContentEditor.saveDraftIfDirty();
+
+      expect(ContentService.saveDraft).not.toHaveBeenCalled();
+    });
+
+    it('should save-draft if document is dirty', () => {
+      ContentEditor.document = testDocument;
+      ContentEditor.markDocumentDirty();
+      ContentEditor.saveDraftIfDirty();
+
+      expect(ContentService.saveDraft).toHaveBeenCalled();
+      expect(testDocument.info.retainable).toBe(true);
     });
   });
 });

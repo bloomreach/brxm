@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
+import { debounce } from 'throttle-debounce';
+
 class EditContentMainCtrl {
   constructor(
+    $interval,
+    $log,
     $q,
     $scope,
+    $rootScope,
     $translate,
     CmsService,
     ConfigService,
@@ -30,8 +35,11 @@ class EditContentMainCtrl {
   ) {
     'ngInject';
 
+    this.$interval = $interval;
+    this.$log = $log;
     this.$q = $q;
     this.$scope = $scope;
+    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
@@ -41,6 +49,8 @@ class EditContentMainCtrl {
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
+
+    this._onFieldChange = this._onFieldChange.bind(this);
   }
 
   $onInit() {
@@ -55,6 +65,27 @@ class EditContentMainCtrl {
         this.RightSidePanelService.stopLoading();
       }
     });
+
+    this._offFieldChange = this.$rootScope.$on('field:change', this._onFieldChange);
+
+    this._reloadPage = debounce(250, true, () => {
+      this.HippoIframeService.reload();
+    });
+
+    // save draft if editor is dirty every 30 seconds
+    this._saveDraftIfDirtyPromise = this.$interval(() => {
+      this.ContentEditor.saveDraftIfDirty();
+    }, 30 * 1000);
+
+  }
+
+  $onDestroy() {
+    this._offFieldChange();
+    this._reloadPage.cancel();
+  }
+
+  _onFieldChange() {
+    this._reloadPage();
   }
 
   notAllFieldsShown() {
@@ -132,7 +163,8 @@ class EditContentMainCtrl {
       .then(() => {
         this.form.$setPristine();
         this.ContentEditor.discardChanges()
-          .then(this.EditContentService._loadDocument(this.ContentEditor.getDocumentId()));
+          .then(() => this.EditContentService._loadDocument(this.ContentEditor.getDocumentId()))
+          .then(() => this.HippoIframeService.reload())
       });
   }
 
@@ -191,32 +223,30 @@ class EditContentMainCtrl {
     this.EditContentService.stopEditing();
   }
 
-  uiCanExit() {
+  async uiCanExit() {
     if (this.isRetainable()) {
       this.ContentEditor.close();
-      return this.$q.resolve();
+      return;
     }
-    return this._confirmExit()
-      .then(() => this.ContentEditor.discardChanges()
-        .catch(() => {
-          // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
-          // the editor should still be closed.
-        })
-        .finally(() => this.ContentEditor.close()));
-  }
 
-  _confirmExit() {
     const isEditingXPage = this.EditContentService.isEditingXPage();
     const titleKey = isEditingXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
     const messageKey = isEditingXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
-    return this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey)
-      .then((action) => {
-        if (action === 'SAVE') {
-          this.HippoIframeService.reload();
-        }
-      });
+    await this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey);
+
+    try {
+      await this.ContentEditor.discardChanges();
+    } catch (e) {
+      this.$log.error('Failed to discard changes while exiting the component', e);
+      // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
+      // the editor should still be closed.
+    } finally {
+      this.HippoIframeService.reload();
+      this.ContentEditor.close();
+    }
   }
+
 }
 
 export default EditContentMainCtrl;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,12 @@ class Step2Controller {
 
   switchEditor() {
     this.switchingEditor = true;
+    this.ContentEditor.saveDraftIfDirty()
+      .then(() => this._switchEditor())
+      .catch(() => this._focusFirstInvalidField());
+  }
+
+  _switchEditor() {
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
     this.ContentEditor.close();
     this.close();
