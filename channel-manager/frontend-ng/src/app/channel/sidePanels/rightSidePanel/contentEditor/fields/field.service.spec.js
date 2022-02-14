@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,21 +33,20 @@ describe('field service', () => {
   it('should throttle continues field savings', () => {
     spyOn(ContentService, 'saveField').and.returnValue($q.resolve());
 
-    FieldService.setDocumentId('mockDocumentId');
+    FieldService.setup('mockDocumentId');
     for (let i = 1; i <= 10; i++) { // eslint-disable-line no-plusplus
       FieldService.save({ name: 'field', values: 'a'.repeat(i), throttle: true });
     }
     $timeout.flush();
 
-    expect(ContentService.saveField).toHaveBeenCalledTimes(2);
-    expect(ContentService.saveField.calls.argsFor(0)).toEqual(['mockDocumentId', 'field', 'a']);
-    expect(ContentService.saveField.calls.argsFor(1)).toEqual(['mockDocumentId', 'field', 'a'.repeat(10)]);
+    expect(ContentService.saveField).toHaveBeenCalled();
+    expect(ContentService.saveField.calls.argsFor(0)).toEqual(['mockDocumentId', 'field', 'a'.repeat(10)]);
   });
 
   it('should save a field', () => {
-    spyOn(ContentService, 'saveField');
+    spyOn(ContentService, 'saveField').and.returnValue($q.resolve());
 
-    FieldService.setDocumentId('mockDocumentId');
+    FieldService.setup('mockDocumentId');
     FieldService.save({ name: 'mockFieldName', values: 'mockValue' });
 
     expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', 'mockValue');
@@ -56,49 +55,50 @@ describe('field service', () => {
   it('should not save errorInfo in arrays', () => {
     const mockValue = [{ value: 'mockValue', errorInfo: { validation: 'mockValue', message: 'invalid' } }];
     const mockValueResult = [{ value: 'mockValue' }];
-    spyOn(ContentService, 'saveField');
+    spyOn(ContentService, 'saveField').and.returnValue($q.resolve());;
 
-    FieldService.setDocumentId('mockDocumentId');
+    FieldService.setup('mockDocumentId');
     FieldService.save({ name: 'mockFieldName', values: mockValue });
 
-    expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
+    expect(ContentService.saveField)
+      .toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
   });
 
   it('should not save errorInfo in single value', () => {
     const mockValue = { value: 'mockValue', errorInfo: { validation: 'mockValue', message: 'invalid' } };
     const mockValueResult = { value: 'mockValue' };
-    spyOn(ContentService, 'saveField');
+    spyOn(ContentService, 'saveField').and.returnValue($q.resolve());;
 
-    FieldService.setDocumentId('mockDocumentId');
+    FieldService.setup('mockDocumentId');
     FieldService.save({ name: 'mockFieldName', values: mockValue });
 
-    expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
+    expect(ContentService.saveField)
+      .toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
   });
 
   it('should cancel throttled save upon immediate save', () => {
     spyOn(ContentService, 'saveField').and.returnValue($q.resolve());
 
-    FieldService.setDocumentId('mockDocumentId');
+    FieldService.setup('mockDocumentId');
     FieldService.save({ name: 'field', values: 'a', throttle: true });
     FieldService.save({ name: 'field', values: 'aa', throttle: true });
     FieldService.save({ name: 'field', values: 'b' });
 
     $timeout.flush();
 
-    expect(ContentService.saveField).toHaveBeenCalledTimes(2);
-    expect(ContentService.saveField.calls.argsFor(0)).toEqual(['mockDocumentId', 'field', 'a']);
-    expect(ContentService.saveField.calls.argsFor(1)).toEqual(['mockDocumentId', 'field', 'b']);
+    expect(ContentService.saveField).toHaveBeenCalled();
+    expect(ContentService.saveField.calls.argsFor(0)).toEqual(['mockDocumentId', 'field', 'b']);
   });
 
   it('should set document id', () => {
     expect(FieldService.documentId).toEqual(null);
-    FieldService.setDocumentId('mockDocumentId');
+    FieldService.setup('mockDocumentId');
     expect(FieldService.documentId).toEqual('mockDocumentId');
   });
 
   it('should return document id', () => {
     expect(FieldService.getDocumentId()).toEqual(null);
-    FieldService.setDocumentId('mockDocumentId');
+    FieldService.setup('mockDocumentId');
     expect(FieldService.getDocumentId()).toEqual('mockDocumentId');
   });
 

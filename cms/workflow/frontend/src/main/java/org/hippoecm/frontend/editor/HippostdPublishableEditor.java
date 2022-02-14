@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.BooleanUtils.isFalse;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
@@ -172,6 +173,10 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             switch (mode) {
                 case EDIT:
                     if (isFalse((Boolean) workflow.hints(branchId).get("obtainEditableInstance"))) {
+                        if (isTrue((Boolean) workflow.hints(branchId).get("editDraft"))) {
+                            workflow.editDraft();
+                            return true;
+                        }
                         return false;
                     }
                     workflow.obtainEditableInstance(branchId);

@@ -46,6 +46,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.ChannelManagerDocumentUpdateServiceImpl;
 import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
@@ -150,6 +151,7 @@ public class DocumentsServiceImplTest {
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
     private PlatformServices platformServices;
+    private ChannelManagerDocumentUpdateServiceImpl channelManagerDocumentUpdateService;
     private DocumentValidityService validityService;
 
     @Before
@@ -157,11 +159,11 @@ public class DocumentsServiceImplTest {
         userContext = new TestUserContext();
         session = userContext.getSession();
         hintsInspector = createMock(HintsInspector.class);
-        documentsService = new DocumentsServiceImpl(){
+        documentsService = new DocumentsServiceImpl() {
             @Override
             SaveDraftDocumentService getJcrSaveDraftDocumentService(final String uuid, final String branchId
                     , final UserContext userContext) {
-                return new SaveDraftDocumentService(){
+                return new SaveDraftDocumentService() {
 
                     @Override
                     public boolean canEditDraft() {
@@ -219,6 +221,8 @@ public class DocumentsServiceImplTest {
         info.setDocumentTemplateQuery("new-news-document");
         info.setDocumentTypeId("project:newsdocument");
         info.setRootPath("/content/documents/channel/news");
+        channelManagerDocumentUpdateService = new ChannelManagerDocumentUpdateServiceImpl();
+        documentsService.setChannelManagerDocumentUpdateService(channelManagerDocumentUpdateService);
     }
 
     @After
@@ -1201,6 +1205,8 @@ public class DocumentsServiceImplTest {
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
         expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.empty());
+        session.refresh(false);
+        expectLastCall();
 
         replayAll();
 
@@ -1231,7 +1237,8 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
         expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session))
                 .andReturn(Optional.of(new ErrorInfo(Reason.OTHER_HOLDER)));
-
+        session.refresh(false);
+        expectLastCall();
         replayAll();
 
         try {
@@ -1290,7 +1297,8 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(true);
-
+        session.refresh(false);
+        expectLastCall();
         replayAll();
 
         try {
@@ -1356,7 +1364,8 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andReturn(false);
-
+        session.refresh(false);
+        expectLastCall();
         replayAll();
 
         try {
@@ -1366,71 +1375,6 @@ public class DocumentsServiceImplTest {
             assertErrorStatusAndReason(expected, Status.BAD_REQUEST, Reason.INVALID_DATA);
             verifyAll();
         }
-    }
-
-    @Test
-    public void updateEditableFieldSuccess() throws Exception {
-        final String uuid = "uuid";
-        final Node handle = createMock(Node.class);
-        final Node draft = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final DocumentType docType = provideDocumentType(handle);
-        final FieldPath fieldPath = new FieldPath("ns:field");
-        final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
-        final List<FieldType> fields = Collections.emptyList();
-
-        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(WorkflowUtils.getDocumentVariantNode(handle, DRAFT)).andReturn(Optional.of(draft));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
-        expect(docType.getFields()).andReturn(fields);
-        expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andReturn(true);
-
-        session.save();
-        expectLastCall();
-
-        replayAll();
-
-        documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
-
-        verifyAll();
-    }
-
-    @Test
-    public void updateEditableFieldSaveFailure() throws Exception {
-        final String uuid = "uuid";
-        final Node handle = createMock(Node.class);
-        final Node draft = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final DocumentType docType = provideDocumentType(handle);
-        final FieldPath fieldPath = new FieldPath("ns:field");
-        final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
-        final List<FieldType> fields = Collections.emptyList();
-
-        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(WorkflowUtils.getDocumentVariantNode(handle, DRAFT)).andReturn(Optional.of(draft));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
-        expect(docType.getFields()).andReturn(Collections.emptyList());
-        expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andReturn(true);
-
-        session.save();
-        expectLastCall().andThrow(new RepositoryException());
-
-        replayAll();
-
-        try {
-            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
-            fail("No Exception");
-        } catch (final InternalServerErrorException e) {
-            assertErrorStatusAndReason(e, Status.INTERNAL_SERVER_ERROR, Reason.SERVER_ERROR);
-        }
-
-        verifyAll();
     }
 
     @Test

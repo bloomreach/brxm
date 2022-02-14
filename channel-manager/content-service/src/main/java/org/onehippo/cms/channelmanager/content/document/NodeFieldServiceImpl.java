@@ -168,7 +168,7 @@ public class NodeFieldServiceImpl implements NodeFieldService {
         }
     }
 
-    private static FieldType getFieldType(final FieldPath fieldPath, final List<FieldType> fields) {
+    static FieldType getFieldType(final FieldPath fieldPath, final List<FieldType> fields) {
         final FieldType fieldType = findFieldType(fieldPath, fields);
         if (fieldType == null) {
             log.warn("Failed to find field with path '{}'", fieldPath);

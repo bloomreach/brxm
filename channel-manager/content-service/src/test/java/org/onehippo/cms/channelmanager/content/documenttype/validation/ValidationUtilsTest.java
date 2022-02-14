@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.easymock.Capture;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.MockCmsSessionContext;
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -81,7 +82,7 @@ public class ValidationUtilsTest {
         final Document document = new Document();
         final DocumentType docType = new DocumentType();
         final Node draftNode = createMock(Node.class);
-        final UserContext userContext = new UserContext(null, null, null);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext());
 
         expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(docType.getFields()), isA(CompoundContext.class))).andReturn(0);
 
@@ -101,7 +102,7 @@ public class ValidationUtilsTest {
         final Node draftNode = createMock(Node.class);
         final Locale locale = new Locale("en");
         final TimeZone timeZone = TimeZone.getDefault();
-        final UserContext userContext = new UserContext(null, locale, timeZone);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext(locale, timeZone));
 
         final Capture<CompoundContext> context = newCapture();
         expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(docType.getFields()), capture(context))).andReturn(0);
@@ -123,7 +124,7 @@ public class ValidationUtilsTest {
         final Document document = new Document();
         final DocumentType docType = new DocumentType();
         final Node draftNode = createMock(Node.class);
-        final UserContext userContext = new UserContext(null, null, null);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext());
 
         expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(docType.getFields()), isA(CompoundContext.class))).andReturn(1);
 
@@ -148,7 +149,7 @@ public class ValidationUtilsTest {
 
         final Locale locale = new Locale("en");
         final TimeZone timeZone = TimeZone.getDefault();
-        final UserContext userContext = new UserContext(null, locale, timeZone);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext(locale, timeZone));
 
         final ValidatorInstance validator = createMock(ValidatorInstance.class);
         final Capture<ValueContext> context = newCapture();
@@ -180,7 +181,7 @@ public class ValidationUtilsTest {
         docType.addValidatorName("documentvalidator");
 
         final Node draftNode = createMock(Node.class);
-        final UserContext userContext = new UserContext(null, null, null);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext());
 
         expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(docType.getFields()), isA(CompoundContext.class))).andReturn(0);
         expect(draftNode.getName()).andThrow(new RepositoryException());
@@ -199,7 +200,7 @@ public class ValidationUtilsTest {
 
         final Node handle = MockNode.root();
         final Node draft = handle.addNode("example", "myproject:newsdocument");
-        final UserContext userContext = new UserContext(null, null, null);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext());
 
         final ValidatorInstance validator = createMock(ValidatorInstance.class);
 
@@ -227,7 +228,7 @@ public class ValidationUtilsTest {
 
         final Node handle = MockNode.root();
         final Node draft = handle.addNode("example", "myproject:newsdocument");
-        final UserContext userContext = new UserContext(null, null,  null);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext());
         final ValidatorInstance validator = createMock(ValidatorInstance.class);
 
         expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(docType.getFields()), isA(CompoundContext.class))).andReturn(0);
@@ -255,7 +256,7 @@ public class ValidationUtilsTest {
 
         final Node handle = MockNode.root();
         final Node draft = handle.addNode("example", "myproject:newsdocument");
-        final UserContext userContext = new UserContext(null, null, null);
+        final UserContext userContext = new UserContext(null, new MockCmsSessionContext());
 
         final ValidatorInstance badValidator = createMock(ValidatorInstance.class);
         final ValidatorInstance goodValidator = createMock(ValidatorInstance.class);
