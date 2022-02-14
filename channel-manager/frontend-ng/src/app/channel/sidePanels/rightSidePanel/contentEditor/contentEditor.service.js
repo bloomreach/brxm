@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,7 +184,7 @@ class ContentEditorService {
 
   _setDocumentId(id) {
     this.documentId = id;
-    this.FieldService.setDocumentId(this.documentId);
+    this.FieldService.setup(this.documentId);
   }
 
   getDocumentId() {
@@ -371,6 +371,14 @@ class ContentEditorService {
         this.error.messageParams = params;
       }
     }
+  }
+
+  saveDraftIfDirty() {
+    if (this.isDocumentDirty()) {
+      this.document.info.retainable = true;
+      return this.ContentService.saveDraft(this.document);
+    }
+    return this.$q.resolve();
   }
 
   save(force) {
