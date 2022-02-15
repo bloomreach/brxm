@@ -780,7 +780,14 @@ public class Main extends PluginApplication {
     private void initCMS() {
         getCspSettings().blocking()
                 .unsafeInline()
-                .add(CSPDirective.FRAME_ANCESTORS, SELF);
+                .add(CSPDirective.FRAME_ANCESTORS, SELF)
+
+                // Pendo
+                .add(CSPDirective.SCRIPT_SRC, "cdn.pendo.io", "data.pendo.io", "pendo-io-static.storage.googleapis.com", "pendo-static-5285379033268224.storage.googleapis.com")
+                .add(CSPDirective.STYLE_SRC, "app.pendo.io", "cdn.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
+                .add(CSPDirective.IMG_SRC, "app.pendo.io", "cdn.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
+                .add(CSPDirective.CONNECT_SRC, "app.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com")
+                .add(CSPDirective.FRAME_ANCESTORS, "app.pendo.io");
 
         /*
          * HST SAML kind of authentication handler needed for Template Composer integration
