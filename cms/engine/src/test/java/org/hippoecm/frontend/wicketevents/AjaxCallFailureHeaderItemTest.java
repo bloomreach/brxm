@@ -24,6 +24,7 @@ import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,6 +42,12 @@ public class AjaxCallFailureHeaderItemTest extends WicketTestCase {
     @SuppressWarnings("unused")
     @Mock
     private Response response;
+
+    @Before
+    public void beForeEach() {
+        // We need to manually call the before methods that are annotated with JUnit5
+        super.commonBefore();
+    }
 
     @Test
     public void test_script_subscribes_to_ajax_call_failure_events() {
