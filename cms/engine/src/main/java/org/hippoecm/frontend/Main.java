@@ -781,6 +781,8 @@ public class Main extends PluginApplication {
         getCspSettings().blocking()
                 .unsafeInline()
                 .add(CSPDirective.FRAME_ANCESTORS, SELF)
+                .add(CSPDirective.IMG_SRC, "data:") // allow ExtJS inline images
+                .add(CSPDirective.SCRIPT_SRC, "hippocdn.global.ssl.fastly.net") // load Hippo UsageStatistics
 
                 // Pendo
                 .add(CSPDirective.SCRIPT_SRC, "cdn.pendo.io", "data.pendo.io", "pendo-io-static.storage.googleapis.com", "pendo-static-5285379033268224.storage.googleapis.com")
