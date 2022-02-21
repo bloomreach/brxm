@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,12 +27,14 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.version.VersionHistory;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -50,6 +52,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.Boolean.FALSE;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_CM_XPAGE_FOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
@@ -59,6 +62,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
@@ -251,6 +255,61 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
     }
 
+    @Test
+    public void action_and_state_for_master_channel_and_master_xpage_when_rendering_version_history() throws Exception {
+
+        // as a result of branching, master will be versioned. If we now get the actions for a versioned node, we get the
+        // actions available when rendering a document from version history
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow(admin);
+
+        documentWorkflow.branch("foo", "Foo");
+
+        // trigger a change in the 'foo' variant, this should not result the master to have 'request-publish'
+        documentWorkflow.obtainEditableInstance("foo");
+        final Node draftNode = getVariant(handle, HippoStdNodeType.DRAFT);
+        draftNode.setProperty(HippoNodeType.HIPPO_NAME, "TEST");
+        admin.save();
+        documentWorkflow.commitEditableInstance();
+
+        final Node unpublished = getVariant(handle, HippoStdNodeType.UNPUBLISHED);
+        VersionHistory versionHistory = admin.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
+
+        String frozenNodeIdentifier = versionHistory.getVersionByLabel("master-unpublished").getFrozenNode().getNode(NODENAME_HST_XPAGE).getIdentifier();
+
+        assertions(frozenNodeIdentifier, ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin.json", "master");
+        assertions(frozenNodeIdentifier, AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author.json", "master");
+
+        // make changes to the unpublished master and after changes, checkout the 'foo' branch again: after that, it is
+        // expected that the 'frozenNodeIdentifier' from above does not point to the 'master working version' any more
+        Document document = documentWorkflow.obtainEditableInstance(MASTER_BRANCH_ID);
+        document.getNode(admin).setProperty(HippoNodeType.HIPPO_NAME, "TEST");
+        admin.save();
+        documentWorkflow.commitEditableInstance();
+
+        documentWorkflow.checkoutBranch("foo");
+
+        // now the workspace version is again for the 'foo' branch, it is expected that 'frozenNodeIdentifier'
+        // is not for the 'master working version' any more, and thus actions like 'publish', 'scheduled publication',
+        // 'copy' and 'save as template' are disabled since it is the non-working-version for which the actions are
+        // displayed
+
+        assertions(frozenNodeIdentifier, ADMIN_CREDENTIALS,
+                "action_and_state_for_master_channel_and_master_xpage_non_working_version_admin.json", "master");
+        assertions(frozenNodeIdentifier, AUTHOR_CREDENTIALS,
+                "action_and_state_for_master_channel_and_master_xpage_non_working_version_author.json", "master");
+
+        // assert the master really has changes hence for the working version, it is indicated that publish = true, copy = true, etc
+        assertions(ADMIN_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_admin_modified.json", "master");
+        assertions(AUTHOR_CREDENTIALS, "action_and_state_for_master_channel_and_master_xpage_author_modified.json", "master");
+
+        final String newFrozenNodeWorkingVersion = versionHistory.getVersionByLabel("master-unpublished").getFrozenNode().getNode(NODENAME_HST_XPAGE).getIdentifier();
+        assertions(newFrozenNodeWorkingVersion, ADMIN_CREDENTIALS,
+                "action_and_state_for_master_channel_and_master_xpage_admin_modified.json", "master");
+        assertions(newFrozenNodeWorkingVersion,  AUTHOR_CREDENTIALS,
+                "action_and_state_for_master_channel_and_master_xpage_author_modified.json", "master");
+
+
+    }
 
     @Test
     public void action_and_state_for_channel_foo_and_NO_EXISTING_xpage_for_branch_foo() throws Exception {
@@ -448,6 +507,9 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         assertions(get.getContentAsString(), expected);
     }
 
+    private void assertions(final String identifier, final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
+        assertions(identifier, experienceSiteMapItemId, creds, fixtureFileName, branchId);
+    }
 
     private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
         String expected = IOUtils.toString(expectedStream, StandardCharsets.UTF_8);
