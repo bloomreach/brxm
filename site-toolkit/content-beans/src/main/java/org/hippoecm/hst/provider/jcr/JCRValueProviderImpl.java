@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Bloomreach
+ *  Copyright 2008-2022 Bloomreach
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,6 +71,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
 
     private static final Set<String> deprecatedProperties = new HashSet<>(Arrays.asList("hst:contextpath",
             "hst:cmslocation", "hst:defaulthostname"));
+
+    // although 'dxphst' namespace is a downstream module, hardcode to skip properties with that namespace as they are
+    // never relevant in the HstNode impls from which the HST model is loaded. If we do not skip them, the Page Delivery
+    // API exposes these properties for menu items
+    private static final String skipNamespace = "dxphst:";
 
     /**
      * Creates a lazy loading jcr value provider instance without useStringPool and with protected jcr properties included
@@ -613,7 +618,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         try {
             for(PropertyIterator allProps = jcrNode.getProperties(); allProps.hasNext();) {
                 Property p = allProps.nextProperty();
-                if(this.propertyMap.hasProperty(p.getName()) || skipProperties.contains(p.getName())) {
+                final String propName = p.getName();
+                if(this.propertyMap.hasProperty(propName) || skipProperties.contains(propName) || propName.startsWith(skipNamespace)) {
                     // already loaded
                     continue;
                 }
@@ -627,7 +633,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         PropertyType.DOUBLE  == p.getType() ||
                         PropertyType.LONG == p.getType() ||
                         PropertyType.NAME == p.getType()) {
-                    loadProperty(p, p.getDefinition(), p.getName());
+                    loadProperty(p, p.getDefinition(), propName);
                 }
             }
         } catch (RepositoryException e) {
