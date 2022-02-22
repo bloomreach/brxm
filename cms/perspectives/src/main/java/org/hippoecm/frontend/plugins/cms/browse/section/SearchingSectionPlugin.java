@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Bloomreach (https://www.bloomreach.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,9 +22,11 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -37,6 +39,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.dialog.HandleSubmitEnabledPayload;
 import org.hippoecm.frontend.form.PostOnlyForm;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -122,6 +125,18 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 updateSearch(true);
             }
         };
+        tx.add(new AjaxEventBehavior("focus") {
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                send(getPage(), Broadcast.BREADTH, new HandleSubmitEnabledPayload(false));
+            }
+        });
+        tx.add(new AjaxEventBehavior("blur") {
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                send(getPage(), Broadcast.BREADTH, new HandleSubmitEnabledPayload(true));
+            }
+        });
         tx.setLabel(Model.of(getString("placeholder")));
         form.add(tx);
 
@@ -369,7 +384,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     private Component createSearchIcon(final String id, final DocumentCollection collection) {
-        final IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
+        final IModel<Icon> iconModel = new LoadableDetachableModel<>() {
             @Override
             protected Icon load() {
                 return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.TIMES : Icon.SEARCH;
