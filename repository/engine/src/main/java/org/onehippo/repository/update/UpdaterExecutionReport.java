@@ -55,7 +55,7 @@ class UpdaterExecutionReport {
     private final PrintStream updatedStream;
     private final PrintStream failedStream;
     private final PrintStream skippedStream;
-    private final PrintStreamLogger jcrStoredLogger;
+    private final Logger useLogger;
 
     private static class TimestampPrintStreamLogger extends PrintStreamLogger {
         private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -77,7 +77,11 @@ class UpdaterExecutionReport {
         logStream = new PrintStream(logFile);
         cbos = new CircularBufferOutputStream(4096);
 
-        jcrStoredLogger = new TimestampPrintStreamLogger("repository", logLevel, logStream, new PrintStream(cbos));
+        if (isDevMode()) {
+            useLogger = new TimestampPrintStreamLogger("repository", logLevel, logStream, new PrintStream(cbos));
+        } else {
+            useLogger = log;
+        }
 
         updatedFile = File.createTempFile("updater-updated", "txt.tmp", null);
         updatedStream = new PrintStream(updatedFile);
@@ -175,11 +179,7 @@ class UpdaterExecutionReport {
     }
 
     Logger getLogger() {
-        if (isDevMode()) {
-            return jcrStoredLogger;
-        } else {
-            return log;
-        }
+        return useLogger;
     }
 
     private boolean isDevMode() {
