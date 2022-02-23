@@ -31,7 +31,7 @@ import org.onehippo.cms7.utilities.logging.PrintStreamLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class UpdaterExecutionReport {
+public class UpdaterExecutionReport {
 
     private final static Logger log = LoggerFactory.getLogger(UpdaterExecutionReport.class.getName());
 
