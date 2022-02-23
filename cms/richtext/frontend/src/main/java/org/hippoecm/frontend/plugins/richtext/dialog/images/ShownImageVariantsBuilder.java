@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class ShownImageVariantsBuilder {
      * @param initials list with initial items
      * @param excludedImageVariants list with items that should be omitted
      * @param includedImageVariants list with items that should be added, null if no includedImageVariants are configured
-     * @return The intersection of all image variants and included image variants minus the blacklist
+     * @return The intersection of all image variants and included image variants minus the blocklist
      */
     static List<String> getAllowedList(List<String> initials, List<String> excludedImageVariants, List<String> includedImageVariants) {
         ShownImageVariantsBuilder builder = new ShownImageVariantsBuilder();

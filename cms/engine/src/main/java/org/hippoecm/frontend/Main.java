@@ -136,8 +136,8 @@ public class Main extends PluginApplication {
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static final String FRONTEND_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-    private static final String WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = "whitelisted.classes.for.package.resources";
-    private static final String[] DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = {
+    private static final String ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES = "allowed.classes.for.package.resources";
+    private static final String[] DEFAULT_ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES = {
             "org.hippoecm.", "org.apache.wicket.", "org.onehippo.", "wicket.contrib."
     };
 
@@ -160,7 +160,7 @@ public class Main extends PluginApplication {
     public static final String PLUGIN_APPLICATION_HIDE_PERSPECTIVE_MENU_PARAMETER = "hidePerspectiveMenu";
 
     // comma separated init parameter
-    public static final String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
+    public static final String ACCEPTED_ORIGIN_ALLOWLIST = "accepted-origin-allowlist";
     /**
      * Custom Wicket {@link IRequestCycleListener} class names parameter which can be comma or whitespace-separated
      * string to set multiple {@link IRequestCycleListener}s.
@@ -491,14 +491,14 @@ public class Main extends PluginApplication {
     }
 
     protected IPackageResourceGuard createPackageResourceGuard() {
-        return new WhitelistedClassesResourceGuard() {
+        return new AllowedClassesResourceGuard() {
             @Override
             protected void onInit() {
-                String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
+                String[] classNamePrefixes = GlobalSettings.get().getStringArray(ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES);
                 if (classNamePrefixes == null || classNamePrefixes.length == 0) {
-                    log.info("No whitelisted package resources found, using the default whitelist: {}",
-                            Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
-                    classNamePrefixes = DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES;
+                    log.info("No allowed package resources found, using the default allowlist: {}",
+                            Arrays.asList(DEFAULT_ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES));
+                    classNamePrefixes = DEFAULT_ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES;
                 }
                 addClassNamePrefixes(classNamePrefixes);
 
@@ -683,7 +683,7 @@ public class Main extends PluginApplication {
     private void addCsrfPreventionRequestCycleListener(final RequestCycleListenerCollection requestCycleListenerCollection) {
         final CsrfPreventionRequestCycleListener listener = new CsrfPreventionRequestCycleListener();
         // split on tab (\t), line feed (\n), carriage return (\r), form feed (\f), " ", and ","
-        final String[] acceptedOrigins = StringUtils.split(getConfigurationParameter(ACCEPTED_ORIGIN_WHITELIST, null), " ,\t\f\r\n");
+        final String[] acceptedOrigins = StringUtils.split(getConfigurationParameter(ACCEPTED_ORIGIN_ALLOWLIST, null), " ,\t\f\r\n");
         if (acceptedOrigins != null && acceptedOrigins.length > 0) {
             for (String acceptedOrigin : acceptedOrigins) {
                 listener.addAcceptedOrigin(acceptedOrigin);

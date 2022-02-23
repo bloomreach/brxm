@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,10 +86,10 @@ public class NavAppRedirectFilter implements Filter {
             acceptedPathPrefixes = ACCEPTED_PATH_PREFIXES;
         } else {
             acceptedPathPrefixes = new ArrayList<>(ACCEPTED_PATH_PREFIXES);
-            final List<String> customWhiteListedPathPrefixes =
+            final List<String> customAllowedPathPrefixes =
                     Stream.of(value.split(",")).map(String::trim).collect(Collectors.toList());
-            log.debug("Adding custom path prefixes: {}", customWhiteListedPathPrefixes);
-            acceptedPathPrefixes.addAll(customWhiteListedPathPrefixes);
+            log.debug("Adding custom path prefixes: {}", customAllowedPathPrefixes);
+            acceptedPathPrefixes.addAll(customAllowedPathPrefixes);
         }
     }
 
