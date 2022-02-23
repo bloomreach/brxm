@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,13 +27,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WhitelistReader {
+public class AllowlistReader {
 
-    private static final Logger log = LoggerFactory.getLogger(WhitelistReader.class);
+    private static final Logger log = LoggerFactory.getLogger(AllowlistReader.class);
 
-    private final Set<String> whitelist = new HashSet<>();
+    private final Set<String> allowlist = new HashSet<>();
 
-    public WhitelistReader(final InputStream is) {
+    public AllowlistReader(final InputStream is) {
         try {
             final List<String> list = IOUtils.readLines(is, "UTF-8");
             for (String line : list) {
@@ -49,22 +49,22 @@ public class WhitelistReader {
                     if (StringUtils.isBlank(beforeComment)) {
                         continue;
                     }
-                    whitelist.add(beforeComment);
+                    allowlist.add(beforeComment);
                 } else {
-                    whitelist.add(line);
+                    allowlist.add(line);
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            log.error("Could not read InputStream due to wrong encoding. Return empty whitelist", e);
+            log.error("Could not read InputStream due to wrong encoding. Return empty allowlist", e);
         } catch (IOException e) {
-            log.error("Error during reading InputStream. Return empty whitelist", e);
+            log.error("Error during reading InputStream. Return empty allowlist", e);
         } finally {
             IOUtils.closeQuietly(is);
         }
     }
 
-    public Set<String> getWhitelist() {
-        return whitelist;
+    public Set<String> getAllowlist() {
+        return allowlist;
     }
 
 

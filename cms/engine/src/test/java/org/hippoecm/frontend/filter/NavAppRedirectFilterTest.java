@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ public class NavAppRedirectFilterTest {
     }
 
     @Test
-    public void urls_with_whitelisted_path_dont_redirect() throws IOException, ServletException {
+    public void urls_with_allowed_path_dont_redirect() throws IOException, ServletException {
 
         expect(request.getMethod()).andReturn("GET");
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
@@ -311,7 +311,7 @@ public class NavAppRedirectFilterTest {
     }
 
     @Test
-    public void urls_with_custom_whitelisted_path_dont_redirect() throws IOException, ServletException {
+    public void urls_with_custom_allowed_path_dont_redirect() throws IOException, ServletException {
         MockFilterConfig filterConfig = new MockFilterConfig();
         final String custom2 = "custom2";
         filterConfig.addInitParameter(CUSTOM_ACCEPTED_PATH_PREFIXES_PARAMETER,
