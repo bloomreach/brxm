@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,19 +23,19 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class WhitelistedClassesResourceGuardTest {
+public class AllowedClassesResourceGuardTest {
 
     private WicketTester tester;
-    private WhitelistedClassesResourceGuard guard;
+    private AllowedClassesResourceGuard guard;
 
     @Before
     public void setUp() {
         tester = new WicketTester();
-        guard = new WhitelistedClassesResourceGuard();
+        guard = new AllowedClassesResourceGuard();
     }
 
     @Test
-    public void denyPublicNonWhitelistedResource() {
+    public void denyPublicNonAllowedResource() {
         assertFalse(guard.accept("org/hippoecm/frontend/test/file.js"));
     }
 
@@ -46,9 +46,9 @@ public class WhitelistedClassesResourceGuardTest {
     }
 
     @Test
-    public void allowPublicWhitelistedResource() {
-        Class whitelisted = getClass();
-        guard.addClassNamePrefixes(whitelisted.getPackage().getName());
+    public void allowPublicAllowedResource() {
+        Class allowed = getClass();
+        guard.addClassNamePrefixes(allowed.getPackage().getName());
         assertTrue(guard.accept("org/hippoecm/frontend/test/file.js"));
     }
 
@@ -59,10 +59,10 @@ public class WhitelistedClassesResourceGuardTest {
     }
 
     @Test
-    public void allowWhitelistedResourceInJar() {
+    public void allowAllowedResourceInJar() {
         String jarPath = "jar:file:/my/file/system/folder/org/apache/wicket/wicket-core/7.10.0/wicket-core-7.10.0.jar!/org/hippoecm/frontend/resource/jquery/jquery-1.12.4.min.js";
-        Class whitelisted = getClass();
-        guard.addClassNamePrefixes(whitelisted.getPackage().getName());
+        Class allowed = getClass();
+        guard.addClassNamePrefixes(allowed.getPackage().getName());
         assertTrue(guard.accept(jarPath));
     }
     
