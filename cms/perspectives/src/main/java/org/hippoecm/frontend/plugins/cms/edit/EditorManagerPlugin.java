@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * <p>An {@link ServiceException} is thrown if:
  * <ul>
  *     <li>None of the registered {@link IEditorFactory} instances created a editor</li>
- *     <li>If the node is of a black listed node type See {@link #validateNodeType(Node, IPluginConfig)} </li>
+ *     <li>If the node type is blocked See {@link #validateNodeType(Node, IPluginConfig)} </li>
  * </ul></p>
  */
 public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefreshable, IDetachable {
@@ -69,10 +69,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     private final Set<IEditorOpenListener> openListeners;
     private transient boolean active = false;
 
-    /**
-     * Parameter name for the black listed node type names
-     */
-    public static final String BLACK_LISTED_NODE_TYPE_NAMES = "blackListedNodeTypeNames";
+    public static final String BLOCKED_NODE_TYPE_NAMES = "blockedNodeTypeNames";
 
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -196,32 +193,31 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     }
 
     /**
-     * <p>The property with the key {@value #BLACK_LISTED_NODE_TYPE_NAMES} can contain one or more string values
+     * <p>The property with the key {@value #BLOCKED_NODE_TYPE_NAMES} can contain one or more string values
      * that contain valid nodetypes, e.g. rep:root, hippostd:folder and hippostd:directory.</p>
      *
-     * <p></p>If the node is of one of type black listed node types a ServiceException will be thrown,
-     * otherwise nothing.</p>
+     * <p>If the node type is blocked a ServiceException will be thrown, otherwise nothing.</p>
      *
      * @param node {@link Node} node to create an editor  for
      * @param parameters {@link IPluginConfig} for this class
-     * @throws ServiceException if the node is of a black listed node type
+     * @throws ServiceException if the node type is blocked
      */
     private void validateNodeType(final Node node, final IPluginConfig parameters) throws ServiceException {
-        final String[] blackListedNodeTypeNames = parameters.getStringArray(BLACK_LISTED_NODE_TYPE_NAMES);
-        if (blackListedNodeTypeNames == null){
-            log.debug("Could not find any parameter {} on {}.", BLACK_LISTED_NODE_TYPE_NAMES, parameters.getName());
+        final String[] blockedNodeTypeNames = parameters.getStringArray(BLOCKED_NODE_TYPE_NAMES);
+        if (blockedNodeTypeNames == null){
+            log.debug("Could not find any parameter {} on {}.", BLOCKED_NODE_TYPE_NAMES, parameters.getName());
             return;
         }
 
-        for (String blackListedNodeTypeName : blackListedNodeTypeNames) {
+        for (String blockedNodeTypeName : blockedNodeTypeNames) {
             try {
-                if (node.isNodeType(blackListedNodeTypeName)) {
+                if (node.isNodeType(blockedNodeTypeName)) {
                     throw new ServiceException(
                             String.format("Could not create an editor for node: { path: %s }, " +
-                                            "because it is of the black listed type: %s. " +
+                                            "because its node type is blocked: %s. " +
                                             "Please correct the deep link to this document or delete the node type name from " +
-                                            "the black list and provide a valid editor template."
-                                    , JcrUtils.getNodePathQuietly(node), blackListedNodeTypeName));
+                                            "the blocklist and provide a valid editor template."
+                                    , JcrUtils.getNodePathQuietly(node), blockedNodeTypeName));
                 }
             } catch (RepositoryException e) {
                 log.error("Could not get node type of node { path {} }", JcrUtils.getNodePathQuietly(node));

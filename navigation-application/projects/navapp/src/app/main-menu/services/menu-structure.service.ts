@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2022 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ export class MenuStructureService {
           new MenuItemLink('search-and-merchandising/site-search/search-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING')),
           new MenuItemLink('search-and-merchandising/site-search/redirects', this.translate('MENU_ITEM_SITE_SEARCH_REDIRECTS')),
           new MenuItemLink('search-and-merchandising/site-search/search-facets', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_FACETS')),
-          new MenuItemLink('search-and-merchandising/site-search/autosuggest-blacklist', this.translate('MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLACKLIST')),
+          new MenuItemLink('search-and-merchandising/site-search/autosuggest-blacklist', this.translate('MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLOCKLIST')),
           new MenuItemLink('search-and-merchandising/site-search/synonyms', this.translate('MENU_ITEM_SITE_SEARCH_SYNONYMS')),
         ]),
         new MenuItemContainer(this.translate('MENU_CONTAINER_CATEGORIES'), [

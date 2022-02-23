@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class WhitelistHtmlFilter implements HtmlFilter {
+public class AllowlistHtmlFilter implements HtmlFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(WhitelistHtmlFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(AllowlistHtmlFilter.class);
 
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
     private static final String DATA_PROTOCOL = "data:";
@@ -40,12 +40,12 @@ public class WhitelistHtmlFilter implements HtmlFilter {
 
     private final Map<String, Element> elements = new HashMap<>();
 
-    public WhitelistHtmlFilter() {
+    public AllowlistHtmlFilter() {
     }
 
-    public WhitelistHtmlFilter(final List<Element> whitelist) {
-        if (whitelist != null) {
-            whitelist.forEach(this::add);
+    public AllowlistHtmlFilter(final List<Element> allowlist) {
+        if (allowlist != null) {
+            allowlist.forEach(this::add);
         }
     }
 
@@ -61,7 +61,7 @@ public class WhitelistHtmlFilter implements HtmlFilter {
     public TagNode apply(final TagNode node) {
         final String nodeName = node.getName();
         if (!elements.containsKey(nodeName) && nodeName != null) {
-            // if element is not whitelisted, ignore it, unless the node name is null which indicates
+            // if element is not in allowlist, ignore it, unless the node name is null which indicates
             // an omitted HTML envelope
             return null;
         }
