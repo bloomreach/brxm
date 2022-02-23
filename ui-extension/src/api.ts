@@ -160,6 +160,13 @@ export interface UiProperties {
 }
 
 /**
+ * Dynamic properties (e.g. Channel Properties, Component Properties).
+ */
+export interface DynamicProperties {
+  [key: string]: string;
+}
+
+/**
  * API to access information about and communicate with the CMS that loads the UI extension.
  */
 export interface UiScope extends UiProperties {
@@ -193,6 +200,11 @@ export interface ChannelScope extends Emitter<ChannelScopeEvents> {
    * The Channel Manager UI will be updated to reflect the channel’s refreshed metadata.
    */
   refresh: () => Promise<void>;
+
+  /**
+   * @returns A Promise that resolves with [[DynamicProperties]] of the current channel.
+   */
+  get(): Promise<DynamicProperties>;
 }
 
 export interface ChannelScopeEvents {
