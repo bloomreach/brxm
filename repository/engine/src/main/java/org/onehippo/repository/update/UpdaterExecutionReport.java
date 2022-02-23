@@ -29,8 +29,11 @@ import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.utilities.io.CircularBufferOutputStream;
 import org.onehippo.cms7.utilities.logging.PrintStreamLogger;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class UpdaterExecutionReport {
+
+    private final static Logger log = LoggerFactory.getLogger(UpdaterExecutionReport.class.getName());
 
     private long startTime = -1l;
     private boolean started = false;
@@ -52,7 +55,7 @@ class UpdaterExecutionReport {
     private final PrintStream updatedStream;
     private final PrintStream failedStream;
     private final PrintStream skippedStream;
-    private final PrintStreamLogger logger;
+    private final PrintStreamLogger jcrStoredLogger;
 
     private static class TimestampPrintStreamLogger extends PrintStreamLogger {
         private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -74,7 +77,7 @@ class UpdaterExecutionReport {
         logStream = new PrintStream(logFile);
         cbos = new CircularBufferOutputStream(4096);
 
-        logger = new TimestampPrintStreamLogger("repository", logLevel, logStream, new PrintStream(cbos));
+        jcrStoredLogger = new TimestampPrintStreamLogger("repository", logLevel, logStream, new PrintStream(cbos));
 
         updatedFile = File.createTempFile("updater-updated", "txt.tmp", null);
         updatedStream = new PrintStream(updatedFile);
@@ -172,7 +175,15 @@ class UpdaterExecutionReport {
     }
 
     Logger getLogger() {
-        return logger;
+        if (isDevMode()) {
+            return jcrStoredLogger;
+        } else {
+            return log;
+        }
+    }
+
+    private boolean isDevMode() {
+        return System.getProperty("project.basedir") != null;
     }
 
     File getLogFile() {
