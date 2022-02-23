@@ -102,6 +102,9 @@
     <Logger name="org.hippoecm.hst.content.beans.dynamic" level="info"/>
     <Logger name="org.hippoecm.hst.content.beans.builder" level="info"/>
 
+    <!-- groovy scripts default log level in production -->
+    <Logger name="org.onehippo.repository.update.UpdaterExecutionReport" level="info"/>
+
     <!-- project logging -->
     <Logger name="${package}" level="info"/>
 
