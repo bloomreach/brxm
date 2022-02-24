@@ -119,7 +119,7 @@ public class DocumentValidityServiceIT extends RepositoryTestCase {
             documentValidityService.handleDocumentTypeChanges(session, documentType, Collections.singletonList(session.getNode(TEST_DOC_DRAFT)));
 
             Assertions.assertThat(interceptor.messages())
-                    .containsExactly("Unable to find prototype 'test:document', skipping handling of document type changes");
+                    .containsExactly("Unable to find prototype node of type 'test:document', skipping handling of type changes");
         }
     }
 
