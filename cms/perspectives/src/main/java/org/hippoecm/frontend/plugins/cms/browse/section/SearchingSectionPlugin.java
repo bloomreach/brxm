@@ -384,7 +384,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     private Component createSearchIcon(final String id, final DocumentCollection collection) {
-        final IModel<Icon> iconModel = new LoadableDetachableModel<>() {
+        final IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
             @Override
             protected Icon load() {
                 return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.TIMES : Icon.SEARCH;
