@@ -30,13 +30,20 @@ import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.update.UpdaterExecutionReport;
 
 public class UpdaterOutput extends Panel {
 
     public UpdaterOutput(final String id, final Component container, final boolean updating) {
         super(id);
 
-        final Label output = new Label("output", ReadOnlyModel.of(() -> parseOutput(container.getDefaultModelObject())));
+        final Label output;
+        if (isDevMode()) {
+            output = new Label("output", ReadOnlyModel.of(() -> parseOutput(container.getDefaultModelObject())));
+        } else {
+            output = new Label("output","In production, logs are stored in normal log files for logger '" +
+                    UpdaterExecutionReport.class.getName() + "' and not visible here");
+        }
         if (updating) {
             output.setOutputMarkupId(true);
             output.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
@@ -60,6 +67,9 @@ public class UpdaterOutput extends Panel {
         } catch (RepositoryException | IOException e) {
             return "Cannot read log: " + e.getMessage();
         }
+    }
+    private boolean isDevMode() {
+        return System.getProperty("project.basedir") != null;
     }
 
 }
