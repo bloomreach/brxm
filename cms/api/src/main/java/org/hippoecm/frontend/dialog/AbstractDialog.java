@@ -182,7 +182,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
                 super(id);
                 setOutputMarkupId(true);
 
-                final Link<String> link = new Link<>("message") {
+                final Link<String> link = new Link<String>("message") {
                     @Override
                     public void onClick() {
                         RequestCycle.get().scheduleRequestHandlerAfterCurrent(new ErrorDownloadRequestTarget(ex));
@@ -262,7 +262,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
         add(feedback);
 
         buttons = new LinkedList<>();
-        final ListView<ButtonWrapper> buttonsView = new ListView<>("buttons", buttons) {
+        final ListView<ButtonWrapper> buttonsView = new ListView<ButtonWrapper>("buttons", buttons) {
             @Override
             protected void populateItem(final ListItem<ButtonWrapper> item) {
                 final Button button = item.getModelObject().getButton();
