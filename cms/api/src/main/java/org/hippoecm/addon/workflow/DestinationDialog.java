@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,18 +49,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
-import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_EDITOR;
 
 public abstract class DestinationDialog extends Dialog<Void> implements IWorkflowInvoker {
 
-    static final Logger log = LoggerFactory.getLogger(DestinationDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(DestinationDialog.class);
 
     private IRenderService dialogRenderer;
     private ServiceTracker tracker;
     private final IPluginContext context;
     private final IClusterControl control;
     private final NodeModelWrapper<Node> destination;
-    private final String intialPath;
+    private final String initialPath;
     private final String modelServiceId;
 
     public DestinationDialog(final IModel<String> title, final IModel<String> question, final IModel<String> answer,
@@ -74,7 +73,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
 
         this.context = context;
         this.destination = destination;
-        this.intialPath = getDestinationPath();
+        this.initialPath = getDestinationPath();
 
         add(createQuestionPanel("question", question, answer));
 
@@ -87,7 +86,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
         control.start();
 
         modelServiceId = decorated.getString("model.folder");
-        tracker = new ServiceTracker<IModelReference>(IModelReference.class) {
+        tracker = new ServiceTracker<>(IModelReference.class) {
 
             IModelReference modelRef;
             IObserver modelObserver;
@@ -97,17 +96,19 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
                 super.onServiceAdded(service, name);
                 if (modelRef == null) {
                     modelRef = service;
-                    modelRef.setModel(destination.getChainedModel());
+                    modelRef.setModel(destination.getNodeModel());
                     context.registerService(modelObserver = new IObserver<IModelReference>() {
 
+                        @Override
                         public IModelReference getObservable() {
                             return modelRef;
                         }
 
+                        @Override
                         public void onEvent(final Iterator<? extends IEvent<IModelReference>> events) {
                             final IModel model = modelRef.getModel();
                             if (model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
-                                destination.setChainedModel(model);
+                                destination.setNodeModel(model);
                             }
                             DestinationDialog.this.setOkEnabled(isOkEnabled());
                         }
@@ -178,7 +179,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
     }
 
     protected boolean isOkEnabled() {
-        return !intialPath.equals(getDestinationPath());
+        return !initialPath.equals(getDestinationPath());
     }
 
     protected boolean checkPermissions() {
@@ -202,7 +203,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
 
     private String getDestinationPath() {
         try {
-            final Node node = (destination != null) ? destination.getChainedModel().getObject() : null;
+            final Node node = (destination != null) ? destination.getNodeModel().getObject() : null;
             return (node != null) ? node.getPath() : "";
         } catch (final RepositoryException e) {
             log.error("Failed to get path of the destination node", e);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
 
             refreshLink = new AjaxSubmitLink("refreshlink", suggestionsForm) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     redraw();
                 }
             };
@@ -202,7 +202,7 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
         protected void populateItem(Item item) {
             final RelatedDoc relatedDoc = (RelatedDoc) item.getModelObject();
 
-            AjaxLink link = new AjaxLink("link") {
+            AjaxLink<Void> link = new AjaxLink<>("link") {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     if (relatedDoc.exists()) {
@@ -230,7 +230,7 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
             link.add(label);
             item.add(link);
 
-            AjaxLink previewLink = new AjaxLink("preview") {
+            AjaxLink<Void> previewLink = new AjaxLink<>("preview") {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     if (relatedDoc.exists()) {

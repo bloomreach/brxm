@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,19 +39,20 @@ import org.slf4j.LoggerFactory;
 
 public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTreeNode {
 
-    static final Logger log = LoggerFactory.getLogger(JcrTreeNode.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrTreeNode.class);
 
-    static final int DETACHING = 0x00000001;
-
-    private List<IJcrTreeNode> children;
+    private static final int DETACHING = 0x00000001;
 
     private final int hashCode;
+    private final IJcrTreeNode parent;
+
     private boolean reloadChildren = true;
     private boolean reloadChildCount = true;
     private int childCount = -1;
-    private IJcrTreeNode parent;
-    private transient int flags = 0;
+    private List<IJcrTreeNode> children;
     private Comparator<IJcrTreeNode> childComparator;
+
+    private transient int flags = 0;
 
     public JcrTreeNode(IModel<Node> nodeModel, IJcrTreeNode parent) {
         super(nodeModel);
@@ -68,19 +69,15 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
         this.childComparator = childComparator;
     }
 
-    @Override
-    public IModel<Node> getNodeModel() {
-        return getChainedModel();
-    }
-
     /**
      * Resolve the child that corresponds to a particular name.
      * @param name
      * @return child node
      * @throws RepositoryException
      */
+    @Override
     public IJcrTreeNode getChild(String name) throws RepositoryException {
-        final Node chainedModelObject = getChainedModel().getObject();
+        final Node chainedModelObject = getNodeModel().getObject();
         if (chainedModelObject.hasNode(name)) {
             JcrNodeModel childModel = new JcrNodeModel(chainedModelObject.getNode(name));
             return createChildJcrTreeNode(childModel);
@@ -90,15 +87,18 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
     // implement TreeNode
 
+    @Override
     public TreeNode getParent() {
         return parent;
     }
 
+    @Override
     public Enumeration<? extends TreeNode> children() {
         ensureChildrenLoaded();
         return Collections.enumeration(children);
     }
 
+    @Override
     public TreeNode getChildAt(int i) {
         if (i == -1) {
             // this is an artifact of the DefaultAbstractTree.isNodeLast(TreeNode)
@@ -110,10 +110,11 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
         if (i >= 0 && i < childCount) {
             return children.get(i);
         }
-        log.warn("Invalid index: " + i + " of " + childCount + " children");
+        log.warn("Invalid index: {} of {} children", i, childCount);
         return new LabelTreeNode(this, "invalid tree node");
     }
 
+    @Override
     public int getChildCount() {
         if (!reloadChildCount && childCount > -1) {
             return childCount;
@@ -122,11 +123,13 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
         return childCount;
     }
 
+    @Override
     public int getIndex(TreeNode node) {
         ensureChildrenLoaded();
         return children.indexOf(node);
     }
 
+    @Override
     public boolean isLeaf() {
         try {
             if (nodeModel != null) {
@@ -141,6 +144,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
         return true;
     }
 
+    @Override
     public boolean getAllowsChildren() {
         return true;
     }
@@ -187,7 +191,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
      * @throws RepositoryException if repository exception occurs
      */
     protected List<IJcrTreeNode> loadChildren() throws RepositoryException {
-        List<IJcrTreeNode> treeNodes = new ArrayList<IJcrTreeNode>();
+        List<IJcrTreeNode> treeNodes = new ArrayList<>();
 
         for (Node childNode : loadChildNodes()) {
             treeNodes.add(createChildJcrTreeNode(new JcrNodeModel(childNode)));
@@ -243,7 +247,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
             if (!baseNode.getPrimaryNodeType().hasOrderableChildNodes()
                     && !baseNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                Collections.sort(childTreeNodes,  childComparator);
+                childTreeNodes.sort(childComparator);
             }
         }
     }
@@ -259,7 +263,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
                 children = loadChildren();
                 childCount = children.size();
             } catch (RepositoryException e) {
-                log.warn("Unable to load children, setting empty list: " + e.getMessage());
+                log.warn("Unable to load children, setting empty list: {}", e.getMessage());
                 children = new ArrayList<>();
                 childCount = 0;
             }
@@ -277,7 +281,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
             return true;
         }
         JcrTreeNode treeNode = (JcrTreeNode) object;
-        if (!nodeModel.equals(treeNode.getChainedModel())) {
+        if (!nodeModel.equals(treeNode.getNodeModel())) {
             return false;
         }
         if (parent == treeNode.parent) {
@@ -296,7 +300,8 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel.toString())
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("nodeModel", nodeModel)
                 .toString();
     }
 }

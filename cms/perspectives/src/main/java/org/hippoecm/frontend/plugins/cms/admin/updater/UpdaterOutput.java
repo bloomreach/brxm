@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.updater;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -27,19 +28,20 @@ import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.io.IOUtils;
-import org.apache.wicket.util.time.Duration;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.util.JcrUtils;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOG;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOGTAIL;
 
 public class UpdaterOutput extends Panel {
 
     public UpdaterOutput(final String id, final Component container, final boolean updating) {
         super(id);
 
-        final Label output = new Label("output", ReadOnlyModel.of(() -> parseOutput(container.getDefaultModelObject())));
+        final Label output = new Label("output", () -> parseOutput(container.getDefaultModelObject()));
         if (updating) {
             output.setOutputMarkupId(true);
-            output.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
+            output.add(new AjaxSelfUpdatingTimerBehavior(Duration.ofSeconds(5)));
         }
         add(output);
     }
@@ -51,11 +53,11 @@ public class UpdaterOutput extends Panel {
 
         final Node node = (Node) o;
         try {
-            final Binary fullLog = JcrUtils.getBinaryProperty(node, "hipposys:log", null);
+            final Binary fullLog = JcrUtils.getBinaryProperty(node, HIPPOSYS_LOG, null);
             if (fullLog != null) {
                 return IOUtils.toString(fullLog.getStream());
             } else {
-                return JcrUtils.getStringProperty(node, "hipposys:logtail", "");
+                return JcrUtils.getStringProperty(node, HIPPOSYS_LOGTAIL, "");
             }
         } catch (RepositoryException | IOException e) {
             return "Cannot read log: " + e.getMessage();

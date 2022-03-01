@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public class DefaultTreeNodeIconProvider extends AbstractJcrTreeNodeIconProvider
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTreeNodeIconProvider.class);
 
+    @Override
     public HippoIcon getNodeIcon(final String id, final TreeNode treeNode, final ITreeState state) {
         if (state.isNodeExpanded(treeNode)) {
             return isXPageFolder(treeNode)

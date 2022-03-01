@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
@@ -82,7 +81,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     public DocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(renameAction = new StdWorkflow<DocumentWorkflow>(RENAME, new StringResourceModel("rename-label", this), context, getModel()) {
+        add(renameAction = new StdWorkflow<>(RENAME, new StringResourceModel("rename-label", this), context, getModel()) {
             private RenameDocumentArguments renameDocumentArguments;
 
             @Override
@@ -125,7 +124,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                         this.getModel());
             }
 
-
             @Override
             protected String execute(DocumentWorkflow workflow) throws Exception {
                 final String targetName = renameDocumentArguments.getTargetName();
@@ -158,7 +156,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(copyAction = new StdWorkflow<DocumentWorkflow>(COPY, new StringResourceModel("copy-label", this), context, getModel()) {
+        add(copyAction = new StdWorkflow<>(COPY, new StringResourceModel("copy-label", this), context, getModel()) {
             NodeModelWrapper<Node> destination = null;
             String name = null;
 
@@ -174,14 +172,14 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                destination = new NodeModelWrapper<Node>(getFolder()) {
+                destination = new NodeModelWrapper<>(getFolder()) {
                 };
 
                 try {
-                    IModel<StringCodec> codec = ReadOnlyModel.of(() -> getNodeNameCodec(getModelNode(), getFolder().getNode()));
+                    IModel<StringCodec> codec = () -> getNodeNameCodec(getModelNode(), getFolder().getNode());
 
                     final CopyNameHelper copyNameHelper = new CopyNameHelper(codec, translate("copyof"));
-                    final Node destinationNode = destination.getChainedModel().getObject();
+                    final Node destinationNode = destination.getNodeModel().getObject();
                     name = copyNameHelper.getCopyName(getModelNode().getDisplayName(), destinationNode);
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
@@ -203,14 +201,14 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                     @Override
                     protected boolean checkFolderTypes() {
-                        return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getChainedModel());
+                        return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getNodeModel());
                     }
                 };
             }
 
             @Override
             protected String execute(DocumentWorkflow workflow) throws Exception {
-                Node folder = destination != null ? destination.getChainedModel().getObject() :
+                Node folder = destination != null ? destination.getNodeModel().getObject() :
                         new JcrNodeModel("/").getNode();
                 Node document = getModel().getNode();
 
@@ -235,7 +233,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
         });
 
-        add(moveAction = new StdWorkflow<DocumentWorkflow>(MOVE, new StringResourceModel("move-label", this), context, getModel()) {
+        add(moveAction = new StdWorkflow<>(MOVE, new StringResourceModel("move-label", this), context, getModel()) {
             NodeModelWrapper<Node> destination;
 
             @Override
@@ -259,7 +257,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                destination = new NodeModelWrapper<Node>(getFolder()) {
+                destination = new NodeModelWrapper<>(getFolder()) {
                 };
                 return new DestinationDialog(Model.of(translate("move-title")), null, null, destination,
                         getPluginContext(), getPluginConfig()) {
@@ -270,7 +268,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                     @Override
                     protected boolean checkFolderTypes() {
-                        return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getChainedModel());
+                        return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getNodeModel());
                     }
                 };
             }
@@ -278,7 +276,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected String execute(DocumentWorkflow workflow) throws Exception {
                 Node document = getHandleOrUnpublishedVariant(getModel().getWorkflow());
-                Node folder = destination != null ? destination.getChainedModel().getObject()
+                Node folder = destination != null ? destination.getNodeModel().getObject()
                         : new JcrNodeModel("/").getNode();
 
                 String nodeName = document.getName();
@@ -288,7 +286,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(deleteAction = new StdWorkflow<DocumentWorkflow>(DELETE,
+        add(deleteAction = new StdWorkflow<>(DELETE,
                 new StringResourceModel("delete-label", this), context, getModel()) {
 
             @Override
@@ -325,7 +323,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(whereUsedAction = new StdWorkflow<DocumentWorkflow>("where-used", new StringResourceModel("where-used-label", this), context, getModel()) {
+        add(whereUsedAction = new StdWorkflow<>("where-used", new StringResourceModel("where-used-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -349,7 +347,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(historyAction = new StdWorkflow<DocumentWorkflow>("history", new StringResourceModel("history-label", this), context, getModel()) {
+        add(historyAction = new StdWorkflow<>("history", new StringResourceModel("history-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {

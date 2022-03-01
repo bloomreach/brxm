@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -189,17 +190,13 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             builderContext.addBuilderListener(new IBuilderListener() {
 
                 public void onBlur() {
-                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null) {
-                        target.add(RenderPluginEditorPlugin.this);
-                    }
+                    final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(RenderPluginEditorPlugin.this));
                 }
 
                 public void onFocus() {
-                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    if (target != null) {
-                        target.add(RenderPluginEditorPlugin.this);
-                    }
+                    final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(RenderPluginEditorPlugin.this));
                 }
             });
         }
