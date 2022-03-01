@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import { ScheduledRequest } from './scheduled-request.model';
 import { Workflow } from './workflow.model';
 import { XPageState } from './xpage-state.model';
 
 export interface PageStates {
   xpage?: XPageState;
-  scheduledRequest?: ScheduledRequest;
   workflow?: Workflow;
 }
