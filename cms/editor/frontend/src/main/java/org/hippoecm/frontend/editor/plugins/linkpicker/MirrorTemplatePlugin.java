@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.ajax.BrLink;
@@ -102,7 +101,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addOpenLink() {
-        final AjaxLink<Void> openLink = new NoDoubleClickAjaxLink<Void>("openLink") {
+        final AjaxLink<Void> openLink = new NoDoubleClickAjaxLink<>("openLink") {
             @Override
             public boolean isVisible() {
                 return hasLink();
@@ -120,7 +119,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addOpenButton() {
-        final AjaxLink<Void> openButton = new BrLink<Void>("open") {
+        final AjaxLink<Void> openButton = new BrLink<>("open") {
             @Override
             public boolean isVisible() {
                 return hasLink();
@@ -146,7 +145,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addClearButton() {
-        final AjaxLink<Void> clearButton = new BrLink<Void>("clear") {
+        final AjaxLink<Void> clearButton = new BrLink<>("clear") {
             @Override
             public boolean isVisible() {
                 return hasLink();
@@ -177,24 +176,20 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     private Dialog<String> createLinkPickerDialog() {
         final JcrPropertyValueModel<String> docBaseModel = getDocBaseModel();
         final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docBaseModel);
-        final IChainingModel<String> linkPickerModel = new IChainingModel<String>() {
+        final IModel<String> linkPickerModel = new IModel<>() {
+
+            @Override
             public String getObject() {
                 return docBaseModel.getObject();
             }
 
+            @Override
             public void setObject(final String uuid) {
                 getDocBaseModel().setObject(uuid);
                 redraw();
             }
 
-            public IModel<String> getChainedModel() {
-                return docBaseModel;
-            }
-
-            public void setChainedModel(final IModel<?> model) {
-                throw new UnsupportedOperationException("Value model cannot be changed");
-            }
-
+            @Override
             public void detach() {
                 docBaseModel.detach();
             }
@@ -224,8 +219,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         } catch (final RepositoryException e) {
             if (e.getCause() instanceof IllegalArgumentException) {
                 log.warn("Invalid value for docbase {} at path {}", docBase, path);
-            }
-            else {
+            } else {
                 log.error("Invalid docbase '{}' at path '{}'", docBase, path, e);
             }
         }
@@ -250,7 +244,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
             final HippoNode hippoNode = (HippoNode) node;
             return hippoNode.getDisplayName();
         } catch (final RepositoryException e) {
-            log.error("Cannot get display name " + e.getMessage(), e);
+            log.error("Cannot get display name {}", e.getMessage(), e);
         }
         return StringUtils.EMPTY;
     }
@@ -277,7 +271,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     IModel<String> getPathModel() {
-        return new LoadableDetachableModel<String>() {
+        return new LoadableDetachableModel<>() {
             @Override
             protected String load() {
                 return getMirrorPath();
@@ -286,7 +280,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     IModel<String> getLocalizedNameModel() {
-        return new LoadableDetachableModel<String>() {
+        return new LoadableDetachableModel<>() {
             @Override
             protected String load() {
                 return getDisplayName(getDocBaseModel().getObject());

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.HashMap;
@@ -29,8 +31,6 @@ import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.StringValueConversionException;
-import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -43,11 +43,8 @@ import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 
 public abstract class AbstractPluginDecorator extends AbstractValueMap implements IPluginConfig, IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     @SuppressWarnings("unchecked")
     private class ListWrapper extends AbstractList implements Serializable {
-        private static final long serialVersionUID = 1L;
 
         private List list;
 
@@ -74,25 +71,29 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
     public AbstractPluginDecorator(IPluginConfig upstream) {
         this.upstream = upstream;
-        this.wrapped = new HashMap<IPluginConfig, IPluginConfig>();
+        this.wrapped = new HashMap<>();
     }
 
+    @Override
     public String getName() {
         return upstream.getName();
     }
 
+    @Override
     public IPluginConfig getPluginConfig(Object key) {
         return wrapConfig(upstream.getPluginConfig(key));
     }
 
+    @Override
     public Set<IPluginConfig> getPluginConfigSet() {
-        Set<IPluginConfig> configSet = new LinkedHashSet<IPluginConfig>();
+        Set<IPluginConfig> configSet = new LinkedHashSet<>();
         for (IPluginConfig config : upstream.getPluginConfigSet()) {
             configSet.add(wrapConfig(config));
         }
         return configSet;
     }
 
+    @Override
     public void detach() {
         if (upstream instanceof IDetachable) {
             ((IDetachable) upstream).detach();
@@ -113,7 +114,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     public Object get(Object key) {
         Object obj = upstream.get(key);
         if (obj == null) {
-            return obj;
+            return null;
         }
         return wrap(obj);
     }
@@ -126,7 +127,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     @Override
     public Set<Map.Entry<String, Object>> entrySet() {
         final Set<Map.Entry<String, Object>> orig = upstream.entrySet();
-        return new AbstractSet<Map.Entry<String, Object>>() {
+        return new AbstractSet<>() {
 
             @Override
             public Iterator<Map.Entry<String, Object>> iterator() {
@@ -135,11 +136,13 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
                     Entry<String, Object> next = null;
 
+                    @Override
                     public boolean hasNext() {
                         fetchNext();
                         return next != null;
                     }
 
+                    @Override
                     public Map.Entry<String, Object> next() {
                         if (next != null) {
                             Map.Entry<String, Object> ret = next;
@@ -153,16 +156,19 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
                         while (next == null && origIter.hasNext()) {
                             final Entry<String, Object> entry = origIter.next();
                             if (entry != null && AbstractPluginDecorator.this.containsKey(entry.getKey())) {
-                                next = new Map.Entry<String, Object>() {
+                                next = new Map.Entry<>() {
 
+                                    @Override
                                     public String getKey() {
                                         return entry.getKey();
                                     }
 
+                                    @Override
                                     public Object getValue() {
                                         return AbstractPluginDecorator.this.get(entry.getKey());
                                     }
 
+                                    @Override
                                     public Object setValue(Object value) {
                                         return AbstractPluginDecorator.this.put(entry.getKey(), value);
                                     }
@@ -172,6 +178,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
                         }
                     }
 
+                    @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
                     }
@@ -241,6 +248,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
     protected abstract Object decorate(Object object);
 
+    @Override
     @SuppressWarnings("unchecked")
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
         this.obContext = (IObservationContext<IPluginConfig>) context;
@@ -250,16 +258,18 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
         return obContext;
     }
 
+    @Override
     public void startObservation() {
-        obContext.registerObserver(observer = new IObserver<IPluginConfig>() {
-            private static final long serialVersionUID = 1L;
+        obContext.registerObserver(observer = new IObserver<>() {
 
+            @Override
             public IPluginConfig getObservable() {
                 return upstream;
             }
 
+            @Override
             public void onEvent(Iterator<? extends IEvent<IPluginConfig>> events) {
-                EventCollection<IEvent<IPluginConfig>> collection = new EventCollection<IEvent<IPluginConfig>>();
+                EventCollection<IEvent<IPluginConfig>> collection = new EventCollection<>();
                 if (events.hasNext()) {
                     collection.add(new PluginConfigEvent(AbstractPluginDecorator.this,
                             PluginConfigEvent.EventType.CONFIG_CHANGED));
@@ -270,6 +280,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
         });
     }
 
+    @Override
     public void stopObservation() {
         obContext.unregisterObserver(observer);
     }
@@ -318,12 +329,12 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     }
 
     @Override
-    public Time getTime(String key) throws StringValueConversionException {
+    public Instant getInstant(String key) throws StringValueConversionException {
         Object value = get(key);
-        if (value instanceof Time) {
-            return (Time) value;
+        if (value instanceof Instant) {
+            return (Instant) value;
         }
-        return super.getTime(key);
+        return super.getInstant(key);
     }
 
 }

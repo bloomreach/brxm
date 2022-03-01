@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
-abstract class MenuLink extends Link {
+abstract class MenuLink extends Link<Void> {
 
     public MenuLink(final String id) {
         super(id);

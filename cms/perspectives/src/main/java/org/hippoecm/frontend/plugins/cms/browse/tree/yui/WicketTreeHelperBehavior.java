@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package org.hippoecm.frontend.plugins.cms.browse.tree.yui;
 
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
 public class WicketTreeHelperBehavior extends AbstractYuiBehavior {
-    private static final long serialVersionUID = 1L;
-    
-  
+
     WicketTreeHelperSettings settings;
     
     public WicketTreeHelperBehavior(WicketTreeHelperSettings settings) {
@@ -33,14 +30,7 @@ public class WicketTreeHelperBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(YuiTreeNamespace.NS, "treehelper");
-        context.addOnDomLoad(new AbstractReadOnlyModel<String>() {
-            private static final long serialVersionUID = 1L;
-            
-            @Override
-            public String getObject() {
-                return getInitString() + getRenderString();
-            }
-        });
+        context.addOnDomLoad(() -> getInitString() + getRenderString());
     }
     public String getInitString() {
         return "YAHOO.hippo.TreeHelper.init('" + getWicketId() + "', " + settings.toScript() + ");";

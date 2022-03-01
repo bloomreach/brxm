@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.addon.workflow;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -119,7 +120,8 @@ class PluginController implements IClusterable {
 
         IRenderService renderService = context.getService(wicketRenderId, IRenderService.class);
         if (renderService != null) {
-            renderService.render((PluginRequestTarget) RequestCycle.get().find(AjaxRequestTarget.class));
+            Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> renderService.render((PluginRequestTarget) ajaxRequestTarget));
         }
         return renderService;
     }

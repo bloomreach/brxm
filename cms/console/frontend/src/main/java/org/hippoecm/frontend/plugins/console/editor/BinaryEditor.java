@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@ package org.hippoecm.frontend.plugins.console.editor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.jcr.Node;
@@ -42,8 +43,6 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -53,6 +52,9 @@ import org.hippoecm.frontend.plugins.console.dialog.BinaryUploadDialog;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.util.JcrConstants.JCR_LAST_MODIFIED;
+import static org.onehippo.repository.util.JcrConstants.JCR_MIME_TYPE;
 
 public class BinaryEditor extends Panel {
 
@@ -70,7 +72,7 @@ public class BinaryEditor extends Panel {
 
         // download
         final ResourceStreamResource resource = new ResourceStreamResource(stream);
-        resource.setCacheDuration(Duration.NONE);
+        resource.setCacheDuration(Duration.ZERO);
         try {
             final Node node = model.getProperty().getParent().getParent();
             final StringBuilder fileName = new StringBuilder(node.getName());
@@ -86,13 +88,7 @@ public class BinaryEditor extends Panel {
         add(downloadLink);
 
         // upload
-        IDialogFactory factory = new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public IDialogService.Dialog createDialog() {
-                return new BinaryUploadDialog(model);
-            }
-        };
+        final IDialogFactory factory = () -> new BinaryUploadDialog(model);
         final IDialogService service = pluginContext.getService(IDialogService.class.getName(), IDialogService.class);
         final DialogLink uploadLink = new DialogLink("binary-upload-link", new Model<>("Upload binary"), factory, service);
         add(uploadLink);
@@ -103,7 +99,8 @@ public class BinaryEditor extends Panel {
         contentIdentityValueLabel.setOutputMarkupPlaceholderTag(true);
         contentIdentityValueLabel.setVisible(false);
         add(contentIdentityValueLabel);
-        final AjaxLink contentIdentityShowLink = new AjaxLink("content-identity-show-link") {
+
+        final AjaxLink<?> contentIdentityShowLink = new AjaxLink<Void>("content-identity-show-link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 setContentIdentity(retrieveJackrabbitContentIdentity());
@@ -194,7 +191,7 @@ public class BinaryEditor extends Panel {
                     return "text/plain";
                 } else {
                     final Node node = model.getProperty().getParent();
-                    return JcrUtils.getStringProperty(node, "jcr:mimeType", "unknown");
+                    return JcrUtils.getStringProperty(node, JCR_MIME_TYPE, "unknown");
                 }
             } catch (RepositoryException e) {
                 log.error("Unexpected exception while determining mime type", e);
@@ -238,14 +235,14 @@ public class BinaryEditor extends Panel {
         }
 
         @Override
-        public Time lastModifiedTime() {
+        public Instant lastModifiedTime() {
             try {
                 final Node node = model.getProperty().getParent();
-                return Time.valueOf(JcrUtils.getDateProperty(node, "jcr:lastModified", Calendar.getInstance()).getTime());
+                return JcrUtils.getDateProperty(node, JCR_LAST_MODIFIED, Calendar.getInstance()).toInstant();
             } catch (RepositoryException e) {
                 log.error("Unexpected exception while determining last modified date", e);
             }
-            return Time.valueOf(new Date());
+            return Instant.now();
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -175,7 +174,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
 
                     public AbstractDialog<String> createDialog() {
                         final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docbaseModel);
-                        return new LinkPickerDialog(context, dialogConfig, new IChainingModel<String>() {
+                        return new LinkPickerDialog(context, dialogConfig, new IModel<String>() {
                             private static final long serialVersionUID = 1L;
 
                             public String getObject() {
@@ -185,14 +184,6 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
                             public void setObject(String object) {
                                 docbaseModel.setObject(object);
                                 redraw();
-                            }
-
-                            public IModel<String> getChainedModel() {
-                                return docbaseModel;
-                            }
-
-                            public void setChainedModel(IModel<?> model) {
-                                throw new UnsupportedOperationException("Value model cannot be changed");
                             }
 
                             public void detach() {
