@@ -24,7 +24,7 @@ import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class TextDialog extends Dialog implements IWorkflowInvoker {
+public abstract class TextDialog extends Dialog<Void> implements IWorkflowInvoker {
 
     private static final Logger log = LoggerFactory.getLogger(TextDialog.class);
 

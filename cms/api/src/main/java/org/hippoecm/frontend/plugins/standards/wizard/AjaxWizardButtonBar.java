@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,43 +16,55 @@
 
 package org.hippoecm.frontend.plugins.standards.wizard;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.wizard.IWizard;
 import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.extensions.wizard.IWizardStep;
 import org.apache.wicket.extensions.wizard.Wizard;
-import org.apache.wicket.extensions.wizard.WizardButtonBar;
-import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.extensions.wizard.WizardButton;
 
+import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
-public class AjaxWizardButtonBar extends WizardButtonBar {
-
-    private final Wizard wizard;
+public class AjaxWizardButtonBar extends org.apache.wicket.extensions.wizard.AjaxWizardButtonBar {
 
     public AjaxWizardButtonBar(String id, final Wizard wizard) {
         super(id, wizard);
-        this.wizard = wizard;
-
         setOutputMarkupId(true);
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
-
-        addOrReplace(new CancelButton(wizard));
-        addOrReplace(new NextButton(wizard));
-        addOrReplace(new PreviousButton(wizard));
-        addOrReplace(new FinishButton(wizard));
     }
 
-    private class CancelButton extends AjaxWizardButton {
+    @Override
+    protected WizardButton newPreviousButton(String id, IWizard wizard) {
+        return new PreviousButton(id, wizard);
+    }
 
-        public CancelButton(final Wizard wizard) {
-            super("cancel", wizard, "cancel");
+    @Override
+    protected WizardButton newNextButton(String id, IWizard wizard) {
+        return new NextButton(id, wizard);
+    }
 
+    @Override
+    protected WizardButton newFinishButton(String id, IWizard wizard) {
+        return new FinishButton(id, wizard);
+    }
+
+    @Override
+    protected WizardButton newCancelButton(String id, IWizard wizard) {
+        return new CancelButton(id, wizard);
+    }
+
+    private static class CancelButton extends AjaxWizardButton {
+
+        public CancelButton(final String id, final IWizard wizard) {
+            super(id, wizard, new ResourceModel("cancel"));
+            add(ClassAttribute.append("btn btn-default"));
             add(new InputBehavior(new KeyType[] {KeyType.Escape}, EventType.click));
 
             // Skip form validation on cancel button
@@ -65,19 +77,17 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             IWizardModel wizardModel = getWizardModel();
             wizardModel.cancel();
         }
     }
 
-    private class NextButton extends AjaxWizardButton {
+    private static class NextButton extends AjaxWizardButton {
 
-        private final Wizard wizard;
-
-        public NextButton(final Wizard wizard) {
-            super("next", wizard, "next");
-            this.wizard = wizard;
+        public NextButton(final String id, final IWizard wizard) {
+            super(id, wizard, new ResourceModel("next"));
+            add(ClassAttribute.append("btn btn-default"));
         }
 
         @Override
@@ -86,7 +96,7 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             IWizardModel wizardModel = getWizardModel();
             IWizardStep step = wizardModel.getActiveStep();
 
@@ -100,18 +110,14 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
                 error(getLocalizer().getString(
                         "org.apache.wicket.extensions.wizard.NextButton.step.did.not.complete", this));
             }
-
-            target.add(wizard);
         }
     }
 
     private static class PreviousButton extends AjaxWizardButton {
 
-        private final Wizard wizard;
-
-        public PreviousButton(final Wizard wizard) {
-            super("previous", wizard, "prev");
-            this.wizard = wizard;
+        public PreviousButton(final String id, final IWizard wizard) {
+            super(id, wizard, new ResourceModel("prev"));
+            add(ClassAttribute.append("btn btn-default"));
 
             // Skip form validation on previous button
             setDefaultFormProcessing(false);
@@ -123,16 +129,16 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             getWizardModel().previous();
-            target.add(wizard);
         }
     }
 
-    private class FinishButton extends AjaxWizardButton {
+    private static class FinishButton extends AjaxWizardButton {
 
-        public FinishButton(final Wizard wizard) {
-            super("finish", wizard, "finish");
+        public FinishButton(final String id, final IWizard wizard) {
+            super(id, wizard, new ResourceModel("finish"));
+            add(ClassAttribute.append("btn btn-default"));
         }
 
         @Override
@@ -142,12 +148,13 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         }
 
         @Override
-        protected void onClick(AjaxRequestTarget target, Form form) {
+        protected void onClick() {
             IWizardModel wizardModel = getWizardModel();
             IWizardStep step = wizardModel.getActiveStep();
 
             // let the step apply any state
             step.applyState();
+
 
             // if the step completed after applying the state, notify the wizard
             if (step.isComplete()) {

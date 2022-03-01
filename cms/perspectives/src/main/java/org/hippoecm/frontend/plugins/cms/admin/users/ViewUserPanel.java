@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ import org.apache.wicket.model.util.MapModel;
 import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
@@ -102,8 +101,8 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         add(new Label("lastName", new PropertyModel(userModel, "lastName")));
         add(new Label("email", new PropertyModel(userModel, "email")));
         add(new Label("provider", new PropertyModel(userModel, "provider")));
-        add(new Label("active", ReadOnlyModel.of(this::getUserActiveLabel)));
-        add(new Label("expired", ReadOnlyModel.of(this::getPasswordExpiredResourceModel)));
+        add(new Label("active", this::getUserActiveLabel));
+        add(new Label("expired", this::getPasswordExpiredResourceModel));
 
         final User user = userModel.getObject();
 
@@ -299,7 +298,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
             final AjaxButton submit = new AjaxButton("submit", hippoForm) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     final HippoSession hippoSession = UserSession.get().getJcrSession();

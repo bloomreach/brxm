@@ -21,7 +21,7 @@ import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.service.ILogoutService;
 
-public class LogoutDialog extends Dialog {
+public class LogoutDialog extends Dialog<Void> {
 
     private final ILogoutService logoutService;
     private boolean logout;

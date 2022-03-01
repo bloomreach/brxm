@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.logout;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.time.Duration;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,7 +26,6 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.template.PackageTextTemplate;
-import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NavAppBridgeHeaderItem;
 import org.hippoecm.frontend.service.ILogoutService;
@@ -49,7 +49,7 @@ public class ActiveLogoutPlugin extends Component {
     /**
      * @param id                         the Wicket ID of this component
      * @param maxInactiveIntervalMinutes the number of minutes a user has to be inactive before being logged out.
-     *                                   A value of zero or less means means 'infinite' and will disable the active logout.
+     *                                   A value of zero or less means 'infinite' and will disable the active logout.
      * @param logoutService              the service to use for logging out a user.
      * @param iframesConnectionTimeout   maximum time to wait for an iframe to connect
      */
@@ -67,7 +67,7 @@ public class ActiveLogoutPlugin extends Component {
     /**
      * @param id                         the Wicket ID of this component
      * @param maxInactiveIntervalMinutes the number of minutes a user has to be inactive before being logged out.
-     *                                   A value of zero or less means means 'infinite' and will disable the active logout.
+     *                                   A value of zero or less means 'infinite' and will disable the active logout.
      * @param logoutService              the service to use for logging out a user.
      */
     public ActiveLogoutPlugin(final String id, final int maxInactiveIntervalMinutes, final ILogoutService logoutService) {
@@ -84,14 +84,12 @@ public class ActiveLogoutPlugin extends Component {
 
         if (isActive()) {
             log.info("Inactive user sessions will be logged out automatically after {} minutes",
-                    Duration.minutes(maxInactiveIntervalMinutes));
+                    Duration.ofMinutes(maxInactiveIntervalMinutes));
         } else {
             log.info("Inactive user sessions will not be logged out automatically");
         }
 
         final IHeaderResponse header = container.getHeaderResponse();
-
-
 
         if (Main.isCmsApplication()) {
             if (iframesConnectionTimeout == CONNECTION_TIMEOUT_NOT_SET) {

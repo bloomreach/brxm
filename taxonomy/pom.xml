@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2021 Bloomreach
+  Copyright 2009-2022 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@
     <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
     <junit.version>4.13.1</junit.version>
     <easymock.version>4.3</easymock.version>
+    <!-- Wicket 9 uses junit5 jupiter assertions -->
+    <junit-jupiter.version>5.7.2</junit-jupiter.version>
   </properties>
 
   <repositories>
@@ -221,7 +223,12 @@
         <version>${easymock.version}</version>
         <scope>test</scope>
       </dependency>
-
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit-jupiter.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
 
   </dependencyManagement>

@@ -197,7 +197,7 @@ public class FolderTreePlugin extends RenderPlugin {
                         // add clicked node path to diagnostics output
                         if (nodeClickedTask != null && clickedNode instanceof FolderTreeNode) {
                             final FolderTreeNode ftn = (FolderTreeNode) clickedNode;
-                            final IModel<Node> chainedModel = ftn.getChainedModel();
+                            final IModel<Node> chainedModel = ftn.getNodeModel();
                             if (chainedModel != null && chainedModel.getObject() != null) {
                                 nodeClickedTask.setAttribute("node", JcrUtils.getNodePathQuietly(chainedModel.getObject()));
                             }
@@ -243,7 +243,6 @@ public class FolderTreePlugin extends RenderPlugin {
             }
         };
 
-
         cmsJcrTree.add(treeHelperBehavior = new WicketTreeHelperBehavior(new WicketTreeHelperSettings(config)) {
 
             @Override
@@ -270,7 +269,7 @@ public class FolderTreePlugin extends RenderPlugin {
         }
         Collections.reverse(providers);
 
-        return (ITreeNodeIconProvider) (id, treeNode, state) -> {
+        return (id, treeNode, state) -> {
             for (final ITreeNodeIconProvider provider : providers) {
                 final Component icon = provider.getNodeIcon(id, treeNode, state);
                 if (icon != null) {

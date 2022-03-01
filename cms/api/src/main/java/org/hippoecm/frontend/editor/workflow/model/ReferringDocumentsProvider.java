@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,11 +59,13 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         this.retrieveUnpublished = retrieveUnpublished;
     }
 
+    @Override
     public Iterator iterator(final long first, final long count) {
         load();
         return entries.subList((int) first, (int) (first + count)).iterator();
     }
 
+    @Override
     public IModel model(final Object object) {
         return (IModel) object;
     }
@@ -82,6 +84,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         return WorkflowUtils.MAX_REFERENCE_COUNT;
     }
     
+    @Override
     public long size() {
         load();
         return entries.size();
@@ -93,6 +96,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         super.detach();
     }
 
+    @Override
     public ISortState getSortState() {
         return state;
     }
@@ -106,7 +110,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
             try {
                 entries = new ArrayList<>();
                 numResults = 0;
-                final IModel<Node> model = getChainedModel();
+                final IModel<Node> model = getNodeModel();
                 SortedSet<Node> nodes = getReferrersSortedByName(model.getObject(), retrieveUnpublished);
                 numResults = nodes.size();
                 for(Node node : nodes) {

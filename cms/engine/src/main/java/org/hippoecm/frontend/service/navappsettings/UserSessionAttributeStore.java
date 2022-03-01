@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,25 @@ package org.hippoecm.frontend.service.navappsettings;
 import java.io.Serializable;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.model.SerializableSupplier;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.session.UserSession;
 
 class UserSessionAttributeStore implements SessionAttributeStore, Serializable {
 
-    private final SerializableSupplier<UserSession> userSessionSupplier;
+    private final IModel<UserSession> userSessionSupplier;
 
-    public UserSessionAttributeStore(final SerializableSupplier<UserSession> userSessionSupplier) {
+    public UserSessionAttributeStore(final IModel<UserSession> userSessionSupplier) {
         this.userSessionSupplier = userSessionSupplier;
     }
 
 
     @Override
     public Serializable getAttribute(final String name) {
-        return userSessionSupplier.get().getAttribute(name);
+        return userSessionSupplier.getObject().getAttribute(name);
     }
 
     @Override
     public Session setAttribute(final String name, final Serializable value) {
-        return userSessionSupplier.get().setAttribute(name, value);
+        return userSessionSupplier.getObject().setAttribute(name, value);
     }
 }
