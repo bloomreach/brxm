@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { WorkflowRequestType } from './workflow-request-type.enum';
+import { RequestType, ScheduledRequestType, WorkflowRequestType } from './workflow-request-type.enum';
 
 export interface WorkflowRequest {
   id: string;
   reason: string;
   requestDate: number;
   creationDate: number;
-  type: WorkflowRequestType;
+  type: WorkflowRequestType & ScheduledRequestType;
   username: string;
+  requestType: RequestType;
+  scheduledDate: number;
 }
