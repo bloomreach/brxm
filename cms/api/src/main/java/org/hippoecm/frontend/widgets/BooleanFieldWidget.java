@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,13 +17,9 @@ package org.hippoecm.frontend.widgets;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.time.Duration;
 
 public class BooleanFieldWidget extends AjaxUpdatingWidget<Boolean> {
-
-    private static final long serialVersionUID = 1L;
 
     public BooleanFieldWidget(String id, IModel<Boolean> model) {
         super(id, model);

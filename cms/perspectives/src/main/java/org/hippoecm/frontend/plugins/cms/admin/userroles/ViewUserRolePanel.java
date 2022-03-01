@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,6 @@ import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.form.PostOnlyForm;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
@@ -100,7 +99,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
 
         // common userrole properties
         add(new Label("name", userRole.getName())); // userroles cannot be renamed, so no model needed
-        add(new Label("description", ReadOnlyModel.of(() -> userRoleModel.getObject().getDescription())));
+        add(new Label("description", () -> userRoleModel.getObject().getDescription()));
         add(new Label("system", userRole.isSystem()));
 
         // actions
@@ -143,7 +142,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         // add a cancel/back button
         form.add(new AjaxButton("back-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 // one up
                 final List<IBreadCrumbParticipant> all = breadCrumbModel.allBreadCrumbParticipants();
                 breadCrumbModel.setActive(all.get(all.size() - 2));
@@ -227,7 +226,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
 
             final AjaxButton submit = new AjaxButton("submit", hippoForm) {
                 @Override
-                protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     final UserRole userRole = userRoleModel.getObject();

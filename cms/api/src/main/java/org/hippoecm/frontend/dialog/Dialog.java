@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.dialog;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -119,10 +120,8 @@ public class Dialog<ModelType> extends AbstractDialog<ModelType> {
         if (action != null) {
             final String script = action.getJavaScript(getModelObject());
             if (StringUtils.isNotBlank(script)) {
-                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target != null) {
-                    target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(script));
-                }
+                final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(script)));
             }
         }
         super.onClose();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.standards.diff;
 
-import org.apache.wicket.model.AbstractReadOnlyModel;
+import java.util.Objects;
+
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.slf4j.Logger;
@@ -64,7 +65,8 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
             return null;
         }
 
-        return diffService.diff(original.getObject(), current.getObject());
+        // Set empty default values in order to prevent nullpointer
+        return diffService.diff( Objects.toString(original.getObject(), ""), Objects.toString(current.getObject(), ""));
     }
 
     @Override
@@ -84,7 +86,7 @@ public class HtmlDiffModel extends LoadableDetachableModel<String> {
      * This model ensures the value is surrounded with <html><body>..value..</body></html>
      * This is required by the DiffHelper.diffHtml method.
      */
-    public static class ValidHtmlModel extends AbstractReadOnlyModel<String> {
+    public static class ValidHtmlModel implements IModel<String> {
 
         IModel<String> wrapped;
 

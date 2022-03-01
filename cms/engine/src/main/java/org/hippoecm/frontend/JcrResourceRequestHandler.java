@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,9 +29,13 @@ import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.io.Streams;
-import org.apache.wicket.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.util.JcrConstants.JCR_DATA;
+import static org.onehippo.repository.util.JcrConstants.JCR_ENCODING;
+import static org.onehippo.repository.util.JcrConstants.JCR_LAST_MODIFIED;
+import static org.onehippo.repository.util.JcrConstants.JCR_MIME_TYPE;
 
 public class JcrResourceRequestHandler implements IRequestHandler {
 
@@ -54,6 +58,7 @@ public class JcrResourceRequestHandler implements IRequestHandler {
     /**
      * @see IRequestHandler#respond(IRequestCycle)
      */
+    @Override
     public void respond(IRequestCycle requestCycle) {
         InputStream stream = null;
         try {
@@ -69,12 +74,12 @@ public class JcrResourceRequestHandler implements IRequestHandler {
 
             // Determine encoding
             String encoding = null;
-            if (node.hasProperty("jcr:encoding")) {
-                encoding = node.getProperty("jcr:encoding").getString();
+            if (node.hasProperty(JCR_ENCODING)) {
+                encoding = node.getProperty(JCR_ENCODING).getString();
             }
-            String mimeType = node.getProperty("jcr:mimeType").getString();
-            Calendar lastModified = node.getProperty("jcr:lastModified").getDate();
-            stream = node.getProperty("jcr:data").getStream();
+            String mimeType = node.getProperty(JCR_MIME_TYPE).getString();
+            Calendar lastModified = node.getProperty(JCR_LAST_MODIFIED).getDate();
+            stream = node.getProperty(JCR_DATA).getBinary().getStream();
 
             // Set content type based on markup type for page
             WebResponse response = (WebResponse) requestCycle.getResponse();
@@ -92,7 +97,7 @@ public class JcrResourceRequestHandler implements IRequestHandler {
             response.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
             response.setHeader("Cache-Control", "no-cache, must-revalidate");
             response.setHeader("Pragma", "no-cache");
-            response.setLastModifiedTime(Time.valueOf(lastModified.getTime()));
+            response.setLastModifiedTime(lastModified.toInstant());
             try {
                 Streams.copy(stream, response.getOutputStream());
             } catch (IOException ioe) {
@@ -108,6 +113,7 @@ public class JcrResourceRequestHandler implements IRequestHandler {
     /**
      * @see IRequestHandler#detach(IRequestCycle)
      */
+    @Override
     public void detach(IRequestCycle requestCycle) {
         node = null;
     }

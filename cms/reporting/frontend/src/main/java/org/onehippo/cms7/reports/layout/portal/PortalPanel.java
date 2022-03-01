@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
  *  limitations under the License.
  */
 package org.onehippo.cms7.reports.layout.portal;
-
 
 import java.util.Collections;
 import java.util.List;
@@ -42,19 +41,17 @@ import org.wicketstuff.js.ext.ExtComponent;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 
-
 @ExtClass("Hippo.Reports.Portal")
 public class PortalPanel extends ExtPanel {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PortalPanel.class);
     private static final CssResourceReference REPORTS_PORTALS_CSS = new CssResourceReference(PortalPanel.class, "Hippo.Reports.Portal.css");
     private static final JavaScriptResourceReference REPORTS_PORTALS_JS = new JavaScriptResourceReference(PortalPanel.class, "Hippo.Reports.Portal.js");
 
-    private IPluginContext context;
+    private final IPluginContext context;
+    private final String serviceName;
+
     private boolean rendered = false;
-    private String serviceName;
 
     public PortalPanel(String id, IPluginContext context, String serviceName) {
         super(id);
@@ -69,7 +66,7 @@ public class PortalPanel extends ExtPanel {
     public void internalRenderHead(final HtmlHeaderContainer container) {
         final IHeaderResponse response = container.getHeaderResponse();
         response.render(CssHeaderItem.forReference(REPORTS_PORTALS_CSS));
-        response.render(new JavaScriptReferenceHeaderItem(REPORTS_PORTALS_JS, null, null, false, null, null) {
+        response.render(new JavaScriptReferenceHeaderItem(REPORTS_PORTALS_JS, null, null) {
             @Override
             public List<HeaderItem> getDependencies() {
                 return Collections.singletonList(JavaScriptReferenceHeaderItem.forReference(ReportPanel.REPORTS_PORTLET_JS));
