@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.form.PostOnlyForm;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -163,7 +162,7 @@ public class TaxonomyBrowser extends Panel {
 
         final AjaxSubmitLink searchBoxIconLink = new AjaxSubmitLink("toggle") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 if (clearSearchBox) {
                     query = StringUtils.EMPTY;
                 }
@@ -171,8 +170,10 @@ public class TaxonomyBrowser extends Panel {
             }
         };
 
-        searchBoxIconLink.add(HippoIcon.fromSprite("search-icon", ReadOnlyModel
-                .of(() -> StringUtils.isNotBlank(query) ? Icon.TIMES : Icon.SEARCH)));
+        searchBoxIconLink.add(HippoIcon.fromSprite("search-icon", () -> StringUtils.isNotBlank(query)
+                ? Icon.TIMES
+                : Icon.SEARCH
+        ));
         searchForm.add(searchBoxIconLink);
 
         container = new WebMarkupContainer("container");

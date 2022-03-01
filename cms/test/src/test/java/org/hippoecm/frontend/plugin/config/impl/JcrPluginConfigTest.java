@@ -40,8 +40,8 @@ public class JcrPluginConfigTest extends HippoTester {
     @Test
     public void getDuration() throws RepositoryException {
         node.setProperty("test", "2 minutes");
-        assertEquals(config.getDuration("test").seconds(), 120, 0.001);
-        assertEquals(config.getAsDuration("test").seconds(), 120, 0.001);
+        assertEquals(config.getDuration("test").getSeconds(), 120, 0.001);
+        assertEquals(config.getAsDuration("test").getSeconds(), 120, 0.001);
         assertNull(config.getAsDuration("nosuchproperty"));
     }
 

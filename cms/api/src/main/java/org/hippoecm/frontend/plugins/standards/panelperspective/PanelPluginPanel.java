@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standards.panelperspective;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -125,10 +126,8 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
     }
 
     protected void redraw() {
-        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.add(this);
-        }
+        Optional<AjaxRequestTarget> target = getRequestCycle().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
     }
 
     public IModel<String> getTitle(Component component) {

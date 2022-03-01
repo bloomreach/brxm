@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,13 +17,16 @@ package org.hippoecm.frontend;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -49,14 +52,13 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.csp.CSPDirective;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.filter.AbstractHeaderResponseFilter;
 import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.apache.wicket.markup.head.filter.OppositeHeaderResponseFilter;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
-import org.apache.wicket.page.IPageManagerContext;
-import org.apache.wicket.pageStore.IDataStore;
 import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -84,15 +86,12 @@ import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVe
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.settings.ResourceSettings;
-import org.apache.wicket.util.IContextProvider;
-import org.apache.wicket.util.IProvider;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener;
 import org.hippoecm.frontend.errors.SwallowExceptionMapper;
 import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
@@ -124,6 +123,9 @@ import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.basjes.parse.useragent.UserAgent;
+import nl.basjes.parse.useragent.UserAgentAnalyzer;
+import static org.apache.wicket.csp.CSPDirectiveSrcValue.SELF;
 import static org.apache.wicket.markup.head.filter.FilteringHeaderResponse.DEFAULT_HEADER_FILTER_NAME;
 
 public class Main extends PluginApplication {
@@ -139,43 +141,43 @@ public class Main extends PluginApplication {
     /**
      * Parameter name of the repository storage directory
      */
-    public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
-    public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
-    public final static String REPOSITORY_USERNAME_PARAM = "repository-username";
+    public static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
+    public static final String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
+    public static final String REPOSITORY_USERNAME_PARAM = "repository-username";
 
     @SuppressWarnings("squid:S2068")
-    public final static String REPOSITORY_PASSWORD_PARAM = "repository-password";
+    public static final String REPOSITORY_PASSWORD_PARAM = "repository-password";
 
-    public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
-    public final static String MAXUPLOAD_PARAM = "upload-limit";
-    public final static String ENCRYPT_URLS = "encrypt-urls";
-    public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
+    public static final String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
+    public static final String MAXUPLOAD_PARAM = "upload-limit";
+    public static final String ENCRYPT_URLS = "encrypt-urls";
+    public static final String OUTPUT_WICKETPATHS = "output-wicketpaths";
 
-    public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+    public static final String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
     public static final String PLUGIN_APPLICATION_HIDE_PERSPECTIVE_MENU_PARAMETER = "hidePerspectiveMenu";
 
     // comma separated init parameter
-    public final static String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
+    public static final String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
     /**
      * Custom Wicket {@link IRequestCycleListener} class names parameter which can be comma or whitespace-separated
      * string to set multiple {@link IRequestCycleListener}s.
      */
-    public final static String REQUEST_CYCLE_LISTENERS_PARAM = "wicket.request.cycle.listeners";
+    public static final String REQUEST_CYCLE_LISTENERS_PARAM = "wicket.request.cycle.listeners";
 
     /**
      * Wicket RequestCycleSettings timeout configuration parameter name in development mode.
      */
-    public final static String DEVELOPMENT_REQUEST_TIMEOUT_PARAM = "wicket.development.request.timeout";
+    public static final String DEVELOPMENT_REQUEST_TIMEOUT_PARAM = "wicket.development.request.timeout";
 
     /**
      * Default Wicket RequestCycleSettings timeout milliseconds in development mode.
      */
-    public final static long DEFAULT_DEVELOPMENT_REQUEST_TIMEOUT_MS = 10 * 60 * 1000L; // 10 minutes
+    public static final long DEFAULT_DEVELOPMENT_REQUEST_TIMEOUT_MS = 10 * 60 * 1000L; // 10 minutes
 
     /**
      * Wicket RequestCycleSettings timeout configuration parameter name in deployment mode.
      */
-    public final static String DEPLOYMENT_REQUEST_TIMEOUT_PARAM = "wicket.deployment.request.timeout";
+    public static final String DEPLOYMENT_REQUEST_TIMEOUT_PARAM = "wicket.deployment.request.timeout";
 
     public static final String CMS_AS_IFRAME_QUERY_PARAMETER = "iframe";
 
@@ -203,7 +205,8 @@ public class Main extends PluginApplication {
     protected String repositoryFallbackUsername;
     protected String repositoryFallbackPassword;
     private WicketFaviconService wicketFaviconService;
-    private IProvider<IExceptionMapper> exceptionMapperProvider;
+    private Supplier<IExceptionMapper> exceptionMapperProvider;
+    private UserAgentAnalyzer userAgentAnalyzer;
 
     protected void initializeFallBackCredentials() {
         repositoryFallbackUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
@@ -227,12 +230,6 @@ public class Main extends PluginApplication {
         registerSessionListeners();
 
         getPageSettings().setVersionPagesByDefault(false);
-//        getPageSettings().setAutomaticMultiWindowSupport(false);
-
-//        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
-
-        // LatestBundledJQueryResourceReference to be removed when upgrading to Wicket 8.x
-        getJavaScriptLibrarySettings().setJQueryReference(new LatestBundledJQueryResourceReference());
 
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
@@ -358,99 +355,6 @@ public class Main extends PluginApplication {
             }
         });
 
-        String applicationName = getPluginApplicationName();
-
-        if (PLUGIN_APPLICATION_VALUE_CMS.equals(applicationName)) {
-
-            // the following is only applicable and needed for the CMS application, not the Console
-
-            /*
-             * HST SAML kind of authentication handler needed for Template Composer integration
-             *
-             */
-            cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
-            if (cmsContextService == null) {
-                cmsContextServiceImpl = new CmsContextServiceImpl();
-                cmsContextService = cmsContextServiceImpl;
-                HippoServiceRegistry.register(cmsContextServiceImpl, CmsContextService.class, CmsInternalCmsContextService.class);
-            }
-
-            cmsEventDispatcherService = HippoServiceRegistry.getService(CmsEventDispatcherService.class);
-            if (cmsEventDispatcherService == null) {
-                cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
-                HippoServiceRegistry.register(cmsEventDispatcherService, CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class);
-            }
-            mount(new AbstractMapper() {
-
-                @Override
-                public IRequestHandler mapRequest(final Request request) {
-                    if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
-                        IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
-
-                        IRequestParameters requestParameters = request.getRequestParameters();
-                        final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
-                        final List<StringValue> destinationPathParams = requestParameters.getParameterValues("destinationPath");
-                        final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
-                                ? destinationPathParams.get(0).toString() : null;
-
-                        HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
-                        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-
-                        if (cmsSessionContext == null) {
-                            throw new IllegalStateException("SSO handshake not possible since there is no valid CMS session " +
-                                    "Context");
-                        }
-
-                        if (destinationPath != null && destinationPath.startsWith("/")) {
-
-                            requestTarget = new IRequestHandler() {
-
-                                @Override
-                                public void respond(IRequestCycle requestCycle) {
-                                    String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
-                                    WebResponse response = (WebResponse) RequestCycle.get().getResponse();
-                                    String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
-                                    if (!cmsContextService.getId().equals(cmsCSID)) {
-                                        // redirect to destinationURL and include marker that it is a retry. This way
-                                        // the destination can choose to not redirect for SSO handshake again if it still does not
-                                        // have a key
-                                        if (destinationUrl.contains("?")) {
-                                            response.sendRedirect(destinationUrl + "&retry");
-                                        } else {
-                                            response.sendRedirect(destinationUrl + "?retry");
-                                        }
-                                        return;
-                                    }
-                                    if (destinationUrl.contains("?")) {
-                                        response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContext.getId());
-                                    } else {
-                                        response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContext.getId());
-                                    }
-                                }
-
-                                @Override
-                                public void detach(IRequestCycle requestCycle) {
-                                    //Nothing to detach.
-                                }
-                            };
-                        }
-                        return requestTarget;
-                    }
-                    return null;
-                }
-
-                @Override
-                public int getCompatibilityScore(final Request request) {
-                    return 0;
-                }
-
-                @Override
-                public Url mapHandler(final IRequestHandler requestHandler) {
-                    return null;
-                }
-            });
-        }
-
         // caching resource stream locator implementation that allows the class argument to be null.
         final IResourceStreamLocator resourceStreamLocator = resourceSettings.getResourceStreamLocator();
         resourceSettings.setResourceStreamLocator(new IResourceStreamLocator() {
@@ -484,7 +388,7 @@ public class Main extends PluginApplication {
 
             if (timeout > 0L) {
                 log.info("Setting wicket request timeout to {} ms.", timeout);
-                getRequestCycleSettings().setTimeout(Duration.milliseconds(timeout));
+                getRequestCycleSettings().setTimeout(Duration.ofMillis(timeout));
             }
 
             // render comments with component class names
@@ -497,8 +401,8 @@ public class Main extends PluginApplication {
             setPageManagerProvider(new DefaultPageManagerProvider(this) {
 
                 @Override
-                protected IPageStore newPageStore(final IDataStore dataStore) {
-                    return new AmnesicPageStore(dataStore);
+                protected IPageStore newPersistentStore() {
+                    return new AmnesicPageStore();
                 }
             });
 
@@ -515,23 +419,24 @@ public class Main extends PluginApplication {
 
             if (timeout > 0L) {
                 log.info("Setting wicket request timeout to {} ms.", timeout);
-                getRequestCycleSettings().setTimeout(Duration.milliseconds(timeout));
+                getRequestCycleSettings().setTimeout(Duration.ofMillis(timeout));
             }
         }
 
         String outputWicketpaths = obtainOutputWicketPathsParameter();
 
-        if (outputWicketpaths != null && "true".equalsIgnoreCase(outputWicketpaths)) {
-            getDebugSettings().setOutputComponentPath(true);
+        //TODO SS: Fix this
+        if ("true".equalsIgnoreCase(outputWicketpaths)) {
+            getDebugSettings().setComponentPathAttributeName("path");
         }
 
-        final IContextProvider<AjaxRequestTarget, Page> ajaxRequestTargetProvider = getAjaxRequestTargetProvider();
-        setAjaxRequestTargetProvider(context -> new PluginRequestTarget(ajaxRequestTargetProvider.get(context)));
+        final Function<Page, AjaxRequestTarget> ajaxRequestTargetProvider = getAjaxRequestTargetProvider();
+
+        setAjaxRequestTargetProvider(context -> new PluginRequestTarget(ajaxRequestTargetProvider.apply(context)));
 
         setPageRendererProvider(new IPageRendererProvider() {
-
             @Override
-            public PageRenderer get(final RenderPageRequestHandler context) {
+            public PageRenderer apply(final RenderPageRequestHandler context) {
                 return new WebPageRenderer(context) {
 
                     @Override
@@ -554,16 +459,34 @@ public class Main extends PluginApplication {
         final IPackageResourceGuard resourceGuard = createPackageResourceGuard();
         resourceSettings.setPackageResourceGuard(resourceGuard);
 
-        if (log.isInfoEnabled()) {
-            log.info("Hippo CMS application " + applicationName + " has started");
-        }
-
         addHeaderResponseDecorator();
         getApplicationSettings().setAccessDeniedPage(PluginPage.class);
+
+        userAgentAnalyzer = UserAgentAnalyzer
+                .newBuilder()
+                .hideMatcherLoadStats()
+                .withFields(UserAgent.AGENT_NAME, UserAgent.AGENT_VERSION_MAJOR)
+                .withCache(10000)
+                .build();
+
+        String applicationName = getPluginApplicationName();
+        if (PLUGIN_APPLICATION_VALUE_CMS.equals(applicationName)) {
+            initCMS();
+        } else {
+            initConsole();
+        }
+
+        if (log.isInfoEnabled()) {
+            log.info("Hippo CMS application {} has started", applicationName);
+        }
+    }
+
+    public UserAgentAnalyzer getUserAgentAnalyzer() {
+        return userAgentAnalyzer;
     }
 
     @Override
-    public IProvider<IExceptionMapper> getExceptionMapperProvider() {
+    public Supplier<IExceptionMapper> getExceptionMapperProvider() {
         return exceptionMapperProvider != null
             ? exceptionMapperProvider
             : super.getExceptionMapperProvider();
@@ -605,7 +528,7 @@ public class Main extends PluginApplication {
         super.internalDestroy();
         if (log.isInfoEnabled()) {
             String applicationName = getPluginApplicationName();
-            log.info("Hippo CMS application " + applicationName + " has stopped");
+            log.info("Hippo CMS application {} has stopped", applicationName);
         }
     }
 
@@ -652,12 +575,6 @@ public class Main extends PluginApplication {
     @Override
     public Class<PluginPage> getHomePage() {
         return org.hippoecm.frontend.PluginPage.class;
-    }
-
-    // ease testing by making page manager context available in the package
-    @Override
-    protected IPageManagerContext getPageManagerContext() {
-        return super.getPageManagerContext();
     }
 
     @Override
@@ -759,7 +676,7 @@ public class Main extends PluginApplication {
                     IRequestCycleListener listener = (IRequestCycleListener) clazz.newInstance();
                     requestCycleListenerCollection.add(listener);
                 } catch (Throwable th) {
-                    log.error("Failed to register RequestCycleListener, " + listenerClassName, th);
+                    log.error("Failed to register RequestCycleListener, {}", listenerClassName, th);
                 }
             }
         }
@@ -844,7 +761,7 @@ public class Main extends PluginApplication {
         final FilteringHeaderResponse.IHeaderResponseFilter oppositeFilter = new OppositeHeaderResponseFilter(DEFAULT_HEADER_FILTER_NAME, navAppFilter);
         final List<FilteringHeaderResponse.IHeaderResponseFilter> filters = Arrays.asList(navAppFilter, oppositeFilter);
 
-        setHeaderResponseDecorator(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
+        getHeaderResponseDecorators().add(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
 
             final Predicate<HeaderItem> shouldRender =
                     isCmsApplication() && hasNoIFrameParameter()
@@ -858,6 +775,112 @@ public class Main extends PluginApplication {
                 }
             }
         });
+    }
+
+    private void initCMS() {
+        getCspSettings().blocking()
+                .unsafeInline()
+                .add(CSPDirective.FRAME_ANCESTORS, SELF)
+                .add(CSPDirective.IMG_SRC, "data:") // allow ExtJS inline images
+                .add(CSPDirective.SCRIPT_SRC, "hippocdn.global.ssl.fastly.net") // load Hippo UsageStatistics
+
+                // Pendo
+                .add(CSPDirective.SCRIPT_SRC, "cdn.pendo.io", "data.pendo.io", "pendo-io-static.storage.googleapis.com", "pendo-static-5285379033268224.storage.googleapis.com")
+                .add(CSPDirective.STYLE_SRC, "app.pendo.io", "cdn.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
+                .add(CSPDirective.IMG_SRC, "app.pendo.io", "cdn.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
+                .add(CSPDirective.CONNECT_SRC, "app.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com")
+                .add(CSPDirective.FRAME_ANCESTORS, "app.pendo.io");
+
+        /*
+         * HST SAML kind of authentication handler needed for Template Composer integration
+         *
+         */
+        cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
+        if (cmsContextService == null) {
+            cmsContextServiceImpl = new CmsContextServiceImpl();
+            cmsContextService = cmsContextServiceImpl;
+            HippoServiceRegistry.register(cmsContextServiceImpl, CmsContextService.class, CmsInternalCmsContextService.class);
+        }
+
+        cmsEventDispatcherService = HippoServiceRegistry.getService(CmsEventDispatcherService.class);
+        if (cmsEventDispatcherService == null) {
+            cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
+            HippoServiceRegistry.register(cmsEventDispatcherService, CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class);
+        }
+        mount(new AbstractMapper() {
+
+            @Override
+            public IRequestHandler mapRequest(final Request request) {
+                if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
+                    IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
+
+                    IRequestParameters requestParameters = request.getRequestParameters();
+                    final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
+                    final List<StringValue> destinationPathParams = requestParameters.getParameterValues("destinationPath");
+                    final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
+                            ? destinationPathParams.get(0).toString() : null;
+
+                    HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
+                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+
+                    if (cmsSessionContext == null) {
+                        throw new IllegalStateException("SSO handshake not possible since there is no valid CMS session " +
+                                "Context");
+                    }
+
+                    if (destinationPath != null && destinationPath.startsWith("/")) {
+
+                        requestTarget = new IRequestHandler() {
+
+                            @Override
+                            public void respond(IRequestCycle requestCycle) {
+                                String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
+                                WebResponse response = (WebResponse) RequestCycle.get().getResponse();
+                                String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
+                                if (!cmsContextService.getId().equals(cmsCSID)) {
+                                    // redirect to destinationURL and include marker that it is a retry. This way
+                                    // the destination can choose to not redirect for SSO handshake again if it still does not
+                                    // have a key
+                                    if (destinationUrl.contains("?")) {
+                                        response.sendRedirect(destinationUrl + "&retry");
+                                    } else {
+                                        response.sendRedirect(destinationUrl + "?retry");
+                                    }
+                                    return;
+                                }
+                                if (destinationUrl.contains("?")) {
+                                    response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContext.getId());
+                                } else {
+                                    response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContext.getId());
+                                }
+                            }
+
+                            @Override
+                            public void detach(IRequestCycle requestCycle) {
+                                //Nothing to detach.
+                            }
+                        };
+                    }
+                    return requestTarget;
+                }
+                return null;
+            }
+
+            @Override
+            public int getCompatibilityScore(final Request request) {
+                return 0;
+            }
+
+            @Override
+            public Url mapHandler(final IRequestHandler requestHandler) {
+                return null;
+            }
+        });
+    }
+
+    private void initConsole() {
+        getCspSettings().blocking()
+                .unsafeInline();
     }
 
     public static boolean isCmsApplication() {

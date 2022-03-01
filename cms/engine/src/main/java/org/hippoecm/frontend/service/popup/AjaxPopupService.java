@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IPopupService;
 
+import java.util.Optional;
+
 /**
  * Adds Javascript to the Wicket AJAX request target that opens a URL in a popup window. If the current Wicket request
  * target is not an AJAX request, nothing happens.
@@ -43,18 +45,18 @@ public class AjaxPopupService extends Plugin implements IPopupService {
         if (url == null) {
             return;
         }
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
             popupSettings.setTarget("'" + url + "'");
 
-            StringBuffer javascript = new StringBuffer();
+            final StringBuilder javascript = new StringBuilder();
             javascript.append("(function() {");
             javascript.append(getPopupBlockerDetectionScript());
             javascript.append(popupSettings.getPopupJavaScript());
             javascript.append("})();");
 
-            target.appendJavaScript(javascript.toString());
-        }
+            ajaxRequestTarget.appendJavaScript(javascript.toString());
+        });
     }
 
     private String getPopupBlockerDetectionScript() {
