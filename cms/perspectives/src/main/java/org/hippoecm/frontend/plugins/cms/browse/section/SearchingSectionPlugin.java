@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 if (hasSearchResult()) {
                     collection.setSearchResult(NO_RESULTS);
                     query = "";
@@ -146,7 +146,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
         };
 
-        final AjaxLink scopeLink = new AjaxLink("scope") {
+        final AjaxLink scopeLink = new AjaxLink<Void>("scope") {
 
             @Override
             public void onClick(final AjaxRequestTarget target) {
@@ -176,7 +176,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 return hasSearchResult();
             }
         };
-        final AjaxLink allLink = new AjaxLink("all") {
+        final AjaxLink allLink = new AjaxLink<Void>("all") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final IModel<Node> backup = folderService.getModel();

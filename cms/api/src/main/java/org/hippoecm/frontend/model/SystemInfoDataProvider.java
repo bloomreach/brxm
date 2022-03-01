@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,18 +31,17 @@ import java.util.jar.Manifest;
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.Home;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SystemInfoDataProvider implements IDataProvider {
+public class SystemInfoDataProvider implements IDataProvider<Map.Entry<String, String>> {
 
     private static final Logger log = LoggerFactory.getLogger(SystemInfoDataProvider.class);
 
-    private final static double MB = (double) 1024 * 1024;
+    private static final double MB = (double) 1024 * 1024;
     public static final String UNKNOWN = "unknown";
 
     public class SystemInfoDataEntry implements Map.Entry<String, String>, Serializable {
@@ -53,14 +52,17 @@ public class SystemInfoDataProvider implements IDataProvider {
             this.key = key;
         }
 
+        @Override
         public String getKey() {
             return key;
         }
 
+        @Override
         public String getValue() {
             return info.get(key);
         }
 
+        @Override
         public String setValue(String value) {
             throw new UnsupportedOperationException("SystemInfo is read only");
         }
@@ -73,19 +75,15 @@ public class SystemInfoDataProvider implements IDataProvider {
         refresh();
     }
 
+    @Override
     public Iterator<Entry<String, String>> iterator(long first, long count) {
         return info.entrySet().iterator();
     }
 
-    public IModel model(Object object) {
-        final Map.Entry<String, String> entry = new SystemInfoDataEntry(((Map.Entry<String, String>) object).getKey());
-        return new AbstractReadOnlyModel() {
-            private static final long serialVersionUID = 1L;
-
-            public Object getObject() {
-                return entry;
-            }
-        };
+    @Override
+    public IModel<Map.Entry<String, String>> model(Map.Entry<String, String> object) {
+        final Map.Entry<String, String> entry = new SystemInfoDataEntry((object).getKey());
+        return () -> entry;
     }
 
     public void refresh() {
@@ -105,10 +103,12 @@ public class SystemInfoDataProvider implements IDataProvider {
         info.put("Processors", "# " + runtime.availableProcessors());
     }
 
+    @Override
     public long size() {
         return info.size();
     }
 
+    @Override
     public void detach() {
     }
 

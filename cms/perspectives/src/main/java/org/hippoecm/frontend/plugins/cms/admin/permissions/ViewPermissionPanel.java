@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.form.PostOnlyForm;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
@@ -123,7 +122,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         add(deletePermission);
 
         add(new Label("role", authRole.getRole()));
-        add(new Label("userrole", ReadOnlyModel.of(()->model.getObject().getAuthRole(authRoleName).getUserRole())));
+        add(new Label("userrole", () -> model.getObject().getAuthRole(authRoleName).getUserRole()));
 
         SetUserRolePanel setUserRolePanel = new SetUserRolePanel("set-userrole");
         setUserRolePanel.setVisible(isSecurityApplAdmin);
@@ -206,7 +205,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         // add a cancel/back button
         form.add(new AjaxButton("back-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 // one up
                 final List<IBreadCrumbParticipant> all = breadCrumbModel.allBreadCrumbParticipants();
                 breadCrumbModel.setActive(all.get(all.size() - 2));
@@ -263,7 +262,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
 
             final AjaxButton submit = new AjaxButton("submit", hippoForm) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     final DomainAuth domain = model.getObject();
@@ -411,7 +410,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
 
             final AjaxButton submit = new AjaxButton("submit", hippoForm) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(AjaxRequestTarget target) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", selectedGroup));

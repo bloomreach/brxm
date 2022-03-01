@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
+
+import java.util.Optional;
 
 /**
  * TODO the layout of the admin perspective should be refactored so the html in AdminBreadCrumbPanel.html is not needed anymore.
@@ -56,10 +58,8 @@ public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
     }
 
     protected void redraw() {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.add(this);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
     }
 
     protected void onAddedToBreadCrumbsBar() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.behavior;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -161,12 +162,12 @@ public class ParameterHistoryBehavior extends AbstractDefaultAjaxBehavior implem
     }
 
     private void setPathWithAjax(final String path, final boolean replace) {
-        final AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (ajax != null) {
+        final Optional<AjaxRequestTarget> ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+        ajax.ifPresent(ajaxRequestTarget -> {
             final String encoding = Application.get().getRequestCycleSettings().getResponseRequestEncoding();
             final String encodedPath = UrlEncoder.QUERY_INSTANCE.encode(path, encoding);
             final String script = String.format("Hippo.ParameterHistory.setPath('%s', %s);", encodedPath, replace);
-            ajax.appendJavaScript(script);
-        }
+            ajaxRequestTarget.appendJavaScript(script);
+        });
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import java.time.Duration;
+
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.time.Duration;
 
 public class TextFieldWidget extends AjaxUpdatingWidget<String> {
 
@@ -36,7 +37,7 @@ public class TextFieldWidget extends AjaxUpdatingWidget<String> {
     public TextFieldWidget(String id, IModel<String> model, IModel<String> labelModel, Duration throttleDelay) {
         super(id, model, throttleDelay);
 
-        final TextField<String> textField = new TextField<String>("widget", model) {
+        final TextField<String> textField = new TextField<>("widget", model) {
             {
                 setFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, false);
             }

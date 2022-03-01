@@ -103,15 +103,14 @@ public class DocumentWorkflowInvokerPlugin extends AbstractWorkflowManagerPlugin
 
     @Override
     public void browse(final IModel<Node> model) {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        RequestCycle.get().find(AjaxRequestTarget.class).ifPresent(ajaxRequestTarget -> {
             try {
                 final String identifier = model.getObject().getIdentifier();
-                target.prependJavaScript(String.format("Hippo.Workflow.setPayload('%s');", identifier));
+                ajaxRequestTarget.prependJavaScript(String.format("Hippo.Workflow.setPayload('%s');", identifier));
             } catch (RepositoryException e) {
                 log.warn("Can not set workflow payload without node identifier", e);
             }
-        }
+        });
     }
 
     private class Ajax extends AbstractDefaultAjaxBehavior {

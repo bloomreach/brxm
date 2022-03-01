@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class BreadcrumbLink extends Breadcrumb {
 
         setCssClass("breadcrumb-link");
 
-        AjaxLink link = new AjaxLink("link") {
+        final AjaxLink<Void> link = new AjaxLink<Void>("link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 if (onClickHandler != null) {

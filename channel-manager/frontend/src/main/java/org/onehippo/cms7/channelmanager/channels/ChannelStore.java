@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
@@ -392,10 +393,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     public void reload() {
         channels = null;
 
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.prependJavaScript("Ext.StoreMgr.lookup('" + this.storeId + "').reload();");
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.prependJavaScript("Ext.StoreMgr.lookup('" + this.storeId + "').reload();"));
     }
 
     private ChannelService getChannelService() {

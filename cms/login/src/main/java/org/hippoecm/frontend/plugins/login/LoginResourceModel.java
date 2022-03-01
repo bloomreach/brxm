@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.login;
 import java.util.Locale;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.model.ReadOnlyModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 public class LoginResourceModel extends ClassResourceModel {
@@ -34,9 +34,9 @@ public class LoginResourceModel extends ClassResourceModel {
         return Session.get().getStyle();
     }
 
-    private static ReadOnlyModel<Locale> getLocale() {
-        return ReadOnlyModel.of(() -> Session.exists()
+    private static IModel<Locale> getLocale() {
+        return () -> Session.exists()
                 ? Session.get().getLocale()
-                : Locale.getDefault());
+                : Locale.getDefault();
     }
 }

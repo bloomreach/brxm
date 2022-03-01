@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,17 +15,17 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.Locale;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -40,6 +40,10 @@ import org.hippoecm.repository.HippoRepository;
 import org.onehippo.repository.mock.MockNode;
 
 public class HippoTester extends WicketTester {
+
+    static {
+        Locale.setDefault(Locale.ENGLISH);
+    }
 
     public HippoTester() {
         this(new HippoTesterApplication());
@@ -67,10 +71,6 @@ public class HippoTester extends WicketTester {
         return home;
     }
 
-    public IPageManagerContext getPageManagerContext() {
-        return ((Main) Application.get()).getPageManagerContext();
-    }
-
     public void runInAjax(Home page, Runnable callback) {
         final TestExecutorBehavior executor = page.getBehaviors(TestExecutorBehavior.class).get(0);
         executor.setCallback(callback);
@@ -79,10 +79,12 @@ public class HippoTester extends WicketTester {
 
     static class TestApplicationFactory implements IApplicationFactory {
 
+        @Override
         public IPluginConfigService getDefaultApplication() {
             return getApplication(null);
         }
 
+        @Override
         public IPluginConfigService getApplication(String name) {
             JavaConfigService configService = new JavaConfigService("test");
             JavaClusterConfig plugins = new JavaClusterConfig();
@@ -139,9 +141,7 @@ public class HippoTester extends WicketTester {
 
         @Override
         public UserSession newSession(Request request, Response response) {
-            return new AccessiblePluginUserSession(request, new LoadableDetachableModel<Session>() {
-                private static final long serialVersionUID = 1L;
-
+            return new AccessiblePluginUserSession(request, new LoadableDetachableModel<>() {
                 @Override
                 protected Session load() {
                     try {
@@ -151,7 +151,6 @@ public class HippoTester extends WicketTester {
                         throw new RuntimeException("Unable to create mock session");
                     }
                 }
-
             });
         }
 
