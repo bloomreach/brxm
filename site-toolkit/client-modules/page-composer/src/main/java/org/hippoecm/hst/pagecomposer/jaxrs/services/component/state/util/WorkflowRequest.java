@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_REQDAT
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_USERNAME;
 
-public final class WorkflowRequest {
+public final class WorkflowRequest implements Request {
 
     private final String id;
     private final Calendar creationDate;
@@ -45,6 +45,11 @@ public final class WorkflowRequest {
         reason = JcrUtils.getStringProperty(requestNode, HIPPOSTDPUBWF_REASON, null);
         type = JcrUtils.getStringProperty(requestNode, HIPPOSTDPUBWF_TYPE, null);
         username = JcrUtils.getStringProperty(requestNode, HIPPOSTDPUBWF_USERNAME, null);
+    }
+
+    @Override
+    public String getRequestType() {
+        return "workflowRequest";
     }
 
     public String getId() {
