@@ -46,6 +46,10 @@
     "states":{
       "workflow":{
         "requests":[
+          {
+            "type":"depublishBranch",
+            "requestType":"scheduledRequest"
+          }
         ]
       },
       "channel":{

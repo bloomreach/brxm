@@ -46,6 +46,10 @@
     "states":{
       "workflow":{
         "requests":[
+          {
+            "type":"publishBranch",
+            "requestType":"scheduledRequest"
+          }
         ]
       },
       "channel":{

@@ -445,6 +445,7 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
         final MockHttpServletResponse get = render(mountId, createRequestResponse, creds, branchId);
         InputStream expected = XPageResourceTest.class.getResourceAsStream(fixtureFileName);
+        System.out.println(get.getContentAsString());
         assertions(get.getContentAsString(), expected);
     }
 
