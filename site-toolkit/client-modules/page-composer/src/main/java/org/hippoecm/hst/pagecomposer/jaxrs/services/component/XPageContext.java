@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 import java.util.List;
 import java.util.Optional;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.Request;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
 
@@ -28,6 +29,7 @@ public class XPageContext {
     private String xPageLockedBy;
     private String xPageName;
     private String xPageState;
+    private List<Request> requests;
     private List<WorkflowRequest> workflowRequests;
     private ScheduledRequest scheduledRequest;
     private String branchId;
@@ -70,6 +72,16 @@ public class XPageContext {
 
     XPageContext setXPageState(final String xPageState) {
         this.xPageState = xPageState;
+        return this;
+    }
+
+
+    public List<Request> getRequests() {
+        return requests;
+    }
+
+    public XPageContext setRequests(final List<Request> requests) {
+        this.requests = requests;
         return this;
     }
 
