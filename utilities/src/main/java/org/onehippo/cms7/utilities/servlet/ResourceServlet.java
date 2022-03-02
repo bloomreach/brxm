@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -201,6 +201,8 @@ public class ResourceServlet extends HttpServlet {
     public static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
     public static final String CACHE_CONTROL_PRIVATE = "private";
     public static final String CACHE_CONTROL_PUBLIC = "public";
+    /** @deprecated CACHE_CONTROL_IMMUTABLE is no longer used and will be removed in 15.0 */
+    @Deprecated
     public static final String CACHE_CONTROL_IMMUTABLE = "immutable";
 
     private static final int CACHE_TIME_OUT_1_YEAR_IN_SECONDS = 31556926;
