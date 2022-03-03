@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.value.IValueMap;
@@ -52,7 +51,7 @@ import wicket.contrib.input.events.key.KeyType;
 /**
  * The multi-files upload dialog using jQuery File Upload plugin
  */
-public abstract class JQueryFileUploadDialog extends Dialog {
+public abstract class JQueryFileUploadDialog extends Dialog<Void> {
     private static final Logger log = LoggerFactory.getLogger(JQueryFileUploadDialog.class);
 
     public static final String FILEUPLOAD_WIDGET_ID = "uploadPanel";
@@ -81,7 +80,7 @@ public abstract class JQueryFileUploadDialog extends Dialog {
             }
 
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 setCancelEnabled(false);
                 isUploadButtonEnabled = false;
                 target.add(this);

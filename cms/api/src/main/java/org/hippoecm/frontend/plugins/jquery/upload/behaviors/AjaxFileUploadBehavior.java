@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.frontend.plugins.jquery.upload.behaviors;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.openjson.JSONArray;
+import com.github.openjson.JSONException;
+import com.github.openjson.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -28,9 +30,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONException;
-import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -47,7 +46,6 @@ import org.hippoecm.frontend.plugins.jquery.upload.TemporaryFileItem;
 import org.hippoecm.frontend.plugins.yui.upload.MagicFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * The file upload behavior to handle uploads sent by ajax requests. The component container can override the following
@@ -159,7 +157,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         diskFileItemFactory.setFileCleaningTracker(new FileCleanerTrackerAdapter(Application.get().getResourceSettings().getFileCleaner()));
 
         try {
-            long contentLength = Long.valueOf(request.getHeader("Content-Length"));
+            long contentLength = Long.parseLong(request.getHeader("Content-Length"));
             if (contentLength > 0) {
                 return request.newMultipartWebRequest(Bytes.bytes(contentLength), container.getPage().getId(),
                         diskFileItemFactory);
@@ -175,8 +173,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         for (String filename : uploadedFiles.keySet()) {
             List<String> errorMessages = uploadedFiles.get(filename).getErrorMessages();
             if (!errorMessages.isEmpty()) {
-                log.warn("file {} contains errors: {}", filename,
-                        StringUtils.join(errorMessages, ";"));
+                log.warn("file {} contains errors: {}", filename, StringUtils.join(errorMessages, ";"));
             }
         }
         onResponse(request, uploadedFiles);
@@ -202,12 +199,12 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
         }
         TextRequestHandler textRequestHandler = new TextRequestHandler(contentType, encoding, responseContent);
         RequestCycle.get().scheduleRequestHandlerAfterCurrent(textRequestHandler);
+
         // touch page and commit request so page gets released (detached)
         final Session session = Session.get();
         final IPageManager pageManager = session.getPageManager();
         final Page page = container.getPage();
         pageManager.touchPage(page);
-        pageManager.commitRequest();
     }
 
     private String generateJsonResponse(final Map<String, FileUploadInfo> uploadedFiles) {
@@ -248,8 +245,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
 
     private String generateHtmlResponse(final Map<String, FileUploadInfo> uploadedFiles) {
         String jsonResponse = generateJsonResponse(uploadedFiles);
-        String escapedJson = StringEscapeUtils.escapeHtml4(jsonResponse);
-        return escapedJson;
+        return StringEscapeUtils.escapeHtml4(jsonResponse);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@ import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialogLink;
 import org.hippoecm.frontend.plugins.standards.sort.NodeSortPanel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+
+import java.util.Optional;
 
 public class MenuPlugin extends RenderPlugin {
 
@@ -189,10 +191,8 @@ public class MenuPlugin extends RenderPlugin {
     }
 
     protected void redrawEditor() {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            send(getPage(), Broadcast.DEPTH, new EditorUpdate(target));
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> send(getPage(), Broadcast.DEPTH, new EditorUpdate(ajaxRequestTarget)));
     }
 
     @Override

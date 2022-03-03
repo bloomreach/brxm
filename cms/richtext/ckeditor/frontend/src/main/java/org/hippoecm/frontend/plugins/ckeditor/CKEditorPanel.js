@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,40 +81,16 @@
         });
     }
 
-    function getFormSubmitListeners(editor) {
-        var form = new CKEDITOR.dom.element(editor.element.$.form),
-            submitListeners = form.getCustomData('submitListeners');
-
-        if (submitListeners === null) {
-            submitListeners = {};
-            form.setCustomData('submitListeners', submitListeners);
-            callFunctionsOnFormSubmit(form, submitListeners);
-        }
-
-        return submitListeners;
-    }
-
-    function setFormSubmitListener(editor, fn) {
-        var submitListeners = getFormSubmitListeners(editor);
-        submitListeners[editor.id] = CKEDITOR.tools.addFunction(fn);
-    }
-
-    function deleteFormSubmitListener(editor) {
-        var form = new CKEDITOR.dom.element(editor.element.$.form),
-            submitListeners = form.getCustomData('submitListeners');
-
-        delete submitListeners[editor.id];
-    }
-
-    function updateEditorElementWhenFormIsSubmitted(editor) {
-        setFormSubmitListener(editor, function() {
-            editor.updateElement();
+    function updateEditorElementOnChange(editor) {
+        editor.on('change', function (ev) {
+            if (editor.checkDirty()) {
+                editor.updateElement();
+            }
         });
     }
 
     function destroyEditorWhenElementIsDestroyed(editor) {
         HippoAjax.registerDestroyFunction(editor.element.$, function() {
-            deleteFormSubmitListener(editor);
             editor.destroy();
         }, editor);
     }
@@ -129,7 +105,7 @@
                     var editor = CKEDITOR.replace(elementId, config);
                     if (editor !== null) {
                         ensureDivAreaCompatibility(editor);
-                        updateEditorElementWhenFormIsSubmitted(editor);
+                        updateEditorElementOnChange(editor);
                         destroyEditorWhenElementIsDestroyed(editor);
                     } else {
                         console.error("CKEditor instance with id '" + elementId + "' was not created");

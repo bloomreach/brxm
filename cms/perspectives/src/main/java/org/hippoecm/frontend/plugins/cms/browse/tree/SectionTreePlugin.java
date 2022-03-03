@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -48,16 +47,11 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
 public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
-    private static final long serialVersionUID = 1L;
-
     private class Section implements IDetachable {
-        private static final long serialVersionUID = 1L;
 
         private final String extension;
         private final String header;
@@ -88,14 +82,13 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             return null;
         }
 
+        @Override
         public void detach() {
             for (IRenderService service : getChildren()) {
                 service.getComponent().detach();
             }
         }
     }
-
-    static final Logger log = LoggerFactory.getLogger(SectionTreePlugin.class);
 
     final DropDownChoice<Section> select;
     final IModel<List<Section>> sections;
@@ -119,16 +112,11 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             allSections.add(new Section(extension, header));
         }
 
-        sections = new AbstractReadOnlyModel<List<Section>>() {
-            @Override
-            public List<Section> getObject() {
-                return allSections.stream().filter(Section::hasChildren).collect(Collectors.toList());
-            }
-        };
+        sections = () -> allSections.stream()
+                .filter(Section::hasChildren)
+                .collect(Collectors.toList());
 
-        add(new ListView<Section>("list", sections) {
-            private static final long serialVersionUID = 1L;
-
+        add(new ListView<>("list", sections) {
             @Override
             protected void populateItem(ListItem<Section> item) {
                 final Section section = item.getModelObject();
@@ -176,8 +164,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 }
         ) {
             @Override
-            public boolean isEnabled(){
-                if (sections != null){
+            public boolean isEnabled() {
+                if (sections != null) {
                     final List<Section> choices = sections.getObject();
                     return choices != null && choices.size() > 1;
                 }
@@ -345,9 +333,11 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         return dirty;
     }
 
+    @Override
     public void start() {
     }
 
+    @Override
     public void stop() {
     }
 

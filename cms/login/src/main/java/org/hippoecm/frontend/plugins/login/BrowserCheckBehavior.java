@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.frontend.plugins.login;
 
 import java.util.StringTokenizer;
@@ -23,14 +22,30 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import nl.basjes.parse.useragent.UserAgent;
 
 public class BrowserCheckBehavior extends Behavior {
 
     private static final Logger log = LoggerFactory.getLogger(BrowserCheckBehavior.class);
 
     private final BrowserCheck check;
+
+    BrowserCheckBehavior(final String[] supported) {
+        check = new BrowserCheck(supported);
+    }
+
+    @Override
+    public void bind(final Component component) {
+        final Main main = (Main) Main.get();
+        final WebClientInfo clientInfo = WebSession.get().getClientInfo();
+        final UserAgent.ImmutableUserAgent userAgent = main.getUserAgentAnalyzer().parse(clientInfo.getUserAgent());
+
+        component.setVisible(!check.isSupported(new BrowserInfoImpl(userAgent)));
+    }
 
     static class BrowserCheck implements IClusterable {
 
@@ -55,13 +70,12 @@ public class BrowserCheckBehavior extends Behavior {
 
     /**
      * Supported browsers can be configured like:
-     * edge 6 <=, safari 4 <, chrome, firefox 3.5 <=, opera
+     * edge 6 <=, safari 4 <, chrome, firefox 3 <=, opera
      */
     public static class Browser implements IClusterable {
 
         String agent;
         int majorVersion = -1;
-        int minorVersion = -1;
         String modifier = "=";
 
         Browser(final String init) {
@@ -69,18 +83,12 @@ public class BrowserCheckBehavior extends Behavior {
 
             agent = st.nextToken();
             if (st.hasMoreTokens()) {
-                String major = st.nextToken(), minor = null;
+                String major = st.nextToken();
                 final int idx = major.indexOf(".");
                 if (idx > -1) {
-                    minor = major.substring(idx + 1);
                     major = major.substring(0, idx);
                 }
-                if (major != null) {
-                    majorVersion = new Integer(major);
-                }
-                if (minor != null) {
-                    minorVersion = new Integer(minor);
-                }
+                majorVersion = Integer.parseInt(major);
             }
 
             if (st.hasMoreTokens()) {
@@ -89,20 +97,15 @@ public class BrowserCheckBehavior extends Behavior {
         }
 
         public boolean is(final BrowserInfo info) {
-            if (!isAgent(info)) {
-                return false;
-            }
-            return isVersion(info);
+            return isAgent(info) && isVersion(info);
+        }
+
+        private boolean isAgent(final BrowserInfo info) {
+            return info.getAgentName().equalsIgnoreCase(agent);
         }
 
         private boolean isVersion(final BrowserInfo info) {
-            if (majorVersion > -1 && !validVersion(majorVersion, info.getMajor())) {
-                return false;
-            }
-            if (minorVersion > -1 && !validVersion(minorVersion, info.getMinor())) {
-                return false;
-            }
-            return true;
+            return majorVersion <= -1 || validVersion(majorVersion, info.getMajorVersion());
         }
 
         private boolean validVersion(final int configured, final int provided) {
@@ -121,137 +124,37 @@ public class BrowserCheckBehavior extends Behavior {
                     return false;
             }
         }
-
-        private boolean isAgent(final BrowserInfo info) {
-            switch (agent) {
-                case "firefox":
-                    return info.isFirefox();
-                case "safari":
-                    return info.isSafari();
-                case "chrome":
-                    return info.isChrome();
-                case "opera":
-                    return info.isOpera();
-                case "edge":
-                    return info.isEdge();
-                default:
-                    return false;
-            }
-        }
-
     }
 
     public interface BrowserInfo {
 
-        boolean isOpera();
+        String getAgentName();
 
-        boolean isChrome();
-
-        boolean isSafari();
-
-        boolean isFirefox();
-
-        boolean isEdge();
-
-        int getMajor();
-
-        int getMinor();
+        int getMajorVersion();
     }
 
-    public static class WicketBrowserInfo implements BrowserInfo {
+    private static class BrowserInfoImpl implements BrowserInfo {
 
-        private static final String CHROME = "Chrome";
-        private static final String SHIRETOKO = "Shiretoko";
-        private static final String FIREFOX = "Firefox";
-        private static final String EDGE = "Edge";
+        final UserAgent ua;
 
-        private final WebClientInfo info;
-        private int major;
-        private int minor;
-
-        WicketBrowserInfo(final WebClientInfo info) {
-            this.info = info;
-
-            major = info.getProperties().getBrowserVersionMajor();
-            minor = info.getProperties().getBrowserVersionMinor();
-            if (major == -1) {
-                if (isFirefox()) {
-                    if (info.getProperties().isBrowserMozillaFirefox()) {
-                        setVersions(FIREFOX);
-                    } else if (info.getUserAgent().contains(SHIRETOKO)) {
-                        setVersions(SHIRETOKO);
-                    }
-                } else if (isChrome()) {
-                    setVersions(CHROME);
-                } else if (isSafari() || isOpera()) {
-                    setVersions("Version");
-                } else if(isEdge()) {
-                    setVersions(EDGE);
-                }
-            }
+        public BrowserInfoImpl(final UserAgent ua) {
+            this.ua = ua;
         }
 
-        private void setVersions(final String string) {
-            final String ua = info.getUserAgent();
-            if (!ua.contains(string)) {
-                return;
-            }
-            parseMajorMinor(ua.substring(ua.indexOf(string) + string.length() + 1));
+        @Override
+        public String getAgentName() {
+            return ua.getValue(UserAgent.AGENT_NAME);
         }
 
-        private void parseMajorMinor(final String parse) {
+        @Override
+        public int getMajorVersion() {
             try {
-                final StringTokenizer st = new StringTokenizer(parse.trim(), ". ");
-                if (st.hasMoreTokens()) {
-                    major = Integer.parseInt(st.nextToken());
-                    if (st.hasMoreTokens()) {
-                        minor = Integer.parseInt(st.nextToken());
-                    }
-                }
-            } catch (final NumberFormatException ex) {
-                log.info("Could not parse " + parse + ": " + ex.getMessage());
+                return Integer.parseInt(ua.getValue(UserAgent.AGENT_VERSION_MAJOR));
+            } catch (NumberFormatException e) {
+                log.warn("Failed to parse UserAgentMajorVersion as integer: {}", e.getMessage());
+                return -1;
             }
         }
-
-        public boolean isChrome() {
-            return info.getProperties().isBrowserChrome();
-        }
-
-        public boolean isFirefox() {
-            return info.getProperties().isBrowserMozillaFirefox()
-                    || (info.getProperties().isBrowserMozilla() && info.getUserAgent().contains(SHIRETOKO));
-        }
-
-        public boolean isOpera() {
-            return info.getProperties().isBrowserOpera();
-        }
-
-        public boolean isSafari() {
-            return info.getProperties().isBrowserSafari() && !isChrome();
-        }
-
-        public boolean isEdge() {
-            final String userAgent = info.getUserAgent();
-            return userAgent.contains(EDGE);
-        }
-
-        public int getMajor() {
-            return major;
-        }
-
-        public int getMinor() {
-            return minor;
-        }
-
     }
 
-    BrowserCheckBehavior(final String[] supported) {
-        check = new BrowserCheck(supported);
-    }
-
-    @Override
-    public void bind(final Component component) {
-        final WebClientInfo info = WebSession.get().getClientInfo();
-        component.setVisible(!check.isSupported(new WicketBrowserInfo(info)));
-    }
 }

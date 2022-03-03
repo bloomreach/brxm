@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
 
@@ -41,10 +42,8 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
 
     public void update(final IModel<Node> newModel) {
         getNodeBreadcrumbModel().update(newModel);
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.add(this);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
     }
 
     @Override

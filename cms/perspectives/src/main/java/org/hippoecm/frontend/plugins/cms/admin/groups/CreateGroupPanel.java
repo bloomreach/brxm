@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
 
         final AjaxButton createButton = new AjaxButton("create-button", form) {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 final Group group = groupModel.getGroup();
                 final String groupName = group.getGroupname();
                 try {
@@ -80,7 +80,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
             }
 
             @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
+            protected void onError(AjaxRequestTarget target) {
                 // make sure the feedback panel is shown
                 target.add(CreateGroupPanel.this);
             }
@@ -91,7 +91,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
         // add a button that can be used to submit the form via ajax
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));

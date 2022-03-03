@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.hippoecm.frontend.plugins.standards.image;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.repository.util.JcrUtils;
@@ -30,9 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class JcrImage extends Image {
 
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(JcrImage.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrImage.class);
 
     private static MessageDigest MD = null;
     static {
@@ -44,7 +42,7 @@ public class JcrImage extends Image {
     }
 
     JcrResourceStream stream;
-    Time lastModified;
+    Instant lastModified;
     int width;
     int height;
 
@@ -69,10 +67,10 @@ public class JcrImage extends Image {
             final StringBuilder sb = new StringBuilder(url);
             sb.append(((url.contains("?")) ? "&" : "?"));
             sb.append("w:lm=");
-            sb.append((lastModified.getMilliseconds() / 1000));
+            sb.append((lastModified.toEpochMilli() / 1000));
             if (MD != null) {
                 sb.append("&h:pathmd=");
-                final String path = JcrUtils.getNodePathQuietly(stream.getChainedModel().getObject());
+                final String path = JcrUtils.getNodePathQuietly(stream.getNodeModel().getObject());
                 sb.append(new BigInteger(1, MD.digest(path.getBytes())).toString(16));
             }
             tag.put("src", sb.toString());
