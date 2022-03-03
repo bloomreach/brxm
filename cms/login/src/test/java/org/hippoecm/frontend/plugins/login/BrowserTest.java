@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.hippoecm.frontend.plugins.login;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hippoecm.frontend.plugins.login.BrowserCheckBehavior.BrowserCheck;
 import org.hippoecm.frontend.plugins.login.BrowserCheckBehavior.BrowserInfo;
 import org.junit.Test;
@@ -25,36 +27,36 @@ import static org.junit.Assert.assertTrue;
 
 public class BrowserTest {
 
-    private static final TestBrowserInfo CHROME = new TestBrowserInfo("chrome", 1, -1);
-    private static final TestBrowserInfo CHROME2 = new TestBrowserInfo("chrome", 2, -1);
-    private static final TestBrowserInfo CHROME3 = new TestBrowserInfo("chrome", 3, -1);
+    private static final TestBrowserInfo CHROME = new TestBrowserInfo("chrome", 1);
+    private static final TestBrowserInfo CHROME2 = new TestBrowserInfo("chrome", 2);
+    private static final TestBrowserInfo CHROME3 = new TestBrowserInfo("chrome", 3);
 
-    private static final TestBrowserInfo FF = new TestBrowserInfo("firefox", -1, -1);
-    private static final TestBrowserInfo FF3 = new TestBrowserInfo("firefox", 3, -1);
-    private static final TestBrowserInfo FF35 = new TestBrowserInfo("firefox", 3, 5);
+    private static final TestBrowserInfo FF = new TestBrowserInfo("firefox", 1);
+    private static final TestBrowserInfo FF2 = new TestBrowserInfo("firefox", 2);
+    private static final TestBrowserInfo FF3 = new TestBrowserInfo("firefox", 3);
 
-    private static final TestBrowserInfo SAFARI = new TestBrowserInfo("safari", -1, -1);
-    private static final TestBrowserInfo SAFARI3 = new TestBrowserInfo("safari", 3, -1);
-    private static final TestBrowserInfo SAFARI4 = new TestBrowserInfo("safari", 4, -1);
+    private static final TestBrowserInfo SAFARI = new TestBrowserInfo("safari", -1);
+    private static final TestBrowserInfo SAFARI3 = new TestBrowserInfo("safari", 3);
+    private static final TestBrowserInfo SAFARI4 = new TestBrowserInfo("safari", 4);
 
-    private static final TestBrowserInfo UNKNOWN = new TestBrowserInfo("unknown", -1, -1);
+    private static final TestBrowserInfo UNKNOWN = new TestBrowserInfo("unknown", -1);
 
     @Test
     public void testNoUnsupported() {
-        checkFalse(new BrowserCheck(new String[] { }), CHROME, CHROME2, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(new BrowserCheck(new String[] { }), CHROME, CHROME2, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
     }
 
     @Test
     public void testNoVersion() {
         final BrowserCheck check = new BrowserCheck(new String[] { "chrome" });
         checkTrue(check, CHROME, CHROME2, CHROME3);
-        checkFalse(check,FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check,FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
     }
 
     @Test
     public void testNoVersionMultiple() {
         final BrowserCheck check = new BrowserCheck(new String[] { "chrome", "firefox" });
-        checkTrue(check, CHROME, CHROME2, CHROME3, FF, FF3, FF35);
+        checkTrue(check, CHROME, CHROME2, CHROME3, FF, FF2, FF3);
         checkFalse(check, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
     }
 
@@ -62,135 +64,117 @@ public class BrowserTest {
     public void testVersionMajor() {
         BrowserCheck check = new BrowserCheck(new String[] { "chrome 1" });
         checkTrue(check, CHROME);
-        checkFalse(check, CHROME2, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME2, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 2" });
         checkTrue(check, CHROME2);
-        checkFalse(check, CHROME, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
-    }
-
-    @Test
-    public void testVersionMajorMinor() {
-        final BrowserCheck check = new BrowserCheck(new String[] { "firefox 3.5" });
-        checkTrue(check, FF35);
-        checkFalse(check, CHROME, CHROME2, CHROME3, FF, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
     }
 
     @Test
     public void testVersionMajorMultiple() {
-        BrowserCheck check = new BrowserCheck(new String[] { "chrome 1", "firefox 3.5" });
-        checkTrue(check, CHROME, FF35);
-        checkFalse(check, CHROME2, CHROME3, FF, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        BrowserCheck check = new BrowserCheck(new String[] { "chrome 1", "firefox 3" });
+        checkTrue(check, CHROME, FF3);
+        checkFalse(check, CHROME2, CHROME3, FF, FF2, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 2", "chrome 3", "safari 4" });
         checkTrue(check, CHROME2, CHROME3, SAFARI4);
-        checkFalse(check, CHROME, FF, FF3, FF35, SAFARI, SAFARI3, UNKNOWN);
+        checkFalse(check, CHROME, FF, FF2, FF3, SAFARI, SAFARI3, UNKNOWN);
     }
 
     @Test
     public void testVersionAndModifier() {
         BrowserCheck check = new BrowserCheck(new String[] { "chrome 1 =" });
         checkTrue(check, CHROME);
-        checkFalse(check, CHROME2, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME2, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 1 >" });
         checkTrue(check, CHROME2, CHROME3);
-        checkFalse(check, CHROME, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 1 >=" });
         checkTrue(check, CHROME, CHROME2, CHROME3);
-        checkFalse(check, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 2 <" });
         checkTrue(check, CHROME);
-        checkFalse(check, CHROME2, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME2, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 2 <=" });
         checkTrue(check, CHROME, CHROME2);
-        checkFalse(check, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
     }
 
     @Test
     public void testVersionAndModifierMultiple() {
         BrowserCheck check = new BrowserCheck(new String[] { "chrome 1 =", "firefox" });
-        checkTrue(check, CHROME, FF, FF3, FF35);
+        checkTrue(check, CHROME, FF, FF2, FF3);
         checkFalse(check, CHROME2, CHROME3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 1 >" });
         checkTrue(check, CHROME2, CHROME3);
-        checkFalse(check, CHROME, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 1 >=" });
         checkTrue(check, CHROME, CHROME2, CHROME3);
-        checkFalse(check, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 2 <" });
         checkTrue(check, CHROME);
-        checkFalse(check, CHROME2, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME2, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
 
         check = new BrowserCheck(new String[] { "chrome 2 <=" });
         checkTrue(check, CHROME, CHROME2);
-        checkFalse(check, CHROME3, FF, FF3, FF35, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
+        checkFalse(check, CHROME3, FF, FF2, FF3, SAFARI, SAFARI3, SAFARI4, UNKNOWN);
     }
 
     @Test
     public void testComplex() {
         final BrowserCheck check = new BrowserCheck(new String[] { "chrome 2 <=", "firefox 3.5", "safari" });
-        checkTrue(check, CHROME, CHROME2, FF35, SAFARI, SAFARI3, SAFARI4);
-        checkFalse(check, CHROME3, FF, FF3, UNKNOWN);
+        checkTrue(check, CHROME, CHROME2, FF3, SAFARI, SAFARI3, SAFARI4);
+        checkFalse(check, CHROME3, FF, FF2, UNKNOWN);
 
     }
 
     private void checkFalse(final BrowserCheck check, final TestBrowserInfo... infos) {
         for(final TestBrowserInfo info : infos) {
-            assertFalse(check.isSupported(info));
+            assertFalse(String.format("Expected %s not to be marked as supported for %s", info, check),
+                    check.isSupported(info));
         }
     }
 
     private void checkTrue(final BrowserCheck check, final TestBrowserInfo... infos) {
         for(final TestBrowserInfo info : infos) {
-            assertTrue(check.isSupported(info));
+            assertTrue(String.format("Expected %s to be supported for %s", info, check), check.isSupported(info));
         }
     }
 
     private static class TestBrowserInfo implements BrowserInfo {
 
         private final int major;
-        private final int minor;
         private final String agent;
 
-        TestBrowserInfo(final String agent, final int major, final int minor) {
+        TestBrowserInfo(final String agent, final int major) {
             this.agent = agent;
-            this.minor = minor;
             this.major = major;
         }
 
-        public int getMajor() {
+        @Override
+        public String getAgentName() {
+            return agent;
+        }
+
+        @Override
+        public int getMajorVersion() {
             return major;
         }
 
-        public int getMinor() {
-            return minor;
-        }
-
-        public boolean isChrome() {
-            return agent.equals("chrome");
-        }
-
-        public boolean isFirefox() {
-            return agent.equals("firefox");
-        }
-
-        public boolean isOpera() {
-            return agent.equals("opera");
-        }
-
-        public boolean isSafari() {
-            return agent.equals("safari");
-        }
-
-        public boolean isEdge() {
-            return agent.equals("edge");
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                    .append("agent", agent)
+                    .append("major", major)
+                    .toString();
         }
     }
 

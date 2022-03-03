@@ -84,7 +84,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         link.add(label);
     }
 
-    public static class Dialog extends AbstractDialog {
+    public static class Dialog extends AbstractDialog<Void> {
 
         private Set<String> handles = new HashSet<>();
         private String mode = MODE_PUBLISH;
