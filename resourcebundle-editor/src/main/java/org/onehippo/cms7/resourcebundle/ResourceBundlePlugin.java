@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.cms7.resourcebundle;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import javax.jcr.Node;
@@ -48,7 +49,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.attributes.ClassAttribute;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
@@ -212,7 +212,7 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
             public void detach() {
             }
         };
-        row.add(ClassAttribute.append(ReadOnlyModel.of(() -> enabledModel.getObject() ? "" : "disabled")));
+        row.add(ClassAttribute.append(() -> enabledModel.getObject() ? "" : "disabled"));
 
         row.add(createEnableCheckBox(resource, enabledModel));
         row.add(new Image("desc", new PackageResourceReference(ResourceBundlePlugin.class, "description.png"))
@@ -280,10 +280,8 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
 
     protected void refreshView() {
         redraw();
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.add(this);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
     }
 
     protected AjaxLink<Void> createResourceAddLink() {

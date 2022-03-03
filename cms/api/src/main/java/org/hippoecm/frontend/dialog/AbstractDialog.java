@@ -18,6 +18,7 @@ package org.hippoecm.frontend.dialog;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -51,7 +52,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -120,11 +120,13 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
             super(id);
         }
 
+        @Override
         public String getCacheKey(final MarkupContainer container, final Class containerClass) {
             return cacheKeyProvider.getCacheKey(AbstractDialog.this, AbstractDialog.this.getClass());
         }
 
         // implement IMarkupResourceStreamProvider.
+        @Override
         public IResourceStream getMarkupResourceStream(final MarkupContainer container, final Class containerClass) {
             return streamProvider.getMarkupResourceStream(AbstractDialog.this, AbstractDialog.this.getClass());
         }
@@ -322,15 +324,12 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
         buttons.add(ok);
 
         if (isFullscreenEnabled()) {
-            final AjaxButton goFullscreen = new AjaxButton(DialogConstants.BUTTON,
-                    new AbstractReadOnlyModel<String>() {
-                        @Override
-                        public String getObject() {
-                            return getString(fullscreen ? "exit-fullscreen" : "fullscreen");
-                        }
-                    }) {
+            final AjaxButton goFullscreen = new AjaxButton(
+                    DialogConstants.BUTTON,
+                    () -> getString(fullscreen ? "exit-fullscreen" : "fullscreen")
+            ) {
                 @Override
-                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     target.appendJavaScript(getFullscreenScript());
                     target.add(this); //update button label
                     fullscreen = !fullscreen;
@@ -438,6 +437,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
      *
      * @return the markup id of the ajax indicator
      */
+    @Override
     public String getAjaxIndicatorMarkupId() {
         if (indicator != null) {
             return indicator.getMarkupId();
@@ -509,6 +509,7 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDialogService(final IDialogService dialogService) {
         this.dialogService = dialogService;
     }
@@ -656,17 +657,16 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
      */
     @Override
     public void onClose() {
-        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> {
             for (final ButtonWrapper bw : buttons) {
                 if (bw.getKeyType() != null) {
                     // the input behavior does not support removal, so we need to do this manually
-                    target.prependJavaScript("if (window['shortcut']) { shortcut.remove('" +
-                            bw.getKeyType() +
-                            "'); }\n");
+                    final String script = String.format("if (window['shortcut']) { shortcut.remove('%s'); }\n", bw.getKeyType());
+                    ajaxRequestTarget.prependJavaScript(script);
                 }
             }
-        }
+        });
     }
 
     /**

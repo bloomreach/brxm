@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
         final AjaxButton saveButton = new AjaxButton("save-button", form) {
 
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 String description = descriptionField.getDefaultModelObjectAsString();
                 if (StringUtils.isBlank(description)) {
                     description = null;
@@ -90,7 +90,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
 
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));

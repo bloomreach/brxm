@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,8 +75,6 @@ import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class DefaultWorkflowPlugin extends RenderPlugin {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultWorkflowPlugin.class);
 
@@ -209,7 +207,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                destination = new NodeModelWrapper<Node>(getFolder()) {
+                destination = new NodeModelWrapper<>(getFolder()) {
                 };
                 try {
                     String nodeName = getDisplayName().getObject().toLowerCase();
@@ -222,7 +220,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                         String copyof = new StringResourceModel("copyof", DefaultWorkflowPlugin.this).getString();
                         CopyNameHelper copyNameHelper = new CopyNameHelper(codec, copyof);
 
-                        name = copyNameHelper.getCopyName(nodeName, destination.getChainedModel().getObject());
+                        name = copyNameHelper.getCopyName(nodeName, destination.getNodeModel().getObject());
                     }
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
@@ -242,7 +240,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
                     @Override
                     protected boolean checkFolderTypes() {
-                        return isContentAllowedInFolder(source, destination.getChainedModel());
+                        return isContentAllowedInFolder(source, destination.getNodeModel());
                     }
                 };
             }
@@ -257,7 +255,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
              */
             private void createNewFileNodeNameWithBaseNameSuffix(final String nodeName) throws RepositoryException {
                 name = nodeName;
-                Node gallery = destination.getChainedModel().getObject();
+                Node gallery = destination.getNodeModel().getObject();
                 if (gallery.hasNode(name)) {
                     name = addOrIncrementFileNodeNameBaseNameSuffix(name);
                     createNewFileNodeNameWithBaseNameSuffix(name);
@@ -297,7 +295,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 final Node folder = destination != null ?
-                        destination.getChainedModel().getObject() : UserSession.get().getJcrSession().getRootNode();
+                        destination.getNodeModel().getObject() : UserSession.get().getJcrSession().getRootNode();
 
                 final String locale = CodecUtils.getLocaleFromDocumentOrFolder(getModel().getNode(), folder);
                 final StringCodec codec = CodecUtils.getNodeNameCodec(getPluginContext(), locale);
@@ -337,7 +335,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                destination = new NodeModelWrapper<Node>(getFolder()) {
+                destination = new NodeModelWrapper<>(getFolder()) {
                 };
                 return new DestinationDialog(Model.of(getString("move-title")), null, null, destination, context, config) {
                     @Override
@@ -347,7 +345,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
                     @Override
                     protected boolean checkFolderTypes() {
-                        return isContentAllowedInFolder(source, destination.getChainedModel());
+                        return isContentAllowedInFolder(source, destination.getNodeModel());
                     }
                 };
             }
@@ -356,7 +354,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             protected String execute(Workflow wf) throws Exception {
 
                 final Node dest = destination != null ?
-                        destination.getChainedModel().getObject() : UserSession.get().getJcrSession().getRootNode();
+                        destination.getNodeModel().getObject() : UserSession.get().getJcrSession().getRootNode();
 
                 final String srcLocale = CodecUtils.getLocaleFromNodeAndAncestors(source.getNode());
                 final String destLocale = CodecUtils.getLocaleFromNodeAndAncestors(dest);
@@ -458,6 +456,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         return CodecUtils.getNodeNameCodecModel(getPluginContext(), locale);
     }
 
+    @Override
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
     }

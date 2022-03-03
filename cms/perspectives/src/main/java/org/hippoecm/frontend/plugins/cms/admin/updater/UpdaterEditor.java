@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ public class UpdaterEditor extends Panel {
 
         final AjaxButton executeButton = new BrSubmit("execute-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 executeUpdater(false);
                 tryRenderFeedback(target);
             }
@@ -131,7 +131,7 @@ public class UpdaterEditor extends Panel {
 
         final AjaxButton undoButton = new BrSubmit("undo-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 executeUndo();
                 tryRenderFeedback(target);
             }
@@ -151,7 +151,7 @@ public class UpdaterEditor extends Panel {
 
         final AjaxButton dryRunButton = new BrSubmit("dryrun-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 executeUpdater(true);
                 tryRenderFeedback(target);
             }
@@ -171,7 +171,7 @@ public class UpdaterEditor extends Panel {
 
         final AjaxButton saveButton = new BrSubmit("save-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 saveUpdater();
                 target.add(executeButton);
                 target.add(dryRunButton);
@@ -192,7 +192,7 @@ public class UpdaterEditor extends Panel {
 
         final AjaxButton stopButton = new BrSubmit("stop-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 stopUpdater();
                 tryRenderFeedback(target);
             }
@@ -211,7 +211,7 @@ public class UpdaterEditor extends Panel {
 
         final AjaxButton deleteButton = new BrSubmit("delete-button") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 deleteUpdater();
             }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.model.ItemModelWrapper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
@@ -36,8 +35,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class SelectionUtils {
 
-    /** Logger */
     private static final Logger log = LoggerFactory.getLogger(SelectionUtils.class);
+
+    private SelectionUtils() {
+    }
 
     /**
      * Get a node from a JCR model
@@ -56,7 +57,7 @@ public final class SelectionUtils {
             node = ((JcrNodeModel) model).getNode();
         }
         else if (model instanceof NodeModelWrapper) {
-            node = ((NodeModelWrapper) model).getChainedModel().getObject();
+            node = ((NodeModelWrapper) model).getNodeModel().getObject();
         }
         else if (model instanceof ItemModelWrapper) {
             node = ((ItemModelWrapper) model).getItemModel().getParentModel().getObject();
@@ -90,7 +91,7 @@ public final class SelectionUtils {
             }
 
             if (!docNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                log.debug("No translated nodes found for node '{}' and below", HippoTranslationNodeType.LOCALE, docNode.getPath());
+                log.debug("No translated nodes found for node '{}' and below", docNode.getPath());
                 return null;
             }
 
@@ -130,10 +131,5 @@ public final class SelectionUtils {
         }
         sb.append(newPathSegment);
         return sb.toString();
-    }
-
-    /** Constructor (prevents instantiation) */
-    private SelectionUtils() {
-        //
     }
 }

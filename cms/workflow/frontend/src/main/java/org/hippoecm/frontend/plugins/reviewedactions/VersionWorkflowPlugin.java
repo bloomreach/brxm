@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.version.Version;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.migrate.StringResourceModelMigration;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -72,43 +71,32 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         final String restoreToBranchId = getBranchInfo(context, BranchIdModel::getBranchId);
         final String restoreToBranchName = getBranchInfo(context, BranchIdModel::getBranchName);
 
-        final String revisionBranchName = getRevisionBranchName();
+        final StringResourceModel createdForLabel = new StringResourceModel("created-for-branch", this)
+                .setParameters(
+                        Model.of(getRevisionBranchName()),
+                        new LoadableDetachableModel<String>() {
+                            @Override
+                            protected String load() {
+                                try {
+                                    Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
+                                    Node versionNode = frozenNode.getParent();
+                                    Calendar calendar = versionNode.getProperty("jcr:created").getDate();
+                                    return DateTimePrinter.of(calendar).print(FormatStyle.LONG, FormatStyle.MEDIUM);
+                                } catch (ValueFormatException e) {
+                                    log.error("Value is not a date", e);
+                                } catch (PathNotFoundException e) {
+                                    log.error("Could not find node", e);
+                                } catch (RepositoryException e) {
+                                    log.error("Repository error", e);
+                                }
+                                return null;
+                            }
+                        });
+        add(new FeedbackStdWorkflow("created-for", createdForLabel, Model.of(Boolean.TRUE)));
 
-
-        add(new FeedbackStdWorkflow("created-for", StringResourceModelMigration.of("created-for-branch", this, null,
-                new LoadableDetachableModel<String>() {
-                    @Override
-                    protected String load() {
-                        return revisionBranchName;
-                    }
-                },
-                new LoadableDetachableModel<String>() {
-                    @Override
-                    protected String load() {
-                        try {
-                            Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
-                            Node versionNode = frozenNode.getParent();
-                            Calendar calendar = versionNode.getProperty("jcr:created").getDate();
-                            return DateTimePrinter.of(calendar).print(FormatStyle.LONG, FormatStyle.MEDIUM);
-                        } catch (ValueFormatException e) {
-                            log.error("Value is not a date", e);
-                        } catch (PathNotFoundException e) {
-                            log.error("Could not find node", e);
-                        } catch (RepositoryException e) {
-                            log.error("Repository error", e);
-                        }
-                        return null;
-                    }
-                }), new Model<>(Boolean.TRUE)
-        ));
-
-        add(new FeedbackStdWorkflow("restoreto", StringResourceModelMigration.of("restore-to", this, null,
-                new LoadableDetachableModel<String>() {
-                    @Override
-                    protected String load() {
-                        return restoreToBranchName;
-                    }
-                }), new Model<>(Boolean.TRUE)));
+        final StringResourceModel restoreToLabel = new StringResourceModel("restore-to", this)
+                .setParameters(Model.of(restoreToBranchName));
+        add(new FeedbackStdWorkflow("restoreto", restoreToLabel, Model.of(Boolean.TRUE)));
 
         add(new StdWorkflow("restore", new StringResourceModel("restore", this), getModel()) {
 
