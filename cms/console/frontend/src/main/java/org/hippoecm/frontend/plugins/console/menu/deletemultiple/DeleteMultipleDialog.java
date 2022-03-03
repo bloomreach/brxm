@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.plugins.console.tree.StyledTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 /**
  * Opens a dialog with subtree of the node that's been selected and allows the user to select multiple nodes to delete
@@ -82,14 +84,15 @@ public class DeleteMultipleDialog extends Dialog<Node> {
             }
 
             @Override
-            protected void onClick(AjaxRequestTarget target) {
+            protected void onClick(Optional<AjaxRequestTarget> target) {
                 final Node node = getModelObject();
                 if (isSelected()) {
                     selectedNodes.remove(node);
                 } else {
                     selectedNodes.add(node);
                 }
-                tree.updateNode(node, target);
+                //TODO SS: Ugly workaround
+                tree.updateNode(node, target.get());
             }
 
             @Override

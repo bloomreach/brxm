@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -139,7 +138,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 });
                 addOpenButton(fragment);
 
-                remove = new BrLink<Void>("remove") {
+                remove = new BrLink<>("remove") {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         valueModel.setObject(JcrConstants.ROOT_NODE_ID);
@@ -230,25 +229,20 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
      * Create a gallery picker dialog to select an image.
      */
     private AbstractDialog<String> createDialog() {
-        final IChainingModel<String> dialogModel = new IChainingModel<String>() {
+        final IModel<String> dialogModel = new IModel<>() {
 
+            @Override
             public String getObject() {
                 return valueModel.getObject();
             }
 
+            @Override
             public void setObject(final String object) {
                 valueModel.setObject(object);
                 GalleryPickerPlugin.this.modelChanged();
             }
 
-            public IModel<?> getChainedModel() {
-                return valueModel;
-            }
-
-            public void setChainedModel(final IModel<?> model) {
-                throw new UnsupportedOperationException("Value model cannot be changed");
-            }
-
+            @Override
             public void detach() {
                 valueModel.detach();
             }
@@ -361,15 +355,15 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 return getPath(node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
             }
         } catch (final ValueFormatException e) {
-            log.warn("Invalid value format for docbase " + e.getMessage());
+            log.warn("Invalid value format for docbase {}", e.getMessage());
             log.debug("Invalid value format for docbase ", e);
         } catch (final PathNotFoundException e) {
-            log.warn("Docbase not found " + e.getMessage());
+            log.warn("Docbase not found {}", e.getMessage());
             log.debug("Docbase not found ", e);
         } catch (final ItemNotFoundException e) {
-            log.info("Docbase " + e.getMessage() + " could not be dereferenced");
+            log.info("Docbase {} could not be dereferenced", e.getMessage());
         } catch (final RepositoryException e) {
-            log.error("Invalid docbase " + e.getMessage(), e);
+            log.error("Invalid docbase {}", e.getMessage(), e);
         }
         return StringUtils.EMPTY;
     }
@@ -381,13 +375,13 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 path = getJCRSession().getNodeByIdentifier(docbaseUUID).getPath();
             }
         } catch (final RepositoryException e) {
-            log.error("Invalid docbase " + e.getMessage(), e);
+            log.error("Invalid docbase {}", e.getMessage(), e);
         }
         return path;
     }
 
     IModel<String> getPathModel() {
-        return new LoadableDetachableModel<String>() {
+        return new LoadableDetachableModel<>() {
             @Override
             protected String load() {
                 return getMirrorPath();

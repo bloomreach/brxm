@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -176,10 +177,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 super.createGalleryItem(upload, galleryType);
 
                 // manually refresh feedback panel on an ajax request
-                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target != null) {
-                    target.add(feedback);
-                }
+                final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(feedback));
             }
         };
     }
@@ -207,10 +206,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         if (type != null) {
             // if an preexisting image is selected, the constructor is not yet called so the class members are not initialized
             setPreferredTypeChoice();
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.add(type);
-            }
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(type));
         }
         super.onModelSelected(model);
     }
@@ -229,10 +226,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         // function is called by parent constructor, when our constructor hasn't run yet...
         if (uploadPanel != null) {
 
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.add(uploadPanel);
-            }
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(uploadPanel));
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -334,9 +333,9 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                             : StringUtils.EMPTY));
 
 
-                    final ReadOnlyModel<Icon> iconModel = ReadOnlyModel.of(() -> active == section
+                    final IModel<Icon> iconModel = () -> active == section
                             ? Icon.CARET_DOWN
-                            : Icon.CARET_RIGHT);
+                            : Icon.CARET_RIGHT;
                     link.add(HippoIcon.fromSprite("categoryIcon", iconModel, IconSize.S));
                     item.add(link);
                 }

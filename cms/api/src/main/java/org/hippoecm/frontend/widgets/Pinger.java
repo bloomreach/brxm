@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,17 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import java.time.Duration;
+
+import com.github.openjson.JSONException;
+import com.github.openjson.JSONObject;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.ajax.json.JSONException;
-import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 import org.hippoecm.frontend.util.RequestUtils;
 import org.slf4j.Logger;
@@ -35,9 +36,9 @@ import org.slf4j.LoggerFactory;
  */
 public class Pinger extends Label {
 
-    private static final int DEFAULT_INTERVAL_SECONDS = 20;
-
     private static final Logger log = LoggerFactory.getLogger(Pinger.class);
+
+    private static final int DEFAULT_INTERVAL_SECONDS = 20;
     private static final String DEFAULT_WICKET_ID = "pinger";
 
     /**
@@ -49,7 +50,7 @@ public class Pinger extends Label {
      */
     @Deprecated
     public Pinger(String id) {
-        this(id, Duration.seconds(DEFAULT_INTERVAL_SECONDS));
+        this(id, Duration.ofSeconds(DEFAULT_INTERVAL_SECONDS));
     }
 
     /**
@@ -65,22 +66,20 @@ public class Pinger extends Label {
     public Pinger(String id, Duration interval) {
         super(id);
         if (interval != null) {
-            if (interval.greaterThan(0L)) {
+            if (!interval.isNegative() && !interval.isZero()) {
                 add(new PingBehavior(interval));
             }
         } else {
-            add(new PingBehavior(Duration.seconds(DEFAULT_INTERVAL_SECONDS)));
+            add(new PingBehavior(Duration.ofSeconds(DEFAULT_INTERVAL_SECONDS)));
         }
     }
 
-    @SuppressWarnings("deprecation")
     public static Pinger every(final Duration interval) {
         return new Pinger(DEFAULT_WICKET_ID, interval);
     }
 
-    @SuppressWarnings("deprecation")
     public static Pinger dummy() {
-        return new Pinger(DEFAULT_WICKET_ID, Duration.valueOf(-1));
+        return new Pinger(DEFAULT_WICKET_ID, Duration.ZERO);
     }
 
     @Override

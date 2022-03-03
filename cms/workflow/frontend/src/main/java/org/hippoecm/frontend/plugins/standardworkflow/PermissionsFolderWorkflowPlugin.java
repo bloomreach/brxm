@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +161,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
         this.selected = selected;
     }
 
-    public class PermissionsConfirmDialog extends WorkflowDialog {
+    public class PermissionsConfirmDialog extends WorkflowDialog<WorkflowDescriptor>{
 
         protected static final String EXCLUDE = "exclude";
 
@@ -222,7 +223,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     WebMarkupContainer controls = new WebMarkupContainer("controls");
                     fragment.add(controls);
 
-                    MarkupContainer remove = new AjaxLink("remove") {
+                    MarkupContainer remove = new AjaxLink<Void>("remove") {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             folderTypesList.remove(valueModel);
@@ -235,7 +236,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
                     remove.add(removeIcon);
 
-                    MarkupContainer upLink = new AjaxLink("up") {
+                    MarkupContainer upLink = new AjaxLink<Void>("up") {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             final int i = folderTypesList.indexOf(valueModel);
@@ -249,7 +250,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
                     upLink.add(upIcon);
 
-                    MarkupContainer downLink = new AjaxLink("down") {
+                    MarkupContainer downLink = new AjaxLink<Void>("down") {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             final int i = folderTypesList.indexOf(valueModel);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
@@ -80,7 +79,7 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
     @Override
     protected void onBeforeRender() {
         // Obtain callback urls used for uploading files & notification
-        String uploadUrl = urlFor(ajaxFileUploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
+        final String uploadUrl = urlForListener(ajaxFileUploadBehavior, new PageParameters()).toString();
         settings.setUploadUrl(uploadUrl);
 
         super.onBeforeRender();
