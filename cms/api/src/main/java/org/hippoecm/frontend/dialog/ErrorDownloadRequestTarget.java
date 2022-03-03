@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.time.Instant;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -202,7 +203,6 @@ enum Column {
 }
 
 public class ErrorDownloadRequestTarget implements IRequestHandler {
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ErrorDownloadRequestTarget.class);
 
@@ -231,7 +231,7 @@ public class ErrorDownloadRequestTarget implements IRequestHandler {
         response.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
         response.setHeader("Cache-Control", "no-cache, must-revalidate");
         response.setHeader("Pragma", "no-cache");
-        response.setLastModifiedTime(Time.now());
+        response.setLastModifiedTime(Instant.now());
 
         // set filename
         response.setAttachmentHeader(FILE_NAME);
@@ -252,7 +252,7 @@ public class ErrorDownloadRequestTarget implements IRequestHandler {
                 ps.println();
 
                 ps.print("time    : ");
-                ps.print(Time.now().toString());
+                ps.print(Instant.now().toString());
                 ps.println();
 
                 javax.jcr.Session jcrSession = session.getJcrSession();

@@ -46,9 +46,9 @@ public abstract class AbstractProvider<T, M extends IModel> extends ItemModelWra
     }
 
     @Override
-    public void setChainedModel(IModel model) {
+    public void setItemModel(IModel model) {
         detach();
-        super.setChainedModel(model);
+        super.setItemModel(model);
     }
 
     @Override

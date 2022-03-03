@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.util.TreeSet;
 
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 
 public class SystemPropertiesDataProvider extends SortableDataProvider {
 
@@ -68,7 +67,7 @@ public class SystemPropertiesDataProvider extends SortableDataProvider {
 
     @Override
     public IModel model(final Object object) {
-        return ReadOnlyModel.of(() -> object);
+        return () -> object;
     }
 
     @Override

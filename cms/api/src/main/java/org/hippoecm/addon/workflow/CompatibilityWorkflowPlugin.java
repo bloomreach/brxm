@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
@@ -42,7 +43,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -75,7 +75,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
     private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
 
-    /** Date formatter for internalionzed dates */
+    /**
+     * Date formatter for internationalized dates
+     */
     protected final DateFormat dateFormatFull;
 
     protected CompatibilityWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -89,11 +91,13 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         modelChanged();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public WorkflowDescriptor getModelObject() {
         return (WorkflowDescriptor) getDefaultModelObject();
@@ -119,7 +123,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this.getModel());
         }
 
-        /** @deprecated Please extend directly from AbstractDialog */
+        /**
+         * @deprecated Please extend directly from AbstractDialog
+         */
         @Deprecated
         public class WorkflowDialog extends AbstractDialog {
 
@@ -152,6 +158,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 }
             }
 
+            @Override
             public IModel<String> getTitle() {
                 return Model.of("");
             }
@@ -165,7 +172,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
+        /**
+         * @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.
+         */
         @Deprecated
         public class ConfirmDialog extends WorkflowDialog {
             private IModel<String> title;
@@ -177,14 +186,14 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             public ConfirmDialog(final IModel<String> title, final IModel<String> intro, final IModel<String> text, final IModel<String> question) {
                 super();
                 this.title = title;
-                if(intro == null) {
+                if (intro == null) {
                     final Label component;
                     add(component = new Label("intro"));
                     component.setVisible(false);
                 } else {
                     add(new Label("intro", intro));
                 }
-                if(text == null) {
+                if (text == null) {
                     final Label component;
                     add(component = new Label("text"));
                     component.setVisible(false);
@@ -205,7 +214,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
+        /**
+         * @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.
+         */
         @Deprecated
         public class NameDialog extends WorkflowDialog {
             private IModel<String> title;
@@ -231,7 +242,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
+        /**
+         * @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.
+         */
         @Deprecated
         public class TextDialog extends WorkflowDialog {
 
@@ -259,7 +272,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
+        /**
+         * @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.
+         */
         @Deprecated
         public class DestinationDialog extends WorkflowDialog {
 
@@ -299,7 +314,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 control.start();
 
                 modelServiceId = decorated.getString("model.folder");
-                tracker = new ServiceTracker<IModelReference>(IModelReference.class) {
+                tracker = new ServiceTracker<>(IModelReference.class) {
 
                     IModelReference modelRef;
                     IObserver modelObserver;
@@ -309,17 +324,19 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                         super.onServiceAdded(service, name);
                         if (modelRef == null) {
                             modelRef = service;
-                            modelRef.setModel(destination.getChainedModel());
+                            modelRef.setModel(destination.getNodeModel());
                             context.registerService(modelObserver = new IObserver<IModelReference>() {
 
+                                @Override
                                 public IModelReference getObservable() {
                                     return modelRef;
                                 }
 
+                                @Override
                                 public void onEvent(final Iterator<? extends IEvent<IModelReference>> events) {
                                     final IModel model = modelRef.getModel();
                                     if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
-                                        destination.setChainedModel(model);
+                                        destination.setNodeModel(model);
                                     }
                                     DestinationDialog.this.setOkEnabled(true);
                                 }
@@ -376,7 +393,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
+        /**
+         * @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.
+         */
         @Deprecated
         public class DateDialog extends WorkflowDialog {
 

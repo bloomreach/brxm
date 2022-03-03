@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,6 +34,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(EasyMockRunner.class)
 public class AjaxCallFailureHeaderItemTest extends WicketTestCase {
@@ -40,6 +42,12 @@ public class AjaxCallFailureHeaderItemTest extends WicketTestCase {
     @SuppressWarnings("unused")
     @Mock
     private Response response;
+
+    @Before
+    public void beForeEach() {
+        // We need to manually call the before methods that are annotated with JUnit5
+        super.commonBefore();
+    }
 
     @Test
     public void test_script_subscribes_to_ajax_call_failure_events() {

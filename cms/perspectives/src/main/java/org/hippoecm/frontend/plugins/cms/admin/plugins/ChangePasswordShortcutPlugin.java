@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.plugins;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,6 @@ import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
@@ -98,7 +98,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
         username = user.getUsername();
 
-        final AjaxLink link = new AjaxLink("link") {
+        final AjaxLink link = new AjaxLink<Void>("link") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final IDialogService dialogService = getDialogService();
@@ -112,7 +112,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         };
         add(link);
 
-        final IModel<String> labelModel = ReadOnlyModel.of(() -> {
+        final IModel<String> labelModel = () -> {
             if (user.isPasswordExpired()) {
                 return translate("password-is-expired");
             } else if (isPasswordAboutToExpire(user)) {
@@ -131,7 +131,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                         .getString();
             }
             return StringUtils.EMPTY;
-        });
+        };
         label = new Label("label", labelModel) {
             @Override
             public boolean isVisible() {
@@ -199,7 +199,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         return getString(key, model);
     }
 
-    private class ChangePasswordDialog extends Dialog {
+    private class ChangePasswordDialog extends Dialog<Void> {
 
         private final PasswordWidget currentWidget;
         private final PasswordWidget newWidget;
@@ -315,24 +315,24 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             }
 
             setFocus(currentWidget);
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.add(currentWidget);
-                target.add(newWidget);
-                target.add(checkWidget);
-                target.add(label);
-            }
+            final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> {
+                ajaxRequestTarget.add(currentWidget);
+                ajaxRequestTarget.add(newWidget);
+                ajaxRequestTarget.add(checkWidget);
+                ajaxRequestTarget.add(label);
+            });
         }
     }
 
-    private class CannotChangePasswordDialog extends Dialog {
+    private class CannotChangePasswordDialog extends Dialog<Void> {
 
         CannotChangePasswordDialog() {
             setTitle(Model.of(translate("change-password-label")));
             setSize(DialogConstants.MEDIUM_AUTO);
             setCancelVisible(false);
 
-            info(translate("cannot-change-password", ReadOnlyModel.of(() -> ChangePasswordShortcutPlugin.this)));
+            info(translate("cannot-change-password", () -> ChangePasswordShortcutPlugin.this));
         }
     }
 

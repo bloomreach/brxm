@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.ILinkListener;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -131,7 +130,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
         fragment.add(new Label("filesize", Model.of(formatter.format(stream.length().bytes()))));
         fragment.add(new Label("mimetype", Model.of(stream.getContentType())));
-        fragment.add(createFileLink(stream, stream.getChainedModel().getObject()));
+        fragment.add(createFileLink(stream, stream.getNodeModel().getObject()));
         fragment.setVisible(!stream.getContentType().equals(MIME_TYPE_HIPPO_BLANK));
 
         return fragment;
@@ -193,7 +192,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             // set by parent class DownloadLink are ignored or overridden.
             final PageParameters parameters = new PageParameters();
             parameters.set("v", UUID.randomUUID());
-            return urlFor(ILinkListener.INTERFACE, parameters);
+            return urlForListener(parameters);
         }
 
         @Override

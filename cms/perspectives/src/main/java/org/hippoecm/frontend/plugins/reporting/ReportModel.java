@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reporting;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,11 +46,9 @@ import org.slf4j.LoggerFactory;
 
 public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider, IObservable {
 
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ReportModel.class);
 
     public static final int UNKNOWN_SIZE = -1;
-
-    private static final Logger log = LoggerFactory.getLogger(ReportModel.class);
 
     private JcrFrontendListener listener;
     private IObservationContext obContext;
@@ -70,12 +68,15 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
             try {
                 final NodeIterator nodeIterator = resultSet.getNodes();
                 return new Iterator<IModel>() {
+                    @Override
                     public boolean hasNext() {
                         return nodeIterator.hasNext();
                     }
+                    @Override
                     public IModel next() {
                         return new JcrNodeModel(nodeIterator.nextNode());
                     }
+                    @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
                     }
@@ -84,7 +85,8 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
                 log.error("Failed to obtain nodes from query result");
             }
         }
-        return new ArrayList(0).iterator();
+
+        return Collections.emptyIterator();
     }
 
     @Override
@@ -168,13 +170,15 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
 
     // IObservable
 
+    @Override
     public void setObservationContext(IObservationContext context) {
         this.obContext = context;
     }
 
+    @Override
     public void startObservation() {
         try {
-            Node node = getChainedModel().getObject();
+            Node node = getNodeModel().getObject();
             Node listenerNode = node.getNode(ReportingNodeTypes.LISTENER);
             listener = new JcrFrontendListener(obContext, new JcrNodeModel(listenerNode));
             listener.start();
@@ -183,6 +187,7 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
         }
     }
 
+    @Override
     public void stopObservation() {
         if (listener != null) {
             listener.stop();

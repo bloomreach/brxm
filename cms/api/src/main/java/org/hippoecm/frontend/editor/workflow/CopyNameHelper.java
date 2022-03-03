@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,36 +21,35 @@ import java.util.regex.Pattern;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.repository.api.StringCodec;
 
 public class CopyNameHelper {
 
-    private final Pattern firstcopy;
-    private final Pattern othercopies;
+    private final Pattern firstCopy;
+    private final Pattern otherCopies;
     private final IModel<StringCodec> codecModel;
     private final String copyOf;
 
     public CopyNameHelper(StringCodec codec, String copyOf) {
-        this(createModel(codec), copyOf);
+        this(() -> codec, copyOf);
     }
 
     public CopyNameHelper(IModel<StringCodec> codecModel, String copyOf) {
         this.codecModel = codecModel;
         this.copyOf = copyOf;
-        this.firstcopy = Pattern.compile(".* \\(" + copyOf + "\\)$");
-        this.othercopies = Pattern.compile(".* \\(" + copyOf + " ([0-9]*?)\\)$");
+        this.firstCopy = Pattern.compile(".* \\(" + copyOf + "\\)$");
+        this.otherCopies = Pattern.compile(".* \\(" + copyOf + " ([0-9]*?)\\)$");
     }
 
     public String getCopyName(String name, Node folder) throws RepositoryException {
         String base;
         int number;
-        if (firstcopy.matcher(name).matches()) {
+        if (firstCopy.matcher(name).matches()) {
             base = name.substring(0, name.lastIndexOf(" (" + copyOf + ")"));
             number = 2;
-        } else if (othercopies.matcher(name).matches()) {
-            Matcher matcher = othercopies.matcher(name);
+        } else if (otherCopies.matcher(name).matches()) {
+            Matcher matcher = otherCopies.matcher(name);
             matcher.find();
             String match = matcher.group(1);
             base = name.substring(0, name.lastIndexOf(" ("));
@@ -75,14 +74,4 @@ public class CopyNameHelper {
         }
         return name;
     }
-
-    private static IModel<StringCodec> createModel(final StringCodec codec) {
-        return new AbstractReadOnlyModel<StringCodec>() {
-            @Override
-            public StringCodec getObject() {
-                return codec;
-            }
-        };
-    }
-
 }

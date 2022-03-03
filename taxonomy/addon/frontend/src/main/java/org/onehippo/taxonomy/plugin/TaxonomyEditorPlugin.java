@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -119,7 +120,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private final boolean editing;
     private final boolean useUrlKeyEncoding;
 
-    private final Form<?> container;
+    private final Form<Void> container;
     private final MarkupContainer holder;
     private final MarkupContainer toolbarHolder;
     private final ITaxonomyService service;
@@ -231,7 +232,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 controls.setVisible(editing);
                 item.add(controls);
 
-                final AjaxLink upControl = new AjaxLink("up") {
+                final AjaxLink<Void> upControl = new AjaxLink<Void>("up") {
                     @Override
                     public boolean isEnabled() {
                         return item.getIndex() > 0;
@@ -251,7 +252,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 upControl.add(HippoIcon.fromSprite("up-icon", Icon.ARROW_UP));
                 controls.add(upControl);
 
-                final AjaxLink downControl = new AjaxLink("down") {
+                final AjaxLink<Void> downControl = new AjaxLink<Void>("down") {
                     @Override
                     public boolean isEnabled() {
                         final String[] synonyms = synonymModel.getObject();
@@ -272,7 +273,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 downControl.add(HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN));
                 controls.add(downControl);
 
-                final AjaxLink removeControl = new AjaxLink("remove") {
+                final AjaxLink<Void> removeControl = new AjaxLink<Void>("remove") {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         final String[] synonyms = synonymModel.getObject();
@@ -297,7 +298,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
         });
 
-        final AjaxLink addSynonymLink = new AjaxLink("add") {
+        final AjaxLink<Void> addSynonymLink = new AjaxLink<Void>("add") {
             @Override
             public boolean isVisible() {
                 return editing;
@@ -389,12 +390,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     @Override
     protected void redraw() {
-        final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        if (target != null) {
-            if (toolbarHolder.size() > 0) {
-                target.add(toolbarHolder);
-            }
-            target.add(holder);
+        final Optional<AjaxRequestTarget> target = getRequestCycle().find(AjaxRequestTarget.class);
+
+        if (target.isPresent()) {
+            target.get().add(toolbarHolder.size() > 0 ? toolbarHolder : holder);
         } else {
             super.redraw();
         }
