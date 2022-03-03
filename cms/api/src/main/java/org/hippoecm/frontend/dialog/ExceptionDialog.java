@@ -16,11 +16,10 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
-public class ExceptionDialog extends Dialog {
+public class ExceptionDialog extends Dialog<Void> {
     private static final long serialVersionUID = 1L;
 
     private String title;
@@ -28,22 +27,9 @@ public class ExceptionDialog extends Dialog {
 
     public ExceptionDialog() {
         this.title = getString("dialog-title", null, "Exception");
-        setTitle(new AbstractReadOnlyModel<String>() {
+        setTitle((IModel<String>) () -> title);
 
-            @Override
-            public String getObject() {
-                return title;
-            }
-        });
-
-        add(new Label("message", new AbstractReadOnlyModel<String>() {
-
-            @Override
-            public String getObject() {
-                return message;
-            }
-
-        }) {
+        add(new Label("message", (IModel<String>) () -> message) {
             @Override
             public boolean isVisible() {
                 return !Strings.isEmpty(message);

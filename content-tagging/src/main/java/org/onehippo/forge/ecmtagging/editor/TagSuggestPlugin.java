@@ -18,6 +18,7 @@ package org.onehippo.forge.ecmtagging.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -85,9 +86,9 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
             } catch (RepositoryException e) {
                 log.error("Repository error: " + e.getMessage(), e);
             }
-            fragment.add(new AjaxFallbackLink("refreshlink") {
+            fragment.add(new AjaxFallbackLink<>("refreshlink") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final Optional<AjaxRequestTarget> optional) {
                     onEvent(null);
                 }
             });
@@ -121,10 +122,10 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
                     final Tag tag = (Tag) item.getModelObject();
 
                     Fragment fragment = new Fragment("fragment", "linkfragment", this);
-                    AjaxFallbackLink link = new AjaxFallbackLink("link") {
+                    AjaxFallbackLink<Void> link = new AjaxFallbackLink<>("link") {
                         @Override
-                        public void onClick(AjaxRequestTarget target) {
-                            TagSuggestView.this.onClick(target, tag);
+                        public void onClick(final Optional<AjaxRequestTarget> optional) {
+                            optional.ifPresent(target -> TagSuggestView.this.onClick(target, tag));
                         }
                     };
 

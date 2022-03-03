@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.model;
 
-import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 
-public class BrowserSectionsModel extends AbstractReadOnlyModel<BrowserSections> implements IObservable,
-        IChangeListener {
-
-    private static final long serialVersionUID = 1L;
+@Deprecated
+public class BrowserSectionsModel implements IModel<BrowserSections>, IObservable, IChangeListener {
 
     private IObservationContext obContext;
     private BrowserSections browser;

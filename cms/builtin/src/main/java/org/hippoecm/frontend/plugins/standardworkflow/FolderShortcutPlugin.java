@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -456,17 +457,16 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
             setOkEnabled(prototype != null);
 
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.add(prototypeContainer);
-                target.add(templateContainer);
-            }
+            Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.ifPresent(ajaxRequestTarget -> {
+                ajaxRequestTarget.add(prototypeContainer);
+                ajaxRequestTarget.add(templateContainer);
+
+            });
 
             if (languageVisible != languageContainer.isVisible()) {
                 languageContainer.setVisible(languageVisible);
-                if (target != null) {
-                    target.add(this);
-                }
+                target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
             }
 
             // By resetting the language the URI is re-encoded using the correct StringCodec

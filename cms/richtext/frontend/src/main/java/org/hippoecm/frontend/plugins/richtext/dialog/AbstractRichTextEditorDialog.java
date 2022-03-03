@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogManager;
 import org.hippoecm.frontend.plugins.richtext.model.AbstractPersistedMap;
+
+import java.util.Optional;
 
 /**
  * @deprecated Please use {@link DialogManager} instead.
@@ -59,10 +61,8 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
         if (action != null) {
             final String script = action.getJavaScript(getModelObject());
             if (StringUtils.isNotBlank(script)) {
-                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target != null) {
-                    target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(script));
-                }
+                final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+                target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(script)));
             }
         }
         super.onClose();

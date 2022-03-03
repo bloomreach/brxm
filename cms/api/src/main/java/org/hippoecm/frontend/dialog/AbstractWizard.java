@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
+
+import java.util.Optional;
 
 public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dialog, IAjaxIndicatorAware {
 
@@ -105,10 +107,8 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
     @Override
     public void onActiveStepChanged(final IWizardStep newStep) {
         super.onActiveStepChanged(newStep);
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (target != null) {
-            target.add(this);
-        }
+        final Optional<AjaxRequestTarget> target = RequestCycle.get().find(AjaxRequestTarget.class);
+        target.ifPresent(ajaxRequestTarget -> ajaxRequestTarget.add(this));
     }
 
     @Override

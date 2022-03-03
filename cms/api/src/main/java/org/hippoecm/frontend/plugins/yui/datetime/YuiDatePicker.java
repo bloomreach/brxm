@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.datetime.DateConverter;
+import org.wicketstuff.datetime.DateConverter;
 import org.apache.wicket.markup.html.form.AbstractTextComponent.ITextFormatProvider;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -61,12 +60,8 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     public void addHeaderContribution(IYuiContext helper) {
         helper.addCssReference(SKIN);
         helper.addModule(HippoNamespace.NS, "datetime");
-        helper.addOnDomLoad(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return "YAHOO.hippo.DateTime.render('" + component.getMarkupId() + "', " + template.getConfigurationAsJSON() + ");";
-            }
-        });
+        helper.addOnDomLoad(() -> String.format("YAHOO.hippo.DateTime.render('%s', %s);",
+                component.getMarkupId(), template.getConfigurationAsJSON()));
     }
 
     @Override
@@ -151,7 +146,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     /**
      * Gets the locale that should be used to configure this widget.
      *
-     * @return By default the locale of the bound component.
+     * @return By default, the locale of the bound component.
      */
     protected Locale getLocale() {
         return component.getLocale();

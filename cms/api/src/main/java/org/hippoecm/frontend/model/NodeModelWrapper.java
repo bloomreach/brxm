@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,9 @@ package org.hippoecm.frontend.model;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public abstract class NodeModelWrapper<T> implements IChainingModel<T> {
-
-    private static final long serialVersionUID = 1L;
+public abstract class NodeModelWrapper<T> implements IModel<T> {
 
     protected JcrNodeModel nodeModel;
 
@@ -34,13 +31,15 @@ public abstract class NodeModelWrapper<T> implements IChainingModel<T> {
         }
     }
 
-    // Implement IChainingModel
+    public NodeModelWrapper(JcrNodeModel nodeModel) {
+        this.nodeModel = nodeModel;
+    }
 
-    public IModel<Node> getChainedModel() {
+    public IModel<Node> getNodeModel() {
         return nodeModel;
     }
 
-    public void setChainedModel(IModel<?> model) {
+    public void setNodeModel(IModel<Node> model) {
         if (model instanceof JcrNodeModel) {
             nodeModel = (JcrNodeModel) model;
         }
@@ -50,15 +49,18 @@ public abstract class NodeModelWrapper<T> implements IChainingModel<T> {
         return nodeModel.getNode();
     }
     
+    @Override
     @SuppressWarnings("unchecked")
     public T getObject() {
         return (T) this;
     }
 
+    @Override
     public void setObject(T object) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void detach() {
         if(nodeModel != null) {
             nodeModel.detach();

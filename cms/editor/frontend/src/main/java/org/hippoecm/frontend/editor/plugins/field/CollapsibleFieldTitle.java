@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.attributes.ClassAttribute;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
 
@@ -40,7 +39,7 @@ public class CollapsibleFieldTitle extends FieldTitle {
 
         this.isCollapsed = isCollapsed;
 
-        final ReadOnlyModel<String> collapsedModel = ReadOnlyModel.of(() -> isCollapsed ? "collapsed" : StringUtils.EMPTY);
+        final IModel<String> collapsedModel = () -> isCollapsed ? "collapsed" : StringUtils.EMPTY;
         h3.add(ClassAttribute.append(collapsedModel));
 
         final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);

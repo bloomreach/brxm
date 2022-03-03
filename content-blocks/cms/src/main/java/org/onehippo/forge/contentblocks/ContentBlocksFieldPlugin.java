@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -672,7 +672,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
             final AjaxSubmitLink link = new AjaxSubmitLink("addItem", form) {
                 @Override
-                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     final String selectedValue = selectedOption != null ? selectedOption.getValue() : null;
                     log.debug("Selected value '{}' from dropdown", selectedValue);
 
