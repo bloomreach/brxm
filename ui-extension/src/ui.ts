@@ -35,7 +35,6 @@ import {
   DialogScope,
   DocumentProperties,
   DocumentScope,
-  DynamicProperties,
   Emitter,
   EventHandler,
   FieldScope,
@@ -115,7 +114,6 @@ interface ChannelParent extends UiParent {
   getPage: ParentMethod<PageProperties>;
   refreshChannel: ParentMethod;
   refreshPage: ParentMethod;
-  getChannel: ParentMethod<DynamicProperties>;
 }
 
 interface DocumentParent extends UiParent {
@@ -156,10 +154,6 @@ class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements
 
   refresh() {
     return this[PARENT].call('refreshChannel');
-  }
-
-  get() {
-    return this[PARENT].call('getChannel');
   }
 }
 
