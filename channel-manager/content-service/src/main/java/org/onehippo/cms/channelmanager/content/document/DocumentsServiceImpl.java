@@ -273,7 +273,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                     getNodePathQuietly(handle), e);
         }
         try {
-            documentValidityService.handleDocumentTypeChanges(internalWorkflowSession, docType, documentVariants);
+            documentValidityService.handleDocumentTypeChanges(userContext, internalWorkflowSession, docType, documentVariants);
         } catch (Exception e) {
             log.error("Failed to update document type changes to document {}", getNodePathQuietly(handle), e);
         } finally {

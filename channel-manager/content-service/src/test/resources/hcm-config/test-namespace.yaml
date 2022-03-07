@@ -22,6 +22,10 @@ definitions:
               jcr:primaryType: hipposysedit:field
               hipposysedit:path: test:link
               hipposysedit:type: hippo:mirror
+            /nestedcompound:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:nestedcompound
+              hipposysedit:type: test:nestedcompound
         /editor:templates:
           jcr:primaryType: editor:templateset
           /_default_:
@@ -46,6 +50,12 @@ definitions:
               field: link
               plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
               wicket.id: ${cluster.id}.field
+            /nestedcompound:
+              jcr:primaryType: frontend:plugin
+              caption: Nested Compound
+              field: nestedcompound
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field
         /hipposysedit:prototypes:
           jcr:primaryType: hipposysedit:prototypeset
           /hipposysedit:prototype:
@@ -54,3 +64,61 @@ definitions:
             /test:link:
               jcr:primaryType: hippo:mirror
               hippo:docbase: docbase-from-document-prototype
+            /test:nestedcompound:
+              jcr:primaryType: test:nestedcompound
+              test:title: ''
+              /test:link:
+                jcr:primaryType: hippo:mirror
+                hippo:docbase: docbase-from-document-prototype
+      /nestedcompound:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:compound', 'hippostd:relaxed']
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: test:title
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /link:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:link
+              hipposysedit:type: hippo:mirror
+          /hipposysedit:prototype:
+            jcr:primaryType: test:nestedcompound
+            test:title: ''
+            /test:link:
+              jcr:primaryType: hippo:mirror
+              hippo:docbase: docbase-from-nestedcompound-prototype
+          /editor:templates:
+            jcr:primaryType: editor:templateset
+            /_default_:
+              jcr:primaryType: frontend:plugincluster
+              frontend:properties: [mode]
+              frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+              frontend:services: [wicket.id, validator.id]
+              /root:
+                jcr:primaryType: frontend:plugin
+                item: ${cluster.id}.field
+                plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              /title:
+                jcr:primaryType: frontend:plugin
+                caption: Title
+                field: title
+                plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+                wicket.id: ${cluster.id}.field
+                /cluster.options:
+                  jcr:primaryType: frontend:pluginconfig
+              /link:
+                jcr:primaryType: frontend:plugin
+                caption: Link
+                field: link
+                plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+                wicket.id: ${cluster.id}.field

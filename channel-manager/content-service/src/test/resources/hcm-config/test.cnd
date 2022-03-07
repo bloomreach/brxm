@@ -13,4 +13,5 @@
 [test:document] > hippo:document, hippostd:relaxed
     orderable
 
-
+[test:nestedcompound] > hippo:compound, hippostd:relaxed
+  orderable
