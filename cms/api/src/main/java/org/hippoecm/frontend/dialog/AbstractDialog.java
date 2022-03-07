@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Bloomreach (https://www.bloomreach.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -79,12 +80,13 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
-    static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
-    static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
+    private static final IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
+    private static final IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
 
     private boolean fullscreen = false;
     private String buttonCssClass;
     private AjaxChannel ajaxChannel;
+    private boolean handleSubmitEnabled = true;
 
     public enum ButtonPosition {
         FIRST,
@@ -286,7 +288,9 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
 
             @Override
             protected void onSubmit() {
-                handleSubmit();
+                if (handleSubmitEnabled){
+                    handleSubmit();
+                }
             }
 
             @Override
@@ -343,6 +347,14 @@ public abstract class AbstractDialog<T> extends PostOnlyForm<T> implements IDial
                             .urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
                 }
             });
+        }
+    }
+
+    @Override
+    public void onEvent(IEvent<?> event) {
+        if (event.getPayload() instanceof HandleSubmitEnabledPayload){
+            HandleSubmitEnabledPayload payload = (HandleSubmitEnabledPayload) event.getPayload();
+            handleSubmitEnabled = payload.isHandleSubmitEnabled();
         }
     }
 
