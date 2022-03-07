@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,7 @@
 import dialogTemplate from './openuiDialog/openuiDialog.html';
 
 export default class OpenUiService {
-  constructor(
-    $document,
-    $log,
-    ConfigService,
-    DialogService,
-    Emittery,
-    ExtensionService,
-    Penpal,
-    ChannelService,
-  ) {
+  constructor($document, $log, ConfigService, DialogService, Emittery, ExtensionService, Penpal) {
     'ngInject';
 
     this.$document = $document;
@@ -36,7 +27,6 @@ export default class OpenUiService {
     this.Emittery = Emittery;
     this.ExtensionService = ExtensionService;
     this.Penpal = Penpal;
-    this.ChannelService = ChannelService;
   }
 
   _createIframe(url) {
@@ -66,7 +56,6 @@ export default class OpenUiService {
         methods: {
           ...options.methods,
           getProperties: this.getProperties.bind(this, extension),
-          getChannel: this.getChannel.bind(this, extension),
           emitEvent: emitter.emit.bind(emitter),
           openDialog: dialogOptions => this.openDialog(dialogOptions, extensionId),
         },
@@ -97,10 +86,6 @@ export default class OpenUiService {
       },
       version: this.ConfigService.cmsVersion,
     };
-  }
-
-  getChannel() {
-    return this.ChannelService.getProperties();
   }
 
   /**
