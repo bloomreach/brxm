@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.document;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -26,6 +27,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.UserContext;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -42,13 +45,9 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
     private static final Logger log = LoggerFactory.getLogger(DocumentValidityServiceImpl.class);
 
     @Override
-    public void handleDocumentTypeChanges(final Session workflowSession, final DocumentType documentType,
-                                          final List<Node> variants) throws RepositoryException {
-        if (variants.isEmpty()) {
-            return;
-        }
-
-        ContentTypeValidator.processChanges(workflowSession, documentType, variants);
+    public void handleDocumentTypeChanges(final UserContext userContext, final Session workflowSession,
+                                          final DocumentType documentType, final List<Node> variants) throws RepositoryException {
+        ContentTypeValidator.processChanges(userContext, workflowSession, documentType, variants);
 
         if (workflowSession.hasPendingChanges()) {
             workflowSession.save();
@@ -57,18 +56,25 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
 
     private static class ContentTypeValidator {
 
-        static void processChanges(final Session workflowSession, final DocumentType documentType,
+        static void processChanges(final UserContext userContext, final Session workflowSession, final DocumentType documentType,
                                    final List<Node> variants) {
-            new ContentTypeValidator(workflowSession).processChanges(documentType, variants);
+            new ContentTypeValidator(userContext, workflowSession).processChanges(documentType, variants);
         }
 
+        private final UserContext userContext;
         private final Session workflowSession;
 
-        private ContentTypeValidator(final Session workflowSession) {
+        private ContentTypeValidator(final UserContext userContext, final Session workflowSession) {
+            this.userContext = userContext;
             this.workflowSession = workflowSession;
         }
 
         private void processChanges(final DocumentType documentType, final List<Node> variants) {
+            if (variants.isEmpty()) {
+                log.debug("No variants available for DocumentType '{}'", documentType.getId());
+                return;
+            }
+
             // The document prototype contains the prototype nodes of the fields that where created with the doc-type editor
             final Node prototype = findFirstPrototypeNode(workflowSession, documentType.getId());
             if (prototype == null) {
@@ -79,12 +85,38 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
             for (final FieldType field : documentType.getFields()) {
                 if (field instanceof NodeFieldType) {
                     checkFieldChanges(variants, prototype, field);
+
+                    final List<Node> fieldVariants = variants.stream()
+                            .map(variantNode -> getFieldNode(field, variantNode))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+
+                    final String jcrType = field.getJcrType();
+                    try {
+                        final DocumentType fieldType = DocumentTypesService.get().getDocumentType(jcrType, userContext);
+                        processChanges(fieldType, fieldVariants);
+                    } catch (Exception e) {
+                        // This exception is thrown if the DocumentTypesService fails to locate a DocumentType, which
+                        // is not always a problem; for example, built-in types like "hippo:mirror" will generate such
+                        // an exception, but they can't be changed by the user, so we don't need to check it for changes.
+                        log.debug("Failed to locate DocumentType for field '{}' with type '{}'", field.getId(), jcrType);
+                    }
                 }
             }
         }
 
-        private void checkFieldChanges(final List<Node> variants, final Node documentPrototype, final FieldType field) {
+        private Node getFieldNode(final FieldType field, final Node variantNode) {
+            try {
+                if (variantNode.hasNode(field.getId())) {
+                    return variantNode.getNode(field.getId());
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to retrieve field node '{}/{}' ", JcrUtils.getNodePathQuietly(variantNode), field.getId());
+            }
+            return null;
+        }
 
+        private void checkFieldChanges(final List<Node> variants, final Node documentPrototype, final FieldType field) {
             final Node variant = variants.get(0);
             try {
                 long numberOfMissingNodes = getNumberOfMissingNodes(variant, field);

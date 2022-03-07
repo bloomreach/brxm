@@ -1,5 +1,5 @@
 /*
- * Copyright 2021
+ * Copyright 2021-2022
  */
 
 <rep='internal'>
@@ -13,4 +13,5 @@
 [test:document] > hippo:document, hippostd:relaxed
     orderable
 
-
+[test:nestedcompound] > hippo:compound, hippostd:relaxed
+  orderable
