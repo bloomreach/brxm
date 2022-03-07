@@ -519,7 +519,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPOSTD_STATE), eq(null))).andReturn(UNPUBLISHED.getState()).anyTimes();
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPO_PROPERTY_BRANCH_ID), eq(null))).andReturn(MASTER_BRANCH_ID).anyTimes();
 
-        validityService.handleDocumentTypeChanges(workflowSession, docType, Lists.newArrayList(draft, unpublished));
+        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft, unpublished));
         expectLastCall();
 
         expect(workflowSession.hasPendingChanges()).andReturn(false);
@@ -591,7 +591,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPOSTD_STATE), eq(null))).andReturn(UNPUBLISHED.getState()).anyTimes();
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPO_PROPERTY_BRANCH_ID), eq(null))).andReturn(MASTER_BRANCH_ID).anyTimes();
 
-        validityService.handleDocumentTypeChanges(workflowSession, docType, Lists.newArrayList(draft, unpublished));
+        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft, unpublished));
         expectLastCall();
 
         expect(workflowSession.hasPendingChanges()).andReturn(false);
@@ -663,7 +663,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPOSTD_STATE), eq(null))).andReturn(UNPUBLISHED.getState()).anyTimes();
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPO_PROPERTY_BRANCH_ID), eq(null))).andReturn(MASTER_BRANCH_ID).anyTimes();
 
-        validityService.handleDocumentTypeChanges(workflowSession, docType, Lists.newArrayList(draft, unpublished));
+        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft, unpublished));
         expectLastCall();
 
         expect(workflowSession.hasPendingChanges()).andReturn(false);
