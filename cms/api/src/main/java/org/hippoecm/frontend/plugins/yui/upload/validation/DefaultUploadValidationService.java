@@ -99,8 +99,9 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         }
         svgScriptsEnabled = params.getAsBoolean(SVG_SCRIPTS_ENABLED, false);
 
-        // default correct mapping from .psd and .ps : some browsers send a mimeType which is not a registered
+        // default correct mapping from .csv, .psd and .ps : some browsers send a mimeType which is not a registered
         // (sub/super) mimeType by tika. Hence we add these by default to the extensionMimeTypeAllowedMapping
+        extensionMimeTypeAllowedMappings.put(".csv", "text/csv");
         extensionMimeTypeAllowedMappings.put(".psd", "image/vnd.adobe.photoshop");
         extensionMimeTypeAllowedMappings.put(".ps", "application/x-font-type1");
 
