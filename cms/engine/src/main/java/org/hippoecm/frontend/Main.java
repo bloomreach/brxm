@@ -1,5 +1,4 @@
 /*
- *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +38,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
 import org.apache.wicket.ISessionListener;
 import org.apache.wicket.Page;
@@ -59,7 +57,6 @@ import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.apache.wicket.markup.head.filter.OppositeHeaderResponseFilter;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
-import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebResponse;
@@ -379,7 +376,7 @@ public class Main extends PluginApplication {
                 return resourceStreamLocator.newResourceNameIterator(path, locale, style, variation, extension, strict);
             }
         });
-
+        setPageManagerProvider(new AmnesicPageManagerProvider());
         if (RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
@@ -397,15 +394,6 @@ public class Main extends PluginApplication {
             // do not render Wicket-specific markup since it can break CSS
             getMarkupSettings().setStripWicketTags(true);
         } else {
-            // don't serialize pages for performance
-            setPageManagerProvider(new DefaultPageManagerProvider(this) {
-
-                @Override
-                protected IPageStore newPersistentStore() {
-                    return new AmnesicPageStore();
-                }
-            });
-
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
 
