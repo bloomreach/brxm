@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.update.UpdaterExecutionReport;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOG;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOGTAIL;
@@ -38,7 +39,13 @@ public class UpdaterOutput extends Panel {
     public UpdaterOutput(final String id, final Component container, final boolean updating) {
         super(id);
 
-        final Label output = new Label("output", () -> parseOutput(container.getDefaultModelObject()));
+        final Label output;
+        if (isDevMode()) {
+            output = new Label("output", () -> parseOutput(container.getDefaultModelObject()));
+        } else {
+            output = new Label("output","In production, logs are stored in normal log files for logger '" +
+                    UpdaterExecutionReport.class.getName() + "' and not visible here");
+        }
         if (updating) {
             output.setOutputMarkupId(true);
             output.add(new AjaxSelfUpdatingTimerBehavior(Duration.ofSeconds(5)));
@@ -62,6 +69,9 @@ public class UpdaterOutput extends Panel {
         } catch (RepositoryException | IOException e) {
             return "Cannot read log: " + e.getMessage();
         }
+    }
+    private boolean isDevMode() {
+        return System.getProperty("project.basedir") != null;
     }
 
 }
