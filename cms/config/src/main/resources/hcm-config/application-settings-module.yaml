@@ -1,0 +1,43 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/application-settings:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.hippoecm.frontend.settings.ApplicationSettingsDaemonModule
+      hipposys:cmsonly: true
+      /hippo:moduleconfig:
+        jcr:primaryType: nt:unstructured
+        /content-security-policy:
+          jcr:primaryType: nt:unstructured
+          connect-src: [
+            'app.pendo.io',
+            'data.pendo.io',
+            'pendo-static-5285379033268224.storage.googleapis.com'
+          ]
+          frame-ancestors: [
+            'app.pendo.io'
+          ]
+          frame-src: [
+            'tools.bloomreach.com',
+            'tools.bloomreach.co.uk',
+            'tools-dev.bloomreach.com',
+            'bloomreach-products.auth0.com'
+          ]
+          img-src: [
+            'app.pendo.io',
+            'cdn.pendo.io',
+            'data.pendo.io',
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'storage.googleapis.com/pendo-static-5285379033268224/'
+          ]
+          script-src: [
+            'cdn.pendo.io',
+            'data.pendo.io',
+            'pendo-io-static.storage.googleapis.com',
+            'pendo-static-5285379033268224.storage.googleapis.com'
+          ]
+          style-src: [
+            'app.pendo.io',
+            'cdn.pendo.io',
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'storage.googleapis.com/pendo-static-5285379033268224/'
+          ]
