@@ -17,10 +17,16 @@ definitions:
             'app.pendo.io'
           ]
           frame-src: [
+            'bloomreach-products.auth0.com',
+            'bloomreach-dev.us.auth0.com',
             'tools.bloomreach.com',
             'tools.bloomreach.co.uk',
+            'tools-staging.bloomreach.com',
+            'tools-staging.bloomreach.co.uk',
             'tools-dev.bloomreach.com',
-            'bloomreach-products.auth0.com'
+            'tools-dev.bloomreach.co.uk',
+            'tools-sandbox.bloomreach.com',
+            'tools-sandbox.bloomreach.co.uk'
           ]
           img-src: [
             'app.pendo.io',
@@ -33,7 +39,8 @@ definitions:
             'cdn.pendo.io',
             'data.pendo.io',
             'pendo-io-static.storage.googleapis.com',
-            'pendo-static-5285379033268224.storage.googleapis.com'
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'maps.googleapis.com'
           ]
           style-src: [
             'app.pendo.io',
