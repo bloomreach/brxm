@@ -878,6 +878,9 @@
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>${maven.plugin.failsafe.version}</version>
           <inherited>true</inherited>
+          <configuration>
+            <useModulePath>false</useModulePath>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
