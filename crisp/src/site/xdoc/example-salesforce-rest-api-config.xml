@@ -47,42 +47,19 @@
           <source><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+       xmlns:s="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+                        http://www.springframework.org/schema/security
+			            https://www.springframework.org/schema/security/spring-security.xsd
+                        http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd">
 
   <bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"
         class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
     <property name="baseUri" value="${salesforce.baseUrl}/services/data/v20.0" />
-    <property name="restTemplate">
-      <bean class="org.springframework.security.oauth2.client.OAuth2RestTemplate">
-        <constructor-arg>
-          <bean class="org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails">
-            <property name="clientAuthenticationScheme" value="form" />
-            <property name="accessTokenUri" value="${salesforce.baseUrl}/services/oauth2/token" />
-            <property name="clientId" value="${salesforce.clientId}" />
-            <property name="clientSecret" value="${salesforce.clientSecret}" />
-            <property name="grantType" value="password" />
-            <!-- NOTE: SalesForce doesn't support scope parameter!
-            <property name="scope">
-              <list>
-                <value>read</value>
-              </list>
-            </property>
-            -->
-            <property name="username" value="${salesforce.username}" />
-            <property name="password" value="${salesforce.password}${salesforce.securityToken}" />
-          </bean>
-        </constructor-arg>
-        <constructor-arg>
-          <bean class="org.springframework.security.oauth2.client.DefaultOAuth2ClientContext">
-            <constructor-arg>
-              <bean class="org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest">
-              </bean>
-            </constructor-arg>
-          </bean>
-        </constructor-arg>
-        <property name="requestFactory" ref="org.springframework.http.client.ClientHttpRequestFactory" />
-      </bean>
-    </property>
     <property name="resourceDataCache">
       <bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
         <constructor-arg>
@@ -100,6 +77,43 @@
         </constructor-arg>
       </bean>
     </property>
+    <property name="clientHttpRequestInterceptor">
+      <list value-type="org.springframework.http.client.ClientHttpRequestInterceptor">
+        <bean class="org.onehippo.cms7.crisp.core.interceptor.SimpleOAuth2AuthorizedClientInterceptor" autowire="constructor">
+          <property name="authorizedClientService" ref="authorizedClientService" />
+          <property name="clientRegistrationId" value="salesforce-login" />
+          <property name="contextAttributesMap" ref="credentials" />
+        </bean>
+      </list>
+    </property>
+  </bean>
+  <util:map id="credentials" map-class="java.util.HashMap">
+      <entry key="org.springframework.security.oauth2.client.OAuth2AuthorizationContext.USERNAME">
+          <value>${salesforce.username}</value>
+      </entry>
+      <entry key="org.springframework.security.oauth2.client.OAuth2AuthorizationContext.PASSWORD">
+          <value>${salesforce.password}</value>
+      </entry>
+  </util:map>
+
+  <s:client-registrations>
+      <s:client-registration registration-id="salesforce-login"
+                             client-id="<salesforce.clientId>"
+                             client-secret="<salesforce.clientSecret>"
+                             client-authentication-method="post"
+                             authorization-grant-type="password"
+                             provider-id="salesforce"/>
+      <s:provider provider-id="salesforce"
+                  authorization-uri="<salesforce.baseUrl>/services/oauth2/token"
+                  token-uri="<salesforce.baseUrl>/services/oauth2/token"/>
+  </s:client-registrations>
+  <bean id="authorizedClientService"
+        class="org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService"
+        autowire="constructor"/>
+
+  <bean id="authorizedClientRepository"
+        class="org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository">
+    <constructor-arg ref="authorizedClientService"/>
   </bean>
 
 </beans>
@@ -156,21 +170,18 @@
             will take a relative resource path to combine it with the base URI to invoke the backend SalesForce REST API in the end.
           </li>
           <li>
-            <code>restTemplate</code> property is to set an <code>org.springframework.security.oauth2.client.OAuth2RestTemplate</code> object.
-            In this example, because the SalesForce REST API backend requires OAuth2 authentication, it set an
-            instance of <code>org.springframework.security.oauth2.client.OAuth2RestTemplate</code> with necessary
-            OAuth2 authentication information.
-            For details on , please see the JavaDocs:
-            <a href="http://docs.spring.io/spring-security/oauth/apidocs/org/springframework/security/oauth2/client/OAuth2RestTemplate.html">OAuth2RestTemplate</a>.
-            <code>org.springframework.http.client.ClientHttpRequestFactory</code> is the default <code>requestFactory</code>
-            bean definition in <strong>CRISP</strong> module library.
-          </li>
-          <li>
-            Finally, <code>resourceDataCache</code> property specifies a <code>ResourceResolver</code> specific
+            <code>resourceDataCache</code> property specifies a <code>ResourceResolver</code> specific
             <code>ResourceDataCache</code> object. If this property is set and the specific resource is cacheable,
             the <code>ResourceServiceBroker</code> may cache resource specific data in the specified <code>ResourceDataCache</code>.
             If not set but the specific resource is still cacheable, <code>ResourceServiceBroker</code>
             may cache resource specific data in a globally-shared <code>ResourceDataCache</code> by default.
+          </li>
+          <li>
+            Finally, <code>clientHttpRequestInterceptor</code> property specifies a <code>SimpleOAuth2AuthorizedClientInterceptor</code> object.
+            In this example, because the SalesForce REST API backend requires OAuth2 authentication, a OAuth2 client needs
+            to be registered in the <code>OAuth2AuthorizedClientRepository</code> with all the necessary OAuth2 authentication information.
+            Please note that the <a href="https://github.com/spring-projects/spring-security-oauth"> spring-security-oauth2 </a>
+            project is deprecated and the related libraries will be removed in the next versions
           </li>
         </ul>
 
