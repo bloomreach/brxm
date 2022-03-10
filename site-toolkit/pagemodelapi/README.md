@@ -5,11 +5,11 @@ When creating a *new* Page Model API version you have to copy all java classes a
 from the previous version to a new MVN module ***and*** make sure that the 
 lastest version classes/resources contain the GIT revision history.
 
-Thus for example, when creating Version 1.0, **rename** the current 'pagemodelapi-v09' MVN 
-module to 'pagemodelapi-v10' and move the package names to 'pagemodelapi.v10'. After this,
-copy the 'pagemodelapi-v10' to 'pagemodelapi-v09' and move for the new MVN module the 
-packages again to 'pagemodelapi.v09'. Now make sure that all GIT version history is present
-in the MVN 'pagemodelapi-v10' 
+Thus for example, when creating Version 2.0, **rename** the current 'pagemodelapi-v10' MVN 
+module to 'pagemodelapi-v20' and move the package names to 'pagemodelapi.v20'. After this,
+copy the 'pagemodelapi-v20' to 'pagemodelapi-v10' and move for the new MVN module the 
+packages again to 'pagemodelapi.v10'. Now make sure that all GIT version history is present
+in the MVN 'pagemodelapi-v20' 
 
     Always make sure the GIT revision history is maintained in the latest version!
     
