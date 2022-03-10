@@ -81,6 +81,9 @@
     <Logger name="org.apache.jackrabbit.core.query.lucene.SearchIndex" level="info"/>
     <Logger name="org.apache.jackrabbit.core.query.lucene.ConsistencyCheck" level="info"/>
 
+    <!-- groovy scripts default log level in production -->
+    <Logger name="org.onehippo.repository.update.UpdaterExecutionReport" level="info"/>
+
     <!-- project logging -->
     <Logger name="${package}" level="info"/>
 
