@@ -822,7 +822,7 @@
 
       <dependency>
         <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
-        <artifactId>hst-pagemodelapi-v09</artifactId>
+        <artifactId>hst-pagemodelapi-v10</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
 
