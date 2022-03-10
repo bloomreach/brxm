@@ -154,8 +154,8 @@
             <code>ResourceServiceBroker</code> can be used in both Content Delivery and Content Authoring applications.
           </li>
           <li>
-            HTTP invocations through Spring Framework <code>RestTemplate</code> (including OAuth2-based <code>RestTemplate</code>
-            configuration example) for more configurability and maintainability.
+            HTTP invocations through Spring Framework <code>RestTemplate</code> for more configurability and
+            maintainability.
           </li>
           <li>
             Dynamic configuration management at runtime through repository configuration.
@@ -245,8 +245,9 @@
           </li>
           <li>
             <strong>Security</strong>:
-            <strong>CRISP</strong> adopts Spring Framework's <code>RestTemplate</code>, <code>OAuth2RestTemplate</code>, etc.
-            for enterprise-ready secured REST service invocations with examples by default.
+            <strong>CRISP</strong> adopts Spring Framework's <code>RestTemplate</code>,
+            <code>ClientHttpRequestInterceptor</code>, etc. for enterprise-ready secured REST service invocations with
+            examples by default.
           </li>
           <li>
             <strong>Availability</strong>:
