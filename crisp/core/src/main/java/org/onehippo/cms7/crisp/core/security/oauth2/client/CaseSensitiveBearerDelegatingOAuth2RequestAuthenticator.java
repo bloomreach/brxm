@@ -24,7 +24,10 @@ import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResour
  * Delegating {@code OAuth2RequestAuthenticator} to inspect the <code>Authorization</code> header value
  * starting with "bearer ..." to correct to "Bearer ..." to be safer with any OAuth2 server implementations.
  * @see <a href="https://issues.onehippo.com/browse/CRISP-7">https://issues.onehippo.com/browse/CRISP-7</a>
+ *
+ * @deprecated Deprecated since Spring Security OAuth project is deprecated
  */
+@Deprecated
 public class CaseSensitiveBearerDelegatingOAuth2RequestAuthenticator implements OAuth2RequestAuthenticator {
 
     private static final String LOWER_CASED_BEARER_PREFIX = "bearer ";
