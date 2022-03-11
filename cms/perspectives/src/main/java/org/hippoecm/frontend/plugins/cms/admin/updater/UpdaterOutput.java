@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.update.UpdaterExecutionReport;
 
 public class UpdaterOutput extends Panel {
 
@@ -39,18 +40,23 @@ public class UpdaterOutput extends Panel {
             public String getObject() {
                 final Object o = container.getDefaultModelObject();
                 if (o != null) {
-                    final Node node = (Node) o;
-                    try {
-                        final Binary fullLog = JcrUtils.getBinaryProperty(node, "hipposys:log", null);
-                        if (fullLog != null) {
-                            return IOUtils.toString(fullLog.getStream());
-                        } else {
-                            return JcrUtils.getStringProperty(node, "hipposys:logtail", "");
+                    if (isDevMode()) {
+                        final Node node = (Node) o;
+                        try {
+                            final Binary fullLog = JcrUtils.getBinaryProperty(node, "hipposys:log", null);
+                            if (fullLog != null) {
+                                return IOUtils.toString(fullLog.getStream());
+                            } else {
+                                return JcrUtils.getStringProperty(node, "hipposys:logtail", "");
+                            }
+                        } catch (RepositoryException e) {
+                            return "Cannot read log: " + e.getMessage();
+                        } catch (IOException e) {
+                            return "Cannot read log: " + e.getMessage();
                         }
-                    } catch (RepositoryException e) {
-                        return "Cannot read log: " + e.getMessage();
-                    } catch (IOException e) {
-                        return "Cannot read log: " + e.getMessage();
+                    } else {
+                        return "In production, logs are stored in normal log files for logger '" +
+                                UpdaterExecutionReport.class.getName() + "' and not visible here";
                     }
                 }
                 return "";
@@ -61,6 +67,10 @@ public class UpdaterOutput extends Panel {
             output.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
         }
         add(output);
+    }
+
+    private boolean isDevMode() {
+        return System.getProperty("project.basedir") != null;
     }
 
 }
