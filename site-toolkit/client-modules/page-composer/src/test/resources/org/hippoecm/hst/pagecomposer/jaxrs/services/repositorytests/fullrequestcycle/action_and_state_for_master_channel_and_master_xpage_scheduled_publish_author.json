@@ -47,7 +47,7 @@
       "workflow":{
         "requests":[
           {
-            "type":"publishBranch",
+            "type":"publish",
             "requestType":"scheduledRequest"
           }
         ]
