@@ -644,6 +644,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if(log.isDebugEnabled()) {
                 log.warn("ContainerException for '{}':", containerRequest, e);
             } else {
+                log.warn("ContainerException for '{}':", containerRequest, e);
                 log.warn("ContainerException for '{}': {}",containerRequest,  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
