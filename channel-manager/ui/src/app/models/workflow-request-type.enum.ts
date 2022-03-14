@@ -24,8 +24,8 @@ export enum WorkflowRequestType {
 }
 
 export enum ScheduledRequestType {
-  Publish = 'publishBranch',
-  Depublish = 'depublishBranch',
+  Publish = 'publish',
+  Depublish = 'depublish',
 }
 
 export enum RequestType {
