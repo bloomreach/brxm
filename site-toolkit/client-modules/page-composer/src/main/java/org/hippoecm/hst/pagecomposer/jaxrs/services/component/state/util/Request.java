@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,11 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+package org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util;
 
-import { ScheduledRequestType } from './scheduled-request-type.enum';
+public interface Request {
 
-export interface ScheduledRequest {
-  scheduledDate: number;
-  type: ScheduledRequestType;
+    String getRequestType();
 }
