@@ -376,7 +376,6 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         PropertySourcesPlaceholderConfigurer ppc = new PropertySourcesPlaceholderConfigurer();
         ppc.setIgnoreUnresolvablePlaceholders(true);
         ppc.setEnvironment(env);
-        //ppc.setProperties(props);
         childContext.addBeanFactoryPostProcessor(ppc);
 
         childContext.refresh();
