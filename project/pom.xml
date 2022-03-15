@@ -1147,6 +1147,7 @@
         <repo.config />
         <repo.bootstrap>true</repo.bootstrap>
         <repo.autoexport.allowed>true</repo.autoexport.allowed>
+        <wicket.js.debug>false</wicket.js.debug>
       </properties>
       <dependencies>
         <dependency>
@@ -1204,6 +1205,7 @@
                   <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
                   <repo.autoexport.allowed>${repo.autoexport.allowed}</repo.autoexport.allowed>
                   <project.version>${hippo.release.version}</project.version>
+                  <wicket.js.debug>${wicket.js.debug}</wicket.js.debug>
                 </systemProperties>
                 <zipUrlInstaller>
                   <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
