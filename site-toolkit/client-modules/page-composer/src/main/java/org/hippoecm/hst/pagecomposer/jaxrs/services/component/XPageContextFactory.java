@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,6 +106,7 @@ final class XPageContextFactory {
                 .setXPageId(experiencePageHandleUUID)
                 .setXPageName(name)
                 .setXPageState(documentState)
+                .setRequests(DocumentStateUtils.getRequests(handle))
                 .setScheduledRequest(scheduledRequest)
                 .setWorkflowRequests(workflowRequests)
                 // NOTE: SCXML currently always allows copy but in the channel manager we have the requirement
