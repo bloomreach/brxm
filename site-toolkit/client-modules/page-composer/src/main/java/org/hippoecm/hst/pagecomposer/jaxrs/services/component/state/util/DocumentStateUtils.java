@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,28 @@ public class DocumentStateUtils {
     private static final Logger log = LoggerFactory.getLogger(DocumentStateUtils.class);
 
     private DocumentStateUtils() {
+    }
+
+    public static List<Request> getRequests(final Node handle) {
+        if (!isValidHandle(handle)) {
+            return Collections.emptyList();
+        }
+
+        final List<Request> requests = new LinkedList<>();
+        try {
+            final NodeIterator requestNodes = handle.getNodes(HippoNodeType.HIPPO_REQUEST);
+            while (requestNodes.hasNext()) {
+                final Node requestNode = requestNodes.nextNode();
+                if (requestNode.isNodeType(NT_HIPPOSTDPUBWF_REQUEST)) {
+                    requests.add(new WorkflowRequest(requestNode));
+                } else if (requestNode.isNodeType("hipposched:workflowjob")) {
+                    requests.add(new ScheduledRequest(requestNode));
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn("Error retrieving workflow request(s) for document '{}'", JcrUtils.getNodePathQuietly(handle), e);
+        }
+        return requests;
     }
 
     public static List<WorkflowRequest> getWorkflowRequests(final Node handle) {
