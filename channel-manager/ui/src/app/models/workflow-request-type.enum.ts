@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,4 +21,14 @@ export enum WorkflowRequestType {
   ScheduledPublish = 'scheduledpublish',
   ScheduledDepublish = 'scheduleddepublish',
   EditDraft = 'editDraft',
+}
+
+export enum ScheduledRequestType {
+  Publish = 'publish',
+  Depublish = 'depublish',
+}
+
+export enum RequestType {
+ Workflow= 'workflowRequest',
+ Scheduled= 'scheduledRequest',
 }

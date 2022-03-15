@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ import { DocumentState } from '../models/document-state.enum';
 import { PageStates } from '../models/page-states.model';
 import { XPageStatusInfo } from '../models/page-status-info.model';
 import { ProjectState } from '../models/project-state.enum';
-import { ScheduledRequestType } from '../models/scheduled-request-type.enum';
-import { WorkflowRequestType } from '../models/workflow-request-type.enum';
+import { RequestType, ScheduledRequestType, WorkflowRequestType } from '../models/workflow-request-type.enum';
 import { XPageState } from '../models/xpage-state.model';
 import { XPageStatus } from '../models/xpage-status.enum';
 import { VersionsService } from '../versions/services/versions.service';
@@ -46,8 +45,7 @@ export class PageService implements OnDestroy {
     (pageStates: PageStates) => this.matchPreviousPageVersion(pageStates),
     (pageStates: PageStates) => this.matchEditingSharedContainers(pageStates),
     (pageStates: PageStates) => this.matchProject(pageStates),
-    (pageStates: PageStates) => this.matchWorkflowRequest(pageStates),
-    (pageStates: PageStates) => this.matchScheduledRequest(pageStates),
+    (pageStates: PageStates) => this.matchRequest(pageStates),
     (pageStates: PageStates) => this.matchXPageState(pageStates),
   ];
   private readonly pageStatusInfoChangeTrigger = new Subject<void>();
@@ -131,66 +129,61 @@ export class PageService implements OnDestroy {
     );
   }
 
-  private matchScheduledRequest(pageStates: PageStates): XPageStatusInfo | undefined {
-    const xPageState = pageStates.xpage;
-    const xPageScheduledRequest = pageStates.scheduledRequest;
-
-    if (!xPageState || !xPageScheduledRequest) {
-      return;
-    }
-
-    const getPageStatus = (type: ScheduledRequestType) => {
-      switch (type) {
-        case ScheduledRequestType.Publish: return XPageStatus.ScheduledPublication;
-        case ScheduledRequestType.Depublish: return XPageStatus.ScheduledToTakeOffline;
-      }
-    };
-
-    const pageStatus = getPageStatus(xPageScheduledRequest.type);
-
-    if (!pageStatus) {
-      return;
-    }
-
-    return new XPageStatusInfo(
-      pageStatus,
-      xPageState.state,
-      xPageState.name,
-      xPageScheduledRequest.scheduledDate,
-    );
-  }
-
-  private matchWorkflowRequest(pageStates: PageStates): XPageStatusInfo | undefined {
+  private matchRequest(pageStates: PageStates): XPageStatusInfo | undefined {
     const xPageState = pageStates.xpage;
     const xPageWorkflowRequests = pageStates.workflow && pageStates.workflow.requests;
-    const xPageWorkflowRequest = xPageWorkflowRequests && xPageWorkflowRequests.length && xPageWorkflowRequests[0];
+    const xPageWorkflowRequest = xPageWorkflowRequests && xPageWorkflowRequests.length && xPageWorkflowRequests.slice(-1)[0];
 
     if (!xPageState || !xPageWorkflowRequest) {
       return;
     }
 
-    const getPageStatus = (type: WorkflowRequestType) => {
-      switch (type) {
-        case WorkflowRequestType.Publish: return XPageStatus.PublicationRequest;
-        case WorkflowRequestType.Depublish: return XPageStatus.TakeOfflineRequest;
-        case WorkflowRequestType.Rejected: return XPageStatus.RejectedRequest;
-        case WorkflowRequestType.ScheduledPublish: return XPageStatus.ScheduledPublicationRequest;
-        case WorkflowRequestType.ScheduledDepublish: return XPageStatus.ScheduledToTakeOfflineRequest;
+    if (xPageWorkflowRequest.requestType === RequestType.Workflow) {
+      const getPageStatusWorkflow = (type: WorkflowRequestType) => {
+        switch (type) {
+          case WorkflowRequestType.Publish: return XPageStatus.PublicationRequest;
+          case WorkflowRequestType.Depublish: return XPageStatus.TakeOfflineRequest;
+          case WorkflowRequestType.Rejected: return XPageStatus.RejectedRequest;
+          case WorkflowRequestType.ScheduledPublish: return XPageStatus.ScheduledPublicationRequest;
+          case WorkflowRequestType.ScheduledDepublish: return XPageStatus.ScheduledToTakeOfflineRequest;
+        }
+      };
+
+      const pageStatus = getPageStatusWorkflow(xPageWorkflowRequest.type);
+
+      if (!pageStatus) {
+        return;
       }
-    };
 
-    const pageStatus = getPageStatus(xPageWorkflowRequest.type);
-
-    if (!pageStatus) {
-      return;
+      return new XPageStatusInfo(
+        pageStatus,
+        xPageState.state,
+        xPageState.name,
+        xPageWorkflowRequest.requestDate,
+      );
     }
 
-    return new XPageStatusInfo(
-      pageStatus,
-      xPageState.state,
-      xPageState.name,
-      xPageWorkflowRequest.requestDate,
-    );
+    if (xPageWorkflowRequest.requestType === RequestType.Scheduled) {
+      const getPageStatusSchedule = (type: ScheduledRequestType) => {
+        switch (type) {
+          case ScheduledRequestType.Publish: return XPageStatus.ScheduledPublication;
+          case ScheduledRequestType.Depublish: return XPageStatus.ScheduledToTakeOffline;
+        }
+      };
+
+      const pageStatus = getPageStatusSchedule(xPageWorkflowRequest.type);
+
+      if (!pageStatus) {
+        return;
+      }
+
+      return new XPageStatusInfo(
+        pageStatus,
+        xPageState.state,
+        xPageState.name,
+        xPageWorkflowRequest.scheduledDate,
+      );
+    }
   }
 
   private matchProject(pageStates: PageStates): XPageStatusInfo | undefined {
