@@ -2,7 +2,6 @@ definitions:
   config:
     /hst:hst/hst:hosts/prod-env:
       jcr:primaryType: hst:virtualhostgroup
-      hst:cmslocation: http://cms.example.com
       /com:
         jcr:primaryType: hst:virtualhost
         hst:contextpath: /intranet
