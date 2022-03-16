@@ -158,11 +158,6 @@
   </servlet>
 
   <servlet>
-    <servlet-name>ModifyingHstConfigurationServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.demo.servlet.ModifyingHstConfigurationServlet</servlet-class>
-  </servlet>
-
-  <servlet>
     <servlet-name>HstDispatcherServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</servlet-class>
     <init-param>
@@ -237,11 +232,6 @@
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>ModifyingHstConfigurationServlet</servlet-name>
-    <url-pattern>/hstconfigmodifier/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
