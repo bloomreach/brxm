@@ -108,6 +108,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
         this.maintenanceMode = context.isMaintenanceMode();
         setDirLevels();
         initManager(context);
+        log.debug(this.getClass().getName()  + " initialized.");
     }
 
     public final boolean isInitialized() {
@@ -116,7 +117,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
 
     public final boolean hasUser(String rawUserId) throws RepositoryException {
         if (!isInitialized()) {
-            throw new IllegalStateException("Not initialized.");
+            throw new IllegalStateException(this.getClass().getName()  + "is not initialized.");
         }
         if (useQueries) {
             String userId = sanitizeId(rawUserId);
