@@ -508,7 +508,13 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
     }
 
     private void assertions(final String identifier, final SimpleCredentials creds, String fixtureFileName, final String branchId) throws Exception {
-        assertions(identifier, experienceSiteMapItemId, creds, fixtureFileName, branchId);
+        final RequestResponseMock createRequestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/" + identifier + "./item/" + experienceSiteMapItemId, null,
+                "GET");
+
+        final MockHttpServletResponse get = render(mountId, createRequestResponse, creds, branchId);
+        InputStream expected = XPageResourceTest.class.getResourceAsStream(fixtureFileName);
+        assertions(get.getContentAsString(), expected);
     }
 
     private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {

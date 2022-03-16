@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.security.Privilege;
 import javax.jcr.version.VersionHistory;
 
 import org.apache.commons.lang3.StringUtils;
@@ -125,10 +124,7 @@ final class XPageContextFactory {
                 // to disallow copy if the selected branch is different from the xpage branch the user is
                 // looking at. If we would allow it the user might not realize that the copy has a different
                 // branchId (belongs to another project) than is currently selected.
-                .setCopyAllowed(TRUE.equals(hints.get("copy")) && unpublishedBranchId.equals(selectedBranchId))
-                // We also disallow these actions if the branches are different
-                // copy is allowed if copy to it's own branch is allowed or if there is a master version that allows copy.
-                .setCopyAllowed((TRUE.equals(hints.get("copy")) || TRUE.equals(workflow.hints().get("copy"))) && workingVersion)
+                .setCopyAllowed((TRUE.equals(hints.get("copy")) && unpublishedBranchId.equals(selectedBranchId) && workingVersion))
                 // We disallow these actions if the branches are different
                 .setRenameAllowed(TRUE.equals(hints.get("rename")) && unpublishedBranchId.equals(selectedBranchId))
                 .setMoveAllowed(TRUE.equals(hints.get("move")) && unpublishedBranchId.equals(selectedBranchId))
