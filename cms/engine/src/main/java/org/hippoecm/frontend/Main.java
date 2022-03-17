@@ -190,6 +190,7 @@ public class Main extends PluginApplication {
 
     private static final String BINARIES_MOUNT = "binaries";
     private static final String AUTH_MOUNT = "auth";
+    private static final String WICKET_JS_DEBUG_PARAM = "wicket.js.debug";
 
     static {
         try {
@@ -399,6 +400,9 @@ public class Main extends PluginApplication {
 
             // do not render Wicket-specific markup since it can break CSS
             getMarkupSettings().setStripWicketTags(true);
+
+            final String isAjaxDebugModeEnabled = System.getProperty(WICKET_JS_DEBUG_PARAM, "false");
+            getDebugSettings().setAjaxDebugModeEnabled("true".equalsIgnoreCase(isAjaxDebugModeEnabled));
         } else {
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
