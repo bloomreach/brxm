@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.VersionHistory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
@@ -36,6 +37,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.DocumentUtils;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -43,8 +45,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.Boolean.TRUE;
+import static org.apache.jackrabbit.JcrConstants.NT_FROZENNODE;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 final class XPageContextFactory {
@@ -93,10 +97,17 @@ final class XPageContextFactory {
         final String documentState = getDocumentState(branchHandle);
         final String unpublishedBranchId = branchHandle.getBranchId();
 
-
         // note the select branch can not exist for 'selectedBranchId' for the document. That is not a problem as the
         // workflow hints just supports that (but gives only few allowed options back which is fine)
         final Map<String, Serializable> hints = workflow.hints(selectedBranchId);
+
+        // the parent of the hst:xpage node is the unpublished
+        final Node unpublishedRequestVariant = userSession.getNodeByIdentifier(contextService.getRequestConfigIdentifier()).getParent();
+        // true if the node for the request identifier PageComposerContextService#getRequestConfigIdentifier is either
+        // for a workspace node OR it is the versioned equivalent for the working node for the branch
+        final boolean workingVersion = isWorkingVersion(WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED),
+                unpublishedRequestVariant, useXPageDocBranch);
+
 
         // the XPageContext is for branchId and documentState uses the actual USED branch (branch or in case missing)
         // master. The available actions *really* uses the hints of the currently viewed channel branch, regardless
@@ -113,12 +124,11 @@ final class XPageContextFactory {
                 // to disallow copy if the selected branch is different from the xpage branch the user is
                 // looking at. If we would allow it the user might not realize that the copy has a different
                 // branchId (belongs to another project) than is currently selected.
-                .setCopyAllowed(TRUE.equals(hints.get("copy")) && unpublishedBranchId.equals(selectedBranchId))
-                // We also disallow these actions if the branches are different
+                .setCopyAllowed((TRUE.equals(hints.get("copy")) && unpublishedBranchId.equals(selectedBranchId) && workingVersion))
+                // We disallow these actions if the branches are different
                 .setRenameAllowed(TRUE.equals(hints.get("rename")) && unpublishedBranchId.equals(selectedBranchId))
                 .setMoveAllowed(TRUE.equals(hints.get("move")) && unpublishedBranchId.equals(selectedBranchId))
                 .setDeleteAllowed(TRUE.equals(hints.get("delete")) && unpublishedBranchId.equals(selectedBranchId));
-
         final Map<String, Map<String, Serializable>> requestsHints = (Map<String, Map<String, Serializable>>) hints.get("requests");
         parseRequestsHints(requestsHints, workflowRequests, xPageContext);
 
@@ -137,9 +147,9 @@ final class XPageContextFactory {
         if (scheduledRequest == null) {
             final boolean pageIsUnlocked = StringUtils.isBlank(xPageContext.getLockedBy());
             if (hints.containsKey("publishBranch")) {
-                xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")) && pageIsUnlocked);
+                xPageContext.setPublishable(TRUE.equals(hints.get("publishBranch")) && pageIsUnlocked && workingVersion);
             } else if (hints.containsKey("requestPublication")) {
-                xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")));
+                xPageContext.setRequestPublication(TRUE.equals(hints.get("requestPublication")) && workingVersion);
             }
 
             if (hints.containsKey("depublishBranch")) {
@@ -155,6 +165,22 @@ final class XPageContextFactory {
 
         }
         return xPageContext;
+    }
+
+    private boolean isWorkingVersion(final Optional<Node> unpublishedWorkspaceVariant, final Node unpublishedRequestVariant, final String branchId) throws RepositoryException {
+        if (!unpublishedRequestVariant.isNodeType(NT_FROZENNODE) || !unpublishedWorkspaceVariant.isPresent()) {
+            // no unpublished, so also no version history, so current version also for sure the working version
+            return true;
+        }
+
+        final VersionHistory versionHistory = unpublishedWorkspaceVariant.get().getSession().getWorkspace().getVersionManager().getVersionHistory(unpublishedWorkspaceVariant.get().getPath());
+        if (!versionHistory.hasVersionLabel(branchId + "-" + UNPUBLISHED.getState())) {
+            // unexpected, though the requestConfigNode is from version history so let's return false
+            return false;
+        }
+        final Node workingVersionForBranch = versionHistory.getVersionByLabel(branchId + "-" + UNPUBLISHED.getState()).getFrozenNode();
+
+        return unpublishedRequestVariant.getIdentifier().equals(workingVersionForBranch.getIdentifier());
     }
 
     private static String getDocumentState(final BranchHandleImpl branchHandle) throws RepositoryException {
