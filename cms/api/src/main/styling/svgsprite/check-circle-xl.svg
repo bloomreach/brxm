@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2022 Bloomreach (https://www.bloomreach.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 -->
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 32 32" xml:space="preserve">
-  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-    <path fill="#3DCC3D" d="M7.99949742,15.5 C3.86024928,15.5 0.5,12.1395255 0.5,8 C0.5,3.85846401 3.86024928,0.5 7.99949742,0.5 C12.1407559,0.5 15.5,3.85946924 15.5,8 C15.5,12.1395255 12.1407559,15.5 7.99949742,15.5 Z"/>
-    <polygon fill="currentColor" points="11.9932065 4.94713439 13.0067935 6.05286561 6.42719158 12.0841673 3.42383404 8.4801383 4.57616596 7.5198617 6.573 9.915"/>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+  <g>
+    <path fill="currentColor" d="M6.46,14c-3.565,0-6.461-2.895-6.461-6.461c0-3.568,2.896-6.461,6.461-6.461 c3.567,0,6.462,2.894,6.462,6.461C12.922,11.105,10.027,14,6.46,14z"/>
   </g>
+  <polygon fill="#FFFFFF" points="10,4.458 9.188,4 5.678,10.226 3.466,7.11 2.705,7.65 5.749,11.961 "/>
 </svg>
