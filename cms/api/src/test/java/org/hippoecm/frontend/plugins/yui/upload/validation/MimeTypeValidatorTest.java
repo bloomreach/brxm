@@ -43,6 +43,13 @@ public class MimeTypeValidatorTest {
                 "application/pdf", "helloWorld.pdf");
     }
 
+    @Test
+    public void browserMimeTypeDoesNotMatchMimeTypeButExplicitlyConfiguredForCsv() {
+        final String fileNameRelativeToResourcesFolder = "org/hippoecm/frontend/plugins/yui/upload/validation/sample.csv";
+        MimeTypeValidator.validate(getFileFromResourceAsStream(fileNameRelativeToResourcesFolder), "foo/bar",
+                "text/csv", "sample.csv");
+    }
+
     // get a file from the resources folder
     // works everywhere, IDEA, unit test and JAR file.
     private InputStream getFileFromResourceAsStream(String fileName) {
