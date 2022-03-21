@@ -1,0 +1,76 @@
+/hippo:configuration:
+  jcr:primaryType: hipposys:configuration
+  /hippo:modules:
+    jcr:primaryType: hipposys:modulefolder
+    /crispregistry:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms7.crisp.repository.CrispRegistryModule
+      /hippo:moduleconfig:
+        jcr:primaryType: crisp:moduleconfig
+        /crisp:resourceresolvercontainer:
+          jcr:primaryType: crisp:resourceresolvercontainer
+          /salesforce:
+            jcr:primaryType: crisp:resourceresolver
+            crisp:beandefinition: |-
+              <?xml version="1.0" encoding="UTF-8"?>
+              <!--
+                Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+              -->
+              <beans xmlns="http://www.springframework.org/schema/beans"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xmlns:s="http://www.springframework.org/schema/security"
+                     xmlns:util="http://www.springframework.org/schema/util"
+                     xsi:schemaLocation="
+                        http://www.springframework.org/schema/security
+                        https://www.springframework.org/schema/security/spring-security.xsd
+                        http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd">
+
+                <bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"
+                      class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
+                  <property name="baseUri" value="${salesforce.baseUrl}/services/data/v20.0" />
+                  
+                  <property name="clientHttpRequestInterceptor">
+                    <list value-type="org.springframework.http.client.ClientHttpRequestInterceptor">
+                      <bean class="org.onehippo.cms7.crisp.core.interceptor.SimpleOAuth2AuthorizedClientInterceptor" autowire="constructor">
+                        <property name="authorizedClientService" ref="authorizedClientService" />
+                        <property name="clientRegistrationId" value="salesforce-login" />
+                        <property name="contextAttributesMap" ref="credentials" />
+                      </bean>
+                    </list>
+                  </property>
+                </bean>
+                <util:map id="credentials" map-class="java.util.HashMap">
+                  <entry key="org.springframework.security.oauth2.client.OAuth2AuthorizationContext.USERNAME">
+                    <value>${salesforce.username}</value>
+                  </entry>
+                  <entry key="org.springframework.security.oauth2.client.OAuth2AuthorizationContext.PASSWORD">
+                    <value>${salesforce.password}</value>
+                  </entry>
+                </util:map>
+
+                <s:client-registrations>
+                  <s:client-registration registration-id="salesforce-login"
+                                         client-id="${salesforce.clientId}"
+                                         client-secret="${salesforce.clientSecret}"
+                                         client-authentication-method="post"
+                                         authorization-grant-type="password"
+                                         provider-id="salesforce"/>
+                  <s:provider provider-id="salesforce"
+                              authorization-uri="${salesforce.baseUrl}/services/oauth2/token"
+                              token-uri="${salesforce.baseUrl}/services/oauth2/token"/>
+                </s:client-registrations>
+                <bean id="authorizedClientService"
+                      class="org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService"
+                      autowire="constructor"/>
+            
+                <bean id="authorizedClientRepository"
+                      class="org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository">
+                  <constructor-arg ref="authorizedClientService"/>
+                </bean>
+
+              </beans>
+            crisp:propnames: [salesforce.baseUrl, salesforce.clientId, salesforce.clientSecret, salesforce.username, salesforce.password]
+            crisp:propvalues: ['https://na1.salesforce.com', someClientId, someClientSecret, 'john.doe@example.com', somePassword]
