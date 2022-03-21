@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -431,7 +431,7 @@ public class TestWebFileValve {
         assertEquals("Content type", styleCss.getMimeType(), response.getContentType());
         if (withCacheHeaders) {
             assertTrue("Expires in the future", ((Date)headers.get("Expires").get(0)).after(Calendar.getInstance().getTime()));
-            assertEquals("Cache-Control header", "public, immutable, max-age=31536000", headers.get("Cache-Control").get(0));
+            assertEquals("Cache-Control header", "public, max-age=31536000", headers.get("Cache-Control").get(0));
         }
         assertEquals("written web file", STYLE_CSS_CONTENTS, response.getContentAsString());
     }
