@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.modules;
 
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -28,7 +27,7 @@ public interface ConfigurableDaemonModule extends DaemonModule {
 
     /**
      * Lifecycle callback to allow a {@link DaemonModule} to configure itself.
-     * This method is called on startup iff there is module config node,
+     * This method is called on startup if there is module config node,
      * and before {@link #initialize} is called.
      *
      * @param moduleConfig  the node containing the configuration of this module
