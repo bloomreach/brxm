@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.ajax.BrLink;
 import org.hippoecm.frontend.ajax.NoDoubleClickAjaxLink;
 import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
@@ -97,8 +98,12 @@ public class SelectableDocumentsView extends Panel implements IPagingDefinition 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 selectedDocuments.clear();
-                ISortableDataProvider<Node, String> provider = SelectableDocumentsView.this.provider;
-                Iterator<? extends Node> iter = provider.iterator(0, provider.size());
+                // Don't add generics, the provider provides
+                // Nodes or JcrNodeModels. Without additional code changes
+                // a ClassCastException(RunTimeException) will occur.
+                // See commit message.
+                ISortableDataProvider provider = SelectableDocumentsView.this.provider;
+                Iterator iter = provider.iterator(0, provider.size());
                 while (iter.hasNext()) {
                     selectedDocuments.add(provider.model(iter.next()));
                 }

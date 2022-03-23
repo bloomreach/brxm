@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.pagemodelapi.v10.DeterministicJsonPointerFactory;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -29,7 +30,8 @@ import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_API_
 public class CommonPageModelApiIT extends AbstractPageModelApiITCases {
 
     @Test
-    public void default_page_model_api_version_is_v09() throws Exception {
+    public void default_page_model_api_version_is_v10() throws Exception {
+        DeterministicJsonPointerFactory.reset();
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/spa/resourceapi/home", null);
 
@@ -37,28 +39,29 @@ public class CommonPageModelApiIT extends AbstractPageModelApiITCases {
 
         JsonNode root = mapper.readTree(response.getContentAsString());
 
-        assertThat(root.get("_meta").get("version").asText())
-                .as("Expected default version to be 0.9")
-                .isEqualTo("0.9");
+        assertThat(root.get("meta").get("version").asText())
+                .as("Expected default version to be 1.0")
+                .isEqualTo("1.0");
 
         assertThat(response.getHeader(PAGE_MODEL_API_VERSION))
-                .as("Expected default header version to be 0.9")
-                .isEqualTo("0.9");
+                .as("Expected default header version to be 1.0")
+                .isEqualTo("1.0");
 
     }
 
     @Test
     public void request_existing_version_api() throws Exception {
+        DeterministicJsonPointerFactory.reset();
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/spa/resourceapi/home", null);
 
-        requestResponse.request.addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, "0.9");
+        requestResponse.request.addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, "1.0");
 
         final MockHttpServletResponse response = render(requestResponse);
 
         assertThat(response.getHeader(PAGE_MODEL_API_VERSION))
-                .as("Expected default header version to be 0.9")
-                .isEqualTo("0.9");
+                .as("Expected default header version to be 1.0")
+                .isEqualTo("1.0");
 
     }
 
