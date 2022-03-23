@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -187,13 +187,6 @@ public interface ContainerConstants {
      * Generic Link Name for the site.
      */
     String LINK_NAME_SITE = "site";
-
-    /**
-     * Generic Link Name for the component rendering.
-     * @deprecated only part of Page Model API 0.9, in 1.0 the link is 'self' for component rendering
-     */
-    @Deprecated
-    String LINK_NAME_COMPONENT_RENDERING = "componentRendering";
 
     String PAGE_MODEL_API_VERSION = "API-Version";
 

@@ -52,6 +52,7 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectP
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.csp.CSPDirective;
+import org.apache.wicket.csp.CSPHeaderConfiguration;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.filter.AbstractHeaderResponseFilter;
 import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
@@ -105,6 +106,8 @@ import org.hippoecm.frontend.service.WicketFaviconService;
 import org.hippoecm.frontend.service.WicketFaviconServiceImpl;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.settings.ApplicationSettings;
+import org.hippoecm.frontend.settings.ContentSecurityPolicy;
 import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.repository.HippoRepository;
@@ -112,6 +115,8 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
+import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
@@ -185,6 +190,7 @@ public class Main extends PluginApplication {
 
     private static final String BINARIES_MOUNT = "binaries";
     private static final String AUTH_MOUNT = "auth";
+    private static final String WICKET_JS_DEBUG_PARAM = "wicket.js.debug";
 
     static {
         try {
@@ -394,6 +400,9 @@ public class Main extends PluginApplication {
 
             // do not render Wicket-specific markup since it can break CSS
             getMarkupSettings().setStripWicketTags(true);
+
+            final String isAjaxDebugModeEnabled = System.getProperty(WICKET_JS_DEBUG_PARAM, "false");
+            getDebugSettings().setAjaxDebugModeEnabled("true".equalsIgnoreCase(isAjaxDebugModeEnabled));
         } else {
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
@@ -767,18 +776,17 @@ public class Main extends PluginApplication {
     }
 
     private void initCMS() {
-        getCspSettings().blocking()
-                .unsafeInline()
-                .add(CSPDirective.FRAME_ANCESTORS, SELF)
-                .add(CSPDirective.IMG_SRC, "data:") // allow ExtJS inline images
-                .add(CSPDirective.SCRIPT_SRC, "hippocdn.global.ssl.fastly.net") // load Hippo UsageStatistics
+        HippoServiceRegistry.addTracker(new ProxiedServiceTracker<>() {
+            @Override
+            public void serviceRegistered(final ProxiedServiceHolder<ApplicationSettings> serviceHolder) {
+                configureCSP(serviceHolder.getServiceProxy().getContentSecurityPolicy());
+            }
 
-                // Pendo
-                .add(CSPDirective.SCRIPT_SRC, "cdn.pendo.io", "data.pendo.io", "pendo-io-static.storage.googleapis.com", "pendo-static-5285379033268224.storage.googleapis.com")
-                .add(CSPDirective.STYLE_SRC, "app.pendo.io", "cdn.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
-                .add(CSPDirective.IMG_SRC, "app.pendo.io", "cdn.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
-                .add(CSPDirective.CONNECT_SRC, "app.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com")
-                .add(CSPDirective.FRAME_ANCESTORS, "app.pendo.io");
+            @Override
+            public void serviceUnregistered(final ProxiedServiceHolder<ApplicationSettings> serviceHolder) {
+
+            }
+        }, ApplicationSettings.class);
 
         /*
          * HST SAML kind of authentication handler needed for Template Composer integration
@@ -867,9 +875,31 @@ public class Main extends PluginApplication {
         });
     }
 
-    private void initConsole() {
-        getCspSettings().blocking()
+    private void configureCSP(final ContentSecurityPolicy contentSecurityPolicy) {
+        final CSPHeaderConfiguration cspHeaderConfiguration = getCspSettings()
+                .blocking()
+                .clear()
                 .unsafeInline();
+
+        // allow the CMS application to be embedded by the navapp
+        cspHeaderConfiguration.add(CSPDirective.FRAME_ANCESTORS, SELF);
+        // allow ExtJS inline images
+        cspHeaderConfiguration.add(CSPDirective.IMG_SRC, "data:");
+        // load Hippo UsageStatistics
+        cspHeaderConfiguration.add(CSPDirective.SCRIPT_SRC, "hippocdn.global.ssl.fastly.net");
+
+        if (contentSecurityPolicy != null) {
+            cspHeaderConfiguration.add(CSPDirective.FRAME_ANCESTORS, contentSecurityPolicy.getFrameAncestors());
+            cspHeaderConfiguration.add(CSPDirective.FRAME_SRC, contentSecurityPolicy.getFrameSources());
+            cspHeaderConfiguration.add(CSPDirective.SCRIPT_SRC, contentSecurityPolicy.getScriptSources());
+            cspHeaderConfiguration.add(CSPDirective.STYLE_SRC, contentSecurityPolicy.getStyleSources());
+            cspHeaderConfiguration.add(CSPDirective.IMG_SRC, contentSecurityPolicy.getImageSources());
+            cspHeaderConfiguration.add(CSPDirective.CONNECT_SRC, contentSecurityPolicy.getConnectSources());
+        }
+    }
+
+    private void initConsole() {
+        getCspSettings().blocking().unsafeInline();
     }
 
     public static boolean isCmsApplication() {
