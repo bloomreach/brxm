@@ -29,7 +29,6 @@
 
   <modules>
     <module>pagemodelapi-common</module>
-    <module>pagemodelapi-v09</module>
     <module>pagemodelapi-v10</module>
     <module>tests</module>
   </modules>
