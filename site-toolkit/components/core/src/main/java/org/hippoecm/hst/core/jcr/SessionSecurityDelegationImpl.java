@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Bloomreach (https://bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.security.domain.DomainRuleExtension.HIPPO_AVAILABILITY_PREVIEW_RULE;
 
 
 public class SessionSecurityDelegationImpl implements SessionSecurityDelegation {
@@ -92,7 +94,8 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
     private Session doCreateLiveSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
         final FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "live", true, true, PropertyType.STRING);
-        final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
+        final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule),
+                DomainRuleExtension.Type.CONSTRAINT);
         return doCreateSecurityDelegate(liveCredentials, delegate, autoLogout,  false, dre).getLeft();
     }
 
@@ -118,8 +121,8 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
     private Pair<Session, Session> doCreatePreviewSecurityDelegate(final Credentials delegate, final boolean autoLogout,
                                                                    final boolean keepDelegateSession) throws RepositoryException, IllegalStateException {
-        final FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "preview", true, true, PropertyType.STRING);
-        final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
+        final FacetRule facetRule = HIPPO_AVAILABILITY_PREVIEW_RULE;
+        final DomainRuleExtension dre = DomainRuleExtension.constraintDomainRule("*", "*", Arrays.asList(facetRule));
         return doCreateSecurityDelegate(previewCredentials, delegate, autoLogout, keepDelegateSession, dre);
     }
 
