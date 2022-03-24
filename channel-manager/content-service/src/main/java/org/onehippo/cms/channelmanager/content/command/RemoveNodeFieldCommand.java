@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms.channelmanager.content.document.NodeFieldRemoval;
+import org.onehippo.cms.channelmanager.content.document.NodeFieldServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms7.services.channelmanager.ChannelManagerCommand;
@@ -50,9 +50,7 @@ public class RemoveNodeFieldCommand implements ChannelManagerCommand {
     public void execute(final Session session) {
         log.debug("Execute {} on session: { {}, userId: {} }", this, session, session.getUserID());
         final String variantAbsolutePath =  getAbsolutePath(getUnpublished(getHandle(uuid, session)));
-        final NodeFieldRemoval nodeFieldRemoval = new NodeFieldRemoval(variantAbsolutePath, fieldPath,
-                fieldTypes, session);
-        nodeFieldRemoval.remove();
+        new NodeFieldServiceImpl(session).removeNodeField(variantAbsolutePath, fieldPath, fieldTypes);
     }
 
     public String toString() {
