@@ -174,7 +174,6 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
         documentsService.setHintsInspector(createHintsInspector(session));
         documentsService.setBranchingService(createBranchingService(session));
-        documentsService.setNodeFieldService(createNodeFieldService(session));
         documentsService.setDocumentValidityService(new DocumentValidityServiceImpl());
         final ChannelManagerDocumentUpdateService service = HippoServiceRegistry
                 .getService(ChannelManagerDocumentUpdateService.class);
