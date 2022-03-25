@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,6 +115,7 @@ public class DocumentTypesServiceImplTest {
         expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(context.getContentType()).andReturn(contentType);
         expect(contentType.isDocumentType()).andReturn(false);
+        expect(contentType.isCompoundType()).andReturn(false);
 
         replayAll();
 
