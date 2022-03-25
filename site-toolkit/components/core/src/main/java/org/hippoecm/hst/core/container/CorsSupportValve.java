@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -229,12 +229,12 @@ public class CorsSupportValve implements Valve {
 
         if (servletResponse.containsHeader(ACCESS_CONTROL_ALLOW_ORIGIN)) {
             // regardless whether mount.getVirtualHost().getAllowedOrigins() allows the origin, when an explicit
-            // hst:responseheader for a certain host is set, we do not look at whitelisted origins
+            // hst:responseheader for a certain host is set, we do not look at allowed origins
             return servletResponse.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN).trim().equals(requestOrigin);
         }
 
         if (mount.getVirtualHost().getAllowedOrigins().contains(requestOrigin)) {
-            log.info("Origin '{}' is whilelisted", requestOrigin);
+            log.info("Origin '{}' is allowed", requestOrigin);
             return true;
         }
         return false;
