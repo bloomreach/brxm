@@ -11,7 +11,8 @@ definitions:
           connect-src: [
             'app.pendo.io',
             'data.pendo.io',
-            'pendo-static-5285379033268224.storage.googleapis.com'
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'maps.googleapis.com'
           ]
           frame-ancestors: [
             'app.pendo.io'
