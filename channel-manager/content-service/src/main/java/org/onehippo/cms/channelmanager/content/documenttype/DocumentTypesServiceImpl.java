@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,8 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
                 .orElseThrow(NotFoundException::new);
 
         final ContentType contentType = context.getContentType();
-        if (!contentType.isDocumentType()) {
-            log.debug("Requested type '{}' is not document type", id);
+        if (!contentType.isDocumentType() && !contentType.isCompoundType()) {
+            log.debug("Requested type '{}' is not document or compound type", id);
             throw new NotFoundException();
         }
 
