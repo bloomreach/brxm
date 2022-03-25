@@ -33,7 +33,7 @@ Example code from a child perspective:
 
 ```
 BRNavigationCommunication.connectToParent({
-  parentOrigin: '<whitelist the origin to match the authenticated origin>',
+  parentOrigin: '<add the origin to allowlist to match the authenticated origin>',
   methods: {
     navigate(path) {
       routeToPath(path);
