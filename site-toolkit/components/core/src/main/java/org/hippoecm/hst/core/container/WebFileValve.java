@@ -36,7 +36,7 @@ import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.webfiles.CacheableWebFile;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.webfiles.WhitelistReader;
+import org.hippoecm.hst.core.webfiles.AllowlistReader;
 import org.hippoecm.hst.util.WebFileUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.Binary;
@@ -60,7 +60,7 @@ public class WebFileValve extends AbstractBaseOrderableValve {
     private static final long ONE_YEAR_SECONDS = TimeUnit.SECONDS.convert(365L, TimeUnit.DAYS);
     private static final long ONE_YEAR_MILLISECONDS = TimeUnit.MILLISECONDS.convert(ONE_YEAR_SECONDS, TimeUnit.SECONDS);
 
-    static final String WHITE_LIST_CONTENT_PATH = "/hst-whitelist.txt";
+    static final String ALLOWLIST_CONTENT_PATH = "/hst-allowlist.txt";
 
     private HstCache webFileCache;
 
@@ -115,23 +115,23 @@ public class WebFileValve extends AbstractBaseOrderableValve {
             throw new WebFileException("Cannot serve web file for empty relative content path.");
         }
 
-        boolean isWhitelisted = false;
+        boolean isAllowed = false;
         try {
-            final Set<String> whitelist = getWhitelistReader(requestContext).getWhitelist();
-            for (String whitelisted : whitelist) {
-                if (relativeContentPath.startsWith(whitelisted) || relativeContentPath.equals(whitelisted)) {
-                    isWhitelisted = true;
+            final Set<String> allowlist = getAllowlistReader(requestContext).getAllowlist();
+            for (String allowedPath : allowlist) {
+                if (relativeContentPath.startsWith(allowedPath) || relativeContentPath.equals(allowedPath)) {
+                    isAllowed = true;
                     break;
                 }
             }
         } catch (WebFileNotFoundException e) {
-            isWhitelisted = false;
+            isAllowed = false;
         }
 
-        if (!isWhitelisted) {
+        if (!isAllowed) {
             final String msg = String.format("Web file for relative content path '%s' is not white listed in '%s' for '%s' " +
                             "hence won't be served publicly. If it is required to be served publicly, add it to the file '%s'",
-                    relativeContentPath, WHITE_LIST_CONTENT_PATH, bundleName, WHITE_LIST_CONTENT_PATH);
+                    relativeContentPath, ALLOWLIST_CONTENT_PATH, bundleName, ALLOWLIST_CONTENT_PATH);
             throw new WebFileException(msg);
         }
 
@@ -152,32 +152,32 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private WhitelistReader getWhitelistReader(final HstRequestContext requestContext)
+    private AllowlistReader getAllowlistReader(final HstRequestContext requestContext)
             throws ContainerException, RepositoryException, WebFileException, IOException {
         final String bundleName = WebFileUtils.getBundleName(requestContext);
 
         final String version = getVersion(requestContext);
-        final String cacheKey= WebFilesService.JCR_ROOT_PATH + "/" + bundleName + WHITE_LIST_CONTENT_PATH;
+        final String cacheKey= WebFilesService.JCR_ROOT_PATH + "/" + bundleName + ALLOWLIST_CONTENT_PATH;
 
         try {
             final CacheElement cacheElement = webFileCache.get(cacheKey);
-            if (cacheElement != null && cacheElement.getContent() instanceof WhitelistReader) {
-                return (WhitelistReader)cacheElement.getContent();
+            if (cacheElement != null && cacheElement.getContent() instanceof AllowlistReader) {
+                return (AllowlistReader)cacheElement.getContent();
             }
             final WebFilesService service = getWebFilesService();
             final Session session = requestContext.getSession();
             final WebFileBundle webFileBundle = service.getJcrWebFileBundle(session, bundleName);
 
-            final WebFile webFile = getWebFileFromBundle(webFileBundle, WHITE_LIST_CONTENT_PATH, version);
-            final WhitelistReader whiteListReader = new WhitelistReader(webFile.getBinary().getStream());
-            final CacheElement whiteListReaderElement = webFileCache.createElement(cacheKey, whiteListReader);
-            webFileCache.put(whiteListReaderElement);
-            return whiteListReader;
+            final WebFile webFile = getWebFileFromBundle(webFileBundle, ALLOWLIST_CONTENT_PATH, version);
+            final AllowlistReader allowlistReader = new AllowlistReader(webFile.getBinary().getStream());
+            final CacheElement allowlistReaderElement = webFileCache.createElement(cacheKey, allowlistReader);
+            webFileCache.put(allowlistReaderElement);
+            return allowlistReader;
         } catch (Exception e) {
             if (e instanceof WebFileNotFoundException) {
-                log.info("No '{}' configured in web files for '{}'. All web files will be whitelisted. In the next PATCH version " +
-                                "(HST 3.1.1) all web files will be blacklisted if there is no '{}' configured in web files.",
-                        WHITE_LIST_CONTENT_PATH, bundleName, WHITE_LIST_CONTENT_PATH);
+                log.info("No '{}' configured in web files for '{}'. All web files will be allowed. In the next PATCH version " +
+                                "(HST 3.1.1) all web files will be blocked if there is no '{}' configured in web files.",
+                        ALLOWLIST_CONTENT_PATH, bundleName, ALLOWLIST_CONTENT_PATH);
             }
             clearBlockingLock(cacheKey);
             throw e;
