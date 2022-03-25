@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,11 +51,11 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
             "org.onehippo.repository.update", "javax.jcr", "javax.jcr.nodetype",
             "javax.jcr.security", "javax.jcr.version"
     };
-    private static final String[] importsBlacklist = {
+    private static final String[] importsBlocklist = {
             "java.io.File", "java.io.FileDescriptor", "java.io.FileInputStream",
             "java.io.FileOutputStream", "java.io.FileWriter", "java.io.FileReader"
     };
-    private static final String[] starImportsBlacklist = {
+    private static final String[] starImportsBlocklist = {
             "java.nio.file", "java.net", "javax.net", "javax.net.ssl", "java.lang.reflect"
     };
 
@@ -117,7 +117,7 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
      * Creates a CompilationCustomizer which (only) checks and prevents obvious and trivial mistakes and misuse
      * of the full power of Groovy.
      * <p>
-     * Certain typical class and package imports like java.io and java(x).net, java.lang.reflect etc. are blacklisted,
+     * Certain typical class and package imports like java.io and java(x).net, java.lang.reflect etc. are blocked,
      * and direct usage of dangerous classes and methods like System, System.exit(), Runtime or ProcessBuilder are
      * also prevented.
      * <p>
@@ -132,8 +132,8 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
      */
     private static CompilationCustomizer createCompilationCustomizer() {
         final SecureASTCustomizer compilationCustomizer = new SecureASTCustomizer();
-        compilationCustomizer.setImportsBlacklist(Arrays.asList(importsBlacklist));
-        compilationCustomizer.setStarImportsBlacklist(Arrays.asList(starImportsBlacklist));
+        compilationCustomizer.setImportsBlacklist(Arrays.asList(importsBlocklist));
+        compilationCustomizer.setStarImportsBlacklist(Arrays.asList(starImportsBlocklist));
         compilationCustomizer.setIndirectImportCheckEnabled(true);
         compilationCustomizer.addExpressionCheckers(new UpdaterExpressionChecker());
         return compilationCustomizer;

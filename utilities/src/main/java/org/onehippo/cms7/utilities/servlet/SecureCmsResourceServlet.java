@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * By default, this {@link SecureCmsResourceServlet} serves resources with whitelisted extensions from either web
+ * By default, this {@link SecureCmsResourceServlet} serves resources with extensions allowed from either web
  * application or classpath, just like {@link ResourceServlet} does. Optionally, this {@link SecureCmsResourceServlet}
  * can be configured to only serve the resources for requests which have logged in user if this is required for
  * some reason. To configure secured access, configure in the web.xml
@@ -64,7 +64,7 @@ public class SecureCmsResourceServlet extends ResourceServlet {
     private static final Logger log = LoggerFactory.getLogger(SecureCmsResourceServlet.class);
 
     /**
-     *  by default cmsSecure is false meaning you do not have to be authenticated to load whitelisted files (see
+     *  by default cmsSecure is false meaning you do not have to be authenticated to load files allowed via the allowlist (see
      *  ResourceServlet). if authenticated is needed, set init-param 'cmsSecure = true' in the web.xml
      */
     private boolean cmsSecure;

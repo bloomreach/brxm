@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,18 +25,18 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestWhitelistReader {
+public class TestAllowlistReader {
 
     @Test
-    public void test_reading_whitelisting_file() throws Exception {
+    public void test_reading_allowlist_file() throws Exception {
 
         InputStream input = null;
         try {
-            input = TestWhitelistReader.class.getResourceAsStream("whitelistTest.txt");
-            final WhitelistReader whiteListingReader = new WhitelistReader(input);
+            input = TestAllowlistReader.class.getResourceAsStream("allowlistTest.txt");
+            final AllowlistReader allowlistReader = new AllowlistReader(input);
 
-            // see "whitelistTest.txt"
-            final Set<String> expectedWhiteList = new ImmutableSet.Builder<String>().add("/css/test",
+            // see "allowlistTest.txt"
+            final Set<String> expectedAllowlist = new ImmutableSet.Builder<String>().add("/css/test",
                     "foo",
                     "js/",
                     "test.txt",
@@ -46,8 +46,8 @@ public class TestWhitelistReader {
                     "/lux/test",
                     "lux/ /foo").build();
 
-            final Set<String> whiteList = whiteListingReader.getWhitelist();
-            assertEquals(expectedWhiteList, whiteList);
+            final Set<String> allowlist = allowlistReader.getAllowlist();
+            assertEquals(expectedAllowlist, allowlist);
         } finally {
             IOUtils.closeQuietly(input);
         }
