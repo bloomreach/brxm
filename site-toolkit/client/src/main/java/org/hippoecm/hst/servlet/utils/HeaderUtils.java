@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Bloomreach
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.utilities.servlet.ResourceServlet.CACHE_CONTROL_PUBLIC;
 import static org.onehippo.cms7.utilities.servlet.ResourceServlet.CACHE_CONTROL_PRIVATE;
-import static org.onehippo.cms7.utilities.servlet.ResourceServlet.CACHE_CONTROL_IMMUTABLE;
 import static org.onehippo.cms7.utilities.servlet.ResourceServlet.HTTP_CACHE_CONTROL_HEADER;
 import static org.onehippo.cms7.utilities.servlet.ResourceServlet.HTTP_EXPIRES_HEADER;
 import static org.onehippo.cms7.utilities.servlet.ResourceServlet.HTTP_IF_MODIFIED_SINCE_HEADER;
@@ -104,7 +103,7 @@ public final class HeaderUtils {
                 boolean isPreview = requestContext != null && requestContext.isPreview();
                 response.setHeader(HTTP_CACHE_CONTROL_HEADER,
                         (isPreview ? CACHE_CONTROL_PRIVATE : CACHE_CONTROL_PUBLIC) +
-                                ", " + CACHE_CONTROL_IMMUTABLE + ", max-age=" + (expires / MILLIS_IN_SEC));
+                                ", max-age=" + (expires / MILLIS_IN_SEC));
             }
         }
     }
