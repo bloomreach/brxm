@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class WhitelistHtmlFilterTest {
+public class AllowlistHtmlFilterTest {
 
     private HtmlCleaner parser;
     private HtmlFilter filter;
@@ -44,26 +44,26 @@ public class WhitelistHtmlFilterTest {
         properties.setOmitHtmlEnvelope(true);
         properties.setOmitXmlDeclaration(true);
         parser = new HtmlCleaner(properties);
-        filter = new WhitelistHtmlFilter();
+        filter = new AllowlistHtmlFilter();
     }
 
     @Test
-    public void testEmptyWhitelist() {
+    public void testEmptyAllowlist() {
         final TagNode result = filterHtml("<div></div>");
         assertNull(result.findElementByName("div", true));
     }
 
     @Test
-    public void testRootNotWhitelisted() {
-        addToWhitelist("span");
+    public void testRootNotAllowed() {
+        addToAllowlist("span");
         final TagNode result = filterHtml("<div><span></span></div>");
         assertNull(result.findElementByName("div", true));
         assertNull(result.findElementByName("span", true));
     }
 
     @Test
-    public void testRootIsWhitelisted() {
-        addToWhitelist("div");
+    public void testRootIsAllowed() {
+        addToAllowlist("div");
         final TagNode result = filterHtml("<div>&nbsp;</div>");
 
         final TagNode div = result.findElementByName("div", false);
@@ -71,8 +71,8 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testWhitelistedChildNodes() {
-        addToWhitelist("p", "em", "strong");
+    public void testAllowedChildNodes() {
+        addToAllowlist("p", "em", "strong");
         final TagNode result = filterHtml("<p><em></em><strong></strong></p>");
 
         final TagNode p = result.findElementByName("p", true);
@@ -83,9 +83,9 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testCleanNonWhiteListedTag() throws Exception {
+    public void testCleanNonAllowedTag() throws Exception {
         TagNode result = filterHtml("<script>alert(\"xss\")</script>");
-        // script element is not on whitelist
+        // script element is not in allowlist
         assertNull(result.findElementByName("script", true));
 
         result = filterHtml("<ScRiPT>alert(\"xss\")</sCrIpT>");
@@ -93,8 +93,8 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testDescendantsWhitelisted() {
-        addToWhitelist("div", "p", "em");
+    public void testDescendantsAllowed() {
+        addToAllowlist("div", "p", "em");
         final TagNode result = filterHtml("<div><p><em>text</em><em>test2</em></p><ul><li>list</li></ul></div><span>&nbsp;</span>");
 
         final TagNode div = result.findElementByName("div", true);
@@ -120,7 +120,7 @@ public class WhitelistHtmlFilterTest {
 
     @Test
     public void testTextInElement() throws Exception {
-        addToWhitelist("p");
+        addToAllowlist("p");
 
         final TagNode result = filterHtml("simple text <p>&nbsp;</p>");
         assertEquals("simple text &nbsp;", result.getText().toString());
@@ -130,8 +130,8 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testAttributesWhitelisted() throws Exception {
-        addToWhitelist(Element.create("img", "src"), Element.create("div", "id", "class"));
+    public void testAttributesAllowed() throws Exception {
+        addToAllowlist(Element.create("img", "src"), Element.create("div", "id", "class"));
 
         final TagNode result = filterHtml("<img src=\"img.gif\" class=\"img-class\"/>" +
                                     "<div id=\"div-id\" class=\"div-class\" alt=\"div-alt\"></div>");
@@ -147,11 +147,11 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testCleanNonWhiteListedAttributes() throws Exception {
-        addToWhitelist("p");
+    public void testCleanNonAllowedAttributes() throws Exception {
+        addToAllowlist("p");
         TagNode result = filterHtml("<p foo=\"bar\">&nbsp;</p>");
 
-        // attribute foo of p is not on whitelist
+        // attribute foo of p is not in allowlist
         assertNull(result.findElementHavingAttribute("foo", true));
 
         result = filterHtml("<p foo=\"bar\" hippo=\"ok\">&nbsp;</p>");
@@ -162,7 +162,7 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testCleanJavascriptInAttributes() {
         final Element a = Element.create("a", "href");
-        addToWhitelist(a);
+        addToAllowlist(a);
 
         // href attribute contains javascript:
         expectEmptyAttributes(a, "<a href=\"javascript:lancerPu('XXXcodepuXXX')\">Text</a>");
@@ -172,7 +172,7 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testCleanEncodedJavascriptInAttributes() {
         final Element a = Element.create("a", "href");
-        addToWhitelist(a);
+        addToAllowlist(a);
 
         // href attribute contains encoded javascript
         expectEmptyAttributes(a, "<a href=\"&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;" +
@@ -181,7 +181,7 @@ public class WhitelistHtmlFilterTest {
 
     @Test
     public void testCleanJavascriptProtocolArgumentFalse() {
-        addToWhitelist(Element.create("a", "href").setOmitJsProtocol(false));
+        addToAllowlist(Element.create("a", "href").setOmitJsProtocol(false));
 
         // href attribute contains javascript:
         final TagNode result = filterHtml("<a href=\"javascript:lancerPu('XXXcodepuXXX')\">Text</a>");
@@ -193,7 +193,7 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testCleanJavascriptProtocolWithWhitespace() {
         final Element a = Element.create("a", "href");
-        addToWhitelist(a);
+        addToAllowlist(a);
 
         // check new lines
         expectEmptyAttributes(a, "<a href=\"jav&#x0A;ascript:alert('XSS');\">test</a>");
@@ -210,14 +210,14 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testCleanDataProtocol() {
         final Element iframe = Element.create("iframe", "src");
-        addToWhitelist(iframe);
+        addToAllowlist(iframe);
 
         expectEmptyAttributes(iframe, "<iframe src=\"data:text/html;base64,PHN2Zy9vbmxvYWQ9YWxlcnQoMSk+\"></iframe>");
     }
 
     @Test
     public void testCleanDataProtocolArgumentFalse() {
-        addToWhitelist(Element.create("iframe", "src").setOmitDataProtocol(false));
+        addToAllowlist(Element.create("iframe", "src").setOmitDataProtocol(false));
 
         // src attribute contains data:
         final TagNode result = filterHtml("<iframe src=\"data:testData\"></iframe>");
@@ -228,7 +228,7 @@ public class WhitelistHtmlFilterTest {
 
     @Test
     public void testDataPrefixOfFileNameIsNotCleaned() {
-        addToWhitelist(Element.create("iframe", "src"));
+        addToAllowlist(Element.create("iframe", "src"));
 
         // src attribute starts with 'data' but is not a data protocol
         final TagNode result = filterHtml("<iframe src=\"data-science.html\"></a>");
@@ -240,7 +240,7 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testCleanDataProtocolWithWhitespace() {
         final Element iframe = Element.create("iframe", "src");
-        addToWhitelist(iframe);
+        addToAllowlist(iframe);
 
         // check new lines
         expectEmptyAttributes(iframe, "<iframe src=\"dat&#x0A;a:testData\"></iframe>");
@@ -257,7 +257,7 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testSecureTargetBlankLinks() {
         final Element a = Element.create("a", "href", "target", "rel");
-        addToWhitelist(a);
+        addToAllowlist(a);
 
         final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\">test</a>");
         final TagNode tag = result.findElementByName(a.getName(), true);
@@ -270,7 +270,7 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testSecureTargetBlankLinksWithExistingRelAttribute() {
         final Element a = Element.create("a", "href", "target", "rel");
-        addToWhitelist(a);
+        addToAllowlist(a);
 
         final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\" rel=\"pingback\">test</a>");
         final TagNode tag = result.findElementByName(a.getName(), true);
@@ -284,7 +284,7 @@ public class WhitelistHtmlFilterTest {
     @Test
     public void testSecureTargetBlankLinksDisabled() {
         final Element a = Element.create("a", "href", "target", "rel").setSecureTargetBlankLinks(false);
-        addToWhitelist(a);
+        addToAllowlist(a);
 
         final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\" rel=\"pingback\">test</a>");
         final TagNode tag = result.findElementByName(a.getName(), true);
@@ -298,11 +298,11 @@ public class WhitelistHtmlFilterTest {
         return filter.apply(parser.clean(html));
     }
 
-    private void addToWhitelist(final String... tags) {
+    private void addToAllowlist(final String... tags) {
         Arrays.stream(tags).forEach(tag -> filter.add(Element.create(tag)));
     }
 
-    private void addToWhitelist(final Element... elements) {
+    private void addToAllowlist(final Element... elements) {
         Arrays.stream(elements).forEach(element -> filter.add(element));
     }
 

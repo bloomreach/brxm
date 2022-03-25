@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ public class HtmlProcessorTest {
             config.setSerializer(serializer);
 
             final Element table = Element.create("table", "summary");
-            config.setWhitelistElements(Collections.singletonList(table));
+            config.setAllowlistElements(Collections.singletonList(table));
 
             processor = new HtmlProcessorImpl(config);
 
@@ -170,7 +170,7 @@ public class HtmlProcessorTest {
     public void testVisitorsRunBeforeFilter() throws Exception {
         final HtmlProcessorConfig htmlProcessorConfig = new HtmlProcessorConfig();
         htmlProcessorConfig.setFilter(true);
-        htmlProcessorConfig.setWhitelistElements(Arrays.asList(Element.create("h1"), Element.create("h2")));
+        htmlProcessorConfig.setAllowlistElements(Arrays.asList(Element.create("h1"), Element.create("h2")));
         processor = new HtmlProcessorImpl(htmlProcessorConfig);
 
         final TagNameCollector one = new TagNameCollector();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,18 +30,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A resource guard which grants access when a user is logged in, or when the class of the resource is whitelisted.
+ * A resource guard which grants access when a user is logged in, or when the class of the resource is allowed.
  * When either of these criteria is met, access is granted by the super class ({@link SecurePackageResourceGuard}).
  * Otherwise access is denied.
  */
-public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard {
+public class AllowedClassesResourceGuard extends SecurePackageResourceGuard {
 
-    private static final Logger log = LoggerFactory.getLogger(WhitelistedClassesResourceGuard.class);
+    private static final Logger log = LoggerFactory.getLogger(AllowedClassesResourceGuard.class);
 
     private final List<String> pathPrefixes;
     private volatile boolean initialized;
 
-    public WhitelistedClassesResourceGuard() {
+    public AllowedClassesResourceGuard() {
         pathPrefixes = new ArrayList<>();
     }
 
@@ -65,17 +65,17 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
             }
         }
 
-        if (isUserLoggedIn() || isWhitelisted(absolutePath)) {
+        if (isUserLoggedIn() || isAllowed(absolutePath)) {
             return super.accept(absolutePath);
         }
-        log.error("Public access denied to non-whitelisted (static) package resource: {}", absolutePath);
+        log.error("Public access denied to non-allowed (static) package resource: {}", absolutePath);
         return false;
     }
 
     protected void onInit() {
     }
 
-    private boolean isWhitelisted(final String absolutePath) {
+    private boolean isAllowed(final String absolutePath) {
         final String strippedPath = stripFilePrexix(absolutePath);
         for (final String prefix : pathPrefixes) {
             if (strippedPath.startsWith(prefix)) {

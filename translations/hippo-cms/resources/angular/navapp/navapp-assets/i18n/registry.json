@@ -109,10 +109,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLACKLIST" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "MENU_CONTAINER_INTERNAL_REPORTS" : {
       "status" : "CLEAN",
       "locales" : null
@@ -732,6 +728,16 @@
     "MENU_ITEM_TOOLTIP_FAILED_ERROR" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLOCKLIST" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
