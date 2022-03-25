@@ -78,7 +78,7 @@ import static org.hippoecm.frontend.util.RequestUtils.getFarthestRequestScheme;
  * {@link #setConflictingOriginAction(CsrfAction) configure} this specific action.
  * <p>
  * When you want to accept certain cross domain request from a range of hosts, you can
- * {@link #addAcceptedOrigin(String) whitelist those domains}.
+ * {@link #addAcceptedOrigin(String) add those domains to allowlist}.
  * <p>
  * You can override the default actions that are performed by overriding the event handlers for
  * them:
@@ -220,7 +220,7 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
     /**
      * Adds an origin (host name/domain name) to the white list. An origin is in the form of
      * &lt;domainname&gt;.&lt;TLD&gt;, and can contain a subdomain. Every Origin header that matches
-     * a domain from the whitelist is accepted and not checked any further for CSRF issues.
+     * a domain from the allowlist is accepted and not checked any further for CSRF issues.
      *
      * E.g. when {@code example.com} is in the white list, this allows requests from (i.e. with an
      * {@code Origin:} header containing) {@code example.com} and {@code blabla.example.com} but
@@ -345,9 +345,9 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
         origin = origin.toLowerCase();
 
         // if the origin is a know and trusted origin, don't check any further but allow the request
-        if (isWhitelistedOrigin(origin))
+        if (isAllowedOrigin(origin))
         {
-            whitelistedHandler(request, origin, page);
+            allowlistHandler(request, origin, page);
             return;
         }
 
@@ -376,13 +376,13 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
     }
 
     /**
-     * Checks whether the domain part of the {@code Origin} HTTP header is whitelisted.
+     * Checks whether the domain part of the {@code Origin} HTTP header is allowed.
      *
      * @param origin
      *            the {@code Origin} HTTP header
-     * @return {@code true} when the origin domain was whitelisted
+     * @return {@code true} when the origin domain was in allowlist
      */
-    private boolean isWhitelistedOrigin(final String origin)
+    private boolean isAllowedOrigin(final String origin)
     {
         try
         {
@@ -390,20 +390,20 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
             final String originHost = originUri.getHost();
             if (Strings.isEmpty(originHost))
                 return false;
-            for (String whitelistedOrigin : acceptedOrigins)
+            for (String allowedOrigin : acceptedOrigins)
             {
-                if (originHost.equalsIgnoreCase(whitelistedOrigin) ||
-                        originHost.endsWith("." + whitelistedOrigin))
+                if (originHost.equalsIgnoreCase(allowedOrigin) ||
+                        originHost.endsWith("." + allowedOrigin))
                 {
-                    log.trace("Origin or Referer {} matched whitelisted origin {}, request accepted", origin,
-                            whitelistedOrigin);
+                    log.trace("Origin or Referer {} matched allowed origin {}, request accepted", origin,
+                            allowedOrigin);
                     return true;
                 }
             }
         }
         catch (URISyntaxException e)
         {
-            log.debug("Origin: {} not parseable as an URI. Whitelisted-origin check skipped.",
+            log.debug("Origin: {} not parseable as an URI. Allowed-origin check skipped.",
                     origin);
         }
 
@@ -489,8 +489,7 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
     }
 
     /**
-     * Handles the case where an origin is in the whitelist. Default action is to allow the
-     * whitelisted origin.
+     * Handles the case where an origin is in the allowlist. Default action is to allow such origins.
      *
      * @param request
      *            the request
@@ -499,19 +498,19 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
      * @param page
      *            the page that is targeted with this request
      */
-    private void whitelistedHandler(HttpServletRequest request, String origin,
-                                    IRequestablePage page)
+    private void allowlistHandler(HttpServletRequest request, String origin,
+                                  IRequestablePage page)
     {
         onWhitelisted(request, origin, page);
         if (log.isDebugEnabled())
         {
-            log.debug("CSRF Origin or Referer {} was whitelisted, allowed for page {}", origin,
+            log.debug("CSRF Origin or Referer {} was allowed, allowed for page {}", origin,
                     page.getClass().getName());
         }
     }
 
     /**
-     * Called when the origin was available in the whitelist. Override this method to implement your
+     * Called when the origin was available in the allowlist. Override this method to implement your
      * own custom action.
      *
      * @param request
@@ -527,7 +526,7 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
 
     /**
      * Handles the case where an origin was checked and matched the request origin. Default action
-     * is to allow the whitelisted origin.
+     * is to allow such origins.
      *
      * @param request
      *            the request

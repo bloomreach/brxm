@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -165,9 +165,9 @@ public class Domain {
         }
         if (node.getParent().isNodeType(NT_FEDERATEDDOMAINFOLDER)) {
 
-            // then every domain below the federateddomainfolder MUST have at least one hierarchical whitelist constraint
+            // then every domain below the federateddomainfolder MUST have at least one hierarchical allowed constraint
             for (DomainRule domainRule : domainRules) {
-                boolean validFederatedDomain = domainRule.getFacetRules().stream().anyMatch(QFacetRule::isHierarchicalWhiteListRule);
+                boolean validFederatedDomain = domainRule.getFacetRules().stream().anyMatch(QFacetRule::isHierarchicalAllowlistRule);
                 if (!validFederatedDomain) {
                     throw new InvalidDomainException(String.format("Invalid federated domain '%s' since every " +
                                     "domain in a federated domain requires at least 1 hierchical constrained confining the " +
