@@ -34,7 +34,9 @@ definitions:
             'cdn.pendo.io',
             'data.pendo.io',
             'pendo-static-5285379033268224.storage.googleapis.com',
-            'storage.googleapis.com/pendo-static-5285379033268224/'
+            'storage.googleapis.com/pendo-static-5285379033268224/',
+            'maps.googleapis.com',
+            'maps.gstatic.com'
           ]
           script-src: [
             'cdn.pendo.io',
@@ -47,5 +49,6 @@ definitions:
             'app.pendo.io',
             'cdn.pendo.io',
             'pendo-static-5285379033268224.storage.googleapis.com',
-            'storage.googleapis.com/pendo-static-5285379033268224/'
+            'storage.googleapis.com/pendo-static-5285379033268224/',
+            'fonts.googleapis.com/css'
           ]
