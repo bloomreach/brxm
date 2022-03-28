@@ -94,8 +94,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
     private Session doCreateLiveSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
         final FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "live", true, true, PropertyType.STRING);
-        final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule),
-                DomainRuleExtension.Type.CONSTRAINT);
+        final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
         return doCreateSecurityDelegate(liveCredentials, delegate, autoLogout,  false, dre).getLeft();
     }
 
@@ -122,7 +121,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
     private Pair<Session, Session> doCreatePreviewSecurityDelegate(final Credentials delegate, final boolean autoLogout,
                                                                    final boolean keepDelegateSession) throws RepositoryException, IllegalStateException {
         final FacetRule facetRule = HIPPO_AVAILABILITY_PREVIEW_RULE;
-        final DomainRuleExtension dre = DomainRuleExtension.constraintDomainRule("*", "*", Arrays.asList(facetRule));
+        final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
         return doCreateSecurityDelegate(previewCredentials, delegate, autoLogout, keepDelegateSession, dre);
     }
 
