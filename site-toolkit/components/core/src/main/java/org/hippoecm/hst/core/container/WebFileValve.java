@@ -129,7 +129,7 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         }
 
         if (!isAllowed) {
-            final String msg = String.format("Web file for relative content path '%s' is not white listed in '%s' for '%s' " +
+            final String msg = String.format("Web file for relative content path '%s' is not allowed in '%s' for '%s' " +
                             "hence won't be served publicly. If it is required to be served publicly, add it to the file '%s'",
                     relativeContentPath, ALLOWLIST_CONTENT_PATH, bundleName, ALLOWLIST_CONTENT_PATH);
             throw new WebFileException(msg);
