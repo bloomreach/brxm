@@ -713,15 +713,15 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        final Session session = userContext.getSession();
-        final Node handle = getHandle(uuid, session);
+        final Session userSession = userContext.getSession();
+        final Node handle = getHandle(uuid, userSession);
         final Node draft = getDraft(handle, branchId);
         final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
 
-        new NodeFieldServiceImpl(session).addNodeField(documentPath, fieldPath, documentType.getFields(), type);
+        new NodeFieldServiceImpl(userSession).addNodeField(documentPath, fieldPath, documentType.getFields(), type);
         try {
-            session.save();
+            userSession.save();
         } catch (RepositoryException e) {
             log.warn("Failed to save session", e );
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
@@ -755,14 +755,14 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        final Session session = userContext.getSession();
+        final Session userSession = userContext.getSession();
         final Node handle = getHandle(uuid, userContext.getSession());
         final Node draft = getDraft(handle, branchId);
         final String documentPath = getDocumentPath(draft);
 
-        new NodeFieldServiceImpl(session).reorderNodeField(documentPath, fieldPath, position);
+        new NodeFieldServiceImpl(userSession).reorderNodeField(documentPath, fieldPath, position);
         try {
-            session.save();
+            userSession.save();
         } catch (RepositoryException e) {
             log.warn("Failed to save session", e );
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
@@ -788,15 +788,15 @@ public class DocumentsServiceImpl implements DocumentsService {
             log.error("Can not remove node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
-        final Session session = userContext.getSession();
-        final Node handle = getHandle(uuid, session);
+        final Session userSession = userContext.getSession();
+        final Node handle = getHandle(uuid, userSession);
         final Node draft = getDraft(handle, branchId);
         final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
 
-        new NodeFieldServiceImpl(session).removeNodeField(documentPath, fieldPath, documentType.getFields());
+        new NodeFieldServiceImpl(userSession).removeNodeField(documentPath, fieldPath, documentType.getFields());
         try {
-            session.save();
+            userSession.save();
         } catch (RepositoryException e) {
             log.warn("Failed to save session", e );
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
