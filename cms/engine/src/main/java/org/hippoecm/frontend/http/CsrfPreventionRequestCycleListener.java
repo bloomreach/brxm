@@ -156,7 +156,7 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
     private String errorMessage = "Origin and Referer header are null or do not correspond to request origin.";
 
     /**
-     * A white list of accepted origins (host names/domain names) presented as
+     * A list of accepted origins (host names/domain names) presented as
      * &lt;domainname&gt;.&lt;TLD&gt;. The domain part can contain subdomains.
      */
     private Collection<String> acceptedOrigins = new ArrayList<>();
@@ -218,11 +218,11 @@ public class CsrfPreventionRequestCycleListener implements IRequestCycleListener
     }
 
     /**
-     * Adds an origin (host name/domain name) to the white list. An origin is in the form of
+     * Adds an origin (host name/domain name) to the allowlist. An origin is in the form of
      * &lt;domainname&gt;.&lt;TLD&gt;, and can contain a subdomain. Every Origin header that matches
      * a domain from the allowlist is accepted and not checked any further for CSRF issues.
      *
-     * E.g. when {@code example.com} is in the white list, this allows requests from (i.e. with an
+     * E.g. when {@code example.com} is in the allowlist, this allows requests from (i.e. with an
      * {@code Origin:} header containing) {@code example.com} and {@code blabla.example.com} but
      * rejects requests from {@code blablaexample.com} and {@code example2.com}.
      *
