@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,17 @@ describe('field service', () => {
   let $timeout;
   let FieldService;
   let ContentService;
+  let HippoIframeService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
-    inject((_$q_, _$timeout_, _FieldService_, _ContentService_) => {
+    inject((_$q_, _$timeout_, _FieldService_, _ContentService_, _HippoIframeService_) => {
       $q = _$q_;
       $timeout = _$timeout_;
       FieldService = _FieldService_;
       ContentService = _ContentService_;
+      HippoIframeService = _HippoIframeService_;
     });
   });
 
@@ -166,6 +168,36 @@ describe('field service', () => {
         FieldService.triggerInputFocus();
         expect(FieldService._customFocusCallback).toHaveBeenCalled();
       });
+
     });
+  });
+
+  it('should reload the preview when a nodeField is added', () => {
+    const expected = 'fieldDefinition';
+    spyOn(ContentService,'addField').and.returnValue($q.resolve(expected));
+    spyOn(HippoIframeService,'reload').and.returnValue($q.resolve());
+    FieldService.add({documentId:'documentId', name: 'name'})
+      .then((actual) => {
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+        expect(actual).toEqual(expected);
+      });
+  });
+
+  it('should reload the preview when a nodeField is removed', () => {
+    spyOn(ContentService,'removeField').and.returnValue($q.resolve());
+    spyOn(HippoIframeService,'reload').and.returnValue($q.resolve());
+    FieldService.remove({documentId:'documentId', name: 'name'})
+      .then(() => {
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
+  });
+
+  it('should reload the preview when a nodeField is re-ordered', () => {
+    spyOn(ContentService,'removeField').and.returnValue($q.resolve());
+    spyOn(HippoIframeService,'reload').and.returnValue($q.resolve());
+    FieldService.reorder({documentId:'documentId', name: 'name', order: 1})
+      .then(() => {
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
   });
 });
