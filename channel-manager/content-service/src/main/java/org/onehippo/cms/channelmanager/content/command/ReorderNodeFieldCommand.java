@@ -46,10 +46,10 @@ public class ReorderNodeFieldCommand implements ChannelManagerCommand {
 
 
     @Override
-    public void execute(final Session session) {
-        log.debug("Execute {} on session: { {}, userId: {} }", this, session, session.getUserID());
-        final String variantAbsolutePath = getAbsolutePath(getUnpublished(getHandle(uuid, session)));
-        new NodeFieldServiceImpl(session).reorderNodeField(variantAbsolutePath, fieldPath, position);
+    public void execute(final Session previewSession) {
+        log.debug("Execute {} on previewSession: { {}, userId: {} }", this, previewSession, previewSession.getUserID());
+        final String variantAbsolutePath = getAbsolutePath(getUnpublished(getHandle(uuid, previewSession)));
+        new NodeFieldServiceImpl(previewSession).reorderNodeField(variantAbsolutePath, fieldPath, position);
     }
 
     public String toString() {
