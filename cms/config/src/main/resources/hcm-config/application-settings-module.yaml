@@ -18,6 +18,7 @@ definitions:
             'app.pendo.io'
           ]
           frame-src: [
+            'app.pendo.io',
             'bloomreach-products.auth0.com',
             'bloomreach-dev.us.auth0.com',
             'tools.bloomreach.com',
@@ -39,6 +40,7 @@ definitions:
             'maps.gstatic.com'
           ]
           script-src: [
+            'app.pendo.io',
             'cdn.pendo.io',
             'data.pendo.io',
             'pendo-io-static.storage.googleapis.com',
