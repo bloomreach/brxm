@@ -79,6 +79,9 @@ public class FilterChainInvokingValve extends AbstractBaseOrderableValve {
                 }
             }
         } catch (IOException ioe) {
+            // The ClientAbortionException is a tomcat specific exception, so we should
+            // not add a dependency on that specific servlet specification
+            // implementation. See https://issues.onehippo.com/browse/ENT-4832
             String exceptionSimpleName = ioe.getCause().getClass().getSimpleName();
             if ("ClientAbortException".equals(exceptionSimpleName)) {
                 log.debug("The client aborted request of {}", request.getRequestURI());
