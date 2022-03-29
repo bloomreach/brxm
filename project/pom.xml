@@ -42,7 +42,7 @@
     <notice.project.name>${project.name}</notice.project.name>
 
     <!--Java 11 related libs -->
-    <activation.version>1.2.2</activation.version>
+    <activation.version>2.1.0</activation.version>
     <jaxb-api.version>2.3.3</jaxb-api.version>
     <annotation-api.version>1.3.1</annotation-api.version>
     <jaxb-runtime.version>2.3.2</jaxb-runtime.version>
@@ -129,7 +129,7 @@
     <!-- restassured 4.3.0 and higher requires groovy 3.0 or higher-->
     <restassured.version>4.2.0</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
-    <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
+    <sling-javax-activation.version>0.3.0</sling-javax-activation.version>
     <javassist.version>3.24.1-GA</javassist.version>
 
     <!-- END properties versions with dependency management -->
@@ -293,8 +293,9 @@
   <dependencyManagement>
     <dependencies>
       <!-- provided third party libraries -->
-      <!-- CMS-11262 javax.activation is provided by the JRE but sometimes a previous version is referenced
+      <!-- Note 1: CMS-11262 javax.activation is provided by the JRE but sometimes a previous version is referenced
            from third-party libraries. This entry prevents accidental downgrades. -->
+      <!-- Note 2: By Java 11, jakarta activation isn't provided by JRE anymore. It's added to the shared library. -->
       <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
@@ -738,6 +739,10 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
     </dependency>
   </dependencies>
 
@@ -1226,6 +1231,11 @@
                   <dependency>
                     <groupId>javax.mail</groupId>
                     <artifactId>mail</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
                     <classpath>extra</classpath>
                   </dependency>
                   <dependency>
