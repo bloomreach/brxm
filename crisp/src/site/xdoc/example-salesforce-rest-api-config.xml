@@ -98,14 +98,14 @@
 
   <s:client-registrations>
       <s:client-registration registration-id="salesforce-login"
-                             client-id="<salesforce.clientId>"
-                             client-secret="<salesforce.clientSecret>"
+                             client-id="${salesforce.clientId}"
+                             client-secret="${salesforce.clientSecret}"
                              client-authentication-method="post"
                              authorization-grant-type="password"
                              provider-id="salesforce"/>
       <s:provider provider-id="salesforce"
-                  authorization-uri="<salesforce.baseUrl>/services/oauth2/token"
-                  token-uri="<salesforce.baseUrl>/services/oauth2/token"/>
+                  authorization-uri="${salesforce.baseUrl}/services/oauth2/token"
+                  token-uri="${salesforce.baseUrl}/services/oauth2/token"/>
   </s:client-registrations>
   <bean id="authorizedClientService"
         class="org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService"
@@ -151,10 +151,6 @@
             <tr>
               <td>salesforce.password</td>
               <td>somePassword</td>
-            </tr>
-            <tr>
-              <td>salesforce.securityToken</td>
-              <td>someSecurityToken</td>
             </tr>
             <tr>
               <td>salesforce.baseUrl</td>
