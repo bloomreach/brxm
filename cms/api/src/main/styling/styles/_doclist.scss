@@ -1,4 +1,4 @@
-// Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2022 Bloomreach (https://www.bloomreach.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,6 +52,14 @@ $doclist-icon-shift-right: 2px;
       + .doclisting-name {
         border-left: 0;
         padding-left: 0;
+      }
+
+      .hi-minus-circle {
+        color: $danger;
+      }
+
+      .hi-check-circle {
+        color: $success;
       }
 
       // shift stacked document state icons a bit
