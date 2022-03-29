@@ -241,8 +241,6 @@ public class NodeFieldServiceImplTest {
         documentNode.orderBefore(eq("field[1]"), eq("field"));
         expectLastCall();
 
-        session.save();
-        expectLastCall();
         replayAll();
 
         nodeFieldService.addNodeField("/document", new FieldPath("field"), singletonList(fieldType), "ns:type");
@@ -281,8 +279,6 @@ public class NodeFieldServiceImplTest {
         documentNode.orderBefore(eq("field[1]"), eq("field[2]"));
         expectLastCall();
 
-        session.save();
-        expectLastCall();
         replayAll();
 
         nodeFieldService.addNodeField("/document", new FieldPath("field[2]"), singletonList(fieldType), "ns:type");
@@ -323,8 +319,6 @@ public class NodeFieldServiceImplTest {
         documentNode.orderBefore(eq("field[2]"), eq("field[1]"));
         expectLastCall();
 
-        session.save();
-        expectLastCall();
         replayAll();
 
         nodeFieldService.reorderNodeField("/documents", new FieldPath("document/field[2]"), 1);
@@ -348,8 +342,6 @@ public class NodeFieldServiceImplTest {
         documentNode.orderBefore(eq("field[1]"), eq("field[3]"));
         expectLastCall();
 
-        session.save();
-        expectLastCall();
         replayAll();
 
         nodeFieldService.reorderNodeField("/documents", new FieldPath("document/field[1]"), 2);
@@ -372,8 +364,6 @@ public class NodeFieldServiceImplTest {
         documentNode.orderBefore(eq("field[1]"), eq(null));
         expectLastCall();
 
-        session.save();
-        expectLastCall();
         replayAll();
 
         nodeFieldService.reorderNodeField("/documents", new FieldPath("document/field[1]"), 2);
@@ -428,8 +418,6 @@ public class NodeFieldServiceImplTest {
         final FieldType fieldType = mockFieldType("field", "ns:type", 0, 1, true, COMPOUND);
 
         session.removeItem("/document/field");
-        expectLastCall();
-        session.save();
         expectLastCall();
         replayAll();
 
