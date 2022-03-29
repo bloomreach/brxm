@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package org.hippoecm.hst.core.container;
+
+import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
@@ -69,11 +71,19 @@ public class FilterChainInvokingValve extends AbstractBaseOrderableValve {
                 if (HDC.isStarted()) {
                     chainingTask = HDC.getCurrentTask().startSubtask("Filter Chain invocation task");
                 }
-                filterChain.doFilter(unwrappedRequest, response);
+                filterChain.doFilter(unwrappedRequest,
+                        response);
             } finally {
                 if (chainingTask != null) {
                     chainingTask.stop();
                 }
+            }
+        } catch (IOException ioe) {
+            String exceptionSimpleName = ioe.getCause().getClass().getSimpleName();
+            if ("ClientAbortException".equals(exceptionSimpleName)) {
+                log.debug("The client aborted request of {}", request.getRequestURI());
+            } else {
+                log.warn("Failed to continue with the filterChain.", ioe);
             }
         } catch (Exception e) {
             log.warn("Failed to continue with the filterChain.", e);
