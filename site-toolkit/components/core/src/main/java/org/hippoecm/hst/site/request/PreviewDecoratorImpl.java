@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -709,12 +709,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             previewDecoratedResolvedVirtualHost = new PreviewDecoratedResolvedVirtualHost(previewDecorator, undecorated);
             return previewDecoratedResolvedVirtualHost;
 
-        }
-
-        @Override
-        @Deprecated
-        public String getDefaultHostName() {
-            return delegatee.getDefaultHostName();
         }
 
         @Override

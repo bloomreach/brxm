@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,13 +83,6 @@ public interface VirtualHosts {
      * @throws MatchException
      */
     ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException;
-
-    /**
-     * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.
-     * @deprecated since 13.2.0, it will be dropped in 14.0.0
-     */
-    @Deprecated
-    String getDefaultHostName();
 
     /**
      * This is the global setting for every {@link VirtualHost} / {@link Mount} whether contextPath should be in the URL or not
