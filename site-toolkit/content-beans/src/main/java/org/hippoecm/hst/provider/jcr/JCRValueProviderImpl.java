@@ -69,8 +69,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
 
     private static final Set<String> skipProperties = new HashSet<>(Arrays.asList("jcr:baseVersion", "jcr:predecessors", "jcr:versionHistory"));
 
-    private static final Set<String> deprecatedProperties = new HashSet<>(Arrays.asList("hst:contextpath",
-            "hst:cmslocation", "hst:defaulthostname"));
+    private static final Set<String> deprecatedProperties = new HashSet<>();
 
     // although 'dxphst' namespace is a downstream module, hardcode to skip properties with that namespace as they are
     // never relevant in the HstNode impls from which the HST model is loaded. If we do not skip them, the Page Delivery
