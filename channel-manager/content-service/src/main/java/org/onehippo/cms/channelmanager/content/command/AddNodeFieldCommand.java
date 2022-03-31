@@ -49,11 +49,11 @@ public class AddNodeFieldCommand implements ChannelManagerCommand {
     }
 
     @Override
-    public void execute(final Session previewSession) {
-        log.debug("Execute {} on session: { {}, userId: {} }", this, previewSession, previewSession.getUserID());
+    public void execute(final Session previewCmsUserSession) {
+        log.debug("Execute {} on session: { {}, userId: {} }", this, previewCmsUserSession, previewCmsUserSession.getUserID());
         final String variantAbsolutePath = getAbsolutePath(
-                DocumentsServiceImpl.getUnpublished(getHandle(uuid, previewSession)));
-        new NodeFieldServiceImpl(previewSession).addNodeField(variantAbsolutePath, fieldPath, fieldTypes, type);
+                DocumentsServiceImpl.getUnpublished(getHandle(uuid, previewCmsUserSession)));
+        new NodeFieldServiceImpl(previewCmsUserSession).addNodeField(variantAbsolutePath, fieldPath, fieldTypes, type);
     }
 
     public String toString() {

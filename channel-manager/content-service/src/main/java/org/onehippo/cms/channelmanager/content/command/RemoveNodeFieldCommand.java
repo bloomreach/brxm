@@ -47,10 +47,10 @@ public class RemoveNodeFieldCommand implements ChannelManagerCommand {
     }
 
     @Override
-    public void execute(final Session previewSession) {
-        log.debug("Execute {} on previewSession: { {}, userId: {} }", this, previewSession, previewSession.getUserID());
-        final String variantAbsolutePath =  getAbsolutePath(getUnpublished(getHandle(uuid, previewSession)));
-        new NodeFieldServiceImpl(previewSession).removeNodeField(variantAbsolutePath, fieldPath, fieldTypes);
+    public void execute(final Session previewCmsUserSession) {
+        log.debug("Execute {} on previewCmsUserSession: { {}, userId: {} }", this, previewCmsUserSession, previewCmsUserSession.getUserID());
+        final String variantAbsolutePath =  getAbsolutePath(getUnpublished(getHandle(uuid, previewCmsUserSession)));
+        new NodeFieldServiceImpl(previewCmsUserSession).removeNodeField(variantAbsolutePath, fieldPath, fieldTypes);
     }
 
     public String toString() {
