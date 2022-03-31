@@ -723,10 +723,9 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             userSession.save();
         } catch (RepositoryException e) {
-            log.warn("Failed to save session", e );
+            refresh(userSession);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
-
         final Document document = assembleDocument(uuid, handle, draft, documentType);
         FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
 
@@ -761,10 +760,12 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String documentPath = getDocumentPath(draft);
 
         new NodeFieldServiceImpl(userSession).reorderNodeField(documentPath, fieldPath, position);
+
         try {
             userSession.save();
         } catch (RepositoryException e) {
-            log.warn("Failed to save session", e );
+            log.warn("Failed to save session, refreshing session", e);
+            refresh(userSession);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
 
@@ -795,10 +796,12 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentType documentType = getDocumentType(handle, userContext);
 
         new NodeFieldServiceImpl(userSession).removeNodeField(documentPath, fieldPath, documentType.getFields());
+
         try {
             userSession.save();
         } catch (RepositoryException e) {
-            log.warn("Failed to save session", e );
+            log.warn("Failed to save session, refreshing session", e);
+            refresh(userSession);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
         }
         if (hasOtherVariantThanDraft(handle)){
