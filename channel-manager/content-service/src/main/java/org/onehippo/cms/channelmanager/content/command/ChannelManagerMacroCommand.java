@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2021-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,16 +34,16 @@ public class ChannelManagerMacroCommand implements ChannelManagerCommand {
     }
 
     @Override
-    public void execute(final Session session) {
-        synchronized (session) {
-            log.debug("Executing macrocommand : {} on session {}", this, session);
+    public void execute(final Session previewCmsUserSession) {
+        synchronized (previewCmsUserSession) {
+            log.debug("Executing macrocommand : {} on previewCmsUserSession {}", this, previewCmsUserSession);
             for (ChannelManagerCommand command : channelManagerCommandList) {
-                log.debug("Executing command: {} on session {},", command, session);
+                log.debug("Executing command: {} on previewCmsUserSession {},", command, previewCmsUserSession);
                 try {
-                    command.execute(session);
+                    command.execute(previewCmsUserSession);
                 } catch (Exception e) {
-                    log.warn("Something went wrong during execution of {} on session: { userId: {} }", this,
-                            session.getUserID(), e);
+                    log.warn("Something went wrong during execution of {} on previewCmsUserSession: { userId: {} }", this,
+                            previewCmsUserSession.getUserID(), e);
                     log.warn("Stop executing other commands for this macrocommand");
                     break;
                 }
