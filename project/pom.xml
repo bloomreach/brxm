@@ -108,8 +108,6 @@
     <jackson2-databind.version>2.13.1</jackson2-databind.version>
     <spring.version>5.3.15</spring.version>
     <spring-boot.version>2.5.9</spring-boot.version>
-    <!-- spring-data-redis version is not in sync with spring, caching module needs to be updated. See ENT-2061 -->
-    <spring-data-redis.version>1.8.23.RELEASE</spring-data-redis.version>
     <spring-integration-ftp.version>5.5.8</spring-integration-ftp.version>
     <spring-integration-sftp.version>5.5.8</spring-integration-sftp.version>
     <spring-security.version>5.6.1</spring-security.version>
