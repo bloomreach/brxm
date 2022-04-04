@@ -131,7 +131,7 @@
     <javassist.version>3.24.1-GA</javassist.version>
 
     <!-- END properties versions with dependency management -->
-    <maven.required.version>3.3.9</maven.required.version>
+    <maven.required.version>3.5.0</maven.required.version>
 
     <maven.plugin.antrun.version>3.0.0</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>3.3.0</maven.plugin.assembly.version>
@@ -144,7 +144,7 @@
     <maven.plugin.dependency.version>3.1.2</maven.plugin.dependency.version>
     <maven.plugin.deploy.version>2.8.2</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
-    <maven.plugin.flatten.version>1.1.0</maven.plugin.flatten.version>
+    <maven.plugin.flatten.version>1.2.2</maven.plugin.flatten.version>
     <maven.plugin.exec.version>3.0.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>3.0.0-M5</maven.plugin.failsafe.version>
     <maven.plugin.frontend.version>1.11.0</maven.plugin.frontend.version>
