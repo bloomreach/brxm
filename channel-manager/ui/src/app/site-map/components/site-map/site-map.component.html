@@ -39,6 +39,7 @@
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodePadding
                  matTreeNodePaddingIndent="24"
+                 matTooltip="{{node.pageTitle || node.name}}"
                  (click)="selectNode(node)"
                  class="mat-tree-node {{ 'qa-tree-node-name-' + node.name }}"
                  [class.selected]="isSelected(node)"
