@@ -92,6 +92,7 @@ import static org.onehippo.cms.channelmanager.content.document.util.DocumentHand
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_PUBLISH;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUEST_PUBLICATION;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
+import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.SERVER_ERROR;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
@@ -110,7 +111,6 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
-    private NodeFieldService nodeFieldService;
     private ChannelManagerDocumentUpdateService channelManagerDocumentUpdateService;
     private DocumentValidityService documentValidityService;
 
@@ -120,10 +120,6 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     public void setBranchingService(final BranchingService branchingService) {
         this.branchingService = branchingService;
-    }
-
-    public void setNodeFieldService(final NodeFieldService nodeFieldService) {
-        this.nodeFieldService = nodeFieldService;
     }
 
     public void setDocumentValidityService(final DocumentValidityService documentValidityService) {
@@ -717,13 +713,19 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        final Node handle = getHandle(uuid, userContext.getSession());
+        final Session userSession = userContext.getSession();
+        final Node handle = getHandle(uuid, userSession);
         final Node draft = getDraft(handle, branchId);
         final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
 
-        nodeFieldService.addNodeField(documentPath, fieldPath, documentType.getFields(), type);
-
+        new NodeFieldServiceImpl(userSession).addNodeField(documentPath, fieldPath, documentType.getFields(), type);
+        try {
+            userSession.save();
+        } catch (RepositoryException e) {
+            refresh(userSession);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+        }
         final Document document = assembleDocument(uuid, handle, draft, documentType);
         FieldTypeUtils.readFieldValues(draft, documentType.getFields(), document.getFields());
 
@@ -752,11 +754,20 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
+        final Session userSession = userContext.getSession();
         final Node handle = getHandle(uuid, userContext.getSession());
         final Node draft = getDraft(handle, branchId);
         final String documentPath = getDocumentPath(draft);
 
-        nodeFieldService.reorderNodeField(documentPath, fieldPath, position);
+        new NodeFieldServiceImpl(userSession).reorderNodeField(documentPath, fieldPath, position);
+
+        try {
+            userSession.save();
+        } catch (RepositoryException e) {
+            log.warn("Failed to save session, refreshing session", e);
+            refresh(userSession);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+        }
 
         if (hasOtherVariantThanDraft(handle)){
             channelManagerDocumentUpdateService.storeCommand(uuid, userContext.getCmsSessionContext(),
@@ -778,13 +789,21 @@ public class DocumentsServiceImpl implements DocumentsService {
             log.error("Can not remove node field if fieldPath is empty");
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
-
-        final Node handle = getHandle(uuid, userContext.getSession());
+        final Session userSession = userContext.getSession();
+        final Node handle = getHandle(uuid, userSession);
         final Node draft = getDraft(handle, branchId);
         final String documentPath = getDocumentPath(draft);
         final DocumentType documentType = getDocumentType(handle, userContext);
 
-        nodeFieldService.removeNodeField(documentPath, fieldPath, documentType.getFields());
+        new NodeFieldServiceImpl(userSession).removeNodeField(documentPath, fieldPath, documentType.getFields());
+
+        try {
+            userSession.save();
+        } catch (RepositoryException e) {
+            log.warn("Failed to save session, refreshing session", e);
+            refresh(userSession);
+            throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
+        }
         if (hasOtherVariantThanDraft(handle)){
             channelManagerDocumentUpdateService.storeCommand(uuid, userContext.getCmsSessionContext(),
                     RemoveNodeFieldCommand.builder()
