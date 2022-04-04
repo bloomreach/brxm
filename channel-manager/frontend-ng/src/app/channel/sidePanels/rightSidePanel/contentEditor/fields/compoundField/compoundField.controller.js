@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import Sortable from 'sortablejs';
 
 export default class CompoundFieldCtrl {
-  constructor($element, $scope, $timeout, FeedbackService, FieldService, HippoIframeService) {
+  constructor($element, $scope, $timeout, FeedbackService, FieldService) {
     'ngInject';
 
     this.expanded = new WeakSet();
@@ -26,7 +26,6 @@ export default class CompoundFieldCtrl {
     this.$timeout = $timeout;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
-    this.HippoIframeService = HippoIframeService;
   }
 
   $onInit() {
@@ -136,7 +135,6 @@ export default class CompoundFieldCtrl {
 
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 })
-      await this.HippoIframeService.reload();
 
       this.form.$setDirty();
       this._focus(newIndex);
@@ -152,7 +150,6 @@ export default class CompoundFieldCtrl {
   async onMove(oldIndex, newIndex) {
     try {
       await this.FieldService.reorder({ name: this.getFieldName(oldIndex), order: newIndex + 1 });
-      await this.HippoIframeService.reload();
 
       this._move(oldIndex, newIndex);
       this._focus(newIndex);
@@ -193,7 +190,6 @@ export default class CompoundFieldCtrl {
   async onAdd(index = 0) {
     try {
       const fields = await this.FieldService.add({ name: `${this.getFieldName(index)}/${this.fieldType.jcrType}` });
-      await this.HippoIframeService.reload();
 
       if (!this.fieldValues) {
         this.fieldValues = [];
@@ -210,7 +206,6 @@ export default class CompoundFieldCtrl {
   async onRemove(index) {
     try {
       await this.FieldService.remove({ name: this.getFieldName(index) });
-      await this.HippoIframeService.reload();
 
       this.fieldValues.splice(index, 1);
       this.form.$setDirty();

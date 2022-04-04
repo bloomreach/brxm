@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Bloomreach (https://bloomreach.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import javax.jcr.PropertyType;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
+
 public final class DomainRuleExtension {
 
     private final String domainName;
     private final String domainRuleName;
     private final Collection<FacetRule> facetRules;
 
-    public DomainRuleExtension(final String domainName, final String domainRuleName, final Collection<FacetRule> facetRules) {
+    public final static FacetRule HIPPO_AVAILABILITY_PREVIEW_RULE = new FacetRule(HIPPO_AVAILABILITY, "preview", true, true, PropertyType.STRING);
+
+
+    public DomainRuleExtension(final String domainName,
+                               final String domainRuleName,
+                               final Collection<FacetRule> facetRules) {
         this.domainName = domainName;
         this.domainRuleName = domainRuleName;
         this.facetRules = new HashSet<FacetRule>(facetRules);
