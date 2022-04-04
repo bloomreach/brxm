@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2022 Bloomreach (https://www.bloomreach.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -170,8 +170,7 @@
   }
 
   .hi-minus-circle {
-    color: $white;
-    fill: $danger;
+    color: $danger;
   }
 
   .hi-minus-circle-clock {
@@ -187,8 +186,7 @@
   }
 
   .hi-check-circle {
-    color: $white;
-    fill: $success;
+    color: $success;
   }
 
   .hi-check-circle-clock {
@@ -212,16 +210,6 @@
 
   .hi-gear {
     color: $hippo-menu-disabled-color;
-  }
-
-  .hi-minus-circle {
-    color: $white;
-    fill: $hippo-menu-disabled-color;
-  }
-
-  .hi-check-circle {
-    color: $white;
-    fill: $hippo-menu-disabled-color;
   }
 
   .hi-files {
