@@ -114,7 +114,6 @@ public class NodeFieldServiceImpl implements NodeFieldService {
                 parentNode.orderBefore(relativeFieldPath, fieldName + "[" + (position + 1) + "]");
             }
 
-            session.save();
         } catch (final RepositoryException e) {
             log.error("Failed to re-order field '{}' to position '{}'", nodeFieldPath, position, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
@@ -130,7 +129,6 @@ public class NodeFieldServiceImpl implements NodeFieldService {
         final String nodeFieldPath = documentPath + SEPARATOR + fieldPath;
         try {
             session.removeItem(nodeFieldPath);
-            session.save();
         } catch (final PathNotFoundException e) {
             throw new NotFoundException(new ErrorInfo(DOES_NOT_EXIST, "field", fieldPath.toString()));
         } catch (final RepositoryException e) {
@@ -160,8 +158,6 @@ public class NodeFieldServiceImpl implements NodeFieldService {
             final String srcPath = fieldNode.getName() + "[" + fieldNode.getIndex() + "]";
             final String destPath = StringUtils.substringAfterLast(targetPath, SEPARATOR);
             fieldNode.getParent().orderBefore(srcPath, destPath);
-
-            session.save();
         } catch (final RepositoryException e) {
             log.error("Failed to copy prototype '{}' to document '{}'", prototypePath, targetPath, e);
             throw new InternalServerErrorException(new ErrorInfo(SERVER_ERROR));
