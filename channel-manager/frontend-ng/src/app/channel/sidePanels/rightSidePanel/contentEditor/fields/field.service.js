@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Bloomreach (https://bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,14 @@
  */
 
 class FieldService {
-  constructor($timeout, $rootScope, $q, ContentService) {
+  constructor($timeout, $rootScope, $q, ContentService, HippoIframeService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.$q = $q;
     this.ContentService = ContentService;
+    this.HippoIframeService = HippoIframeService;
 
     this.documentId = null;
     this.throttled = {};
@@ -144,20 +145,26 @@ class FieldService {
     return this.throttled[documentId] && this.throttled[documentId][name];
   }
 
-  reorder({
+  async reorder({
     documentId = this.getDocumentId(),
     name,
     order,
   }) {
-    return this.ContentService.reorderField(documentId, name, order);
+    const reorder = await this.ContentService.reorderField(documentId, name, order);
+    await this.HippoIframeService.reload();
+    return reorder;
   }
 
-  add({ documentId = this.getDocumentId(), name }) {
-    return this.ContentService.addField(documentId, name);
+  async add({ documentId = this.getDocumentId(), name }) {
+    const addField = await this.ContentService.addField(documentId, name);
+    await this.HippoIframeService.reload();
+    return addField;
   }
 
-  remove({ documentId = this.getDocumentId(), name }) {
-    return this.ContentService.removeField(documentId, name);
+  async remove({ documentId = this.getDocumentId(), name }) {
+    const removeField = await this.ContentService.removeField(documentId, name)
+    await this.HippoIframeService.reload();
+    return removeField;
   }
 }
 
