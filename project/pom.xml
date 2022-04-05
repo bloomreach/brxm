@@ -42,7 +42,7 @@
     <notice.project.name>${project.name}</notice.project.name>
 
     <!--Java 11 related libs -->
-    <activation.version>2.1.0</activation.version>
+    <activation.version>1.2.2</activation.version>
     <jaxb-api.version>2.3.3</jaxb-api.version>
     <annotation-api.version>1.3.1</annotation-api.version>
     <jaxb-runtime.version>2.3.2</jaxb-runtime.version>
@@ -129,7 +129,7 @@
     <!-- restassured 4.3.0 and higher requires groovy 3.0 or higher-->
     <restassured.version>4.2.0</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
-    <sling-javax-activation.version>0.3.0</sling-javax-activation.version>
+    <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
     <javassist.version>3.24.1-GA</javassist.version>
 
     <!-- END properties versions with dependency management -->
