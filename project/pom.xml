@@ -291,8 +291,9 @@
   <dependencyManagement>
     <dependencies>
       <!-- provided third party libraries -->
-      <!-- CMS-11262 javax.activation is provided by the JRE but sometimes a previous version is referenced
+      <!-- Note 1: CMS-11262 javax.activation is provided by the JRE but sometimes a previous version is referenced
            from third-party libraries. This entry prevents accidental downgrades. -->
+      <!-- Note 2: By Java 11, jakarta activation isn't provided by JRE anymore. It's added to the shared library. -->
       <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
@@ -736,6 +737,10 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
     </dependency>
   </dependencies>
 
@@ -1224,6 +1229,11 @@
                   <dependency>
                     <groupId>javax.mail</groupId>
                     <artifactId>mail</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
                     <classpath>extra</classpath>
                   </dependency>
                   <dependency>
