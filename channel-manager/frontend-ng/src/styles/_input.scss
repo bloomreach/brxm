@@ -1,4 +1,4 @@
-// Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 .md-bloomreach-theme {
   md-input-container {
     margin: 12px 0;
+    min-width: 1px;
 
     &.no-margin {
       margin: 0;
