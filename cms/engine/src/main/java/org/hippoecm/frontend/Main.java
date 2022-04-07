@@ -895,6 +895,7 @@ public class Main extends PluginApplication {
             cspHeaderConfiguration.add(CSPDirective.STYLE_SRC, contentSecurityPolicy.getStyleSources());
             cspHeaderConfiguration.add(CSPDirective.IMG_SRC, contentSecurityPolicy.getImageSources());
             cspHeaderConfiguration.add(CSPDirective.CONNECT_SRC, contentSecurityPolicy.getConnectSources());
+            cspHeaderConfiguration.add(CSPDirective.FONT_SRC, contentSecurityPolicy.getFontSources());
         }
     }
 
