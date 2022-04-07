@@ -24,6 +24,7 @@ import org.hippoecm.repository.util.JcrUtils;
 public final class ContentSecurityPolicy {
 
     private String[] connectSources = new String[]{};
+    private String[] fontSources = new String[]{};
     private String[] frameAncestors = new String[]{};
     private String[] frameSources = new String[]{};
     private String[] imageSources = new String[]{};
@@ -32,6 +33,7 @@ public final class ContentSecurityPolicy {
 
     public ContentSecurityPolicy(final Node cspNode) throws RepositoryException {
         connectSources = JcrUtils.getMultipleStringProperty(cspNode, "connect-src", connectSources);
+        fontSources = JcrUtils.getMultipleStringProperty(cspNode, "font-src", fontSources);
         frameAncestors = JcrUtils.getMultipleStringProperty(cspNode, "frame-ancestors", frameAncestors);
         frameSources = JcrUtils.getMultipleStringProperty(cspNode, "frame-src", frameSources);
         imageSources = JcrUtils.getMultipleStringProperty(cspNode, "img-src", imageSources);
@@ -41,6 +43,10 @@ public final class ContentSecurityPolicy {
 
     public String[] getConnectSources() {
         return connectSources;
+    }
+
+    public String[] getFontSources() {
+        return fontSources;
     }
 
     public String[] getFrameAncestors() {
