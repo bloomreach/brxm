@@ -61,9 +61,8 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
             log.error("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()));
             return null;
         }
-
-        // strip leading and trailing slashes
-        String path = PathUtils.normalizePath(requestPath);
+        // strip leading and trailing slashes. By http spec, pathInfo (requestPath) can be null
+        String path = requestPath == null ? "" : PathUtils.normalizePath(requestPath);
 
         String matchingIgnoredPrefix = null;
         // check whether the requestPath starts with the cmsPreviewPrefix path: If so, first strip this prefix off and append it later to the resolvedMountPath
