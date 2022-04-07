@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials-plugins</artifactId>
-    <version>13.4.17-SNAPSHOT</version>
+    <version>13.4.18-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials SEO Plugin</name>
