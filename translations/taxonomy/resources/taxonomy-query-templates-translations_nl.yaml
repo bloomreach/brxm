@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        new-taxonomy-document: Nieuwe taxonomie

@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        new-taxonomy-document: 新分类法
