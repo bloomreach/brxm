@@ -730,14 +730,8 @@
       "locales" : null
     },
     "MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLOCKLIST" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
