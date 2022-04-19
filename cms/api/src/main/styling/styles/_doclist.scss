@@ -87,26 +87,6 @@ $doclist-icon-shift-right: 2px;
     &.doclisting-name {
       width: 100%;
       min-width: 90px;
-
-      span[title*="hippo"] {
-        align-items: center;
-        animation: hop .3s infinite alternate ease-out;
-        background-image: url("#{$images}/logo/logo.svg");
-        background-repeat: no-repeat;
-        background-size: 100px 60px;
-        display: flex;
-        height: 55px;
-      }
-
-      @keyframes hop {
-        from {
-          background-position: right bottom -9px;
-        }
-
-        to {
-          background-position: right bottom 1px;
-        }
-      }
     }
 
     .yui-layout-collapsed &.doclisting-name {

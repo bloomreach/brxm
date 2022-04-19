@@ -1,4 +1,4 @@
-// Copyright 2014-2021 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -587,23 +587,6 @@
 .browse-perspective-center-body .tabpanel form > div,
 .browse-perspective-center-body .tabpanel form > div > div {
   height: 100%;
-}
-
-.browse-perspective-center-body .tabpanel {
-  animation: jump .3s infinite alternate ease-out;
-  background-image: url("#{$images}/logo/logo.svg");
-  background-repeat: no-repeat;
-  background-size: 100px 60px;
-}
-
-@keyframes jump {
-  from {
-    background-position: center bottom -9px;
-  }
-
-  to {
-    background-position: center bottom 16px;
-  }
 }
 
 .hippo-editor-field-value-container {
