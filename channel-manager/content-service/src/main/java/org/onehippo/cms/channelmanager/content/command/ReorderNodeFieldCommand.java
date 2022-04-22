@@ -17,7 +17,7 @@ package org.onehippo.cms.channelmanager.content.command;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms.channelmanager.content.document.NodeFieldReorder;
+import org.onehippo.cms.channelmanager.content.document.NodeFieldServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms7.services.channelmanager.ChannelManagerCommand;
 import org.slf4j.Logger;
@@ -46,12 +46,10 @@ public class ReorderNodeFieldCommand implements ChannelManagerCommand {
 
 
     @Override
-    public void execute(final Session session) {
-        log.debug("Execute {} on session: { {}, userId: {} }", this, session, session.getUserID());
-        final String variantAbsolutePath = getAbsolutePath(getUnpublished(getHandle(uuid, session)));
-        final NodeFieldReorder nodeFieldReorder = new NodeFieldReorder(variantAbsolutePath, fieldPath,
-                position, session);
-        nodeFieldReorder.reorder();
+    public void execute(final Session previewCmsUserSession) {
+        log.debug("Execute {} on previewCmsUserSession: { {}, userId: {} }", this, previewCmsUserSession, previewCmsUserSession.getUserID());
+        final String variantAbsolutePath = getAbsolutePath(getUnpublished(getHandle(uuid, previewCmsUserSession)));
+        new NodeFieldServiceImpl(previewCmsUserSession).reorderNodeField(variantAbsolutePath, fieldPath, position);
     }
 
     public String toString() {

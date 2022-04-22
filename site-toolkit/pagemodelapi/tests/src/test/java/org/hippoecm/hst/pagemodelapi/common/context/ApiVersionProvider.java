@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagemodelapi.common.context;
 public class ApiVersionProvider {
 
     public enum ApiVersion {
-        V09,
         V10
     }
 

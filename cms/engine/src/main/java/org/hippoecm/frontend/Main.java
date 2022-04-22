@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Bloomreach (https://www.bloomreach.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
 import org.apache.wicket.ISessionListener;
 import org.apache.wicket.Page;
@@ -53,13 +52,13 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectP
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.csp.CSPDirective;
+import org.apache.wicket.csp.CSPHeaderConfiguration;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.filter.AbstractHeaderResponseFilter;
 import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.apache.wicket.markup.head.filter.OppositeHeaderResponseFilter;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
-import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebResponse;
@@ -107,6 +106,8 @@ import org.hippoecm.frontend.service.WicketFaviconService;
 import org.hippoecm.frontend.service.WicketFaviconServiceImpl;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.settings.ApplicationSettings;
+import org.hippoecm.frontend.settings.ContentSecurityPolicy;
 import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.repository.HippoRepository;
@@ -114,6 +115,8 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
+import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
@@ -133,8 +136,8 @@ public class Main extends PluginApplication {
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static final String FRONTEND_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-    private static final String WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = "whitelisted.classes.for.package.resources";
-    private static final String[] DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = {
+    private static final String ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES = "allowed.classes.for.package.resources";
+    private static final String[] DEFAULT_ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES = {
             "org.hippoecm.", "org.apache.wicket.", "org.onehippo.", "wicket.contrib."
     };
 
@@ -157,7 +160,7 @@ public class Main extends PluginApplication {
     public static final String PLUGIN_APPLICATION_HIDE_PERSPECTIVE_MENU_PARAMETER = "hidePerspectiveMenu";
 
     // comma separated init parameter
-    public static final String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
+    public static final String ACCEPTED_ORIGIN_ALLOWLIST = "accepted-origin-allowlist";
     /**
      * Custom Wicket {@link IRequestCycleListener} class names parameter which can be comma or whitespace-separated
      * string to set multiple {@link IRequestCycleListener}s.
@@ -187,6 +190,7 @@ public class Main extends PluginApplication {
 
     private static final String BINARIES_MOUNT = "binaries";
     private static final String AUTH_MOUNT = "auth";
+    private static final String WICKET_JS_DEBUG_PARAM = "wicket.js.debug";
 
     static {
         try {
@@ -379,7 +383,7 @@ public class Main extends PluginApplication {
                 return resourceStreamLocator.newResourceNameIterator(path, locale, style, variation, extension, strict);
             }
         });
-
+        setPageManagerProvider(new AmnesicPageManagerProvider());
         if (RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
@@ -396,16 +400,10 @@ public class Main extends PluginApplication {
 
             // do not render Wicket-specific markup since it can break CSS
             getMarkupSettings().setStripWicketTags(true);
+
+            final String isAjaxDebugModeEnabled = System.getProperty(WICKET_JS_DEBUG_PARAM, "false");
+            getDebugSettings().setAjaxDebugModeEnabled("true".equalsIgnoreCase(isAjaxDebugModeEnabled));
         } else {
-            // don't serialize pages for performance
-            setPageManagerProvider(new DefaultPageManagerProvider(this) {
-
-                @Override
-                protected IPageStore newPersistentStore() {
-                    return new AmnesicPageStore();
-                }
-            });
-
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
 
@@ -493,14 +491,14 @@ public class Main extends PluginApplication {
     }
 
     protected IPackageResourceGuard createPackageResourceGuard() {
-        return new WhitelistedClassesResourceGuard() {
+        return new AllowedClassesResourceGuard() {
             @Override
             protected void onInit() {
-                String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
+                String[] classNamePrefixes = GlobalSettings.get().getStringArray(ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES);
                 if (classNamePrefixes == null || classNamePrefixes.length == 0) {
-                    log.info("No whitelisted package resources found, using the default whitelist: {}",
-                            Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
-                    classNamePrefixes = DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES;
+                    log.info("No allowed package resources found, using the default allowlist: {}",
+                            Arrays.asList(DEFAULT_ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES));
+                    classNamePrefixes = DEFAULT_ALLOWED_CLASSES_FOR_PACKAGE_RESOURCES;
                 }
                 addClassNamePrefixes(classNamePrefixes);
 
@@ -685,7 +683,7 @@ public class Main extends PluginApplication {
     private void addCsrfPreventionRequestCycleListener(final RequestCycleListenerCollection requestCycleListenerCollection) {
         final CsrfPreventionRequestCycleListener listener = new CsrfPreventionRequestCycleListener();
         // split on tab (\t), line feed (\n), carriage return (\r), form feed (\f), " ", and ","
-        final String[] acceptedOrigins = StringUtils.split(getConfigurationParameter(ACCEPTED_ORIGIN_WHITELIST, null), " ,\t\f\r\n");
+        final String[] acceptedOrigins = StringUtils.split(getConfigurationParameter(ACCEPTED_ORIGIN_ALLOWLIST, null), " ,\t\f\r\n");
         if (acceptedOrigins != null && acceptedOrigins.length > 0) {
             for (String acceptedOrigin : acceptedOrigins) {
                 listener.addAcceptedOrigin(acceptedOrigin);
@@ -778,18 +776,17 @@ public class Main extends PluginApplication {
     }
 
     private void initCMS() {
-        getCspSettings().blocking()
-                .unsafeInline()
-                .add(CSPDirective.FRAME_ANCESTORS, SELF)
-                .add(CSPDirective.IMG_SRC, "data:") // allow ExtJS inline images
-                .add(CSPDirective.SCRIPT_SRC, "hippocdn.global.ssl.fastly.net") // load Hippo UsageStatistics
+        HippoServiceRegistry.addTracker(new ProxiedServiceTracker<>() {
+            @Override
+            public void serviceRegistered(final ProxiedServiceHolder<ApplicationSettings> serviceHolder) {
+                configureCSP(serviceHolder.getServiceProxy().getContentSecurityPolicy());
+            }
 
-                // Pendo
-                .add(CSPDirective.SCRIPT_SRC, "cdn.pendo.io", "data.pendo.io", "pendo-io-static.storage.googleapis.com", "pendo-static-5285379033268224.storage.googleapis.com")
-                .add(CSPDirective.STYLE_SRC, "app.pendo.io", "cdn.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
-                .add(CSPDirective.IMG_SRC, "app.pendo.io", "cdn.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com", "storage.googleapis.com/pendo-static-5285379033268224/")
-                .add(CSPDirective.CONNECT_SRC, "app.pendo.io", "data.pendo.io", "pendo-static-5285379033268224.storage.googleapis.com")
-                .add(CSPDirective.FRAME_ANCESTORS, "app.pendo.io");
+            @Override
+            public void serviceUnregistered(final ProxiedServiceHolder<ApplicationSettings> serviceHolder) {
+
+            }
+        }, ApplicationSettings.class);
 
         /*
          * HST SAML kind of authentication handler needed for Template Composer integration
@@ -878,9 +875,32 @@ public class Main extends PluginApplication {
         });
     }
 
-    private void initConsole() {
-        getCspSettings().blocking()
+    private void configureCSP(final ContentSecurityPolicy contentSecurityPolicy) {
+        final CSPHeaderConfiguration cspHeaderConfiguration = getCspSettings()
+                .blocking()
+                .clear()
                 .unsafeInline();
+
+        // allow the CMS application to be embedded by the navapp
+        cspHeaderConfiguration.add(CSPDirective.FRAME_ANCESTORS, SELF);
+        // allow ExtJS inline images
+        cspHeaderConfiguration.add(CSPDirective.IMG_SRC, "data:");
+        // load Hippo UsageStatistics
+        cspHeaderConfiguration.add(CSPDirective.SCRIPT_SRC, "hippocdn.global.ssl.fastly.net");
+
+        if (contentSecurityPolicy != null) {
+            cspHeaderConfiguration.add(CSPDirective.FRAME_ANCESTORS, contentSecurityPolicy.getFrameAncestors());
+            cspHeaderConfiguration.add(CSPDirective.FRAME_SRC, contentSecurityPolicy.getFrameSources());
+            cspHeaderConfiguration.add(CSPDirective.SCRIPT_SRC, contentSecurityPolicy.getScriptSources());
+            cspHeaderConfiguration.add(CSPDirective.STYLE_SRC, contentSecurityPolicy.getStyleSources());
+            cspHeaderConfiguration.add(CSPDirective.IMG_SRC, contentSecurityPolicy.getImageSources());
+            cspHeaderConfiguration.add(CSPDirective.CONNECT_SRC, contentSecurityPolicy.getConnectSources());
+            cspHeaderConfiguration.add(CSPDirective.FONT_SRC, contentSecurityPolicy.getFontSources());
+        }
+    }
+
+    private void initConsole() {
+        getCspSettings().blocking().unsafeInline();
     }
 
     public static boolean isCmsApplication() {

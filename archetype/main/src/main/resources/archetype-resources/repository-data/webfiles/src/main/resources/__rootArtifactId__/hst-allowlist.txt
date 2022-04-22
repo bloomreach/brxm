@@ -1,0 +1,26 @@
+##########################################################################
+#                                                                        #
+#   This file must contain all files and folders that                    #
+#   must be publicly available over http. Typically folders              #
+#   that contain server side scripts, such a freemarker                  #
+#   templates, should not be added as they in general should             #
+#   not be publicly available.                                           #
+#                                                                        #
+#   The entries are *relative* to the 'web file bundle root'             #
+#   which is the folder in which this hst-allowlist.txt file is          #
+#   located.                                                             #
+#                                                                        #
+#   Examples assuming the web file bundle root is 'site':                #
+#                                                                        #
+#   css/       : allows all descendant web files below 'site/css/'       #
+#   common.js  : allows the file 'site/common.js'                        #
+#                                                                        #
+#   Note that the processing of the entries is 'starts-with' based,      #
+#   thus for example allowing 'css' without '/' behind it, allows        #
+#   all files and folders that start with 'css'                          #
+#                                                                        #
+##########################################################################
+
+css/
+fonts/
+js/

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 
-public final class ScheduledRequest {
+public final class ScheduledRequest implements Request {
 
     private final Calendar scheduledDate;
     private final String type;
@@ -35,6 +35,11 @@ public final class ScheduledRequest {
         scheduledDate = JcrUtils.getDateProperty(requestNode, "hipposched:triggers/default/hipposched:nextFireTime", null);
         type = getAttributeValue(requestNode, "hipposched:methodName", "unknown");
         identifier = requestNode.getIdentifier();
+    }
+
+    @Override
+    public String getRequestType() {
+        return "scheduledRequest";
     }
 
     public String getType() {
