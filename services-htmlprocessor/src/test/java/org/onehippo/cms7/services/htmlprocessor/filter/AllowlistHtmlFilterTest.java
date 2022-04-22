@@ -1,0 +1,316 @@
+/*
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.onehippo.cms7.services.htmlprocessor.filter;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+public class AllowlistHtmlFilterTest {
+
+    private HtmlCleaner parser;
+    private HtmlFilter filter;
+
+    @Before
+    public void setUp() {
+        final CleanerProperties properties = new CleanerProperties();
+        properties.setOmitHtmlEnvelope(true);
+        properties.setOmitXmlDeclaration(true);
+        parser = new HtmlCleaner(properties);
+        filter = new AllowlistHtmlFilter();
+    }
+
+    @Test
+    public void testEmptyAllowlist() {
+        final TagNode result = filterHtml("<div></div>");
+        assertNull(result.findElementByName("div", true));
+    }
+
+    @Test
+    public void testRootNotAllowed() {
+        addToAllowlist("span");
+        final TagNode result = filterHtml("<div><span></span></div>");
+        assertNull(result.findElementByName("div", true));
+        assertNull(result.findElementByName("span", true));
+    }
+
+    @Test
+    public void testRootIsAllowed() {
+        addToAllowlist("div");
+        final TagNode result = filterHtml("<div>&nbsp;</div>");
+
+        final TagNode div = result.findElementByName("div", false);
+        assertNotNull(div);
+    }
+
+    @Test
+    public void testAllowedChildNodes() {
+        addToAllowlist("p", "em", "strong");
+        final TagNode result = filterHtml("<p><em></em><strong></strong></p>");
+
+        final TagNode p = result.findElementByName("p", true);
+        assertNotNull(p);
+        assertTrue(p.hasChildren());
+        assertEquals("em", p.getChildTagList().get(0).getName());
+        assertEquals("strong", p.getChildTagList().get(1).getName());
+    }
+
+    @Test
+    public void testCleanNonAllowedTag() throws Exception {
+        TagNode result = filterHtml("<script>alert(\"xss\")</script>");
+        // script element is not in allowlist
+        assertNull(result.findElementByName("script", true));
+
+        result = filterHtml("<ScRiPT>alert(\"xss\")</sCrIpT>");
+        assertNull(result.findElementByName("script", true));
+    }
+
+    @Test
+    public void testDescendantsAllowed() {
+        addToAllowlist("div", "p", "em");
+        final TagNode result = filterHtml("<div><p><em>text</em><em>test2</em></p><ul><li>list</li></ul></div><span>&nbsp;</span>");
+
+        final TagNode div = result.findElementByName("div", true);
+        assertNotNull(div);
+        assertEquals(1, div.getChildTags().length);
+
+        final TagNode p = div.findElementByName("p", false);
+        assertNotNull(p);
+        assertEquals(2, p.getChildTags().length);
+
+        final List<? extends TagNode> ems = p.getElementListByName("em", false);
+        assertEquals(2, ems.size());
+
+        // span should be cleaned
+        assertNull(result.findElementByName("span", true));
+    }
+
+    @Test
+    public void testPlainText() throws Exception {
+        final TagNode result = filterHtml("simple text");
+        assertEquals("simple text", result.getText().toString());
+    }
+
+    @Test
+    public void testTextInElement() throws Exception {
+        addToAllowlist("p");
+
+        final TagNode result = filterHtml("simple text <p>&nbsp;</p>");
+        assertEquals("simple text &nbsp;", result.getText().toString());
+
+        final TagNode p = result.getChildTags()[0];
+        assertEquals("&nbsp;", p.getText().toString());
+    }
+
+    @Test
+    public void testAttributesAllowed() throws Exception {
+        addToAllowlist(Element.create("img", "src"), Element.create("div", "id", "class"));
+
+        final TagNode result = filterHtml("<img src=\"img.gif\" class=\"img-class\"/>" +
+                                    "<div id=\"div-id\" class=\"div-class\" alt=\"div-alt\"></div>");
+
+        final TagNode img = result.findElementByName("img", true);
+        assertEquals("img.gif", img.getAttributeByName("src"));
+        assertFalse(img.hasAttribute("class"));
+
+        final TagNode div = result.findElementByName("div", true);
+        assertEquals("div-id", div.getAttributeByName("id"));
+        assertEquals("div-class", div.getAttributeByName("class"));
+        assertFalse(div.hasAttribute("alt"));
+    }
+
+    @Test
+    public void testCleanNonAllowedAttributes() throws Exception {
+        addToAllowlist("p");
+        TagNode result = filterHtml("<p foo=\"bar\">&nbsp;</p>");
+
+        // attribute foo of p is not in allowlist
+        assertNull(result.findElementHavingAttribute("foo", true));
+
+        result = filterHtml("<p foo=\"bar\" hippo=\"ok\">&nbsp;</p>");
+        assertNull(result.findElementHavingAttribute("foo", true));
+        assertNull(result.findElementHavingAttribute("hippo", true));
+    }
+
+    @Test
+    public void testCleanJavascriptInAttributes() {
+        final Element a = Element.create("a", "href");
+        addToAllowlist(a);
+
+        // href attribute contains javascript:
+        expectEmptyAttributes(a, "<a href=\"javascript:lancerPu('XXXcodepuXXX')\">Text</a>");
+    }
+
+    // Verify fix for CMS-7701 - See comment https://issues.onehippo.com/browse/CMS-7701?focusedCommentId=274200&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-274200
+    @Test
+    public void testCleanEncodedJavascriptInAttributes() {
+        final Element a = Element.create("a", "href");
+        addToAllowlist(a);
+
+        // href attribute contains encoded javascript
+        expectEmptyAttributes(a, "<a href=\"&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;" +
+                                            "&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;\">link</a>");
+    }
+
+    @Test
+    public void testCleanJavascriptProtocolArgumentFalse() {
+        addToAllowlist(Element.create("a", "href").setOmitJsProtocol(false));
+
+        // href attribute contains javascript:
+        final TagNode result = filterHtml("<a href=\"javascript:lancerPu('XXXcodepuXXX')\">Text</a>");
+        final TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("javascript:lancerPu('XXXcodepuXXX')", a.getAttributeByName("href"));
+    }
+
+    @Test
+    public void testCleanJavascriptProtocolWithWhitespace() {
+        final Element a = Element.create("a", "href");
+        addToAllowlist(a);
+
+        // check new lines
+        expectEmptyAttributes(a, "<a href=\"jav&#x0A;ascript:alert('XSS');\">test</a>");
+        expectEmptyAttributes(a, "<a href=\"javascript\n:alert('XSS');\">test</a>");
+
+        // spaces
+        expectEmptyAttributes(a, "<a href=\"javascript : alert('XSS');\">test</a>");
+        expectEmptyAttributes(a, "<a href=\"javascript  :  &#160;alert('XSS');\">test</a>");
+
+        // tabs and CR
+        expectEmptyAttributes(a, "<a href=\"java\tscript\t:\ralert('XSS');\">test</a>");
+    }
+
+    @Test
+    public void testCleanDataProtocol() {
+        final Element iframe = Element.create("iframe", "src");
+        addToAllowlist(iframe);
+
+        expectEmptyAttributes(iframe, "<iframe src=\"data:text/html;base64,PHN2Zy9vbmxvYWQ9YWxlcnQoMSk+\"></iframe>");
+    }
+
+    @Test
+    public void testCleanDataProtocolArgumentFalse() {
+        addToAllowlist(Element.create("iframe", "src").setOmitDataProtocol(false));
+
+        // src attribute contains data:
+        final TagNode result = filterHtml("<iframe src=\"data:testData\"></iframe>");
+        final TagNode iframe = result.findElementByName("iframe", true);
+        assertNotNull(iframe);
+        assertEquals("data:testData", iframe.getAttributeByName("src"));
+    }
+
+    @Test
+    public void testDataPrefixOfFileNameIsNotCleaned() {
+        addToAllowlist(Element.create("iframe", "src"));
+
+        // src attribute starts with 'data' but is not a data protocol
+        final TagNode result = filterHtml("<iframe src=\"data-science.html\"></a>");
+        final TagNode iframe = result.findElementByName("iframe", true);
+        assertNotNull(iframe);
+        assertEquals("data-science.html", iframe.getAttributeByName("src"));
+    }
+
+    @Test
+    public void testCleanDataProtocolWithWhitespace() {
+        final Element iframe = Element.create("iframe", "src");
+        addToAllowlist(iframe);
+
+        // check new lines
+        expectEmptyAttributes(iframe, "<iframe src=\"dat&#x0A;a:testData\"></iframe>");
+        expectEmptyAttributes(iframe, "<iframe src=\"data\n:testData\"></iframe>");
+
+        // spaces
+        expectEmptyAttributes(iframe, "<iframe src=\"data : testData\"></iframe>");
+        expectEmptyAttributes(iframe, "<iframe src=\"data  :  &#160;testData\"></iframe>");
+
+        // tabs and CR
+        expectEmptyAttributes(iframe, "<iframe src=\"dat\ta\t:\rtestData\"></iframe>");
+    }
+
+    @Test
+    public void testSecureTargetBlankLinks() {
+        final Element a = Element.create("a", "href", "target", "rel");
+        addToAllowlist(a);
+
+        final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\">test</a>");
+        final TagNode tag = result.findElementByName(a.getName(), true);
+
+        final String relAttribute = tag.getAttributeByName("rel");
+        assertThat("attribute 'rel' should contain value 'noopener'", relAttribute, containsString("noopener"));
+        assertThat("attribute 'rel' should contain value 'noreferrer'", relAttribute, containsString("noreferrer"));
+    }
+
+    @Test
+    public void testSecureTargetBlankLinksWithExistingRelAttribute() {
+        final Element a = Element.create("a", "href", "target", "rel");
+        addToAllowlist(a);
+
+        final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\" rel=\"pingback\">test</a>");
+        final TagNode tag = result.findElementByName(a.getName(), true);
+
+        final String relAttribute = tag.getAttributeByName("rel");
+        assertThat("attribute 'rel' should contain original value", relAttribute, containsString("pingback"));
+        assertThat("attribute 'rel' should contain value 'noopener'", relAttribute, containsString("noopener"));
+        assertThat("attribute 'rel' should contain value 'noreferrer'", relAttribute, containsString("noreferrer"));
+    }
+
+    @Test
+    public void testSecureTargetBlankLinksDisabled() {
+        final Element a = Element.create("a", "href", "target", "rel").setSecureTargetBlankLinks(false);
+        addToAllowlist(a);
+
+        final TagNode result = filterHtml("<a href=\"http://www.acme.com\" target=\"_blank\" rel=\"pingback\">test</a>");
+        final TagNode tag = result.findElementByName(a.getName(), true);
+
+        final String relAttribute = tag.getAttributeByName("rel");
+        assertThat("attribute 'rel' should not contain value 'noopener'", relAttribute, not(containsString("noopener")));
+        assertThat("attribute 'rel' should not contain value 'noreferrer'", relAttribute, not(containsString("noreferrer")));
+    }
+
+    private TagNode filterHtml(final String html) {
+        return filter.apply(parser.clean(html));
+    }
+
+    private void addToAllowlist(final String... tags) {
+        Arrays.stream(tags).forEach(tag -> filter.add(Element.create(tag)));
+    }
+
+    private void addToAllowlist(final Element... elements) {
+        Arrays.stream(elements).forEach(element -> filter.add(element));
+    }
+
+    private void expectEmptyAttributes(final Element element, final String payload) {
+        final TagNode result = filterHtml(payload);
+        final TagNode tag = result.findElementByName(element.getName(), true);
+
+        assertNotNull(tag);
+        element.getAttributes().forEach(attr -> assertEquals("", tag.getAttributeByName(attr)));
+    }
+}

@@ -1,0 +1,56 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/application-settings:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.hippoecm.frontend.settings.ApplicationSettingsDaemonModule
+      hipposys:cmsonly: true
+      /hippo:moduleconfig:
+        jcr:primaryType: nt:unstructured
+        /content-security-policy:
+          jcr:primaryType: nt:unstructured
+          connect-src: [
+            'app.pendo.io',
+            'data.pendo.io',
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'maps.googleapis.com'
+          ]
+          frame-ancestors: [
+            'app.pendo.io'
+          ]
+          frame-src: [
+            'app.pendo.io',
+            'bloomreach-products.auth0.com',
+            'bloomreach-dev.us.auth0.com',
+            'tools.bloomreach.com',
+            'tools.bloomreach.co.uk',
+            'tools-staging.bloomreach.com',
+            'tools-staging.bloomreach.co.uk',
+            'tools-dev.bloomreach.com',
+            'tools-dev.bloomreach.co.uk',
+            'tools-sandbox.bloomreach.com',
+            'tools-sandbox.bloomreach.co.uk'
+          ]
+          img-src: [
+            'app.pendo.io',
+            'cdn.pendo.io',
+            'data.pendo.io',
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'storage.googleapis.com/pendo-static-5285379033268224/',
+            'maps.googleapis.com',
+            'maps.gstatic.com'
+          ]
+          script-src: [
+            'app.pendo.io',
+            'cdn.pendo.io',
+            'data.pendo.io',
+            'pendo-io-static.storage.googleapis.com',
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'maps.googleapis.com'
+          ]
+          style-src: [
+            'app.pendo.io',
+            'cdn.pendo.io',
+            'pendo-static-5285379033268224.storage.googleapis.com',
+            'storage.googleapis.com/pendo-static-5285379033268224/',
+            'fonts.googleapis.com/css'
+          ]

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020-2021 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ import { DocumentState } from '../models/document-state.enum';
 import { PageStates } from '../models/page-states.model';
 import { XPageStatusInfo } from '../models/page-status-info.model';
 import { ProjectState } from '../models/project-state.enum';
-import { ScheduledRequestType } from '../models/scheduled-request-type.enum';
-import { WorkflowRequestType } from '../models/workflow-request-type.enum';
+import { RequestType, ScheduledRequestType, WorkflowRequestType } from '../models/workflow-request-type.enum';
 import { XPageState } from '../models/xpage-state.model';
 import { XPageStatus } from '../models/xpage-status.enum';
 import { VersionsService } from '../versions/services/versions.service';
@@ -162,7 +161,7 @@ describe('PageService', () => {
       {
         xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
         workflow: {
-          requests: [{ type: WorkflowRequestType.Publish, name: 'page name' }],
+          requests: [{ type: WorkflowRequestType.Publish, name: 'page name', requestType: RequestType.Workflow }],
         },
       },
       undefined,
@@ -177,7 +176,7 @@ describe('PageService', () => {
       {
         xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
         workflow: {
-          requests: [{ type: WorkflowRequestType.Depublish, name: 'page name' }],
+          requests: [{ type: WorkflowRequestType.Depublish, name: 'page name', requestType: RequestType.Workflow }],
         },
       },
       undefined,
@@ -192,7 +191,7 @@ describe('PageService', () => {
       {
         xpage: { name: 'page name', state: DocumentState.Changed, branchId: 'master' },
         workflow: {
-          requests: [{ type: WorkflowRequestType.Rejected }],
+          requests: [{ type: WorkflowRequestType.Rejected, requestType: RequestType.Workflow }],
         },
       },
       undefined,
@@ -207,7 +206,7 @@ describe('PageService', () => {
       {
         xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
         workflow: {
-          requests: [{ type: WorkflowRequestType.ScheduledPublish, requestDate: 1596811323 }],
+          requests: [{ type: WorkflowRequestType.ScheduledPublish, requestDate: 1596811323, requestType: RequestType.Workflow }],
         },
       },
       undefined,
@@ -223,7 +222,7 @@ describe('PageService', () => {
       {
         xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
         workflow: {
-          requests: [{ type: WorkflowRequestType.ScheduledDepublish, requestDate: 1596811323 }],
+          requests: [{ type: WorkflowRequestType.ScheduledDepublish, requestDate: 1596811323, requestType: RequestType.Workflow }],
         },
       },
       undefined,
@@ -238,7 +237,9 @@ describe('PageService', () => {
       'ScheduledPublication',
       {
         xpage: { name: 'page name', state: DocumentState.Unpublished, branchId: 'master' },
-        scheduledRequest: { type: ScheduledRequestType.Publish, scheduledDate: 1596811323 },
+        workflow: {
+          requests: [{ type: ScheduledRequestType.Publish, scheduledDate: 1596811323, requestType: RequestType.Scheduled }],
+        },
       },
       undefined,
       new XPageStatusInfo(
@@ -252,7 +253,9 @@ describe('PageService', () => {
       'ScheduledToTakeOffline',
       {
         xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
-        scheduledRequest: { type: ScheduledRequestType.Depublish, scheduledDate: 1596811323 },
+        workflow: {
+          requests: [{ type: ScheduledRequestType.Depublish, scheduledDate: 1596811323, requestType: RequestType.Scheduled }],
+        },
       },
       undefined,
       new XPageStatusInfo(
@@ -478,6 +481,24 @@ describe('PageService', () => {
         undefined,
         undefined,
         'username',
+      ),
+    ],
+    [
+      'PublicationRequest if the latest element in workflow.requests is WorkflowRequestType.Publish',
+      {
+        xpage: { name: 'page name', state: DocumentState.Live, branchId: 'master' },
+        workflow: {
+          requests: [
+            { type: WorkflowRequestType.Depublish, name: 'page name', requestType: RequestType.Workflow },
+            { type: WorkflowRequestType.Publish, name: 'page name', requestType: RequestType.Workflow },
+          ],
+        },
+      },
+      undefined,
+      new XPageStatusInfo(
+        XPageStatus.PublicationRequest,
+        DocumentState.Live,
+        'page name',
       ),
     ],
   ])('getXPageStatus if page states represent "%s" state', (expectedStatusName, pageStates, project, expectedStatusInfo) => {

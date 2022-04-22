@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class HtmlProcessorConfig implements Serializable {
     private boolean secureTargetBlankLinks;
     private boolean filter;
     private boolean convertLineEndings;
-    private List<Element> whitelistElements;
+    private List<Element> allowlistElements;
 
     public HtmlProcessorConfig() {
         charset = DEFAULT_CHARSET;
@@ -83,11 +83,11 @@ public class HtmlProcessorConfig implements Serializable {
         serializer = HtmlSerializer.valueOfOrDefault(serializerName);
 
         if (node.hasNodes()) {
-            whitelistElements = new ArrayList<>();
+            allowlistElements = new ArrayList<>();
             final NodeIterator filters = node.getNodes();
             while (filters.hasNext()) {
                 final Element element = createElement(filters.nextNode());
-                whitelistElements.add(element);
+                allowlistElements.add(element);
             }
         }
     }
@@ -132,12 +132,12 @@ public class HtmlProcessorConfig implements Serializable {
         return filter;
     }
 
-    public void setWhitelistElements(final List<Element> whitelistElements) {
-        this.whitelistElements = whitelistElements;
+    public void setAllowlistElements(final List<Element> allowlistElements) {
+        this.allowlistElements = allowlistElements;
     }
 
-    public List<Element> getWhitelistElements() {
-        return whitelistElements;
+    public List<Element> getAllowlistElements() {
+        return allowlistElements;
     }
 
     public boolean isConvertLineEndings() {

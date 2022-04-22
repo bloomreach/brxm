@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import { ScheduledRequest } from './scheduled-request.model';
 import { Workflow } from './workflow.model';
 import { XPageState } from './xpage-state.model';
 
 export interface PageStates {
   xpage?: XPageState;
-  scheduledRequest?: ScheduledRequest;
   workflow?: Workflow;
 }

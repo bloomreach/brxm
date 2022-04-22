@@ -20,7 +20,7 @@ import java.util.List;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
-import org.onehippo.cms.channelmanager.content.document.NodeFieldAddition;
+import org.onehippo.cms.channelmanager.content.document.NodeFieldServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms7.services.channelmanager.ChannelManagerCommand;
@@ -49,13 +49,11 @@ public class AddNodeFieldCommand implements ChannelManagerCommand {
     }
 
     @Override
-    public void execute(final Session session) {
-        log.debug("Execute {} on session: { {}, userId: {} }", this, session, session.getUserID());
+    public void execute(final Session previewCmsUserSession) {
+        log.debug("Execute {} on session: { {}, userId: {} }", this, previewCmsUserSession, previewCmsUserSession.getUserID());
         final String variantAbsolutePath = getAbsolutePath(
-                DocumentsServiceImpl.getUnpublished(getHandle(uuid, session)));
-        final NodeFieldAddition nodeFieldAddition = new NodeFieldAddition(variantAbsolutePath,
-                fieldPath, fieldTypes, type, session);
-        nodeFieldAddition.add();
+                DocumentsServiceImpl.getUnpublished(getHandle(uuid, previewCmsUserSession)));
+        new NodeFieldServiceImpl(previewCmsUserSession).addNodeField(variantAbsolutePath, fieldPath, fieldTypes, type);
     }
 
     public String toString() {
