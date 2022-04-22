@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { WorkflowRequestType } from './workflow-request-type.enum';
+import { RequestType, ScheduledRequestType, WorkflowRequestType } from './workflow-request-type.enum';
 
 export interface WorkflowRequest {
   id: string;
   reason: string;
   requestDate: number;
   creationDate: number;
-  type: WorkflowRequestType;
+  type: WorkflowRequestType & ScheduledRequestType;
   username: string;
+  requestType: RequestType;
+  scheduledDate: number;
 }

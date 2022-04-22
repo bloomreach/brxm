@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
 
 import static java.util.stream.Collectors.toMap;
@@ -38,8 +36,7 @@ final class HstStateProvider {
         if (context.isExperiencePageRequest()) {
             final XPageContext xPageContext = context.getXPageContext();
             states.putAll(xPageStates(xPageContext));
-            states.putAll(scheduledRequestStates(xPageContext));
-            states.put(HstState.WORKFLOW_REQUESTS, xPageContext.getWorkflowRequests());
+            states.put(HstState.REQUESTS, xPageContext.getRequests());
         }
 
         return states;
@@ -56,17 +53,6 @@ final class HstStateProvider {
             states.put(HstState.XPAGE_LOCKED_BY, xPageContext.getLockedBy());
         }
 
-        return states;
-    }
-
-    private Map<NamedCategory, Object> scheduledRequestStates(XPageContext xPageContext) {
-        final ScheduledRequest scheduledRequest = xPageContext.getScheduledRequest();
-        if (scheduledRequest == null) {
-            return Collections.emptyMap();
-        }
-        final Map<NamedCategory, Object> states = new HashMap<>();
-        states.put(HstState.SCHEDULEDREQUEST_SCHEDULED_DATE, scheduledRequest.getScheduledDate());
-        states.put(HstState.SCHEDULEDREQUEST_TYPE, scheduledRequest.getType());
         return states;
     }
 

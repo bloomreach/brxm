@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.document;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -26,6 +27,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.UserContext;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -42,103 +45,148 @@ public class DocumentValidityServiceImpl implements DocumentValidityService {
     private static final Logger log = LoggerFactory.getLogger(DocumentValidityServiceImpl.class);
 
     @Override
-    public void handleDocumentTypeChanges(final Session workflowSession, final DocumentType documentType, final List<Node> variants) throws RepositoryException {
-        if (variants.isEmpty()) {
-            return;
-        }
-
-        // The document prototype contains the prototype nodes of the fields that where created with the doc-type editor
-        final Node prototype = findFirstPrototypeNode(workflowSession, documentType.getId());
-        if (prototype == null) {
-            log.warn("Unable to find prototype '{}', skipping handling of document type changes", documentType.getId());
-            return;
-        }
-
-        for (final FieldType field : documentType.getFields()) {
-            if (field instanceof NodeFieldType) {
-                checkFieldChanges(workflowSession, variants, prototype, field);
-            }
-        }
+    public void handleDocumentTypeChanges(final UserContext userContext, final Session workflowSession,
+                                          final DocumentType documentType, final List<Node> variants) throws RepositoryException {
+        ContentTypeValidator.processChanges(userContext, workflowSession, documentType, variants);
 
         if (workflowSession.hasPendingChanges()) {
             workflowSession.save();
         }
     }
 
-    private void checkFieldChanges(final Session workflowSession, final List<Node> variants,
-                                   final Node documentPrototype, final FieldType field) {
+    private static class ContentTypeValidator {
 
-        final Node variant = variants.get(0);
-        try {
-            long numberOfMissingNodes = getNumberOfMissingNodes(variant, field);
-            if (numberOfMissingNodes == 0) {
+        static void processChanges(final UserContext userContext, final Session workflowSession, final DocumentType documentType,
+                                   final List<Node> variants) {
+            new ContentTypeValidator(userContext, workflowSession).processChanges(documentType, variants);
+        }
+
+        private final UserContext userContext;
+        private final Session workflowSession;
+
+        private ContentTypeValidator(final UserContext userContext, final Session workflowSession) {
+            this.userContext = userContext;
+            this.workflowSession = workflowSession;
+        }
+
+        private void processChanges(final DocumentType documentType, final List<Node> variants) {
+            if (variants.isEmpty()) {
+                log.debug("No variants available for DocumentType '{}'", documentType.getId());
                 return;
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Found {} missing node(s) for field '{}' of type '{}' in document node {}",
-                        numberOfMissingNodes, field.getId(), field.getType(), getNodePathQuietly(variant));
-            }
-
-            final List<Node> missingPrototypeNodes = findMissingPrototypeNodes(workflowSession, documentPrototype, field);
-            if (missingPrototypeNodes.isEmpty()) {
-                log.error("Failed to find prototype nodes for field '{}' in document '{}' which is missing {} nodes",
-                        field.getId(), getNodePathQuietly(variant), numberOfMissingNodes);
+            // The document prototype contains the prototype nodes of the fields that where created with the doc-type editor
+            final Node prototype = findFirstPrototypeNode(workflowSession, documentType.getId());
+            if (prototype == null) {
+                log.warn("Unable to find prototype node of type '{}', skipping handling of type changes", documentType.getId());
                 return;
             }
 
-            copyMissingPrototypeNodes(workflowSession, field, numberOfMissingNodes, missingPrototypeNodes, variants);
-        } catch (RepositoryException e) {
-            log.warn("An error occurred while checking the cardinality of field '{}': {}", field.getId(), e.getMessage());
-        }
-    }
+            for (final FieldType field : documentType.getFields()) {
+                if (field instanceof NodeFieldType) {
+                    checkFieldChanges(variants, prototype, field);
 
-    private List<Node> findMissingPrototypeNodes(final Session workflowSession, final Node documentPrototype,
-                                                 final FieldType field) throws RepositoryException {
-        List<Node> prototypeNodes = Collections.emptyList();
+                    final List<Node> fieldVariants = variants.stream()
+                            .map(variantNode -> getFieldNode(field, variantNode))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
 
-        // check if document prototype has nodes
-        if (documentPrototype != null) {
-            prototypeNodes = NodeUtils.getNodes(documentPrototype, field.getId()).collect(Collectors.toList());
-        }
-
-        // otherwise, do a ContentTypeHandle lookup by JCR type
-        if (prototypeNodes.isEmpty()) {
-            final Node fieldPrototype = findFirstPrototypeNode(workflowSession, field.getJcrType());
-            if (fieldPrototype != null) {
-                log.debug("Will use the prototype at {}", getNodePathQuietly(fieldPrototype));
-                prototypeNodes = Collections.singletonList(fieldPrototype);
+                    final String jcrType = field.getJcrType();
+                    try {
+                        final DocumentType fieldType = DocumentTypesService.get().getDocumentType(jcrType, userContext);
+                        processChanges(fieldType, fieldVariants);
+                    } catch (Exception e) {
+                        // This exception is thrown if the DocumentTypesService fails to locate a DocumentType, which
+                        // is not always a problem; for example, built-in types like "hippo:mirror" will generate such
+                        // an exception, but they can't be changed by the user, so we don't need to check it for changes.
+                        log.debug("Failed to locate DocumentType for field '{}' with type '{}'", field.getId(), jcrType);
+                    }
+                }
             }
         }
 
-        return prototypeNodes;
-    }
-
-    private void copyMissingPrototypeNodes(final Session workflowSession, final FieldType field,
-                                           long numberOfMissingNodes, final List<Node> prototypeNodes,
-                                           final List<Node> variantNodes) throws RepositoryException {
-
-        Iterator<Node> prototypes = prototypeNodes.listIterator();
-        while (numberOfMissingNodes > 0 && prototypes.hasNext()) {
-
-            final Node prototypeNode = prototypes.next();
-            final String prototypePath = prototypeNode.getPath();
-
-            for (final Node variant: variantNodes) {
-                // copy the prototype node to the field-path in the document
-                final String targetPath = variant.getPath() + SEPARATOR + field.getId();
-                JcrUtils.copy(workflowSession, prototypePath, targetPath);
+        private Node getFieldNode(final FieldType field, final Node variantNode) {
+            try {
+                if (variantNode.hasNode(field.getId())) {
+                    return variantNode.getNode(field.getId());
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to retrieve field node '{}/{}' ", JcrUtils.getNodePathQuietly(variantNode), field.getId());
             }
-
-            if (!prototypes.hasNext()) {
-                prototypes = prototypeNodes.listIterator();
-            }
-            numberOfMissingNodes--;
+            return null;
         }
-    }
 
-    private long getNumberOfMissingNodes(final Node node, final FieldType field) throws RepositoryException {
-        final long numberOfNodes = NodeUtils.getNodes(node, field.getId()).count();
-        return Math.max(0, field.getMinValues() - numberOfNodes);
+        private void checkFieldChanges(final List<Node> variants, final Node documentPrototype, final FieldType field) {
+            final Node variant = variants.get(0);
+            try {
+                long numberOfMissingNodes = getNumberOfMissingNodes(variant, field);
+                if (numberOfMissingNodes == 0) {
+                    return;
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Found {} missing node(s) for field '{}' of type '{}' in document node {}",
+                            numberOfMissingNodes, field.getId(), field.getType(), getNodePathQuietly(variant));
+                }
+
+                final List<Node> missingPrototypeNodes = findMissingPrototypeNodes(documentPrototype, field);
+                if (missingPrototypeNodes.isEmpty()) {
+                    log.error("Failed to find prototype nodes for field '{}' in document '{}' which is missing {} nodes",
+                            field.getId(), getNodePathQuietly(variant), numberOfMissingNodes);
+                    return;
+                }
+
+                copyMissingPrototypeNodes(field, numberOfMissingNodes, missingPrototypeNodes, variants);
+            } catch (RepositoryException e) {
+                log.warn("An error occurred while checking the cardinality of field '{}': {}", field.getId(), e.getMessage());
+            }
+        }
+
+        private List<Node> findMissingPrototypeNodes(final Node documentPrototype, final FieldType field) throws RepositoryException {
+            List<Node> prototypeNodes = Collections.emptyList();
+
+            // check if document prototype has nodes
+            if (documentPrototype != null) {
+                prototypeNodes = NodeUtils.getNodes(documentPrototype, field.getId()).collect(Collectors.toList());
+            }
+
+            // otherwise, do a ContentTypeHandle lookup by JCR type
+            if (prototypeNodes.isEmpty()) {
+                final Node fieldPrototype = findFirstPrototypeNode(workflowSession, field.getJcrType());
+                if (fieldPrototype != null) {
+                    log.debug("Will use the prototype at {}", getNodePathQuietly(fieldPrototype));
+                    prototypeNodes = Collections.singletonList(fieldPrototype);
+                }
+            }
+
+            return prototypeNodes;
+        }
+
+        private void copyMissingPrototypeNodes(final FieldType field, long numberOfMissingNodes,
+                                               final List<Node> prototypeNodes, final List<Node> variantNodes) throws RepositoryException {
+
+            Iterator<Node> prototypes = prototypeNodes.listIterator();
+            while (numberOfMissingNodes > 0 && prototypes.hasNext()) {
+
+                final Node prototypeNode = prototypes.next();
+                final String prototypePath = prototypeNode.getPath();
+
+                for (final Node variant : variantNodes) {
+                    // copy the prototype node to the field-path in the document
+                    final String targetPath = variant.getPath() + SEPARATOR + field.getId();
+                    JcrUtils.copy(workflowSession, prototypePath, targetPath);
+                }
+
+                if (!prototypes.hasNext()) {
+                    prototypes = prototypeNodes.listIterator();
+                }
+                numberOfMissingNodes--;
+            }
+        }
+
+        private long getNumberOfMissingNodes(final Node node, final FieldType field) throws RepositoryException {
+            final long numberOfNodes = NodeUtils.getNodes(node, field.getId()).count();
+            return Math.max(0, field.getMinValues() - numberOfNodes);
+        }
     }
 }

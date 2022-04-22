@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>15.0.0-SNAPSHOT</version>
+    <version>15.1.0-SNAPSHOT</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>15.0.0-SNAPSHOT</version>
+  <version>15.1.0-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -36,7 +36,7 @@
   <properties>
     <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
          should NOT be updated with product releases. -->
-    <hippo.jackrabbit.version>2.21.6-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.21.6-h3</hippo.jackrabbit.version>
     <hippo.cargo-extensions.version>14.0.0</hippo.cargo-extensions.version>
 
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
@@ -822,7 +822,7 @@
 
       <dependency>
         <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
-        <artifactId>hst-pagemodelapi-v09</artifactId>
+        <artifactId>hst-pagemodelapi-v10</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
 
