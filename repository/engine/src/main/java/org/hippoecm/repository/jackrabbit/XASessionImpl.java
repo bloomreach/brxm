@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Bloomreach (https://bloomreach.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
@@ -92,6 +93,8 @@ import org.onehippo.repository.xml.ImportContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
+
+import static org.onehippo.repository.security.domain.DomainRuleExtension.HIPPO_AVAILABILITY_PREVIEW_RULE;
 
 public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl implements InternalHippoSession {
 
@@ -584,7 +587,27 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
             final Set<QFacetRule> facetRules = ruleExtensionsMap.get("*");
             if (facetRules != null && !facetRules.isEmpty()) {
                 Set<DomainRule> extendedDomainRules = domainRules.stream()
-                        .map(r -> new DomainRule(r, facetRules))
+                        // this is an unfortunate temporal workaround: to render the preview in the channel mgr, the user
+                        // most be able to
+                        .map(r -> {
+                            if ("frontend-config".equals(r.getDomainName())){
+                                // do not constraint the hippo-frontend read access through a wildcard facetrule for
+                                // availability = preview only: this is because the preview jcr session for the preview
+                                // website still must be able to access the live prototypes of namespaces. This is
+                                // a bit of a workaround. It would be cleaner if we could do this via DomainRuleExtensions
+                                // by for example excluding a domain. For now hardcoded here
+                                final Set<QFacetRule> filterFacetRules = facetRules.stream()
+                                        .filter(rule -> !Objects.equals(rule.getFacetRule(), HIPPO_AVAILABILITY_PREVIEW_RULE))
+                                        .collect(Collectors.toSet());
+                                if (filterFacetRules.isEmpty()) {
+                                    // no extra facet rules to add, just return the original domain rule
+                                    return r;
+                                }
+                                return new DomainRule(r, filterFacetRules);
+                            } else {
+                                return new DomainRule(r, facetRules);
+                            }
+                        })
                         .collect(Collectors.toSet());
                 domainRules.clear();
                 domainRules.addAll(extendedDomainRules);

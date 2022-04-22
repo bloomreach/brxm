@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Bloomreach (https://bloomreach.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -116,6 +116,9 @@ public class QFacetRule implements Serializable {
 
     private final FacetRuleType facetRuleType;
 
+    // the non QFacetRule equivalent of this
+    private FacetRule facetRule;
+
     public enum FacetRuleType {
         NODETYPE,
         NODENAME,
@@ -137,6 +140,7 @@ public class QFacetRule implements Serializable {
         this.valueName = nameResolver.getQName(value);
         this.equals = facetRule.isEqual();
         this.optional = facetRule.isOptional();
+        this.facetRule = facetRule;
     }
 
     /**
@@ -178,6 +182,8 @@ public class QFacetRule implements Serializable {
         value = tmpValue;
         valueName = tmpName;
 
+        facetRule = new FacetRule(facet, value, equals, optional, type);
+
     }
 
     private FacetRuleType getFacetRuleType(final String facet) {
@@ -196,7 +202,7 @@ public class QFacetRule implements Serializable {
         }
     }
 
-    public boolean isHierarchicalWhiteListRule() {
+    public boolean isHierarchicalAllowlistRule() {
         if (JcrConstants.JCR_PATH.equals(facet) && equals) {
             return true;
         }
@@ -345,6 +351,13 @@ public class QFacetRule implements Serializable {
      */
     public int getType() {
         return type;
+    }
+
+    /**
+     * @return the {@link FacetRule} representation for this {@link QFacetRule}
+     */
+    public FacetRule getFacetRule() {
+        return facetRule;
     }
 
     /**

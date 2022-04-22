@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,7 @@ public enum HstState implements NamedCategory {
     XPAGE_NAME("name", HstCategory.XPAGE),
     XPAGE_STATE("state", HstCategory.XPAGE),
 
-    WORKFLOW_REQUESTS("requests", HstCategory.WORKFLOW),
-
-    SCHEDULEDREQUEST_SCHEDULED_DATE("scheduledDate", HstCategory.SCHEDULED_REQUEST),
-    SCHEDULEDREQUEST_TYPE("type", HstCategory.SCHEDULED_REQUEST),
+    REQUESTS("requests", HstCategory.WORKFLOW),
     ;
 
     private final String name;

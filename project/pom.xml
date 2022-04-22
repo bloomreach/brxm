@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>15.0.0-SNAPSHOT</version>
+  <version>15.1.0-SNAPSHOT</version>
 
   <name>Hippo CMS Project POM</name>
   <description>Hippo CMS Project POM</description>
@@ -33,7 +33,7 @@
   </organization>
 
   <properties>
-    <hippo.release.version>15.0.0-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>15.1.0-SNAPSHOT</hippo.release.version>
 
     <!-- use UTF-8 encoding for filtered file copy and test reports -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,7 +45,7 @@
     <activation.version>1.2.2</activation.version>
     <jaxb-api.version>2.3.3</jaxb-api.version>
     <annotation-api.version>1.3.1</annotation-api.version>
-    <jaxb-runtime.version>2.3.2</jaxb-runtime.version>
+    <jaxb-runtime.version>2.3.4</jaxb-runtime.version>
     <ws-api.version>2.3.3</ws-api.version>
 
     <!--
@@ -64,7 +64,7 @@
     <mail.version>1.4.7</mail.version>
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.1</log4j2.version>
-    <guava.version>30.1-jre</guava.version>
+    <guava.version>31.1-jre</guava.version>
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
@@ -106,12 +106,10 @@
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.13.1</jackson2.version>
     <jackson2-databind.version>2.13.1</jackson2-databind.version>
-    <spring.version>5.3.15</spring.version>
-    <spring-boot.version>2.5.9</spring-boot.version>
-    <!-- spring-data-redis version is not in sync with spring, caching module needs to be updated. See ENT-2061 -->
-    <spring-data-redis.version>1.8.23.RELEASE</spring-data-redis.version>
-    <spring-integration-ftp.version>5.5.8</spring-integration-ftp.version>
-    <spring-integration-sftp.version>5.5.8</spring-integration-sftp.version>
+    <spring.version>5.3.18</spring.version>
+    <spring-boot.version>2.5.12</spring-boot.version>
+    <spring-integration-ftp.version>5.5.10</spring-integration-ftp.version>
+    <spring-integration-sftp.version>5.5.10</spring-integration-sftp.version>
     <spring-security.version>5.6.1</spring-security.version>
     <spring-security-oauth2.version>2.5.1.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.9.7</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
@@ -130,10 +128,10 @@
     <restassured.version>4.2.0</restassured.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
-    <javassist.version>3.24.1-GA</javassist.version>
+    <javassist.version>3.27.0-GA</javassist.version>
 
     <!-- END properties versions with dependency management -->
-    <maven.required.version>3.3.9</maven.required.version>
+    <maven.required.version>3.5.0</maven.required.version>
 
     <maven.plugin.antrun.version>3.0.0</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>3.3.0</maven.plugin.assembly.version>
@@ -146,7 +144,7 @@
     <maven.plugin.dependency.version>3.1.2</maven.plugin.dependency.version>
     <maven.plugin.deploy.version>2.8.2</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
-    <maven.plugin.flatten.version>1.1.0</maven.plugin.flatten.version>
+    <maven.plugin.flatten.version>1.2.2</maven.plugin.flatten.version>
     <maven.plugin.exec.version>3.0.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>3.0.0-M5</maven.plugin.failsafe.version>
     <maven.plugin.frontend.version>1.11.0</maven.plugin.frontend.version>
@@ -293,8 +291,9 @@
   <dependencyManagement>
     <dependencies>
       <!-- provided third party libraries -->
-      <!-- CMS-11262 javax.activation is provided by the JRE but sometimes a previous version is referenced
+      <!-- Note 1: CMS-11262 javax.activation is provided by the JRE but sometimes a previous version is referenced
            from third-party libraries. This entry prevents accidental downgrades. -->
+      <!-- Note 2: By Java 11, jakarta activation isn't provided by JRE anymore. It's added to the shared library. -->
       <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
@@ -739,6 +738,10 @@
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -1147,6 +1150,7 @@
         <repo.config />
         <repo.bootstrap>true</repo.bootstrap>
         <repo.autoexport.allowed>true</repo.autoexport.allowed>
+        <wicket.js.debug>false</wicket.js.debug>
       </properties>
       <dependencies>
         <dependency>
@@ -1204,6 +1208,7 @@
                   <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
                   <repo.autoexport.allowed>${repo.autoexport.allowed}</repo.autoexport.allowed>
                   <project.version>${hippo.release.version}</project.version>
+                  <wicket.js.debug>${wicket.js.debug}</wicket.js.debug>
                 </systemProperties>
                 <zipUrlInstaller>
                   <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
@@ -1224,6 +1229,11 @@
                   <dependency>
                     <groupId>javax.mail</groupId>
                     <artifactId>mail</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
                     <classpath>extra</classpath>
                   </dependency>
                   <dependency>

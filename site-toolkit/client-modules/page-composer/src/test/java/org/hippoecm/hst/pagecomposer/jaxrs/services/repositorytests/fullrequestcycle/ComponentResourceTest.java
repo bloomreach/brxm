@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Category;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstState;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
@@ -210,7 +209,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(XPAGE, HstState.XPAGE_STATE), "live")
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
-                .put(key(WORKFLOW, HstState.WORKFLOW_REQUESTS), Collections.emptyList())
+                .put(key(WORKFLOW, HstState.REQUESTS), Collections.emptyList())
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A published xpage request contains xpage and channel states")
