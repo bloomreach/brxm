@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class HtmlProcessorConfigTest {
         assertFalse(config.isFilter());
         assertFalse(config.isOmitComments());
         assertTrue(config.isConvertLineEndings());
-        assertNull(config.getWhitelistElements());
+        assertNull(config.getAllowlistElements());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class HtmlProcessorConfigTest {
                 .setOmitJsProtocol(false)
                 .setOmitDataProtocol(false)
                 .setSecureTargetBlankLinks(false);
-        assertThat(config.getWhitelistElements(), CoreMatchers.hasItems(a, div));
+        assertThat(config.getAllowlistElements(), CoreMatchers.hasItems(a, div));
     }
 
     @Test

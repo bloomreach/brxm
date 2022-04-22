@@ -86,14 +86,14 @@
 
   <s:client-registrations>
       <s:client-registration registration-id="marketo-login"
-                             client-id="<marketo.clientId>"
-                             client-secret="<marketo.clientSecret>"
+                             client-id="${marketo.clientId}"
+                             client-secret="${marketo.clientSecret}"
                              client-authentication-method="client_secret_basic"
                              authorization-grant-type="client_credentials"
                              provider-id="marketo"/>
       <s:provider provider-id="marketo"
-                  authorization-uri="<marketo.baseUrl>/identity/oauth/token"
-                  token-uri="<marketo.baseUrl>/identity/oauth/token"/>
+                  authorization-uri="${marketo.baseUrl}/identity/oauth/token"
+                  token-uri="${marketo.baseUrl}/identity/oauth/token"/>
   </s:client-registrations>
   <bean id="authorizedClientService"
         class="org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService"
