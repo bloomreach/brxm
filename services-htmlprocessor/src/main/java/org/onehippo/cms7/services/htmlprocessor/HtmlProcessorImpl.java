@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.Serializer;
 import org.htmlcleaner.TagNode;
 import org.onehippo.cms7.services.htmlprocessor.filter.HtmlFilter;
-import org.onehippo.cms7.services.htmlprocessor.filter.WhitelistHtmlFilter;
+import org.onehippo.cms7.services.htmlprocessor.filter.AllowlistHtmlFilter;
 import org.onehippo.cms7.services.htmlprocessor.serialize.HtmlSerializerFactory;
 import org.onehippo.cms7.services.htmlprocessor.util.StringUtil;
 import org.onehippo.cms7.services.htmlprocessor.visit.HtmlTag;
@@ -51,7 +51,7 @@ public class HtmlProcessorImpl implements HtmlProcessor {
         properties.setOmitComments(config.isOmitComments());
 
         parser = new HtmlCleaner(properties);
-        filter = new WhitelistHtmlFilter(config.getWhitelistElements());
+        filter = new AllowlistHtmlFilter(config.getAllowlistElements());
         serializer = HtmlSerializerFactory.create(config.getSerializer(), properties);
     }
 

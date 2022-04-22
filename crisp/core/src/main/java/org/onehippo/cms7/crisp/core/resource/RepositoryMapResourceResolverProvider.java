@@ -43,12 +43,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.util.InMemoryResource;
 
@@ -66,6 +69,8 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     private static final String PROFILE_BEAN_DEFS_RESOURCE_PATH = "/"
             + RepositoryMapResourceResolverProvider.class.getPackage().getName().replace(".", "/")
             + "/RepositoryMapResourceResolverProvider-profile.xml";
+
+    private static final String RESOURCE_RESOLVER_CONTEXT_PROPERTY_SOURCE = "ResourceResolverContextPropertySource";
 
     /**
      * Spring ApplicationContext which instantiates this bean.
@@ -349,12 +354,10 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     private AbstractApplicationContext createChildApplicationContext(final String beanDefs, String[] propNames,
             String[] propValues) {
         GenericApplicationContext childContext = new GenericApplicationContext(applicationContext);
-        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(childContext);
-        xmlReader.loadBeanDefinitions(new InMemoryResource(beanDefs));
-        xmlReader.loadBeanDefinitions(new ClassPathResource(PROFILE_BEAN_DEFS_RESOURCE_PATH));
-
+        ConfigurableEnvironment env = childContext.getEnvironment();
+        MutablePropertySources propertySources = env.getPropertySources();
         Properties props = new Properties();
-
+        propertySources.addFirst(new PropertiesPropertySource(RESOURCE_RESOLVER_CONTEXT_PROPERTY_SOURCE, props));
         if (propNames != null && propValues != null) {
             for (int i = 0; i < propNames.length; i++) {
                 if (propValues.length > i) {
@@ -367,11 +370,13 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
             }
         }
 
+        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(childContext);
+        xmlReader.loadBeanDefinitions(new InMemoryResource(beanDefs));
+        xmlReader.loadBeanDefinitions(new ClassPathResource(PROFILE_BEAN_DEFS_RESOURCE_PATH));
         log.debug("Setting PropertyPlaceholderConfigurer for a CRISP ResourceResolver's appContext with properties: {}.", props);
-        PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
+        PropertySourcesPlaceholderConfigurer ppc = new PropertySourcesPlaceholderConfigurer();
         ppc.setIgnoreUnresolvablePlaceholders(true);
-        ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
-        ppc.setProperties(props);
+        ppc.setEnvironment(env);
         childContext.addBeanFactoryPostProcessor(ppc);
 
         childContext.refresh();

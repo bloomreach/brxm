@@ -22,16 +22,19 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.onehippo.cms.channelmanager.content.UserContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
 public interface DocumentValidityService {
 
     /**
      * <p>
-     * When a document type is changed, existing documents of said type might have an invalid content state, i.e. in
-     * certain cases (compound fields) they are missing a node which prevents the VisualEditor from showing the fields
-     * in the frontend. This method will check if a there are missing nodes, and will copy them from the document
-     * prototype or the field prototype until the min-values amount is reached.
+     * When a document/compound type is changed, existing documents and component-content instances of said type might
+     * have an invalid content state, i.e. in certain cases (compound fields) they are missing a node which prevents the
+     * VisualEditor from showing the fields in the frontend. This method will check if there are missing nodes, and
+     * will copy them from the document or the field prototype until the {@link FieldType#getMinValues} requirement is
+     * fulfilled.
      * </p>
      * <p>
      * If there are changes made, the implementation of this method will persist the changes made by the
@@ -44,6 +47,6 @@ public interface DocumentValidityService {
      *                        to find the missing prototypes.
      * @throws RepositoryException Throws a {@code RepositoryException} when the session save fails.
      */
-    void handleDocumentTypeChanges(Session workflowSession, DocumentType documentType, final List<Node> variants)
+    void handleDocumentTypeChanges(UserContext userContext, Session workflowSession, DocumentType documentType,  List<Node> variants)
             throws RepositoryException;
 }

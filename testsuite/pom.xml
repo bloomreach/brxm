@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2021 Bloomreach
+  Copyright 2011-2022 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>15.0.0-SNAPSHOT</version>
+    <version>15.1.0-SNAPSHOT</version>
     <relativePath>../release/pom.xml</relativePath>
   </parent>
 
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>15.0.0-SNAPSHOT</version>
+  <version>15.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -442,7 +442,7 @@
                 <exclude>conf/catalina-logging.properties</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/css/style.css</exclude>
-                <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/hst-whitelist.txt</exclude>
+                <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/hst-allowlist.txt</exclude>
                 <exclude>components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml</exclude>
                 <exclude>resources/src/main/webapp/css/yui-2.8.1-reset-fonts-grids.css</exclude>
                 <!-- repository content XML -->
