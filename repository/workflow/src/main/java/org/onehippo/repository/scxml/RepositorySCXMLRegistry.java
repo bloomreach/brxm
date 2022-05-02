@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     public RepositorySCXMLRegistry() {
     }
 
-    void reconfigure(Node configRootNode) throws RepositoryException {
+    protected void reconfigure(Node configRootNode) throws RepositoryException {
         this.session = configRootNode.getSession();
         Node scxmlDefinitionsNode = configRootNode.getNode(SCXML_DEFINITIONS);
         this.scxmlDefinitionsNodePath = scxmlDefinitionsNode.getPath();
@@ -95,7 +95,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
     }
 
-    void initialize() {
+    protected void initialize() {
         refresh();
     }
 
