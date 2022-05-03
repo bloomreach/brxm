@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2022 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import { NgxLoggerLevel } from 'ngx-logger';
 
 import { ConfigResource } from './config-resource.dto';
+import { NavAppHelpLink } from './nav-app-help-link.dto';
 
 /**
  * AppSettings is provided in the NavAppSettings to configure settings for the navapp
@@ -73,4 +74,9 @@ export interface AppSettings {
    * Enable or disable usage statistics tracking.
    */
   usageStatisticsEnabled: boolean;
+
+  /**
+   * Returns list of help links that must be displayed by the menu in the navapp.
+   */
+  helpLinks: NavAppHelpLink[];
 }
