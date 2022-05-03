@@ -1,24 +1,25 @@
 /*
- * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *  https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
+
 package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,15 +37,20 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.AppSettings;
 import org.hippoecm.frontend.service.INavAppSettingsService;
+import org.hippoecm.frontend.service.NavAppHelpLink;
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +76,16 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     private final transient NavAppResourceService navAppResourceService;
 
-    NavAppSettingsService(IPluginContext context, IPluginConfig config, IModel<PluginUserSession> pluginUserSessionSupplier, IModel<SessionAttributeStore> sessionAttributeStoreSupplier, NavAppResourceService navAppResourceService) {
+    static final String HELP_MENU_LINKS_NODE_NAME = "helpLinks";
+    static final String HELP_MENU_LINK_TRANSLATIONKEY = "translationKey";
+    static final String HELP_MENU_LINK_LINK = "link";
+    static final String HELP_MENU_LINK_VISIBLE = "visible";
+    static final String HELP_MENU_RESOURCE_BUNDLE = "hippo:cms.navapp";
+
+    NavAppSettingsService(IPluginContext context, IPluginConfig config,
+                          IModel<PluginUserSession> pluginUserSessionSupplier,
+                          IModel<SessionAttributeStore> sessionAttributeStoreSupplier,
+                          NavAppResourceService navAppResourceService) {
         super(context, config);
         this.pluginUserSessionSupplier = pluginUserSessionSupplier;
         this.navAppResourceService = navAppResourceService;
@@ -135,10 +150,10 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final StringValue path = request.getQueryParameters().getParameterValue(PATH_PARAM);
         if (!path.isEmpty()) {
             return Stream.concat(
-                    Stream.of("content", PATH_PARAM),
-                    Stream.of(path.toString().split("/"))
-                            .filter(StringUtils::isNotBlank)
-                            .map(String::trim))
+                            Stream.of("content", PATH_PARAM),
+                            Stream.of(path.toString().split("/"))
+                                    .filter(StringUtils::isNotBlank)
+                                    .map(String::trim))
                     .collect(Collectors.joining("/", "/", ""));
         }
         return "/";
@@ -195,6 +210,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
         final boolean usageStaticsticsEnabled = UsageStatisticsSettings.get().isEnabled();
 
+        final List<NavAppHelpLink> helpLinks = getHelpLinks();
+
         return new AppSettings() {
 
             @Override
@@ -241,6 +258,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             public boolean isUsageStatisticsEnabled() {
                 return usageStaticsticsEnabled;
             }
+
+            @Override
+            public List<NavAppHelpLink> getHelpLinks() {
+                return helpLinks;
+            }
         };
     }
 
@@ -269,4 +291,38 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         }
     }
 
+    private List<NavAppHelpLink> getHelpLinks() {
+        final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
+        final ArrayList<NavAppHelpLink> linksList = new ArrayList<>();
+
+        Locale locale;
+        try {
+            locale = UserSession.get().getLocale();
+        } catch (Exception e) {
+            locale = LocalizationService.DEFAULT_LOCALE;
+        }
+        ResourceBundle resourceBundle = localizationService.getResourceBundle(HELP_MENU_RESOURCE_BUNDLE, locale);
+
+        final IPluginConfig helpLinksConfig = getPluginConfig().getPluginConfig(HELP_MENU_LINKS_NODE_NAME);
+
+        if (helpLinksConfig == null) {
+            return linksList;
+        }
+
+        helpLinksConfig.getPluginConfigSet().forEach((helpLink) -> {
+            final String translationKey = helpLink.getString(HELP_MENU_LINK_TRANSLATIONKEY);
+            final String label = resourceBundle.getString(translationKey);
+            final boolean isVisible = helpLink.getBoolean(HELP_MENU_LINK_VISIBLE);
+            String link = helpLink.getString(HELP_MENU_LINK_LINK);
+
+            if (!link.startsWith("https://")) {
+                log.warn("Navapp help link url did not start with `https://` {}", link);
+                link = "";
+            }
+
+            linksList.add(new NavAppHelpLink(label, URI.create(link), isVisible));
+        });
+
+        return linksList;
+    }
 }
