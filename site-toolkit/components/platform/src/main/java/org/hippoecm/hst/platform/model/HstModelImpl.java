@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class HstModelImpl implements InternalHstModel {
     private final HstCache pageCache;
     private final boolean clearPageCacheAfterModelLoad;
 
-    private volatile VirtualHosts virtualHosts;
+    private volatile VirtualHostsService virtualHosts;
     private BiPredicate<Session, Channel> channelFilter;
 
     private final String[] hstFilterPrefixExclusions;
@@ -160,7 +160,6 @@ public class HstModelImpl implements InternalHstModel {
     }
 
     public synchronized void invalidate() {
-
         if (virtualHosts == null) {
             return;
         }
@@ -177,17 +176,31 @@ public class HstModelImpl implements InternalHstModel {
 
     @Override
     public VirtualHosts getVirtualHosts() {
-        VirtualHosts vhosts = virtualHosts;
-        if (vhosts != null) {
+
+        VirtualHostsService vhosts = virtualHosts;
+        if (vhosts != null && vhosts.getBuildNumber() == invalidationMonitor.getSynchronousOnEventsCounter()) {
             return vhosts;
         }
+        if (vhosts != null) {
+            log.info("VirtualHostsService was not yet invalidated however the synchronous event listener already " +
+                    "received an event: trigger rebuild");
+        }
+
+        log.info("Building VirtualHostsService Model");
+
+
+        // this await is NOT allowed to be done in the synchronized (this) block below as it will result in LIVE/DEADLOCKS
+        // since invalidationMonitor.awaitEventsConsistency waits for the async hst model listener to receive events
+        // but that also synchronized on this
+        invalidationMonitor.awaitEventsConsistency();
 
         synchronized (this) {
+            // use the async counter as build number as this is how 'far' the events have been processed
+            long buildNumber = invalidationMonitor.getAsynchronousOnEventsCounter();
             vhosts = virtualHosts;
-            if (vhosts != null) {
+            if (vhosts != null && vhosts.getBuildNumber() == buildNumber) {
                 return vhosts;
             }
-
 
             final PlatformRequestContextProvider platformRequestContextProvider = new PlatformRequestContextProvider();
             final HstRequestContext requestContext = RequestContextProvider.get();
@@ -208,7 +221,7 @@ public class HstModelImpl implements InternalHstModel {
                 if (platformClassloader != currentClassloader) {
                     Thread.currentThread().setContextClassLoader(platformClassloader);
                 }
-                final VirtualHostsService virtualHosts = new VirtualHostsService(websiteServletContext.getContextPath(),
+                final VirtualHostsService virtualHosts = new VirtualHostsService(buildNumber, websiteServletContext.getContextPath(),
                         websiteContainerConfiguration,
                         hstNodeLoadingCache,
                         hstConfigurationLoadingCache);
