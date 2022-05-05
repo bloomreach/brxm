@@ -52,6 +52,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.update.UpdaterExecutionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -81,6 +82,7 @@ public class UpdaterEditor extends Panel {
         }
     });
 
+
     protected final IPluginContext context;
     protected final Panel container;
     protected final Form form;
@@ -97,6 +99,7 @@ public class UpdaterEditor extends Panel {
     protected String throttle = String.valueOf(DEFAULT_THROTTLE);
     protected boolean dryRun = false;
     protected String logLevel = Level.DEBUG.toString();
+    protected String logTarget = UpdaterExecutionReport.DEFAULT_LOG_TARGET;
 
     public UpdaterEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
         super("updater-editor", model);
@@ -376,6 +379,22 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(logLevelField);
 
+        final LabelledDropDownFieldTableRow logTargetField = new LabelledDropDownFieldTableRow("log-target",
+                new Model<>("Log Target"), new PropertyModel<>(this, "logTarget"), UpdaterExecutionReport.LOG_TARGET_MAP) {
+
+            @Override
+            public boolean isEnabled() {
+                return isLogTargetFieldEnabled();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return isLogTargetFieldVisible();
+            }
+        };
+        radios.add(logTargetField);
+
+
         final LabelledCheckBoxTableRow dryRunCheckBox = new LabelledCheckBoxTableRow("dryrun", new Model<>("Dry run"),
                 new PropertyModel<>(this, "dryRun")) {
             @Override
@@ -440,6 +459,7 @@ public class UpdaterEditor extends Panel {
             method = "custom";
         }
         logLevel = getStringProperty(HippoNodeType.HIPPOSYS_LOGLEVEL, Level.DEBUG.toString());
+        logTarget = getStringProperty(HippoNodeType.HIPPOSYS_LOGTARGET, "LOGS");
         dryRun = getBooleanProperty(HippoNodeType.HIPPOSYS_DRYRUN, false);
     }
 
@@ -554,6 +574,8 @@ public class UpdaterEditor extends Panel {
             node.setProperty(HippoNodeType.HIPPOSYS_PARAMETERS, StringUtils.defaultString(parameters));
             node.setProperty(HippoNodeType.HIPPOSYS_LOGLEVEL,
                     StringUtils.defaultIfBlank(logLevel, Level.DEBUG.toString()));
+            node.setProperty(HippoNodeType.HIPPOSYS_LOGTARGET,
+                    StringUtils.defaultIfBlank(logTarget, "LOGS"));
             node.getSession().save();
             return true;
         } catch (RepositoryException e) {
@@ -868,6 +890,13 @@ public class UpdaterEditor extends Panel {
 
     protected boolean isLogLevelFieldVisible() {
         return true;
+    }
+
+    protected boolean isLogTargetFieldEnabled() {
+        return false;
+    }
+    protected boolean isLogTargetFieldVisible() {
+        return UpdaterExecutionReport.isPersistLogsSupported();
     }
 
     protected boolean isDryRunCheckBoxVisible() {
