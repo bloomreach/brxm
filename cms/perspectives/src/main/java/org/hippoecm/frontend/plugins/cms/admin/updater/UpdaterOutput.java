@@ -33,6 +33,7 @@ import org.onehippo.repository.update.UpdaterExecutionReport;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOG;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOGTAIL;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOGTARGET;
 
 public class UpdaterOutput extends Panel {
 
@@ -40,11 +41,15 @@ public class UpdaterOutput extends Panel {
         super(id);
 
         final Label output;
-        if (isDevMode()) {
-            output = new Label("output", () -> parseOutput(container.getDefaultModelObject()));
-        } else {
-            output = new Label("output","In production, logs are stored in normal log files for logger '" +
+        final String logs = parseOutput(container.getDefaultModelObject());
+        // For BC it is not enough to test eg UpdaterExecutionReport#isPersistLogsSupported or the log target as older
+        // history nodes do not have the log target, therefore, just check if there are logs and if not, mention logs are
+        // written to normal log files
+        if (StringUtils.isEmpty(logs)) {
+            output = new Label("output","Logs are stored in normal log files for logger '" +
                     UpdaterExecutionReport.class.getName() + "' and not visible here");
+        } else {
+            output = new Label("output", () -> logs);
         }
         if (updating) {
             output.setOutputMarkupId(true);
@@ -69,9 +74,6 @@ public class UpdaterOutput extends Panel {
         } catch (RepositoryException | IOException e) {
             return "Cannot read log: " + e.getMessage();
         }
-    }
-    private boolean isDevMode() {
-        return System.getProperty("project.basedir") != null;
     }
 
 }
