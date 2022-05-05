@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.utilities.io.CircularBufferOutputStream;
@@ -34,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class UpdaterExecutionReport {
 
     private final static Logger log = LoggerFactory.getLogger(UpdaterExecutionReport.class.getName());
+    public static final String GROOVY_PERSIST_LOGS_SUPPORTED_SYSTEM_PROP = "groovy.persist.logs.supported";
 
     private long startTime = -1l;
     private boolean started = false;
@@ -57,6 +61,15 @@ public class UpdaterExecutionReport {
     private final PrintStream skippedStream;
     private final Logger useLogger;
 
+    public static String DEFAULT_LOG_TARGET = "LOG FILES";
+    public static String REPOSITORY_LOG_TARGET = "REPOSITORY";
+    public static final Map<String, String> LOG_TARGET_MAP = Collections.unmodifiableMap(new LinkedHashMap() {
+        {
+            put(DEFAULT_LOG_TARGET, DEFAULT_LOG_TARGET);
+            put(REPOSITORY_LOG_TARGET, REPOSITORY_LOG_TARGET);
+        }
+    });
+
     private static class TimestampPrintStreamLogger extends PrintStreamLogger {
         private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -72,12 +85,12 @@ public class UpdaterExecutionReport {
         }
     }
 
-    UpdaterExecutionReport(final String logLevel) throws IOException {
+    UpdaterExecutionReport(final String logLevel, final String logTarget) throws IOException {
         logFile = File.createTempFile("updater-execution", ".log.tmp", null);
         logStream = new PrintStream(logFile);
         cbos = new CircularBufferOutputStream(4096);
 
-        if (isDevMode()) {
+        if (REPOSITORY_LOG_TARGET.equals(logTarget) && isPersistLogsSupported()) {
             useLogger = new TimestampPrintStreamLogger("repository", logLevel, logStream, new PrintStream(cbos));
         } else {
             useLogger = log;
@@ -182,8 +195,12 @@ public class UpdaterExecutionReport {
         return useLogger;
     }
 
-    private boolean isDevMode() {
+    private static boolean isDevMode() {
         return System.getProperty("project.basedir") != null;
+    }
+
+    public static boolean isPersistLogsSupported() {
+        return Boolean.getBoolean(GROOVY_PERSIST_LOGS_SUPPORTED_SYSTEM_PROP) || isDevMode();
     }
 
     File getLogFile() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -78,7 +78,8 @@ public class UpdaterExecutor implements EventListener {
         this.background = session.impersonate(new SimpleCredentials("system", new char[] {}));
 
         final String logLevel = JcrUtils.getStringProperty(updaterNode, HippoNodeType.HIPPOSYS_LOGLEVEL, null);
-        report = new UpdaterExecutionReport(logLevel);
+        final String logTarget = JcrUtils.getStringProperty(updaterNode, HippoNodeType.HIPPOSYS_LOGTARGET, "LOGS");
+        report = new UpdaterExecutionReport(logLevel, logTarget);
 
         try {
             updaterInfo = new UpdaterInfo(updaterNode);
