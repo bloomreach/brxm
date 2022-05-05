@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,20 @@
  */
 package org.hippoecm.hst.platform.configuration.model;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import javax.jcr.observation.EventIterator;
 
-import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
-import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.platform.model.HstModelImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HstConfigurationEventListener extends GenericEventListener {
 
     private HstModelImpl hstModelImpl;
     private HstEventsCollector hstEventsCollector;
+
+    private final AtomicLong counter = new AtomicLong();
 
     public HstConfigurationEventListener(final HstModelImpl hstModelImpl, final HstEventsCollector hstEventsCollector) {
         this.hstModelImpl = hstModelImpl;
@@ -37,6 +38,7 @@ public class HstConfigurationEventListener extends GenericEventListener {
     @Override
     public void onEvent(EventIterator events) {
         synchronized(hstModelImpl) {
+            counter.incrementAndGet();
             hstEventsCollector.collect(events);
             if (hstEventsCollector.hasEvents()) {
                 hstModelImpl.invalidate();
@@ -44,4 +46,7 @@ public class HstConfigurationEventListener extends GenericEventListener {
         }
     }
 
+    public long getOnEventCount() {
+        return counter.get();
+    }
 }
