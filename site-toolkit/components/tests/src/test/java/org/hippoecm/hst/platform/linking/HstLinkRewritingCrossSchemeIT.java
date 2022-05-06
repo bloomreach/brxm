@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -148,7 +148,6 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:site2/hst:configurations/unittestproject/hst:sitemap/news/_any_.html"));
         try {
             makeSiteMapItemsHttps(siteMapItemsToSetHttpsScheme);
-            Thread.sleep(100);
 
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("http", "localhost", "/subsite/home", null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
