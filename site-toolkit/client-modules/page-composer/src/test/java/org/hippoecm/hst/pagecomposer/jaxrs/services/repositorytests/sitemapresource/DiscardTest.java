@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,8 +104,6 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         newsDefault.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "foo");
 
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
 
         // now discard by 'admin'..... 'news/_default_' contains not allowed lock. It should be removed
         mountResource.discardChanges();
@@ -162,8 +160,6 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
 
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
 
         // now discard by 'admin'. 'news' should keep lock by 'bob'
         mountResource.discardChanges();
@@ -212,8 +208,6 @@ public class DiscardTest extends AbstractSiteMapResourceTest {
         news.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "foo");
         session.move(news.getPath(), news.getPath() + "Renamed");
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
 
         // now discard by 'admin'. Discard should not revert the preview, only lock by 'admin' removed from 'newsRenamed/*
         mountResource.discardChanges();

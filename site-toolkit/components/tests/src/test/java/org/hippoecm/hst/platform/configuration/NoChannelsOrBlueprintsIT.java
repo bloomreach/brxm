@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,6 @@ public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
     public void testModelWithoutChannels() throws Exception {
         removeChannelNodes(session);
         session.save();
-        Thread.sleep(100);
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
         assertTrue(vhosts.getChannels("dev-localhost").isEmpty());
     }
@@ -66,7 +65,6 @@ public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
     public void testModelWithoutBlueprints() throws Exception {
         session.getNode("/hst:hst/hst:blueprints").remove();
         session.save();
-        Thread.sleep(100);
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
         assertTrue(vhosts.getBlueprints().isEmpty());
     }
@@ -76,7 +74,6 @@ public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
         removeChannelNodes(session);
         session.getNode("/hst:hst/hst:blueprints").remove();
         session.save();
-        Thread.sleep(100);
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
         assertTrue(vhosts.getChannels("dev-localhost").isEmpty());
         assertTrue(vhosts.getBlueprints().isEmpty());

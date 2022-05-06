@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -123,7 +123,6 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
             newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
             session.save();
-            Thread.sleep(100);
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
@@ -157,7 +156,6 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             }
 
             session.save();
-            Thread.sleep(100);
 
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
@@ -190,7 +188,6 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             }
 
             session.save();
-            Thread.sleep(100);
 
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
@@ -761,7 +758,6 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/contact");
         session.save();
-        Thread.sleep(100);
         try {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
@@ -802,7 +798,6 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         session.getNode("/hst:site2/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${3}");
         session.save();
-        Thread.sleep(100);
         try {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
@@ -870,7 +865,6 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         session.getNode("/hst:site2/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_default_/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${1}");
         session.save();
-        Thread.sleep(100);
         try {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
 
