@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.ConfigurationUtils;
@@ -34,8 +33,6 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +75,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         contactPage.setProperty("hst:parameternames", new String[]{"foo","foo"});
         contactPage.setProperty("hst:parametervalues", new String[]{"bar", "lux"});
         contactPage.setProperty("hst:parameternameprefixes", new String[]{"", "professional"});
-        saveSession();
+        session.save();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -99,14 +96,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         assertEquals("bar", localParameters.get("foo"));
         assertEquals("lux", localParameters.get(prefixedParameterName));
 
-    }
-
-    private void saveSession() throws RepositoryException {
-        session.save();
-        //TODO SS: Clarify what could be the cause of failures without delay
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {}
     }
 
     @Test
@@ -314,9 +303,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         session.save();
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
-        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
-        // add thread sleep (which should not be needed)
-        Thread.sleep(50);
 
         assertPropertyPlaceHolderReplaced("prop");
 
@@ -325,10 +311,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         session.save();
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
-
-        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
-        // add thread sleep (which should not be needed)
-        Thread.sleep(50);
 
         assertPropertyPlaceHolderReplaced("prop");
 
@@ -339,10 +321,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         session.save();
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:xpages/basepage/header"});
-
-        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
-        // add thread sleep (which should not be needed)
-        Thread.sleep(50);
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
@@ -366,10 +344,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
-        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
-        // add thread sleep (which should not be needed)
-        Thread.sleep(50);
-
         assertPropertyPlaceHolderReplaced("placeholderprop");
 
 
@@ -386,10 +360,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
 
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header/container/banner-new-style",
         "/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitem/paramWithDefaultValue"});
-
-        // for some reason the invalidator does not always invalidate the header, resulting in flake test, for now,
-        // add thread sleep (which should not be needed)
-        Thread.sleep(50);
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");

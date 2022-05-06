@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
     @Test
     public void default_sitemap_item_container_resource_for_root_mount() throws Exception {
         createContainerResourceSiteMapItem("_any_.xyz", "hst:hst/hst:configurations/hst:default/hst:sitemap");
-        saveSession();
+        session.save();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/foo/bar.xyz");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/foo/bar.xyz");
         assertTrue(resolvedSiteMapItem.getHstSiteMapItem().isContainerResource());
@@ -66,7 +66,7 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
     @Test
     public void default_sitemap_item_container_resource_for_sub_mount() throws Exception {
         createContainerResourceSiteMapItem("_any_.xyz", "hst:hst/hst:configurations/hst:default/hst:sitemap");
-        saveSession();
+        session.save();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/intranet/foo/bar.xyz");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/foo/bar.xyz");
         assertTrue(resolvedSiteMapItem.getHstSiteMapItem().isContainerResource());
@@ -75,7 +75,7 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
     @Test
     public void default_sitemap_item_container_resource_implicit_properties() throws Exception {
         createContainerResourceSiteMapItem("_any_.xyz", "hst:hst/hst:configurations/hst:default/hst:sitemap");
-        saveSession();
+        session.save();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/foo/bar.xyz");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/foo/bar.xyz");
         assertEquals("ContainerResourcePipeline", resolvedSiteMapItem.getNamedPipeline());
@@ -89,7 +89,7 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
         containerResourceSiteMapItem.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE, "myPipeline");
         containerResourceSiteMapItem.setProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC, false);
         containerResourceSiteMapItem.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING, false);
-        saveSession();
+        session.save();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/foo/bar.xyz");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/foo/bar.xyz");
         assertEquals("myPipeline", resolvedSiteMapItem.getNamedPipeline());
@@ -100,7 +100,7 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
     @Test
     public void sitemap_item_container_resource_not_allowed_outside_hst_default() throws Exception {
         createContainerResourceSiteMapItem("_any_.xyz", "hst:hst/hst:configurations/unittestproject/hst:sitemap");
-        saveSession();
+        session.save();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/foo/bar.xyz");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/foo/bar.xyz");
         assertEquals("pagenotfound",resolvedSiteMapItem.getPathInfo());
@@ -122,12 +122,5 @@ public class HstDefaultSiteMapModelsIT extends AbstractTestConfigurations {
         return child;
     }
 
-    private void saveSession() throws RepositoryException {
-        session.save();
-        //TODO SS: Clarify what could be the cause of failures without delay
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {}
-    }
 
 }

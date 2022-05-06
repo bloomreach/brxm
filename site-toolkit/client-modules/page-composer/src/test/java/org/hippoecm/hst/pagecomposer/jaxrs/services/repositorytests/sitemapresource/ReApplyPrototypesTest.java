@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,6 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
 
         testContext.secondPrototypeUUID = secondPrototypeNode.getIdentifier();
         session.save();
-        Thread.sleep(200);
 
         getSiteMapItemRepresentation(session, "home");
         testContext.prototypeUUID = getPrototypePageUUID();

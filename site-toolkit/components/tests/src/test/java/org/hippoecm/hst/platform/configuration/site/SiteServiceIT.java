@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -166,7 +166,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                 session.getNode(configPath + "-preview/hst:channel").setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "someonelikeyou");
             }
             String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            saveSession(session);
+            session.save();
             invalidator.eventPaths(pathsToBeChanged);
 
             {
@@ -441,7 +441,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "unittestproject");
         branchNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
         branchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestproject"});
-        saveSession(session);
+        session.save();
     }
 
     @Test
@@ -452,7 +452,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
             Node branchNode = session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000");
             branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "nonexisting");
-            saveSession(session);
+            session.save();
             assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000"));
         } finally {
             restoreHstConfigBackup(session);
@@ -472,7 +472,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // since the branch is a branchof 'unittestproject', it should start with the name 'unittestproject-' and is
             // thus incorrect like this and hence won't be loaded
             createBranch(session, name, branchId);
-            saveSession(session);
+            session.save();
             Channel branch = hstManager.getVirtualHosts().getChannels("dev-localhost").get(name);
             assertEquals("unittestproject", branch.getBranchOf());
             assertEquals(branchId, branch.getBranchId());
@@ -500,7 +500,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                     "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000");
             Node mount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000");
             mount.setProperty(MOUNT_PROPERTY_MOUNTPOINT, "/hst:hst/hst:sites/unittestproject-branchid-000");
-            saveSession(session);
+            session.save();
             // now assert that the resolved mount for unittestproject-branchid-000 has a HstSite that is null because
             // a hst:site is not allowed to point to a branch. Note that the mount 'unittestproject-branchid-000' is added
             // nonetheless because the mount can have valid child mounts
@@ -524,7 +524,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
             JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject",
                     "/hst:hst/hst:configurations/unittestproject-preview");
-            saveSession(session);
+            session.save();
             assertNotNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-preview"));
             assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000-preview"));
         } finally {
@@ -544,7 +544,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // preview branch extends from the live branch
             session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                     new String[]{"../unittestproject-branchid-000"});
-            saveSession(session);
+            session.save();
             assertNotNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000-preview"));
         } finally {
             restoreHstConfigBackup(session);
@@ -562,7 +562,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
-            saveSession(session);
+            session.save();
 
             Node mountNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
@@ -600,7 +600,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
-            saveSession(session);
+            session.save();
 
             Node mountNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
             Channel branch = hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000");
@@ -629,11 +629,4 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         }
     }
 
-    private void saveSession(final Session session) throws RepositoryException {
-        session.save();
-        //TODO SS: Clarify what could be the cause of failures without delay
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {}
-    }
 }
