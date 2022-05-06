@@ -56,15 +56,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         createHstConfigBackup(session);
         movePagesInheritedPagesToProject(session);
         testComponent = addTestComponent();
-        saveSession();
-    }
-
-    private void saveSession() throws RepositoryException {
         session.save();
-        //TODO SS: Clarify what could be the cause of failures without delay
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {}
     }
 
     private void movePagesInheritedPagesToProject(final Session session) throws RepositoryException {
@@ -125,7 +117,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         canonicalContainer.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
         Node canonicalComponentItem = canonicalContainer.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         canonicalComponentItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
-        saveSession();
+        session.save();
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -151,7 +143,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     @Test(expected = ConstraintViolationException.class)
     public void reference_component_property_mandatory_on_containercomponentreference() throws Exception {
         testComponent.addNode("containerRef", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE);
-        saveSession();
+        session.save();
     }
 
     @Test
@@ -178,7 +170,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         */
         Node canonicalContainerReference = parent.addNode(containerReferenceNodeName, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE);
         canonicalContainerReference.setProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, reference);
-        saveSession();
+        session.save();
     }
 
     @Test
@@ -288,9 +280,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer", "/hst:hst/hst:configurations/unittestproject");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
 
-        // trigger events as during tests the jcr event listeners are not enabled
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
-
         {
             // reload model after changes
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -311,10 +300,8 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
 
             componentNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"name1", "name2"});
             componentNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"value1", "value2"});
-            saveSession();
+            session.save();
 
-            // trigger reload
-            invalidator.eventPaths(canonicalJcrPath);
             mount = hstSitesManager.getVirtualHosts().getMountByIdentifier(getLocalhostRootMountId());
             component = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage").
                     getChildByName(TEST_COMPONENT_NODE_NAME).getChildByName("containerReferencePreserveMyName");
@@ -351,9 +338,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
                 "/hst:hst/hst:configurations/unittestproject");
         addComponentReference(testComponent, "localcontainer", "myReferenceableContainer");
 
-        // trigger events as during tests the jcr event listeners are not enabled
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
-
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -371,7 +355,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
         final Node hstConfigNode = session.getNode(hstConfigurationPath);
         hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
-        saveSession();
+        session.save();
     }
 
     @Test
@@ -407,7 +391,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // from unittestproject remove the 'pages' and 'sitemap' it has itself
         session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:pages").remove();
         session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:sitemap").remove();
-        saveSession();
+        session.save();
     }
 
 
@@ -501,7 +485,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // in 'unittestsubproject' to be from 'unittestproject' instead of from 'unittestcommon'
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
                 new String[]{"../unittestproject/hst:workspace", "../unittestproject"});
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestsubproject");
+
         final VirtualHosts vhostsNew = hstSitesManager.getVirtualHosts();
         {
             final Mount mount = vhostsNew.getMountByIdentifier(getLocalhostSubProjectMountId());
@@ -549,9 +533,8 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // now trigger a change in the inherited component from workspace. This should trigger a reload
         final Node componentItem = session.getNodeByIdentifier(itemUUID);
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"valueNew"});
-        saveSession();
-        // trigger events as during tests the jcr event listeners are not enabled
-        invalidator.eventPaths(componentItem.getPath());
+        session.save();
+
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -582,7 +565,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         final Node workspace = session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace");
         workspace.addNode("hst:pages");
         session.move(testComponent.getParent().getPath(), "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage");
-        saveSession();
+        session.save();
         assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
 
     }
@@ -699,7 +682,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         componentItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"name1"});
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"value1"});
-        saveSession();
+        session.save();
 
         //hstSitesManager.invalidate();
         return highestAncestorPath;

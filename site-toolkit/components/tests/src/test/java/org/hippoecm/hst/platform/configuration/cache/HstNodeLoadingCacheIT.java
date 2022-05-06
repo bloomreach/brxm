@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.hst.platform.configuration.cache;
 
 
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -33,9 +32,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Test;
 
@@ -150,7 +147,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             setup.session.getNode("/hst:hst/hst:blueprints/testblueprint/hst:configuration/hst:sitemenus").remove();
             setup.session.getNode("/hst:hst/hst:blueprints/testblueprint").remove();
 
-            saveAndInvalidate(setup.session);
+            saveAndTriggerReload(setup.session);
 
 
             assertNull(hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost"));
@@ -171,7 +168,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             setup.session.getNode("/hst:hst/hst:configurations/unittestproject")
                     .setProperty("hst:inheritsfrom",new String[]{"../common"});
 
-            saveAndInvalidate(setup.session);
+            saveAndTriggerReload(setup.session);
 
 
             try {
@@ -200,7 +197,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME, "XXX");
             session.getNode("/hst:hst/hst:blueprints/testblueprint/hst:configuration/hst:sitemenus").setProperty(GENERAL_PROPERTY_LOCKED_BY, "YYY");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
 
@@ -237,7 +234,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             JcrUtils.copy(session, "/hst:hst/hst:hosts/dev-localhost/localhost",
                                    "/hst:hst/hst:hosts/dev-localhost/localhost-copy");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
             assertTrue(hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost").getNodes().size() == 2);
@@ -268,11 +265,11 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             JcrUtils.copy(session, "/hst:hst/hst:hosts/dev-localhost/localhost",
                     "/hst:hst/hst:hosts/dev-localhost/localhost-copy");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
             session.removeItem("/hst:hst/hst:hosts/dev-localhost/localhost-copy");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
             assertTrue(hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost").getNodes().size() == 1);
@@ -288,12 +285,12 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             assertTrue(hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost").getNodes().size() == 1);
 
             session.removeItem("/hst:hst/hst:hosts/dev-localhost");
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
             //restore
             JcrUtils.copy(session, "/hst-backup/hst:hosts/dev-localhost",
                     "/hst:hst/hst:hosts/dev-localhost");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
             assertTrue(hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost").getNodes().size() == 1);
@@ -312,9 +309,9 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             JcrUtils.copy(session, "/hst:hst/hst:hosts/dev-localhost/localhost",
                     "/hst:hst/hst:hosts/dev-localhost/localhost2");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
             session.removeItem("/hst:hst/hst:hosts/dev-localhost");
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
             assertNull("/hst:hst/hst:hosts/dev-localhost has been removed, expect null ",
                     hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost"));
@@ -332,9 +329,9 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             JcrUtils.copy(session, "/hst:hst/hst:hosts/dev-localhost/localhost/8081",
                     "/hst:hst/hst:hosts/dev-localhost/localhost/8082");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
             session.removeItem("/hst:hst/hst:hosts/dev-localhost");
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
             assertNull("/hst:hst/hst:hosts/dev-localhost has been removed, expect null ",
                     hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost"));
@@ -367,7 +364,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             JcrUtils.copy(session, "/hst:hst/hst:hosts/dev-localhost/localhost",
                     "/hst:hst/hst:hosts/dev-localhost/localhost-copy");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
             final HstNode instanceAfter = hstNodeLoadingCache.getNode("/hst:hst/hst:hosts/dev-localhost/localhost");
@@ -381,7 +378,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject",
                     "/hst:hst/hst:configurations/unittestproject-new");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
             final HstNode configNodeInstanceAfter1 = hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject");
@@ -390,7 +387,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
 
             session.getNode("/hst:hst/hst:configurations/unittestproject-new").setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
             final HstNode configNodeInstanceAfter2 = hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject");
@@ -404,7 +401,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
 
             session.getNode("/hst:hst/hst:configurations/unittestproject-new").remove();
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
             final HstNode configNodeInstanceAfter3 = hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject");
@@ -424,7 +421,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main/News",
                     "/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main/News-copy");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
 
@@ -461,9 +458,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             configuration.setProperty(BRANCH_PROPERTY_BRANCH_OF, "dummy");
             JcrUtils.copy(session, workspace.getPath(), "/hst:hst/hst:configurations/unittestproject/hst:upstream");
 
-            saveAndInvalidate(session);
-
-
+            saveAndTriggerReload(session);
 
             assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
             assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
@@ -492,7 +487,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             configuration.setProperty(BRANCH_PROPERTY_BRANCH_OF, "dummy");
             JcrUtils.copy(session, workspace.getPath(), "/hst:hst/hst:configurations/unittestproject/hst:upstream");
 
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
 
@@ -505,7 +500,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             // make sure that a change to hst:upstream does not result in loaded hst:upstream
 
             session.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream/hst:sitemap").setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
-            saveAndInvalidate(session);
+            saveAndTriggerReload(session);
 
 
 
@@ -518,23 +513,17 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
 
             configuration.setProperty(BRANCH_PROPERTY_BRANCH_ID, "dummy-again");
 
-            saveAndInvalidate(session);
-
-
+            saveAndTriggerReload(session);
 
             assertNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"));
 
         }
     }
 
-    private void saveAndInvalidate(final Session session) throws RepositoryException {
-        final List<String> changedPaths = new ArrayList<>();
-        for (Node changes : new NodeIterable(((HippoSession) session).pendingChanges())) {
-            changedPaths.add(changes.getPath());
-        }
+    private void saveAndTriggerReload(final Session session) throws Exception {
         session.save();
-        invalidator.eventPaths(changedPaths.toArray(new String[0]));
-        hstEventsDispatcher.dispatchHstEvents();
+        // getVirtualHosts triggers a model reload which triggers the collected events to be processed
+        hstManager.getVirtualHosts();
     }
 
     class CommonHstConfigSetup implements AutoCloseable {
@@ -559,11 +548,11 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             }
         }
 
-        protected void restoreHstConfigBackup() throws RepositoryException, InterruptedException {
+        protected void restoreHstConfigBackup() throws Exception {
             if (session.nodeExists("/hst-backup")) {
                 session.removeItem("/hst:hst");
                 JcrUtils.copy(session, "/hst-backup", "/hst:hst");
-                saveAndInvalidate(session);
+                saveAndTriggerReload(session);
 
             }
         }
