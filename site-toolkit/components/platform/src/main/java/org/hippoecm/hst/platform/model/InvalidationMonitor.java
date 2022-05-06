@@ -24,13 +24,11 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstEventConsumer;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.platform.configuration.model.EventPathsInvalidatorImpl;
 import org.hippoecm.hst.platform.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.repository.api.SynchronousEventListener;
 import org.slf4j.Logger;
@@ -51,7 +49,7 @@ public class InvalidationMonitor {
     private final Session syncSession;
     private final HstConfigurationEventListener hstConfigurationEventListener;
     private final SynchronousOnEventCounter synchronousOnEventCounter;
-    private final EventPathsInvalidator eventPathsInvalidator;
+    private final HstEventsCollector hstEventsCollector;
     private final HstEventsDispatcher hstEventsDispatcher;
 
     public InvalidationMonitor(final Session session,
@@ -63,15 +61,12 @@ public class InvalidationMonitor {
 
         syncSession = session.impersonate(new SimpleCredentials("configuser", "".toCharArray()));
 
-        final HstEventsCollector hstEventsCollector = new HstEventsCollector(hstNodeLoadingCache.getRootPath());
+        hstEventsCollector = new HstEventsCollector(hstNodeLoadingCache.getRootPath());
 
         // jcr listener to collect hst events in 'hstEventsCollector'
         hstConfigurationEventListener = new HstConfigurationEventListener(hstModelImpl, hstEventsCollector);
 
         synchronousOnEventCounter = new SynchronousOnEventCounter();
-
-        // EventPathsInvalidatorImpl to be able to push events manually and to collect in the hstEventsCollector
-        eventPathsInvalidator = new EventPathsInvalidatorImpl(hstModelImpl, hstEventsCollector);
 
         session.getWorkspace().getObservationManager().addEventListener(hstConfigurationEventListener,
                 getAnyEventType(), hstNodeLoadingCache.getRootPath(), true, null, null, false);
@@ -93,8 +88,8 @@ public class InvalidationMonitor {
         syncSession.logout();
     }
 
-    protected EventPathsInvalidator getEventPathsInvalidator() {
-        return eventPathsInvalidator;
+    public HstEventsCollector getHstEventsCollector() {
+        return hstEventsCollector;
     }
 
     private int getAnyEventType() {
