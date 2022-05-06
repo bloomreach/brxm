@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -97,8 +97,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         // since unittestproject contains its own 'hst:prototypepages' node, we first move this node away (otherwise
         // instance won't be shared)
         removePagePrototypeFromConfig(session);
-        // wait for the jcr events to really have been all processed
-        Thread.sleep(100);
         // make sure model is fully reloaded the first time
         hstModel.invalidate();
 
@@ -174,8 +172,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
     public void testReloadOnlyChangedHstComponentsConfigurations() throws Exception {
         removePagePrototypeFromConfig(session);
 
-        // wait for the jcr events to really have been all processed
-        Thread.sleep(100);
         // make sure model is fully reloaded the first time
         hstModel.invalidate();
 
@@ -301,7 +297,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
         invalidator.eventPaths(pathsToBeChanged);
 
         ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
@@ -330,7 +325,6 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node defaultSitemap = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap");
         defaultSitemap.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:sitemapitem");
         session.save();
-        Thread.sleep(100);
 
         ResolvedMount mountAgain1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/");
         ResolvedMount mountAgain2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");

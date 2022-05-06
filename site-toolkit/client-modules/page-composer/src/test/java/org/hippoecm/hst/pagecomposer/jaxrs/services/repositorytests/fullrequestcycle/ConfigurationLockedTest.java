@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,8 +42,6 @@ public class ConfigurationLockedTest extends MountResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
         session.logout();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
     }
 
     @Test
@@ -60,8 +58,6 @@ public class ConfigurationLockedTest extends MountResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(CONFIGURATION_PROPERTY_LOCKED, false);
         session.save();
         session.logout();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
         HstManager manager = siteComponentManager.getComponent(HstManager.class);
         Channel unittestproject = manager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject");
         assertFalse(unittestproject.isConfigurationLocked());
