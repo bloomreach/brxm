@@ -59,7 +59,8 @@ import org.slf4j.event.Level;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import static org.onehippo.repository.update.UpdaterExecutionReport.DEFAULT_LOG_TARGET;
+import static org.onehippo.repository.update.UpdaterExecutionReport.LOG_FILES_LOG_TARGET;
+import static org.onehippo.repository.update.UpdaterExecutionReport.REPOSITORY_LOG_TARGET;
 
 public class UpdaterEditor extends Panel {
 
@@ -100,7 +101,7 @@ public class UpdaterEditor extends Panel {
     protected String throttle = String.valueOf(DEFAULT_THROTTLE);
     protected boolean dryRun = false;
     protected String logLevel = Level.DEBUG.toString();
-    protected String logTarget = DEFAULT_LOG_TARGET;
+    protected String logTarget = LOG_FILES_LOG_TARGET;
 
     public UpdaterEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
         super("updater-editor", model);
@@ -460,7 +461,9 @@ public class UpdaterEditor extends Panel {
             method = "custom";
         }
         logLevel = getStringProperty(HippoNodeType.HIPPOSYS_LOGLEVEL, Level.DEBUG.toString());
-        logTarget = getStringProperty(HippoNodeType.HIPPOSYS_LOGTARGET, DEFAULT_LOG_TARGET);
+        // in case repository logs are supported, make this the default
+        logTarget = getStringProperty(HippoNodeType.HIPPOSYS_LOGTARGET,
+                UpdaterExecutionReport.isPersistLogsSupported() ? REPOSITORY_LOG_TARGET : LOG_FILES_LOG_TARGET);
         dryRun = getBooleanProperty(HippoNodeType.HIPPOSYS_DRYRUN, false);
     }
 
@@ -576,7 +579,7 @@ public class UpdaterEditor extends Panel {
             node.setProperty(HippoNodeType.HIPPOSYS_LOGLEVEL,
                     StringUtils.defaultIfBlank(logLevel, Level.DEBUG.toString()));
             node.setProperty(HippoNodeType.HIPPOSYS_LOGTARGET,
-                    StringUtils.defaultIfBlank(logTarget, DEFAULT_LOG_TARGET));
+                    StringUtils.defaultIfBlank(logTarget, LOG_FILES_LOG_TARGET));
             node.getSession().save();
             return true;
         } catch (RepositoryException e) {
