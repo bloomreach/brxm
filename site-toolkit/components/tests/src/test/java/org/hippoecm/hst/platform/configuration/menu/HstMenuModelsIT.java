@@ -111,9 +111,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // now delete /unittestproject/hst:sitemenus and show the inherited one is used from common
         final Node mainMenuNode = session.getNodeByIdentifier(mainUnitTestProjectMenuIdentifier);
         mainMenuNode.remove();
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         {
             ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
@@ -139,9 +137,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/main");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         // unittestproject sitemenu should now be loaded from 'hst:workspace'
         {
@@ -252,9 +248,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/main");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         // unittestproject sitemenu should now be loaded from 'hst:workspace'
         {
@@ -277,9 +271,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // now delete /hst:hst/hst:configurations/unittestproject/hst:sitemenus
         // unittestproject should now use the hst:workspace menu only
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemenus").remove();
-        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         // unittestproject sitemenu should now be loaded from 'unittestproject/hst:workspace'
         {
@@ -304,9 +296,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // /hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus and thus have no menu items
 
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus").remove();
-        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         {
             ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
@@ -330,9 +320,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/main");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         // reloading and them fetching menu again should result in exact same menu as before
         ResolvedMount afterMount = hstManager.getVirtualHosts().matchMount("localhost",  "/subsite");
@@ -377,9 +365,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/footer",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -404,8 +390,6 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
             setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                     inheritanceVariant);
 
-            pathsToBeChanged = new String[]{"/hst:hst/hst:configurations/unittestproject"};
-            invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -417,9 +401,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
             }
             // make sure a change triggers a reload!
             session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer").addNode("newItem", NODETYPE_HST_SITEMENUITEM);
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -434,9 +416,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
             }
 
             session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer/newItem");
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
         }
     }
 
@@ -489,8 +469,6 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
         session.save();
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
-
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());

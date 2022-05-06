@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -130,10 +130,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
                 counter++;
                 String nextVal = "testVal" + counter;
                 mountNode.setProperty(TEST_PROP, nextVal);
-                // Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(mountNode.getSession(), mountNode.getSession().getNode("/hst:hst"), false);
                 mountNode.getSession().save();
-                invalidator.eventPaths(pathsToBeChanged);
 
                 // ASYNC load
                 final VirtualHosts asyncHosts = hstManager.getVirtualHosts();
@@ -242,10 +239,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
                                     String nextVal = "testVal" + counter.incrementAndGet();
                                     Node node = getSession1().getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
                                     node.setProperty(TEST_PROP, nextVal);
-                                    // Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                                    String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(node.getSession(), node.getSession().getNode("/hst:hst"), false);
                                     node.getSession().save();
-                                    invalidator.eventPaths(pathsToBeChanged);
 
                                     JobResultWrapperModifyMount result = new JobResultWrapperModifyMount();
                                     result.testPropAfterChange = nextVal;
