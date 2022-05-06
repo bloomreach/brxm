@@ -259,9 +259,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
                 }
                 jcrNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, "https");
             }
-            String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
         } finally {
             if (session != null) {
                 session.logout();
@@ -283,9 +281,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
                     jcrNode.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME, siteMapItemReference.originalScheme);
                 }
             }
-            String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
         } finally {
             if (session != null) {
                 session.logout();

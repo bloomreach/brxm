@@ -165,9 +165,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                 // add a change by setting 'lockedby' on preview channel node
                 session.getNode(configPath + "-preview/hst:channel").setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "someonelikeyou");
             }
-            String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
 
             {
                 final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
@@ -223,8 +221,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         assertNotSame(hstSite1.componentsConfiguration, hstSite2.componentsConfiguration);
         assertSame(hstSite1.componentsConfiguration.get(), hstSite2.componentsConfiguration.get());
 
-        // we now invalidate the hst:hosts node by an explicit event
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:hosts"});
+        // we now invalidate the hst model to trigger a reload
+        ((HstModelImpl)hstModelSite1).invalidate();
 
         final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
@@ -348,8 +346,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         assertNotSame(hstSite1.siteMapItemHandlersConfigurationService, hstSite2.siteMapItemHandlersConfigurationService);
         assertSame(hstSite1.siteMapItemHandlersConfigurationService.get(), hstSite2.siteMapItemHandlersConfigurationService.get());
 
-        // we now invalidate the hst:hosts node by an explicit event
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:hosts"});
+        // we now invalidate the hst model to trigger a reload
+        ((HstModelImpl)hstModelSite1).invalidate();
 
         final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
