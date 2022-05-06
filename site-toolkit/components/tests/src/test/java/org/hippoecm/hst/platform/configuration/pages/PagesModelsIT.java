@@ -206,10 +206,8 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
 
-        invalidator.eventPaths(pathsToBeChanged);
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -233,8 +231,6 @@ public class PagesModelsIT extends AbstractTestConfigurations {
             setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                     inheritanceVariant);
 
-            pathsToBeChanged = new String[]{"/hst:hst/hst:configurations/unittestproject"};
-            invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -247,9 +243,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
             final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage");
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -260,9 +254,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_NAMES).remove();
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_VALUES).remove();
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
         }
     }
 
@@ -311,8 +303,6 @@ public class PagesModelsIT extends AbstractTestConfigurations {
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
         session.save();
-        invalidator.eventPaths(new String[] {"/hst:hst/hst:configurations/unittestproject"});
-
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
