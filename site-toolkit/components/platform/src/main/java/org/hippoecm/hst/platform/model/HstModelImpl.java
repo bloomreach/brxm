@@ -43,7 +43,6 @@ import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
@@ -314,10 +313,8 @@ public class HstModelImpl implements InternalHstModel {
         return hstNodeLoadingCache.getRootPath();
     }
 
-    // internal api!
-    @Override
-    public EventPathsInvalidator getEventPathsInvalidator() {
-        return invalidationMonitor.getEventPathsInvalidator();
+    public InvalidationMonitor getInvalidationMonitor() {
+        return invalidationMonitor;
     }
 
     private void configureSiteMapMatcher() {
