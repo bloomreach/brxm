@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,9 +113,6 @@ public class HstComponentCatalogIT extends AbstractTestConfigurations {
 
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/banner-old-style",
-                "/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/banner-new-style"});
-
         {
             // assert invalidation works and 'warning' assertion on non-loadable class 'Foo'
             try (final Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ParametersInfoAnnotationUtils.class).build()) {
@@ -140,9 +137,6 @@ public class HstComponentCatalogIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/hst:default/hst:catalog/unittestpackage");
 
         session.save();
-
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage",
-                "/hst:hst/hst:configurations/hst:default/hst:catalog/unittestpackage"});
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");

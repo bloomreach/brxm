@@ -141,8 +141,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
                 .setProperty(COMPONENT_PROPERTY_COMPONENTDEFINITION, "not/found");
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:components/header/container/banner-new-style"});
-
         {
             try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
                 final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
@@ -180,8 +178,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
                 .setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.HeaderComponent");
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
-
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
 
@@ -209,8 +205,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header")
                 .setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.BannerComponent");
         session.save();
-
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -250,10 +244,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         componentHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"val3", "val4"});
 
         session.save();
-
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
-
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:components/header"});
 
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -302,15 +292,11 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${1}"});
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
-
         assertPropertyPlaceHolderReplaced("prop");
 
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[] {"prop"});
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${testparam}"});
         session.save();
-
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
 
         assertPropertyPlaceHolderReplaced("prop");
 
@@ -319,8 +305,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         baseHeader.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[] {"${23}"});
 
         session.save();
-
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:xpages/basepage/header"});
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
@@ -342,8 +326,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         baseHeader.setProperty(COMPONENT_PROPERTY_COMPONENT_CLASSNAME, "org.hippoecm.hst.test.PropertyPlaceHolderComponent");
         session.save();
 
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header"});
-
         assertPropertyPlaceHolderReplaced("placeholderprop");
 
 
@@ -357,9 +339,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitem/paramWithDefaultValue")
                 .setProperty("hst:defaultvalue", "${1}");
         session.save();
-
-        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestcommon/hst:abstractpages/basepage/header/container/banner-new-style",
-        "/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitem/paramWithDefaultValue"});
 
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");

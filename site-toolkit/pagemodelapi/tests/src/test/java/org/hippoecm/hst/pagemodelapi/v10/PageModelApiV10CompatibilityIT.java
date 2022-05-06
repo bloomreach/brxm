@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,8 +208,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             catalogItemNode.setProperty("hst:parametervalues", new String[]{"invalid ref"});
             session.save();
 
-            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/hst:pages/residualparamstestpage/container/testcatalogitemenucomponentinstance");
-
             try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MenuDynamicComponent.class).build()) {
 
                 String actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0", "_maxreflevel=0");
@@ -226,6 +224,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         } finally {
             catalogItemNode.setProperty("hst:parameternames", valueBefore1);
             catalogItemNode.setProperty("hst:parametervalues", valueBefore2);
+            session.save();
             session.logout();
         }
     }
@@ -453,9 +452,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             session.getNode(SPA_MOUNT_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "http://www.example.com");
             session.save();
 
-            // trigger direct invalidation of model without waiting for jcr event
-            eventPathsInvalidator.eventPaths(SPA_MOUNT_JCR_PATH);
-
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_explicit_hst_url_prefix_mount.json");
@@ -482,9 +478,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
             session.getNode(LOCALHOST_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "http://www.example.com");
             session.save();
-
-            // trigger direct invalidation of model without waiting for jcr event
-            eventPathsInvalidator.eventPaths(LOCALHOST_JCR_PATH);
 
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
@@ -513,9 +506,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             session.getNode(LOCALHOST_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "http://www.example.com/withpathinfo");
             session.save();
 
-            // trigger direct invalidation of model without waiting for jcr event
-            eventPathsInvalidator.eventPaths(LOCALHOST_JCR_PATH);
-
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_explicit_hst_url_with_pathinfo.json");
@@ -540,9 +530,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
             session.getNode(SPA_MOUNT_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "invalid://www.example.com");
             session.save();
-
-            // trigger direct invalidation of model without waiting for jcr event
-            eventPathsInvalidator.eventPaths(SPA_MOUNT_JCR_PATH);
 
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
@@ -574,9 +561,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             session.getNode(LOCALHOST_JCR_PATH).setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "http://cdn.example.com");
             session.save();
 
-            // trigger direct invalidation of model without waiting for jcr event
-            eventPathsInvalidator.eventPaths(LOCALHOST_JCR_PATH);
-
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_cdn_and_hst_url_prefix.json");
@@ -605,9 +589,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             session.getNode(LOCALHOST_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "http://www.example.com");
             session.getNode(LOCALHOST_JCR_PATH).setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "http://cdn.example.com");
             session.save();
-
-            // trigger direct invalidation of model without waiting for jcr event
-            eventPathsInvalidator.eventPaths(LOCALHOST_JCR_PATH);
 
             String actual = getActualJson("/_cmsinternal/spa/resourceapi", "1.0",
                     ContainerConstants.RENDERING_HOST  +"=localhost", EDITOR_CREDS);
@@ -723,8 +704,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             catalogItemNode.setProperty("hst:valuetype", "text");
             session.save();
 
-            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:catalog/unittestpackage/testcatalogitemparameteroverriding/hideFutureItems");
-
             String actual;
             try (final Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HstComponentConfigurationService.class).build()) {
                 actual = getActualJson("/spa/resourceapi/residualparamstest", "1.0");
@@ -772,7 +751,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             headerComponentNode.setProperty("hst:parameternames", new String[]{PageModelAggregationValve.HIDE_PARAMETER_NAME});
             headerComponentNode.setProperty("hst:parametervalues", new String[]{"true"});
             session.save();
-            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
             DeterministicJsonPointerFactory.reset();
 
             {
@@ -785,7 +763,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             // mark the component to be hidden but now through ON instead of 'true'
             headerComponentNode.setProperty("hst:parametervalues", new String[]{"ON"});
             session.save();
-            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
             DeterministicJsonPointerFactory.reset();
 
             {
@@ -798,7 +775,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             // mark the component to be NOT hidden but now through OFF
             headerComponentNode.setProperty("hst:parametervalues", new String[]{"OFF"});
             session.save();
-            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
             DeterministicJsonPointerFactory.reset();
 
             {
@@ -811,7 +787,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             // mark the component to be NOT hidden but now through "LOREM"...some falsy value
             headerComponentNode.setProperty("hst:parametervalues", new String[]{"LOREM"});
             session.save();
-            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
             DeterministicJsonPointerFactory.reset();
 
             {
@@ -824,7 +799,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             // mark the component to be NOT hidden but now through ""...some falsy value
             headerComponentNode.setProperty("hst:parametervalues", new String[]{""});
             session.save();
-            eventPathsInvalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:components/header");
             DeterministicJsonPointerFactory.reset();
 
             {
@@ -849,5 +823,4 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             session.logout();
         }
     }
-
 }
