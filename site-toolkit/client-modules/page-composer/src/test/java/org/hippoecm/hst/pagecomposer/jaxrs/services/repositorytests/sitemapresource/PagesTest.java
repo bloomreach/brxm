@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,8 +93,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER, true);
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
@@ -122,7 +120,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/webfiles")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE, false);
         session.save();
-        Thread.sleep(200);
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
@@ -167,7 +164,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PAGE_TITLE, "foo");
         session.save();
-        Thread.sleep(200);
         initContext();
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.getSiteMapPages(null);
@@ -198,7 +194,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         final Node containerItem = container.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         containerItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
         session.save();
-        Thread.sleep(200);
 
         final SiteMapItemRepresentation homePage = getHomePage();
         assertTrue(homePage.getHasContainerItemInPageDefinition());
@@ -217,7 +212,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         homePageContainer.setProperty("hst:referencecomponent", "testcontainer");
 
         session.save();
-        Thread.sleep(200);
 
         final SiteMapItemRepresentation homePage = getHomePage();
         // REFERENCED items do not count!
@@ -244,7 +238,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:abstractpages",
                 "/hst:hst/hst:configurations/unittestproject-preview/hst:abstractpages");
         session.save();
-        Thread.sleep(200);
         final SiteMapItemRepresentation homePage = getHomePage();
         // REFERENCED items do not count!
         assertFalse(homePage.getHasContainerItemInPageDefinition());
@@ -267,7 +260,6 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         containerItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
         session.save();
 
-        Thread.sleep(200);
         final SiteMapItemRepresentation homePage = getHomePage();
         // INHERITED CONFIGURATION items do not count!
         assertFalse(homePage.getHasContainerItemInPageDefinition());

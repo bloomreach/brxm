@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,16 +36,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -81,8 +78,6 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemenus",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus");
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
         createPreviewWithSiteMenuWorkspace();
     }
 
@@ -102,8 +97,6 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
 
             adminGroup.setProperty("hipposys:members", original);
             session.save();
-            // give time for jcr events to evict model
-            Thread.sleep(100);
         } finally {
             super.tearDown();
         }
@@ -134,8 +127,6 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
         ((HstMutableRequestContext) ctx).setSession(session);
         mountResource.startEdit();
         ModifiableRequestContextProvider.clear();
-        // time for jcr events to arrive
-        Thread.sleep(100);
     }
 
     public SiteMenuItemRepresentation getSiteMenuItemRepresentation(final Session requestSession,

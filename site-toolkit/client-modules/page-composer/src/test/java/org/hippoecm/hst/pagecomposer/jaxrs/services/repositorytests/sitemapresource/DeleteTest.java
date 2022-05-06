@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,6 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
     public void test_delete_with_page_which_does_not_exist_live() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage").remove();
         session.save();
-        Thread.sleep(200);
 
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
@@ -96,7 +95,6 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
                 "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home2");
 
         session.save();
-        Thread.sleep(200);
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
 
         final HstComponentConfiguration componentConfiguration = mountResource.getPageComposerContextService().getEditingPreviewSite()
@@ -169,7 +167,6 @@ public class DeleteTest extends AbstractSiteMapResourceTest {
         final Node container = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + expectedNewPageBarNodeName + "/main/container1");
         container.setProperty(GENERAL_PROPERTY_LOCKED_BY, "JohnDoe");
         session.save();
-        Thread.sleep(200);
 
         // reload model and context
         initContext();

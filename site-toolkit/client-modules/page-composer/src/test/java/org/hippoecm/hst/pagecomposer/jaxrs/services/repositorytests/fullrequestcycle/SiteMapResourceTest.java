@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,11 +33,9 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.Utilities;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -62,8 +60,6 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
         Session session = backupHstAndCreateWorkspace();
         session.save();
         session.logout();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
     }
 
     @After
