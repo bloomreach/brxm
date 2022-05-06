@@ -192,10 +192,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node globalConfig = session.getNode("/hst:hst/hst:configurations/global");
         globalConfig.addNode("hst:pages", "hst:pages");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
@@ -221,9 +218,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         // remove node again
         session.getNode("/hst:hst/hst:configurations/global").getNode("hst:pages").remove();
-        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         // now we expect the same instance again from cache
         final ResolvedMount mountSecondAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
@@ -250,9 +245,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         globalConfig = session.getNode("/hst:hst/hst:configurations/global");
         globalConfig.addNode("hst:sitemenus", "hst:sitemenus");
-        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         // there is still inheritance from global to unittest site hence not the same
         final ResolvedMount mountThirdAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
@@ -295,9 +288,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node defaultComponents = session.getNode("/hst:hst/hst:configurations/hst:default/hst:components");
         defaultComponents.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:component");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/");
@@ -369,9 +360,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node commonCatalog = configurationsNode.addNode("hst:catalog", "hst:catalog");
         commonCatalog.addNode("testNewUniqueNamedNodeInCommonCatalogTriggersReloadAll", "hst:containeritempackage");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
 
         ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
