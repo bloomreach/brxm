@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,6 @@ public class SiteMapTreePickerRepresentationTest extends AbstractTestTreePickerR
         final Node home = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
         home.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER, true);
         session.save();
-        Thread.sleep(100);
 
         AbstractTreePickerRepresentation representation = createSiteMapRepresentation("", getSiteMapIdentifier());
         for (AbstractTreePickerRepresentation child : representation.getItems()) {

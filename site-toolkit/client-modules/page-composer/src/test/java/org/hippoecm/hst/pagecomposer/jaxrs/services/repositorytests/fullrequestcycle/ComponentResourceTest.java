@@ -126,8 +126,6 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         session.getNodeByIdentifier(getNodeId("/hst:hst/hst:configurations/unittestproject")).setProperty(HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
         session.logout();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
 
         final MockHttpServletResponse response = getActionsAndStatesRequest(containerTestPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
@@ -171,8 +169,6 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final String documentXPageId = getVariant(documentWorkflow.getNode(), UNPUBLISHED).getNode("hst:xpage").getIdentifier();
         hippoSession.save();
         hippoSession.logout();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
 
         final MockHttpServletResponse response = getActionsAndStatesRequest(documentXPageId);
         Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());

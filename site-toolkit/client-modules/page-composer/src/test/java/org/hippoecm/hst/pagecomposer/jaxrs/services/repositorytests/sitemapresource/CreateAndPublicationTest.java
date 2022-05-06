@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,8 +83,6 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:workspace");
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace");
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -99,8 +97,6 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages");
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -115,8 +111,6 @@ public class CreateAndPublicationTest extends AbstractSiteMapResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
         session.removeItem("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap");
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
         initContext();
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();

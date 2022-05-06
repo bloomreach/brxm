@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,6 @@ public class PageUpdateEventTest extends AbstractSiteMapResourceTest {
         super.setUp();
         createPreviewWithSiteMapWorkspace("localhost", "/subsite");
         session.save();
-        // time for jcr events to arrive
-        Thread.sleep(100);
     }
 
     private void initContext() throws Exception {

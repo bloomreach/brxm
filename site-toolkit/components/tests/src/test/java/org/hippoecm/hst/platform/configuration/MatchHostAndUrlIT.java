@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -941,7 +941,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/contact");
         session.save();
-        Thread.sleep(100);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         GenericHttpServletRequestWrapper containerRequest;
@@ -986,7 +985,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "common/aboutfolder/nonexisting");
         session.save();
-        Thread.sleep(100);
         MockHttpServletResponse response = new MockHttpServletResponse();
         GenericHttpServletRequestWrapper containerRequest;
         {
@@ -1065,7 +1063,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_default_/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${1}");
         session.save();
-        Thread.sleep(100);
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         GenericHttpServletRequestWrapper containerRequest;
