@@ -34,7 +34,6 @@ import org.onehippo.repository.update.UpdaterExecutionReport;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOG;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOGTAIL;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOGTARGET;
 
 public class UpdaterOutput extends Panel {
 
@@ -50,7 +49,7 @@ public class UpdaterOutput extends Panel {
             output = new Label("output","Logs are stored in normal log files for logger '" +
                     UpdaterExecutionReport.class.getName() + "' and not visible here");
         } else {
-            output = new Label("output", () -> ReadOnlyModel.of(() -> logs));
+            output = new Label("output", ReadOnlyModel.of(() -> logs));
         }
         if (updating) {
             output.setOutputMarkupId(true);
@@ -66,11 +65,11 @@ public class UpdaterOutput extends Panel {
 
         final Node node = (Node) o;
         try {
-            final Binary fullLog = JcrUtils.getBinaryProperty(node, "hipposys:log", null);
+            final Binary fullLog = JcrUtils.getBinaryProperty(node, HIPPOSYS_LOG, null);
             if (fullLog != null) {
                 return IOUtils.toString(fullLog.getStream());
             } else {
-                return JcrUtils.getStringProperty(node, "hipposys:logtail", "");
+                return JcrUtils.getStringProperty(node, HIPPOSYS_LOGTAIL, "");
             }
         } catch (RepositoryException | IOException e) {
             return "Cannot read log: " + e.getMessage();
