@@ -272,7 +272,6 @@
 - * (undefined) multiple
 - * (undefined)
 + * (hipposys:moduleconfig)
-+ * (nt:base)
 
 [hipposys:updaterinfo] > nt:base
 - hipposys:description (string)
