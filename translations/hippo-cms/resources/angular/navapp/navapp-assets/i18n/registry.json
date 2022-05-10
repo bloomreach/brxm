@@ -226,8 +226,14 @@
       "locales" : null
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_API_DETAILS" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ACCOUNT_OVERVIEW" : {
       "status" : "CLEAN",
