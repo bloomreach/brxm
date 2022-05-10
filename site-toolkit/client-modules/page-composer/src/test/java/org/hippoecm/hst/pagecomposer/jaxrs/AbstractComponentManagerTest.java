@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -133,11 +133,7 @@ public abstract class AbstractComponentManagerTest {
 
     @After
     public void tearDown() throws Exception {
-
         ModifiableRequestContextProvider.clear();
-        // model is used in next test method again, invalidate to have a clean empty model again
-        ((HstModelImpl)platformComponentManager.getComponent(HstModelProvider.class).getHstModel()).invalidate();
-        ((HstModelImpl)siteComponentManager.getComponent(HstModelProvider.class).getHstModel()).invalidate();
     }
 
 

@@ -72,7 +72,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
     private String experienceSiteMapItemId;
 
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
+        super.setUp();
         // the containerNodeName is the equivalent of the 'hippo:identifier' on the XPage Layout container
         containerNodeName = "430df2da-3dc8-40b5-bed5-bdc44b8445c6";
 
