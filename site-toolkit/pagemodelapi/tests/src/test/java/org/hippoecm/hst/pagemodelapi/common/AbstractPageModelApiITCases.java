@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,6 @@ import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
@@ -90,9 +88,6 @@ public abstract class AbstractPageModelApiITCases {
     protected static Filter filter;
     protected static ObjectMapper mapper = new ObjectMapper();
 
-    protected static InternalHstModel hstModel;
-
-
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
@@ -126,9 +121,6 @@ public abstract class AbstractPageModelApiITCases {
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         modelRegistry.registerHstModel(servletContext, componentManager, true);
-
-        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        hstModel = (InternalHstModel) provider.getHstModel();
 
     }
 
