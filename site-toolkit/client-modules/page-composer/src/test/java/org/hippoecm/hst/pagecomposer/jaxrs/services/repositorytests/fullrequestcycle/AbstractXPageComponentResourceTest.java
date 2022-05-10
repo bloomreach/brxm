@@ -116,7 +116,11 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
                 admin.getNode(EXPERIENCE_PAGE_HANDLE_PATH).remove();
             }
             if (admin.nodeExists("/expPage1")) {
-                admin.move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+                // do not user session move for CONTENT as this does not update the hippo:paths derived property!
+                // instead copy and remove
+                JcrUtils.copy(admin, "/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+                admin.getNode("/expPage1").remove();
+
             } else {
                 fail("'/expPage1' should have been backed up");
             }
