@@ -24,7 +24,6 @@ import javax.jcr.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -72,16 +71,7 @@ public class HstConfigurationUtils {
         setLastModifiedTimeStamps(session, pathsToBeChanged);
 
         session.save();
-        final InternalHstModel previewHstModel = getPreviewHstModel();
-        if (previewHstModel != null) {
-            final EventPathsInvalidator invalidator = previewHstModel.getEventPathsInvalidator();
-            // after the save the paths need to be send, not before!
-            if (invalidator != null && pathsToBeChanged != null) {
-                invalidator.eventPaths(pathsToBeChanged);
-            }
-        } else {
-            log.warn("HstConfigurationUtils#persistChanges should not be used when invoked from outside the channel mgr");
-        }
+
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),StringUtils.join(prunedPathChanges, ","));
     }
