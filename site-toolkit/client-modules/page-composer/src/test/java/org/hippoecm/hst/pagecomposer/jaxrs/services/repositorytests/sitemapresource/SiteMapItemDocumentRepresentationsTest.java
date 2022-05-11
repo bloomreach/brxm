@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         session.getNodeByIdentifier(toUpdate.getId()).getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).remove();
         session.save();
 
-        Thread.sleep(100);
         final SiteMapItemRepresentation homeWithoutRelContentPath = getSiteMapItemRepresentation(session, "home");
         assertNull(homeWithoutRelContentPath.getRelativeContentPath());
         assertNull(homeWithoutRelContentPath.getPrimaryDocumentRepresentation());
@@ -153,7 +152,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
             session.getNode("/unittestcontent/documents/unittestproject/common/homepage/homepage").setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"preview"});
             session.save();
-            Thread.sleep(100);
 
             liveUser.logout();
             liveUser = createLiveUserSession();
@@ -188,7 +186,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
         session.getNodeByIdentifier(toUpdate.getId()).setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,"non-existing");
         session.save();
 
-        Thread.sleep(100);
         final SiteMapItemRepresentation homeWithoutExistingComponent = getSiteMapItemRepresentation(session, "home");
         assertEquals(1, homeWithoutExistingComponent.getAvailableDocumentRepresentations().size());
         assertSame(homeWithoutExistingComponent.getPrimaryDocumentRepresentation(),
@@ -237,7 +234,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
                 });
 
         session.save();
-        Thread.sleep(100);
 
         final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
         final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();
@@ -275,7 +271,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
                 });
 
         session.save();
-        Thread.sleep(100);
 
         final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
         final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();
@@ -324,7 +319,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
                 });
 
         session.save();
-        Thread.sleep(100);
 
         final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
         final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();

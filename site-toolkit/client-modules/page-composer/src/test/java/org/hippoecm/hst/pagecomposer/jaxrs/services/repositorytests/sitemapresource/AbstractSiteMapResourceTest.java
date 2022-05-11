@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,8 +101,6 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/newsoverview");
 
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
 
         createPreviewWithSiteMapWorkspace("localhost", "");
 
@@ -125,8 +123,6 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
             adminGroup.setProperty("hipposys:members", original);
             session.save();
-            // give time for jcr events to evict model
-            Thread.sleep(100);
         } finally {
             super.tearDown();
         }
@@ -147,8 +143,6 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         ((HstMutableRequestContext) ctx).setSession(session);
         mountResource.startEdit();
         ModifiableRequestContextProvider.clear();
-        // time for jcr events to arrive
-        Thread.sleep(100);
     }
 
     /**

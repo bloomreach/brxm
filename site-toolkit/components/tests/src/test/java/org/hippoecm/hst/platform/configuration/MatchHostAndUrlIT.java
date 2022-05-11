@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -941,7 +941,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/contact");
         session.save();
-        Thread.sleep(100);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         GenericHttpServletRequestWrapper containerRequest;
@@ -986,7 +985,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "common/aboutfolder/nonexisting");
         session.save();
-        Thread.sleep(100);
         MockHttpServletResponse response = new MockHttpServletResponse();
         GenericHttpServletRequestWrapper containerRequest;
         {
@@ -1065,7 +1063,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_default_/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${1}");
         session.save();
-        Thread.sleep(100);
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         GenericHttpServletRequestWrapper containerRequest;
@@ -1133,8 +1130,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
             session.save();
 
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
-
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
             final ResolvedVirtualHost resolvedVirtualHost = vhosts.matchVirtualHost("www.unit.foo");
@@ -1164,8 +1159,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
                     "/hst:hst/hst:hosts/testgroup/${toplevel}/${domainpart1}-${domainpart2}");
             session.save();
 
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
-
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
             final ResolvedVirtualHost resolvedVirtualHost = vhosts.matchVirtualHost("www.bar-lux.foo");
@@ -1192,7 +1185,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
 
             session.save();
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -1203,8 +1195,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             session.move("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
 
             session.save();
-
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
 
             vhosts = hstSitesManager.getVirtualHosts();
             assertNotNull(vhosts.matchVirtualHost("www.unit.test"));
@@ -1228,8 +1218,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
                     "/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/${mountname}");
 
             session.save();
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/custompipeline",
-                    "/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/${mountname}");
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -1256,7 +1244,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
 
             session.save();
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -1282,7 +1269,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
 
             session.save();
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -1309,7 +1295,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
 
             session.save();
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -1338,7 +1323,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
                     "/hst:hst/hst:hosts/testgroup/127.0.0.9");
 
             session.save();
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/test/unit/www", "/hst:hst/hst:hosts/testgroup");
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -1360,7 +1344,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             {
                 session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "//localhost");
                 session.save();
-                invalidator.eventPaths("/hst:hst/hst:hosts/dev-localhost/localhost");
 
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 final ResolvedVirtualHost localhost = vhosts.matchVirtualHost("localhost");
@@ -1370,7 +1353,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             {
                 session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "https://localhost");
                 session.save();
-                invalidator.eventPaths("/hst:hst/hst:hosts/dev-localhost/localhost");
 
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 final ResolvedVirtualHost localhost = vhosts.matchVirtualHost("localhost");
@@ -1382,7 +1364,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
                     // invalid scheme is ignored
                     session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "mailto://localhost");
                     session.save();
-                    invalidator.eventPaths("/hst:hst/hst:hosts/dev-localhost/localhost");
 
                     VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                     final ResolvedVirtualHost localhost = vhosts.matchVirtualHost("localhost");

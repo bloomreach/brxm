@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,9 +82,7 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
         // only the live configuration will inherit from the 'unittestcommon/hst:workspace'
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
         inheritanceAndInvalidationAssertions();
     }
     @Test
@@ -92,9 +90,7 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
         // only the live configuration will inherit from the 'unittestcommon/hst:workspace/hst:pages'
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:pages"});
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
         inheritanceAndInvalidationAssertions();
     }
 
@@ -109,9 +105,7 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
             assertNotNull("preview configuration should had inherited 'hst:pages/homepage' via live that in turns inherits from unittestcommon/hst:workspace", previewPageComponent);
         }
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage").remove();
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier());

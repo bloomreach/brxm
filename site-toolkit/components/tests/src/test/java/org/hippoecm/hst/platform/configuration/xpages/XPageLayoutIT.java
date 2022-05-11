@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.hst.platform.configuration.xpages;
 
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
@@ -145,8 +144,6 @@ public class XPageLayoutIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage2");
         session.save();
 
-        invalidate("/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage2");
-
         final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
 
         final Map<String, HstComponentConfiguration> xPages = mount.getMount().getHstSite().getComponentsConfiguration().getXPages();
@@ -176,8 +173,6 @@ public class XPageLayoutIT extends AbstractTestConfigurations {
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage1",
                 "/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage2");
         session.save();
-        invalidate("/hst:hst/hst:configurations/unittestproject/hst:xpages/xpage2");
-
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final Map<String, HstComponentConfiguration> xPages = mount.getMount().getHstSite().getComponentsConfiguration().getXPages();
@@ -195,9 +190,6 @@ public class XPageLayoutIT extends AbstractTestConfigurations {
 
         session.save();
 
-        invalidate("/hst:hst/hst:configurations/unittestproject/hst:xpages",
-                "/hst:hst/hst:configurations/unittestcommon/hst:xpages");
-
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final Map<String, HstComponentConfiguration> xPages = mount.getMount().getHstSite().getComponentsConfiguration().getXPages();
@@ -208,19 +200,12 @@ public class XPageLayoutIT extends AbstractTestConfigurations {
 
         session.save();
 
-        invalidate("/hst:hst/hst:configurations/unittestcommon/hst:xpages",
-                "/hst:hst/hst:configurations/hst:default/hst:xpages");
+
         {
             final ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final Map<String, HstComponentConfiguration> xPages = mount.getMount().getHstSite().getComponentsConfiguration().getXPages();
             assertThat(xPages.size()).isEqualTo(1);
         }
-    }
-
-    private void invalidate(String... paths) {
-
-        Arrays.stream(paths).forEach(s -> invalidator.eventPaths(s));
-
     }
 
 }
