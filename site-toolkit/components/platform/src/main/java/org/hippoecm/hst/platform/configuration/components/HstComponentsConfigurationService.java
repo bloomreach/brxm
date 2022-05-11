@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,7 +77,6 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private List<HstComponentConfiguration> availableContainerItems = new ArrayList<>();
 
     private final Set<String> usedReferenceNames = new HashSet<>();
-    private AtomicInteger autoCreatedCounter = new AtomicInteger(0);
 
     /**
      * Map from template node name to Template
@@ -292,26 +291,19 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         final String referenceName = componentConfiguration.getReferenceName();
         if (StringUtils.isBlank(referenceName)) {
-
-            setAutocreatedReference((HstComponentConfigurationService) componentConfiguration, usedReferenceNames, autoCreatedCounter);
-        } else if (usedReferenceNames.contains(referenceName)){
-            log.error("componentConfiguration '{}' contains invalid explicit reference '{}' since already in use. " +
-                    "Autocreating a new one now.", componentConfiguration.getCanonicalStoredLocation(), referenceName);
-            setAutocreatedReference((HstComponentConfigurationService) componentConfiguration, usedReferenceNames, autoCreatedCounter);
-        } else {
-            usedReferenceNames.add(referenceName);
+            setAutocreatedReference((HstComponentConfigurationService) componentConfiguration, usedReferenceNames);
         }
-
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
     }
 
     public static void setAutocreatedReference(final HstComponentConfigurationService componentConfiguration,
-                                               Set<String> usedReferenceNames,
-                                               final AtomicInteger autoCreatedCounter) {
-        String autoRefName = "r" + (autoCreatedCounter.incrementAndGet());
+                                               Set<String> usedReferenceNames) {
+        int autoCreatedCounter = 1;
+        String autoRefName = "r" + autoCreatedCounter;
         while (usedReferenceNames.contains(autoRefName)) {
-            autoRefName = "r" + (autoCreatedCounter.incrementAndGet());
+            autoRefName = "r" + ++autoCreatedCounter;
         }
+        usedReferenceNames.add(autoRefName);
         componentConfiguration.setReferenceName(StringPool.get(autoRefName));
     }
 
