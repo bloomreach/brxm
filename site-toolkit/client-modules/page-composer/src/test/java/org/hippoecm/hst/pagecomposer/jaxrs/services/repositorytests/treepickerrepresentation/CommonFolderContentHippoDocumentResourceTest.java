@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,6 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractTestTr
             commonFolder.addMixin(NT_NAMED);
             commonFolder.setProperty(HIPPO_NAME, "Common Folder");
             session.save();
-            Thread.sleep(100);
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getCommonFolderConfigIdentifier());
             assertEquals("Common Folder", representation.getDisplayName());
             assertEquals(2, representation.getItems().size());
@@ -87,8 +86,6 @@ public class CommonFolderContentHippoDocumentResourceTest extends AbstractTestTr
             final Node commonFolder = session.getNodeByIdentifier(getCommonFolderConfigIdentifier());
             commonFolder.removeMixin(NT_NAMED);
             session.save();
-            // give time for jcr events to evict model
-            Thread.sleep(100);
         }
     }
 

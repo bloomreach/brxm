@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,6 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         // delete existing prototype page first
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages").remove();
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         final Response response = mountResource.getPrototypePages();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -61,8 +59,6 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         prototypeNode.getNode("main/container1").remove();
         prototypeNode.getNode("main/container2").remove();
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(1, representation.getPrototypes().size());
@@ -76,8 +72,6 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
                 "/hst:hst/hst:configurations/unittestcommon/hst:prototypepages/common-prototype-page");
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
         assertEquals(2, representation.getPrototypes().size());
@@ -107,8 +101,6 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
         session.removeItem("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page");
         session.save();
 
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
@@ -138,8 +130,6 @@ public class MountResourcePrototypesTest extends AbstractMountResourceTest {
                 "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/bbb-page");
         session.save();
 
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         PrototypesRepresentation representation = (PrototypesRepresentation)((ResponseRepresentation) mountResource.getPrototypePages().getEntity()).getData();
 
