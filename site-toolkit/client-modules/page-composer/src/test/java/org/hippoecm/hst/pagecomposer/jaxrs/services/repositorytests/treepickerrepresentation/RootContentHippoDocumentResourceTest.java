@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,6 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
             addContent();
 
             session.save();
-            Thread.sleep(100);
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
@@ -98,8 +97,6 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
         } finally {
             cleanupContent(absRootContentPath, originalPrimaryType);
             session.save();
-            // give time for jcr events to evict model
-            Thread.sleep(100);
         }
     }
 
@@ -119,7 +116,6 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
             addContent();
 
             session.save();
-            Thread.sleep(100);
 
             // request for the homepage but do not set the homepage as REQUEST_CONFIG_NODE_IDENTIFIER hence 'false'
             AbstractTreePickerRepresentation representation = createRootContentRepresentation("", getRootContentConfigIdentifier());
@@ -137,8 +133,6 @@ public class RootContentHippoDocumentResourceTest extends AbstractTestTreePicker
         } finally {
             cleanupContent(absRootContentPath, originalPrimaryType);
             session.save();
-            // give time for jcr events to evict model
-            Thread.sleep(100);
         }
     }
 

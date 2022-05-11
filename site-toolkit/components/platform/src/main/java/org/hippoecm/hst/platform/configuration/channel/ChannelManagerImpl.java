@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2021 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,6 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
@@ -144,9 +143,9 @@ public class ChannelManagerImpl implements ChannelManager {
                     }
                 });
 
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstModel.getConfigurationRootPath()), false);
+
                 session.save();
-                hstModel.getEventPathsInvalidator().eventPaths(pathsToBeChanged);
+
                 return channelName;
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
@@ -192,7 +191,7 @@ public class ChannelManagerImpl implements ChannelManager {
         final Set<String> uniqueChannelNames = new HashSet<>();
 
         for (HstModel model : modelRegistry.getHstModels()) {
-            final String hstRoot = ((HstModelImpl) model).getConfigurationRootPath();
+            final String hstRoot = model.getConfigurationRootPath();
             Node rootNode = session.getNode(hstRoot);
 
             Node sitesNode = rootNode.getNode(sites);
@@ -240,9 +239,9 @@ public class ChannelManagerImpl implements ChannelManager {
                                 listenerEx);
                     }
                 });
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstModel.getConfigurationRootPath()), false);
+
                 session.save();
-                hstModel.getEventPathsInvalidator().eventPaths(pathsToBeChanged);
+
             } catch (RepositoryException | IllegalArgumentException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }

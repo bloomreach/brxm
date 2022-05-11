@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2022 Bloomreach
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -87,7 +87,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     public void setUp() throws Exception {
         super.setUp();
         setCachingFlagAndComponentClass();
-        
+
     }
 
     @After
@@ -99,7 +99,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         super.tearDown();
     }
 
-   
+
     @Test
     public void testCachedPagesAndHeaders() throws ContainerException, UnsupportedEncodingException {
         String timestamp = String.valueOf(System.nanoTime());
@@ -354,9 +354,9 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     }
 
     /**
-     * We now create x requests and start executing them with 50 threads: Note that EVEN that at 
+     * We now create x requests and start executing them with 50 threads: Note that EVEN that at
      * start we do not have any cached page, only ONE SINGLE request will actually build the response
-     * regardless with the initial concurrency : This is because we use a Blocking Cache which guards 
+     * regardless with the initial concurrency : This is because we use a Blocking Cache which guards
      * against stampeding herds as well
      */
     @Test
@@ -373,10 +373,10 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         for (int i = 0; i < nrJobs; i++) {
             jobs.add(new MockedRequestExecutor());
         }
-        
-        final List<Future<MockHttpServletResponse>> futures = executorService.invokeAll(jobs);        
+
+        final List<Future<MockHttpServletResponse>> futures = executorService.invokeAll(jobs);
         executorService.shutdown(); // Disable new tasks from being submitted
-       
+
         // Wait a while for existing tasks to terminate
         if (!executorService.awaitTermination(15, TimeUnit.SECONDS)) {
             executorService.shutdownNow(); // Cancel currently executing tasks
@@ -399,7 +399,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
             assertTrue(current.getHeader("timestamp").equals(next.getHeader("timestamp")));
             current = next;
         }
-        
+
     }
 
     /**
@@ -427,16 +427,16 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
             Collection<MockedRequestExecutor> jobs = new ArrayList<MockedRequestExecutor>(nrJobs);
             for (int i = 0; i < nrJobs; i++) {
                 if (i % 100 == 0) {
-                 jobs.add(new MockedRequestExecutor(true));  
+                 jobs.add(new MockedRequestExecutor(true));
                 } else {
                  jobs.add(new MockedRequestExecutor());
                 }
             }
             final List<Future<MockHttpServletResponse>> futures = executorService.invokeAll(jobs);
-            
-            
-            executorService.shutdown(); 
-            
+
+
+            executorService.shutdown();
+
             if (!executorService.awaitTermination(15, TimeUnit.SECONDS)) {
                 executorService.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
@@ -444,7 +444,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
                     fail("Pool did not terminate");
                 }
             }
-    
+
             MockHttpServletResponse current = null;
 
             for (Future<MockHttpServletResponse> future : futures) {
@@ -462,7 +462,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
                 current = next;
             }
         } catch (Throwable e) {
-            fail(e.toString()); 
+            fail(e.toString());
         }
         assertFalse("Not all page responses should be the same due to cache clearing",allResponsesAreExactlyTheSameCachedInstance);
     }
@@ -470,11 +470,11 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     class MockedRequestExecutor implements Callable<MockHttpServletResponse> {
 
         boolean firstClearCache = false;
-        
+
         public MockedRequestExecutor() {
-            
+
         }
-        
+
         public MockedRequestExecutor(final boolean clear) {
             firstClearCache = clear;
         }
@@ -601,7 +601,6 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
 
         headerComponent.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, HeaderComponentWithResponseHeaders.class.getName());
         getSession().save();
-        Thread.sleep(100);
     }
 
 

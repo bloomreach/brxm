@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -38,31 +37,24 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.platform.utils.UUIDUtils;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_FROZENUUID;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_MOUNT;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.EDITING_HST_MODEL_LINK_CREATOR_ATTR;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils.getXPageUnpublishedVariant;
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
-import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_PRIMARY_TYPE;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
@@ -278,11 +270,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         @Override
         public String getConfigurationRootPath() {
             return delegatee.getConfigurationRootPath();
-        }
-
-        @Override
-        public EventPathsInvalidator getEventPathsInvalidator() {
-            return delegatee.getEventPathsInvalidator();
         }
 
         @Override
