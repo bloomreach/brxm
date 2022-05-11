@@ -77,7 +77,6 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private List<HstComponentConfiguration> availableContainerItems = new ArrayList<>();
 
     private final Set<String> usedReferenceNames = new HashSet<>();
-    private AtomicInteger autoCreatedCounter = new AtomicInteger(0);
 
     /**
      * Map from template node name to Template
