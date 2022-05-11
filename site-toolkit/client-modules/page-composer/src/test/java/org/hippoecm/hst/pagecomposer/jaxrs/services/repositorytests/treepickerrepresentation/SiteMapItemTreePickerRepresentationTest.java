@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class SiteMapItemTreePickerRepresentationTest extends AbstractTestTreePickerRepresentation {
@@ -65,7 +63,6 @@ public class SiteMapItemTreePickerRepresentationTest extends AbstractTestTreePic
         final Node child = any.addNode("2011", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
         child.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "news/2011");
         session.save();
-        Thread.sleep(100);
         AbstractTreePickerRepresentation representation = createSiteMapItemRepresentation("", anyIdentifier);
         assertFalse(representation.isExpandable());
         assertTrue(representation.isCollapsed());

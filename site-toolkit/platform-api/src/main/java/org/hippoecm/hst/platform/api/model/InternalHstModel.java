@@ -29,7 +29,5 @@ public interface InternalHstModel extends HstModel {
 
     ChannelManager getChannelManager();
 
-    EventPathsInvalidator getEventPathsInvalidator();
-
     void invalidate();
 }
