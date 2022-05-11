@@ -183,9 +183,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private String[] hstFilterSuffixExclusions;
 
     private HstComponentRegistry componentRegistry;
+    private long buildNumber;
 
-    public VirtualHostsService(final String contextPath, final ContainerConfiguration websiteContainerConfiguration, final HstNodeLoadingCache hstNodeLoadingCache,
+    public VirtualHostsService(final long buildNumber, final String contextPath, final ContainerConfiguration websiteContainerConfiguration, final HstNodeLoadingCache hstNodeLoadingCache,
                                final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
+        this.buildNumber = buildNumber;
         long start = System.currentTimeMillis();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
         this.contextPath = contextPath;
@@ -1018,6 +1020,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
     @Override
     public HstComponentRegistry getComponentRegistry() {
         return componentRegistry;
+    }
+
+    public long getBuildNumber() {
+        return buildNumber;
     }
 
     public void setComponentRegistry(final HstComponentRegistry hstComponentRegistry) {
