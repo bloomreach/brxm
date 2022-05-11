@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/News/News1", "/unittestcontent/documents/unittestproject/" + tmpDocName);
         // rename document to handle name
         session.move("/unittestcontent/documents/unittestproject/"+tmpDocName+"/News1", "/unittestcontent/documents/unittestproject/" + tmpDocName + "/" + tmpDocName);
-        saveSession();
+        session.save();
     }
 
     @After
@@ -73,7 +73,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         if (session.itemExists(TMPDOC_LOC2)) {
             session.removeItem(TMPDOC_LOC2);
         }
-        saveSession();
+        session.save();
         session.logout();
         super.tearDown();
     }
@@ -105,7 +105,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathAbsolute.class.getName());
         contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-absolute"});
         contactPage.setProperty("hst:parametervalues", new String[]{TMPDOC_LOC});
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -132,7 +132,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
         contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
         contactPage.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -154,7 +154,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
             componentNode.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
 
         }
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -187,7 +187,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
             componentNode.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
         }
 
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -224,7 +224,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
         contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
         contactPage.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -256,7 +256,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, TMPDOC_NAME);
 
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -302,7 +302,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/contact/thankyou")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, TMPDOC_NAME);
 
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -326,7 +326,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
         contactPage.setProperty("hst:parametervalues", new String[]{"News/News1"});
 
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node newsDoc = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
@@ -360,7 +360,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         contactSiteMapItem.setProperty("hst:parameternames", new String[]{"property-foo"});
         contactSiteMapItem.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
 
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -378,7 +378,7 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         // property-foo should get substitude by the contactSiteMapItem parameter value for 'property-foo'
         contactPage.setProperty("hst:parametervalues", new String[]{"${unresolvable-property-foo}"});
 
-        saveSession();
+        session.save();
 
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
@@ -386,12 +386,5 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         assertEquals("pagenotfound", hstLink.getPath());
     }
 
-    private void saveSession() throws RepositoryException {
-        session.save();
-        //TODO SS: Clarify what could be the cause of failures without delay
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {}
-    }
 
 }

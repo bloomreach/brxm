@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,8 +77,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         addReferencedContainerForHomePage();
         String catalogItemUUID = addCatalogItem();
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
         final HstRequestContext ctx = pccs.getRequestContext();
@@ -109,10 +107,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
                 session.nodeExists(ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath()));
         assertTrue("Preview config node should exist",
                 session.nodeExists(previewConfigurationPath));
-
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "");
 
@@ -166,10 +160,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
         assertEquals("New container item should be created", Response.Status.CREATED.getStatusCode(), response.getStatus());
 
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
-
         mockNewRequest(session, "localhost", "/home");
         // reload the preview channel : After changes, it *must* be a different object
         assertTrue("Since there are changes, pccs.getEditingPreviewChannel should return a new object.", previewChannel != pccs.getEditingPreviewChannel());
@@ -179,10 +169,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         assertTrue(changedBySet.contains("admin"));
 
         mountResource.publish();
-
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "/home");
 
@@ -217,9 +203,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
 
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
-
         mockNewRequest(session, "localhost", "");
 
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
@@ -244,9 +227,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         body3.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
 
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(100);
-
         mockNewRequest(session, "localhost", "/home");
 
         try ( Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(AbstractHelper.class).build()) {
@@ -272,8 +252,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         addReferencedContainerForHomePage();
         String catalogItemUUID = addCatalogItem();
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
 
@@ -353,8 +331,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         addReferencedContainerForHomePage();
         String catalogItemUUID = addCatalogItem();
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
 
@@ -442,8 +418,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         testSideNode.setProperty("hst:configurationpath", "/hst:hst/hst:configurations/7_8");
 
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
         mockNewRequest(session, "localhost", "");
@@ -451,10 +425,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         assertEquals("/hst:hst/hst:configurations/7_8", pccs.getRequestContext().getResolvedMount().getMount().getHstSite().getConfigurationPath());
 
         mountResource.startEdit();
-
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "");
 
@@ -471,19 +441,12 @@ public class MountResourceTest extends AbstractMountResourceTest {
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
         assertEquals("New container item should be created", Response.Status.CREATED.getStatusCode(), response.getStatus());
 
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "/home");
 
         usersWithLockedContainers = pccs.getEditingPreviewChannel().getChangedBySet();
         assertTrue(usersWithLockedContainers.contains("admin"));
 
         mountResource.publish();
-
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "/home");
 
@@ -741,15 +704,9 @@ public class MountResourceTest extends AbstractMountResourceTest {
         addReferencedContainerForHomePage();
         String catalogItemUUID = addCatalogItem();
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "");
         mountResource.startEdit();
-
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "");
 
@@ -764,10 +721,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
-        // reload model through new request, and then modify a container
-        // give time for jcr events to evict model
-        Thread.sleep(200);
-
         mockNewRequest(session, "localhost", "/home");
 
     }
@@ -777,8 +730,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
 
         session.save();
-        // give time for jcr events to evict model
-        Thread.sleep(200);
         mockNewRequest(session, "localhost", "");
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
         final HstRequestContext ctx = pccs.getRequestContext();
