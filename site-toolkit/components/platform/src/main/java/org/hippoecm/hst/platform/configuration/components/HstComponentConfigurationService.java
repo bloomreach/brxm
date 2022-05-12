@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -135,7 +134,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String pageErrorHandlerClassName;
 
     private Set<String> usedChildReferenceNames = new HashSet<>();
-    private AtomicInteger autocreatedCounter = new AtomicInteger(0);
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
 
@@ -1897,11 +1895,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             child.autocreateReferenceNames();
             final String referenceName = child.getReferenceName();
             if (StringUtils.isBlank(referenceName)) {
-                setAutocreatedReference(child, usedChildReferenceNames, autocreatedCounter);
+                setAutocreatedReference(child, usedChildReferenceNames);
             } else if (usedChildReferenceNames.contains(referenceName)){
                 log.error("componentConfiguration '{}' contains invalid explicit reference '{}' since already in use. " +
                         "Autocreating a new one now.", child.getCanonicalStoredLocation(), referenceName);
-                setAutocreatedReference(child, usedChildReferenceNames, autocreatedCounter);
+                setAutocreatedReference(child, usedChildReferenceNames);
             } else {
                 usedChildReferenceNames.add(referenceName);
             }
