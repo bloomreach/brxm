@@ -437,6 +437,8 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYS_LOGLEVEL = "hipposys:loglevel";
 
+    public static final String HIPPOSYS_LOGTARGET = "hipposys:logtarget";
+
     public static final String HIPPO_IGNORABLE = "hippo:ignorable";
 
     public static final String NT_RESOURCEBUNDLES = "hipposys:resourcebundles";
