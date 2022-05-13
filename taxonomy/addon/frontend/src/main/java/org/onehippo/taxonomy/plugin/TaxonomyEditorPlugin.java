@@ -393,7 +393,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         final Optional<AjaxRequestTarget> target = getRequestCycle().find(AjaxRequestTarget.class);
 
         if (target.isPresent()) {
-            target.get().add(toolbarHolder.size() > 0 ? toolbarHolder : holder);
+            if (toolbarHolder.size() > 0) {
+                target.get().add(toolbarHolder);
+            }
+            target.get().add(holder);
         } else {
             super.redraw();
         }
