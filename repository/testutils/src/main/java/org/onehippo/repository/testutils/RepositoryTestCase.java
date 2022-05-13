@@ -165,7 +165,7 @@ public abstract class RepositoryTestCase {
 
     @After
     public void tearDown() throws Exception {
-//        this.tearDown(false);
+        this.tearDown(false);
     }
 
     protected void tearDown(boolean clearRepository) throws Exception {
