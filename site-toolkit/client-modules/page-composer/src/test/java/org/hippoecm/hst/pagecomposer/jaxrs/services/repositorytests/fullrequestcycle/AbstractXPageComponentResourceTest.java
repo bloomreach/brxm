@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -118,7 +118,11 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
                 admin.getNode(EXPERIENCE_PAGE_HANDLE_PATH).remove();
             }
             if (admin.nodeExists("/expPage1")) {
-                admin.move("/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+                // do not user session move for CONTENT as this does not update the hippo:paths derived property!
+                // instead copy and remove
+                JcrUtils.copy(admin, "/expPage1", EXPERIENCE_PAGE_HANDLE_PATH);
+                admin.getNode("/expPage1").remove();
+
             } else {
                 fail("'/expPage1' should have been backed up");
             }
