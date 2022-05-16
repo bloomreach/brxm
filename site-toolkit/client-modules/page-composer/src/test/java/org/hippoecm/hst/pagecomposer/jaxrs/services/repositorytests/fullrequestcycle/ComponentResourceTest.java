@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.component.Category;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstAction;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.HstState;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
@@ -164,57 +163,68 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final String xpagePath = "/unittestcontent/documents/unittestproject/experiences/expPage1";
         final String handleId = getNodeId(xpagePath);
         final HippoSession hippoSession = (HippoSession) createSession(ADMIN_CREDENTIALS);
-        final WorkflowManager workflowManager = hippoSession.getWorkspace().getWorkflowManager();
-        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", hippoSession.getNodeByIdentifier(handleId));
-        documentWorkflow.depublish();
-        documentWorkflow.publish();
-        final String name = DocumentUtils.getDisplayName(documentWorkflow.getNode()).orElse("UNDEFINED");
-        final String documentXPageId = getVariant(documentWorkflow.getNode(), UNPUBLISHED).getNode("hst:xpage").getIdentifier();
+        JcrUtils.copy(hippoSession, xpagePath, "/bak");
         hippoSession.save();
-        hippoSession.logout();
         // give time for jcr events to evict model
         Thread.sleep(100);
+        try {
+            final WorkflowManager workflowManager = hippoSession.getWorkspace().getWorkflowManager();
+            final DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", hippoSession.getNodeByIdentifier(handleId));
+            documentWorkflow.depublish();
+            documentWorkflow.publish();
+            final String name = DocumentUtils.getDisplayName(documentWorkflow.getNode()).orElse("UNDEFINED");
+            final String documentXPageId = getVariant(documentWorkflow.getNode(), UNPUBLISHED).getNode("hst:xpage").getIdentifier();
 
-        final MockHttpServletResponse response = getActionsAndStatesRequest(documentXPageId);
-        Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+            final MockHttpServletResponse response = getActionsAndStatesRequest(documentXPageId);
+            Assertions.assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
-        final ActionsAndStatesRepresentation actionsAndStates = getActionsAndStates(response);
-        final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
+            final ActionsAndStatesRepresentation actionsAndStates = getActionsAndStates(response);
+            final Map<String, Boolean> actions = flattenActions(actionsAndStates.getActions());
 
-        final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
-                .put(key(CHANNEL, CHANNEL_CLOSE), true)
-                .put(key(CHANNEL, CHANNEL_DELETE), false)
-                .put(key(CHANNEL, CHANNEL_DISCARD_CHANGES), false)
-                .put(key(CHANNEL, CHANNEL_MANAGE_CHANGES), false)
-                .put(key(CHANNEL, CHANNEL_PUBLISH), false)
-                .put(key(CHANNEL, CHANNEL_SETTINGS), true)
-                .put(key(XPAGE, XPAGE_COPY), true)
-                .put(key(XPAGE, XPAGE_DELETE), false)
-                .put(key(XPAGE, XPAGE_MOVE), false)
-                .put(key(XPAGE, XPAGE_PUBLISH), false)
-                .put(key(XPAGE, XPAGE_RENAME), false)
-                .put(key(XPAGE, XPAGE_SCHEDULE_PUBLICATION), false)
-                .put(key(XPAGE, XPAGE_SCHEDULE_UNPUBLICATION), true)
-                .put(key(XPAGE, XPAGE_UNPUBLISH), true)
-                .build();
-        Assertions.assertThat(actions)
-                .describedAs("An xpage request contains all channel and xpage actions")
-                .isEqualTo(expectedActionItems);
+            final Map<String, Boolean> expectedActionItems = ImmutableMap.<String, Boolean>builder()
+                    .put(key(CHANNEL, CHANNEL_CLOSE), true)
+                    .put(key(CHANNEL, CHANNEL_DELETE), false)
+                    .put(key(CHANNEL, CHANNEL_DISCARD_CHANGES), false)
+                    .put(key(CHANNEL, CHANNEL_MANAGE_CHANGES), false)
+                    .put(key(CHANNEL, CHANNEL_PUBLISH), false)
+                    .put(key(CHANNEL, CHANNEL_SETTINGS), true)
+                    .put(key(XPAGE, XPAGE_COPY), true)
+                    .put(key(XPAGE, XPAGE_DELETE), false)
+                    .put(key(XPAGE, XPAGE_MOVE), false)
+                    .put(key(XPAGE, XPAGE_PUBLISH), false)
+                    .put(key(XPAGE, XPAGE_RENAME), false)
+                    .put(key(XPAGE, XPAGE_SCHEDULE_PUBLICATION), false)
+                    .put(key(XPAGE, XPAGE_SCHEDULE_UNPUBLICATION), true)
+                    .put(key(XPAGE, XPAGE_UNPUBLISH), true)
+                    .build();
+            Assertions.assertThat(actions)
+                    .describedAs("An xpage request contains all channel and xpage actions")
+                    .isEqualTo(expectedActionItems);
 
-        final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
+            final Map<String, Object> states = flattenStates(actionsAndStates.getStates());
 
-        final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
-                .put(key(XPAGE, HstState.XPAGE_BRANCH_ID), BranchConstants.MASTER_BRANCH_ID)
-                .put(key(XPAGE, HstState.XPAGE_ID), handleId)
-                .put(key(XPAGE, HstState.XPAGE_NAME), name)
-                .put(key(XPAGE, HstState.XPAGE_STATE), "live")
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
-                .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
-                .put(key(WORKFLOW, HstState.WORKFLOW_REQUESTS), Collections.emptyList())
-                .build();
-        Assertions.assertThat(states)
-                .describedAs("A published xpage request contains xpage and channel states")
-                .isEqualTo(expectedStates);
+            final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
+                    .put(key(XPAGE, HstState.XPAGE_BRANCH_ID), BranchConstants.MASTER_BRANCH_ID)
+                    .put(key(XPAGE, HstState.XPAGE_ID), handleId)
+                    .put(key(XPAGE, HstState.XPAGE_NAME), name)
+                    .put(key(XPAGE, HstState.XPAGE_STATE), "live")
+                    .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
+                    .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
+                    .put(key(WORKFLOW, HstState.WORKFLOW_REQUESTS), Collections.emptyList())
+                    .build();
+            Assertions.assertThat(states)
+                    .describedAs("A published xpage request contains xpage and channel states")
+                    .isEqualTo(expectedStates);
+        } finally {
+            hippoSession.getNode(xpagePath).remove();
+            // do not use '.move' as this does not update the hippo:paths derived property
+            JcrUtils.copy(hippoSession, "/bak", xpagePath);
+            hippoSession.getNode("/bak").remove();
+            hippoSession.save();
+            hippoSession.logout();
+            // give time for jcr events to evict model
+            Thread.sleep(100);
+        }
     }
 
     private MockHttpServletResponse getActionsAndStatesRequest(String containerId) throws RepositoryException, IOException, ServletException {
