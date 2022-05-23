@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2022 Bloomreach (https://www.bloomreach.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,21 +15,34 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.onehippo.cms.json.Json;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Base manager for showing a dialog.
  */
+@Slf4j
 public class DialogManager<ModelType> implements IDetachable {
 
     private static final String DIALOG_CONFIG = "dialogConfig";
+    private static final String DIALOG_CONTEXT = "dialogContext";
 
     private final IPluginContext context;
-    private final DialogConfig config;
+    private final IPluginConfig config;
     private final DialogBehavior behavior;
 
     private ScriptAction<ModelType> cancelAction;
@@ -37,7 +50,7 @@ public class DialogManager<ModelType> implements IDetachable {
 
     public DialogManager(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
-        this.config = new DialogConfig(config);
+        this.config = config;
 
         behavior = new DialogBehavior() {
             @Override
@@ -55,8 +68,13 @@ public class DialogManager<ModelType> implements IDetachable {
         beforeShowDialog(parameters);
 
         final String paramsDialogConfig = parameters.get(DIALOG_CONFIG);
-        final IPluginConfig mergedDialogConfig = config.getMerged(paramsDialogConfig);
-        final Dialog<ModelType> dialog = createDialog(context, mergedDialogConfig, parameters);
+        final String paramsDialogContext = parameters.get(DIALOG_CONTEXT);
+
+        final IPluginConfig dialogPluginConfigTemplate = mergeJsonWithConfig(config, paramsDialogConfig);
+        final IPluginConfig dialogPluginContext = mergeJsonWithConfig(new JavaPluginConfig(), paramsDialogContext);
+
+        final IPluginConfig dialogPluginConfig = createPluginConfig(dialogPluginConfigTemplate, dialogPluginContext);
+        final Dialog<ModelType> dialog = createDialog(context, dialogPluginConfig, parameters);
 
         if (cancelAction != null) {
             dialog.setCancelAction(cancelAction);
@@ -75,6 +93,10 @@ public class DialogManager<ModelType> implements IDetachable {
         return new Dialog<>();
     }
 
+    protected IPluginConfig createPluginConfig(final IPluginConfig template, final IPluginConfig context) {
+        return template;
+    }
+
     private IDialogService getDialogService() {
         return context.getService(IDialogService.class.getName(), IDialogService.class);
     }
@@ -89,5 +111,55 @@ public class DialogManager<ModelType> implements IDetachable {
 
     @Override
     public void detach() {
+    }
+
+    private IPluginConfig mergeJsonWithConfig(final IPluginConfig defaultConfig, final String jsonConfig) {
+        if (StringUtils.isEmpty(jsonConfig)) {
+            return defaultConfig;
+        }
+
+        final JavaPluginConfig config = new JavaPluginConfig();
+        config.putAll(defaultConfig);
+
+        try {
+            final ObjectNode dialogConfig = Json.object(jsonConfig);
+            addJsonToConfig(dialogConfig, config);
+        } catch (IOException e) {
+            log.warn("Could not parse dialog configuration '{}'. Using default configuration.",
+                    jsonConfig, e);
+        }
+        return config;
+    }
+
+    private void addJsonToConfig(final ObjectNode json, final JavaPluginConfig config) {
+        final Iterator<String> jsonFields = json.fieldNames();
+        while (jsonFields.hasNext()) {
+            final String jsonField = jsonFields.next();
+            final JsonNode jsonValue = json.get(jsonField);
+            config.put(jsonField, asJavaObject(jsonValue));
+        }
+    }
+
+    private Object asJavaObject(final JsonNode jsonValue) {
+        if (jsonValue.isTextual()) {
+            return jsonValue.asText();
+        }
+
+        if (jsonValue.isBoolean()) {
+            return jsonValue.asBoolean();
+        }
+
+        if (jsonValue.isArray()) {
+            // always assume an array of strings
+            final ArrayNode array = (ArrayNode) jsonValue;
+            final String[] values = new String[array.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = array.get(i).asText();
+            }
+            return values;
+        }
+
+        log.warn("Skipped JSON value of unknown type: '{}'", jsonValue);
+        return null;
     }
 }
