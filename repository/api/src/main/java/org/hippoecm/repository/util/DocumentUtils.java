@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,6 +93,27 @@ public class DocumentUtils {
             } else {
                 log.warn("Problem retrieving variant node type for handle(?) node '{}': {}", handle, e.getMessage());
             }
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<Node> findHandle(final Node node) {
+        if (node == null) {
+            return Optional.empty();
+        }
+
+        try {
+            final Node rootNode = node.getSession().getRootNode();
+            Node handleNode = node;
+            while (!rootNode.isSame(handleNode)) {
+                if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    return Optional.of(handleNode);
+                }
+                handleNode = handleNode.getParent();
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to find the ancestor '{}' node of node {}", HippoNodeType.NT_HANDLE,
+                    JcrUtils.getNodePathQuietly(node), e);
         }
         return Optional.empty();
     }
