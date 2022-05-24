@@ -22,6 +22,7 @@ export interface Ng1ComponentEditorService {
   propertiesAsFormData(): ComponentProperties;
   getComponent(): any;
   isReadOnly(): boolean;
+  isForeignPage(): boolean;
 }
 
 export const NG1_COMPONENT_EDITOR_SERVICE = new InjectionToken<Ng1ComponentEditorService>('NG1_COMPONENT_EDITOR_SERVICE');

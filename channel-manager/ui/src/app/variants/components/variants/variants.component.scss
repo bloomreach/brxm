@@ -24,6 +24,11 @@
   padding: $spacing-full;
   padding-bottom: 0;
 
+  .disabled {
+    opacity: .38;
+    pointer-events: none;
+  }
+
   @include mat-elevation(3);
 
   ::ng-deep {

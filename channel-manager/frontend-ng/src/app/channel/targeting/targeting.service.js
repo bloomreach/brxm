@@ -134,9 +134,9 @@ class TargetingService {
     }
   }
 
-  async updateVariant(componentId, formData, variant, personaId, characteristics) {
-    const page = this.PageStructureService.getPage();
-    const component = page.getComponentById(componentId);
+  async updateVariant(component, formData, variant, personaId, characteristics) {
+    const componentId = component.getId();
+    const lastModified = component.getLastModified();
 
     const encodedVariantId = encodeURIComponent(variant.id);
     const newVariantId = encodedVariantId === 'hippo-default'
@@ -144,7 +144,7 @@ class TargetingService {
       : this._createVariantId(personaId, characteristics, variant.abvariantId);
 
     const headers = {
-      lastModifiedTimestamp: component.lastModified,
+      lastModifiedTimestamp: lastModified,
       'Move-To': newVariantId,
     };
 
