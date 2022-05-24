@@ -161,7 +161,7 @@ public class FieldTypeUtils {
         if (editorFieldConfig.isPresent()) {
             final Node node = editorFieldConfig.get();
             try {
-                return JcrUtils.getStringProperty(editorFieldConfig.get(), "mode", "edit") .equals("view");
+                return JcrUtils.getStringProperty(node, "mode", "edit") .equals("view");
             } catch (RepositoryException e) {
                 log.warn("Failed to read 'mode' property of editor config node {}", JcrUtils.getNodePathQuietly(node),
                         e);
