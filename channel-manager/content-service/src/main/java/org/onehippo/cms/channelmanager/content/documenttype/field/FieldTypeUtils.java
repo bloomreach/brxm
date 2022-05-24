@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https:/www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,6 +155,19 @@ public class FieldTypeUtils {
 
     private static boolean isNotStructureElement(final String pluginClass) {
         return STRUCTURE_PLUGIN_CLASSES.stream().noneMatch(pluginClass::startsWith);
+    }
+
+    public static boolean isReadOnly(final Optional<Node> editorFieldConfig) {
+        if (editorFieldConfig.isPresent()) {
+            final Node node = editorFieldConfig.get();
+            try {
+                return JcrUtils.getStringProperty(editorFieldConfig.get(), "mode", "edit") .equals("view");
+            } catch (RepositoryException e) {
+                log.warn("Failed to read 'mode' property of editor config node {}", JcrUtils.getNodePathQuietly(node),
+                        e);
+            }
+        }
+        return false;
     }
 
     private static class TypeDescriptor {
