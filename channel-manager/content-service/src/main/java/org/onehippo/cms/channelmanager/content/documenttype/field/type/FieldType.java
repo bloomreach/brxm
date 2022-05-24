@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,10 @@ public interface FieldType {
     boolean isOrderable();
 
     void setOrderable(final boolean orderable);
+
+    boolean isReadOnly();
+
+    void setReadOnly(final boolean readOnly);
 
     /**
      * Represents the "required" validator, which indicates that a field must have content. What exactly that
