@@ -228,9 +228,14 @@ describe('TargetingService', () => {
     });
 
     describe('updateVariant', () => {
+      const component = {
+        getId: () => 'component-id',
+        getLastModified: () => 'last-modified'
+      };
+
       it('should execute a PUT request on the HST with an URI-Encoded variant ID', () => {
         const variant = { id: 'variant&id' };
-        TargetingService.updateVariant('component-id', data, variant);
+        TargetingService.updateVariant(component, data, variant);
         $rootScope.$digest();
 
         expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
@@ -245,7 +250,7 @@ describe('TargetingService', () => {
 
       it('should move to "hippo-default" variant if current variant is Default', () => {
         const variant = { id: 'hippo-default' };
-        TargetingService.updateVariant('component-id', data, variant);
+        TargetingService.updateVariant(component, data, variant);
         $rootScope.$digest();
 
         expect(HstService.doPutFormWithHeaders).toHaveBeenCalledWith(
@@ -261,7 +266,7 @@ describe('TargetingService', () => {
 
       it('should return success response with the newVariantId', (done) => {
         const variant = { id: 'variant-id' };
-        TargetingService.updateVariant('component-id', data, variant).then((result) => {
+        TargetingService.updateVariant(component, data, variant).then((result) => {
           expect(result).toEqual({
             message: 'Successfully updated variant "variant-id" for component "component-id"',
             reloadRequired: false,
@@ -276,7 +281,7 @@ describe('TargetingService', () => {
       });
 
       it('should check for changes', () => {
-        TargetingService.updateVariant('component-id', data, 'variant-id');
+        TargetingService.updateVariant(component, data, 'variant-id');
         $rootScope.$digest();
 
         expect(ChannelService.checkChanges).toHaveBeenCalled();
