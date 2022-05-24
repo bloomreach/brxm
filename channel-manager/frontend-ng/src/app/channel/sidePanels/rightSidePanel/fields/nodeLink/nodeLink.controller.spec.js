@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -223,7 +223,10 @@ describe('nodeLinkController', () => {
     it('picks a link', (done) => {
       PickerService.pickLink.and.returnValue($q.resolve());
       $ctrl.open().then(() => {
-        expect(PickerService.pickLink).toHaveBeenCalledWith('link-picker-config', { uuid: 'model-value' });
+        expect(PickerService.pickLink).toHaveBeenCalledWith({ uuid: 'model-value' }, 'link-picker-config', {
+          fieldIndex: 0,
+          fieldPath: 'TestField',
+        });
         done();
       });
       $scope.$digest();
