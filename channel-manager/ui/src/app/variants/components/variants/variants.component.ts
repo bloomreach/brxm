@@ -213,6 +213,10 @@ export class VariantsComponent implements OnInit, OnDestroy {
     return this.componentEditorService.isReadOnly();
   }
 
+  isForeignPage(): boolean {
+    return this.componentEditorService.isForeignPage();
+  }
+
   private onChange(): void {
     this.dirty = true;
     this.variantUpdated.emit({ variant: this.currentVariant });
