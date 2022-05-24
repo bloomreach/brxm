@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.plugins.linkpicker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
@@ -28,9 +29,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.picker.NodePickerPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -82,7 +85,10 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         if (mode == IEditor.Mode.EDIT) {
             final IDialogFactory dialogFactory = () -> {
-                final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), (JcrPropertyValueModel) valueModel);
+                final JcrPropertyModel<?> jcrPropertyModel = ((JcrPropertyValueModel) valueModel).getJcrPropertymodel();
+                final Map<String, Object> options = Map.of("fieldId", jcrPropertyModel.getItemModel().getUuid());
+                final NodePickerPluginConfig pluginConfig = new NodePickerPluginConfig(getPluginConfig(), options);
+                final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(pluginConfig, (JcrPropertyValueModel) valueModel);
                 return new LinkPickerDialog(context, dialogConfig, new IModel<>() {
 
                     @Override
