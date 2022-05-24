@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -510,6 +510,7 @@ describe('hippoIframeCtrl', () => {
     };
 
     const eventData = {
+      documentUuid: 'documentId',
       containerItemId: 'id',
       isParameterValueRelativePath: true,
       parameterName: 'parameterName',
@@ -538,7 +539,8 @@ describe('hippoIframeCtrl', () => {
       $rootScope.$emit('iframe:document:select', eventData);
       $rootScope.$digest();
 
-      expect(PickerService.pickPath).toHaveBeenCalledWith(eventData.pickerConfig, '/base/currentPath');
+      expect(PickerService.pickPath).toHaveBeenCalledWith('/base/currentPath', eventData.pickerConfig,
+        { componentId: 'id', documentId: 'documentId', fieldPath: 'parameterName' });
       expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
         'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
       );
@@ -557,7 +559,8 @@ describe('hippoIframeCtrl', () => {
       $rootScope.$emit('iframe:document:select', { ...eventData, parameterValue: '/base/currentPath' });
       $rootScope.$digest();
 
-      expect(PickerService.pickPath).toHaveBeenCalledWith(eventData.pickerConfig, '/base/currentPath');
+      expect(PickerService.pickPath).toHaveBeenCalledWith('/base/currentPath', eventData.pickerConfig,
+        { componentId: 'id', documentId: 'documentId', fieldPath: 'parameterName' });
       expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
         'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
       );
