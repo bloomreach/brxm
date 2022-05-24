@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,9 @@ describe('pathLinkController', () => {
 
       $ctrl.open();
 
-      expect(PickerService.pickPath).toHaveBeenCalledWith(config.linkpicker, ngModel.$modelValue);
+      expect(PickerService.pickPath).toHaveBeenCalledWith(ngModel.$modelValue, config.linkpicker, {
+        fieldPath: 'TestField',
+      });
     });
 
     it('updates the view when a path has been picked', (done) => {

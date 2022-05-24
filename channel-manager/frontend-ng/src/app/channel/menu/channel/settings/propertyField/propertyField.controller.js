@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,11 @@ class PropertyFieldCtrl {
       selectableNodeTypes: this.annotation.pickerSelectableNodeTypes,
     };
 
-    return this.PickerService.pickPath(pickerConfig, this.value)
+    const pickerContext = {
+      fieldPath: this.field,
+    };
+
+    return this.PickerService.pickPath(this.value, pickerConfig, pickerContext)
       .then(({ path }) => {
         this.getSetPath(path);
       });
