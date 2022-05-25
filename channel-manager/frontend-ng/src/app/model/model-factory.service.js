@@ -88,54 +88,56 @@ export default class ModelFactoryService {
     const links = [];
     const meta = [];
 
-    collection.forEach((item) => {
-      const hstMeta = this._transform
-        ? this._transform(item)
-        : item;
-      const type = this._getType(hstMeta);
-      let entity;
-      try {
-        entity = this._build(type, item);
-      } catch (e) {
-        this.$log.warn(`Ignoring unknown page structure element '${type}'.`);
+    if (collection) {
+      collection.forEach((item) => {
+        const hstMeta = this._transform
+            ? this._transform(item)
+            : item;
+        const type = this._getType(hstMeta);
+        let entity;
+        try {
+          entity = this._build(type, item);
+        } catch (e) {
+          this.$log.warn(`Ignoring unknown page structure element '${type}'.`);
 
-        return;
-      }
-
-      if (entity instanceof EndMarker) {
-        components.pop();
-      }
-
-      if (entity instanceof PageMeta) {
-        meta.push(entity);
-      }
-
-      if (entity instanceof ComponentEntity) {
-        if (components.length) {
-          components[components.length - 1].addComponent(entity);
-        } else {
-          children.push(entity);
+          return;
         }
 
-        components.push(entity);
-      }
-
-      if (entity instanceof LinkEntity) {
-        if (components.length) {
-          const [component] = components.slice(-1);
-          component.addLink(entity);
-          entity.setComponent(component);
-        } else {
-          links.push(entity);
+        if (entity instanceof EndMarker) {
+          components.pop();
         }
-      }
 
-      if (entity instanceof HeadContributions) {
-        if (components.length) {
-          components[components.length - 1].addHeadContributions(entity);
+        if (entity instanceof PageMeta) {
+          meta.push(entity);
         }
-      }
-    });
+
+        if (entity instanceof ComponentEntity) {
+          if (components.length) {
+            components[components.length - 1].addComponent(entity);
+          } else {
+            children.push(entity);
+          }
+
+          components.push(entity);
+        }
+
+        if (entity instanceof LinkEntity) {
+          if (components.length) {
+            const [component] = components.slice(-1);
+            component.addLink(entity);
+            entity.setComponent(component);
+          } else {
+            links.push(entity);
+          }
+        }
+
+        if (entity instanceof HeadContributions) {
+          if (components.length) {
+            components[components.length - 1].addHeadContributions(entity);
+          }
+        }
+      });
+    }
 
     return { children, links, meta };
   }
