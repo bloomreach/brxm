@@ -100,7 +100,7 @@ class ComponentEditorService {
   }
 
   isReadOnly() {
-    return this.component && this.component.getContainer().isDisabled();
+    return this.component && this.component.getContainer() && this.component.getContainer().isDisabled();
   }
 
   openComponentPage() {
@@ -166,7 +166,7 @@ class ComponentEditorService {
 
     const currentContainer = this.component.getContainer();
     const changedContainer = component.getContainer();
-    const isLockApplied = currentContainer.isDisabled() !== changedContainer.isDisabled();
+    const isLockApplied = currentContainer && currentContainer.isDisabled() !== changedContainer.isDisabled();
 
     this.page = page;
     this.component = component;
