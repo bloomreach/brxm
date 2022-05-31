@@ -61,10 +61,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "HELP_LINK_SUPPORT_PORTAL" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "ERROR_CONFIGURATION" : {
       "status" : "CLEAN",
       "locales" : null
@@ -86,10 +82,6 @@
       "locales" : null
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_RSRP_WIDGET_ENGAGEMENT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "HELP_LINK_XM_DOCUMENTATION" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -300,10 +292,6 @@
       "locales" : null
     },
     "MENU_CONTAINER_ORGANIC" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "HELP_LINK_SM_HELP" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -738,6 +726,36 @@
     "MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLOCKLIST" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "DISCOVERY_DOCUMENTATION_LINK" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "SUPPORT_LINK" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CONTENT_DOCUMENTATION_LINK" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
