@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.hippoecm.frontend.service.navappsettings;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,6 +46,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.AppSettings;
 import org.hippoecm.frontend.service.INavAppSettingsService;
+import org.hippoecm.frontend.service.NavAppHelpLink;
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NgxLoggerLevel;
@@ -56,6 +57,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.onehippo.repository.security.SessionUser;
 
 import static org.easymock.EasyMock.createMock;
@@ -71,6 +75,7 @@ import static org.hippoecm.frontend.service.NgxLoggerLevel.TRACE;
 import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.NAVIGATIONITEMS_ENDPOINT;
 import static org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings.SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(EasyMockRunner.class)
 public class NavAppSettingsServiceTest {
@@ -90,12 +95,24 @@ public class NavAppSettingsServiceTest {
     private IPluginConfig config;
     @Mock
     private NavAppResourceService navAppResourceService;
+    @Mock
+    private IPluginConfig helpLinks;
+    @Mock
+    private IPluginConfig helpLink;
+    @Mock
+    private LocalizationService localizationService;
+    @Mock
+    private ResourceBundle resourceBundle;
 
     private final String scheme = "scheme";
     private final String host = "cms.host.name";
     private final String contextPath = "/context-path";
 
     private INavAppSettingsService navAppSettingsService;
+
+    private final String testLinkUrlString = "https://test.support.url";
+    private final String testLinkTranslationKey = "navapp.links.testKey";
+    private final String testLinkTranslationValue = "My Awesome Link";
 
     @Mock
     private WebApplication webApplication;
@@ -108,6 +125,7 @@ public class NavAppSettingsServiceTest {
 
     @Before
     public void setUp() throws RepositoryException {
+        HippoServiceRegistry.register(localizationService, LocalizationService.class);
 
         expect(request.getContainerRequest()).andReturn(servletRequest).anyTimes();
         expect(request.getQueryParameters()).andStubReturn(parameters);
@@ -146,6 +164,8 @@ public class NavAppSettingsServiceTest {
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
+        setHelpMenuExpectations();
+
         replay(config);
 
         sessionAttributeStore = new SessionAttributeStore() {
@@ -177,6 +197,7 @@ public class NavAppSettingsServiceTest {
 
     @After
     public void tearDown() {
+        HippoServiceRegistry.unregister(localizationService, LocalizationService.class);
         ThreadContext.setApplication(null);
         System.clearProperty(SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO);
     }
@@ -318,6 +339,7 @@ public class NavAppSettingsServiceTest {
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
+        setHelpMenuExpectations();
         replay(config);
 
         reset(parameters);
@@ -344,6 +366,7 @@ public class NavAppSettingsServiceTest {
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
+        setHelpMenuExpectations();
         replay(config);
 
 
@@ -373,6 +396,7 @@ public class NavAppSettingsServiceTest {
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(info.name());
+        setHelpMenuExpectations();
         replay(config);
 
 
@@ -401,6 +425,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
+        setHelpMenuExpectations();
         replay(config);
 
         reset(parameters);
@@ -427,6 +452,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
+        setHelpMenuExpectations();
         replay(config);
 
         reset(parameters);
@@ -448,6 +474,17 @@ public class NavAppSettingsServiceTest {
         verify(config, parameters);
     }
 
+    @Test
+    public void get_help_links_from_repository() {
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        final List<NavAppHelpLink> links = navAppSettings.getAppSettings().getHelpLinks();
+        final NavAppHelpLink firstLink = links.get(0);
+
+        assert(links.size() == 1);
+        assert(firstLink.getUrl().toString()).equals(testLinkUrlString);
+        assert(firstLink.getLabel()).equals(testLinkTranslationValue);
+        assert(firstLink.isVisible());
+    }
 
     private void testAppSettingsAssertions(AppSettings appSettings) {
         // First resource must always be present
@@ -459,6 +496,24 @@ public class NavAppSettingsServiceTest {
         assertThat(appSettings.getNavAppResourceLocation(), is(URI.create("angular/navapp")));
         assertThat(appSettings.isCmsServingNavAppResources(), is(true));
         assertThat(appSettings.isUsageStatisticsEnabled(), is(true));
+    }
+
+    private void setHelpMenuExpectations() {
+        reset(helpLink);
+        reset(resourceBundle);
+        reset(localizationService);
+        reset(helpLinks);
+        expect(helpLink.getString(NavAppSettingsService.HELP_MENU_LINK_TRANSLATIONKEY)).andReturn(testLinkTranslationKey);
+        expect(helpLink.getString(NavAppSettingsService.HELP_MENU_LINK_LINK)).andReturn(testLinkUrlString);
+        expect(helpLink.getBoolean(NavAppSettingsService.HELP_MENU_LINK_VISIBLE)).andReturn(true);
+        expect(resourceBundle.getString(testLinkTranslationKey)).andReturn(testLinkTranslationValue);
+        expect(localizationService.getResourceBundle(NavAppSettingsService.HELP_MENU_RESOURCE_BUNDLE, new Locale("en"))).andReturn(resourceBundle);
+        expect(config.getPluginConfig(NavAppSettingsService.HELP_MENU_LINKS_NODE_NAME)).andReturn(helpLinks);
+        expect(helpLinks.getPluginConfigSet()).andReturn(Set.of(helpLink));
+        replay(localizationService);
+        replay(helpLink);
+        replay(resourceBundle);
+        replay(helpLinks);
     }
 
 }
