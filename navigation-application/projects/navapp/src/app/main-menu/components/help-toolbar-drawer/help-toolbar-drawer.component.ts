@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2022 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,11 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import {
-  Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, HostBinding, Inject, Input, OnInit, Output } from '@angular/core';
+
+import { AppSettings } from '../../../models/dto/app-settings.dto';
+import { NavAppHelpLink } from '../../../models/dto/nav-app-help-link.dto';
+import { APP_SETTINGS } from '../../../services/app-settings';
 
 @Component({
   selector: 'brna-help-toolbar-drawer',
@@ -39,7 +37,7 @@ import {
     ]),
   ],
 })
-export class HelpToolbarDrawerComponent {
+export class HelpToolbarDrawerComponent implements OnInit {
   @HostBinding('@slideInOut')
   animate = true;
 
@@ -48,6 +46,14 @@ export class HelpToolbarDrawerComponent {
 
   @Output()
   helpDrawerOpenChange = new EventEmitter<boolean>();
+
+  links: NavAppHelpLink[];
+
+  constructor(@Inject(APP_SETTINGS) private readonly appSettings: AppSettings) {}
+
+  ngOnInit(): void {
+    this.links = this.appSettings.helpLinks;
+  }
 
   onClickedOutside(): void {
     this.helpDrawerOpenChange.emit(false);

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2019-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 <div class="content-wrapper" (clickOutside)="onClickedOutside()">
   <h1 class="header">{{ 'MENU_CONTAINER_HELP' | translate }}</h1>
   <ul class="links" (click)="onLinkClicked()">
-    <li><a href="http://support.bloomreach.com" target="_blank">{{ 'HELP_LINK_SUPPORT_PORTAL' | translate }}</a></li>
-    <li><a href="https://documentation.bloomreach.com/library/end-user-manual/end-user-manual-introduction.html" target="_blank">{{ 'HELP_LINK_XM_DOCUMENTATION' | translate }}</a></li>
-    <li><a href="https://documentation.bloomreach.com/search-and-merchandising" target="_blank">{{ 'HELP_LINK_SM_HELP' | translate }}</a></li>
+    <ng-container *ngFor="let link of links">
+      <li *ngIf="link.visible">
+        <a [href]="link.url" target="_blank">{{ link.label }}</a>
+      </li>
+    </ng-container>
   </ul>
 </div>
 <div class="window-content-cover"></div>
