@@ -233,7 +233,7 @@ class EditContentMainCtrl {
     const titleKey = isEditingXPage ? 'SAVE_XPAGE_CHANGES_TITLE' : 'SAVE_DOCUMENT_CHANGES_TITLE';
     const messageKey = isEditingXPage ? 'SAVE_CHANGES_TO_XPAGE' : 'SAVE_CHANGES_TO_DOCUMENT';
 
-    await this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey);
+    const action = await this.ContentEditor.confirmSaveOrDiscardChanges(messageKey, {}, titleKey);
 
     try {
       await this.ContentEditor.discardChanges();
@@ -242,7 +242,9 @@ class EditContentMainCtrl {
       // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
       // the editor should still be closed.
     } finally {
-      this.HippoIframeService.reload();
+      if (action === 'DISCARD') {
+        this.HippoIframeService.reload();
+      }
       this.ContentEditor.close();
     }
   }
