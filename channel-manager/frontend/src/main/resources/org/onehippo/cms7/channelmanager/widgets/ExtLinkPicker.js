@@ -56,17 +56,18 @@
       this._removeListeners();
     },
 
-    openPicker: function (currentValue, pickerConfig, pickedCallback, cancelCallback) {
+    openPicker: function (currentValue, pickerConfig, pickerContext, pickedCallback, cancelCallback) {
       this._addListeners(pickedCallback, cancelCallback);
-      this._firePickEvent(currentValue, pickerConfig);
+      this._firePickEvent(currentValue, pickerConfig, pickerContext);
     },
 
-    _firePickEvent: function (currentValue, pickerConfig) {
+    _firePickEvent: function (currentValue, pickerConfig, pickerContext) {
       var config = JSON.parse(JSON.stringify(pickerConfig));
+      var context = JSON.parse(JSON.stringify(pickerContext || ''));
       config.rootPath = encodeURI(pickerConfig.rootPath || '');
       config.initialPath = encodeURI(pickerConfig.initialPath || '');
 
-      this.fireEvent('pick', currentValue, Ext.util.JSON.encode(config));
+      this.fireEvent('pick', currentValue, Ext.util.JSON.encode(config), Ext.util.JSON.encode(context));
     }
   });
 
@@ -74,6 +75,7 @@
 
     constructor: function (config) {
       this.pickerConfig = config.pickerConfig;
+      this.pickerContext = config.pickerContext;
       this.defaultValue = config.defaultValue;
       this.displayValue = config.displayValue;
       this.renderTextFieldInvalid = false;
@@ -128,6 +130,7 @@
         Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
           this.getValue(),
           this.pickerConfig,
+          this.pickerContext,
           Ext.createDelegate(this.picked, this),
           Ext.createDelegate(this.canceled, this)
         );
