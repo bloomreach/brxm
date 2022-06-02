@@ -128,6 +128,7 @@ import org.slf4j.LoggerFactory;
 
 import nl.basjes.parse.useragent.UserAgent;
 import nl.basjes.parse.useragent.UserAgentAnalyzer;
+import static org.apache.wicket.coop.CrossOriginOpenerPolicyConfiguration.CoopMode.SAME_ORIGIN_ALLOW_POPUPS;
 import static org.apache.wicket.csp.CSPDirectiveSrcValue.SELF;
 import static org.apache.wicket.markup.head.filter.FilteringHeaderResponse.DEFAULT_HEADER_FILTER_NAME;
 
@@ -776,6 +777,8 @@ public class Main extends PluginApplication {
     }
 
     private void initCMS() {
+        getSecuritySettings().setCrossOriginOpenerPolicyConfiguration(SAME_ORIGIN_ALLOW_POPUPS);
+
         HippoServiceRegistry.addTracker(new ProxiedServiceTracker<>() {
             @Override
             public void serviceRegistered(final ProxiedServiceHolder<ApplicationSettings> serviceHolder) {
