@@ -42,12 +42,13 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
     public NodePickerPluginConfig(final IPluginConfig config, final Map<String, Object> parameters) {
         super(config);
 
-        final HippoSession jcrSession = UserSession.get().getJcrSession();
-        final Locale locale = UserSession.get().getLocale();
-        replaceParameters(this, parameters, jcrSession, locale);
+        final Map<String, Object> params = createContextParameters(parameters);
+        final StringSubstitutor stringSubstitutor = new StringSubstitutor(params);
+
+        replaceAll((k, v) -> stringSubstitutor.replace(v));
     }
 
-    private static void replaceParameters(final Map<String, Object> config, final Map<String, Object> parameters, final HippoSession jcrSession, final Locale locale) {
+    private Map<String, Object> createContextParameters(final Map<String, Object> parameters) {
         final Map<String, Object> params  = new HashMap<>();
         if (parameters != null) {
             params.putAll(parameters);
@@ -62,10 +63,13 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
         params.putIfAbsent("fieldIndex", StringUtils.EMPTY);
         params.putIfAbsent("fieldPath", StringUtils.EMPTY);
         params.putIfAbsent("folderPath", StringUtils.EMPTY);
+
+        final Locale locale = UserSession.get().getLocale();
         params.putIfAbsent("locale", locale != null
                 ? locale.getLanguage()
                 : LocalizationService.DEFAULT_LOCALE.getLanguage());
 
+        final HippoSession jcrSession = UserSession.get().getJcrSession();
         Node handleNode = null;
 
         if (params.containsKey("fieldId") && StringUtils.isNotEmpty((CharSequence) params.get("fieldId"))) {
@@ -90,12 +94,12 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
 
         if (handleNode != null) {
             params.put("documentPath", JcrUtils.getNodePathQuietly(handleNode));
-            if (params.containsKey("fieldPath") && !((String)params.get("fieldPath")).startsWith("/")) {
+            if (params.containsKey("fieldPath") && !((String) params.get("fieldPath")).startsWith("/")) {
                 params.put("fieldPath",
                         String.format("%s/%s/%s",
-                        JcrUtils.getNodePathQuietly(handleNode),
-                        JcrUtils.getNodeNameQuietly(handleNode),
-                        params.get("fieldPath")));
+                                JcrUtils.getNodePathQuietly(handleNode),
+                                JcrUtils.getNodeNameQuietly(handleNode),
+                                params.get("fieldPath")));
             }
 
             DocumentUtils.getDisplayName(handleNode).ifPresent(s -> params.put("documentName", s));
@@ -108,7 +112,7 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
             }
         }
 
-        final StringSubstitutor stringSubstitutor = new StringSubstitutor(params);
-        config.replaceAll((k, v) -> stringSubstitutor.replace(v));
+        return params;
     }
+
 }
