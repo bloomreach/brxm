@@ -85,6 +85,11 @@ public class DialogManager<ModelType> implements IDetachable {
         final String paramsDialogConfig = parameters.get(DIALOG_CONFIG);
         final String paramsDialogContext = parameters.get(DIALOG_CONTEXT);
 
+        if (log.isDebugEnabled()) {
+            log.debug("String value of dialogConfig request parameter: {}", paramsDialogConfig);
+            log.debug("String value of dialogContext request parameter: {}", paramsDialogContext);
+        }
+
         final IPluginConfig dialogPluginConfigTemplate = mergeJsonWithConfig(config, paramsDialogConfig);
         final IPluginConfig dialogPluginContext = mergeJsonWithConfig(new JavaPluginConfig(), paramsDialogContext);
 
