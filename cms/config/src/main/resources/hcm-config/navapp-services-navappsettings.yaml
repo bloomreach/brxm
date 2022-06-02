@@ -3,6 +3,20 @@ definitions:
     /hippo:configuration/hippo:frontend/navapp/navapp-services/navAppSettingsService:
       jcr:primaryType: frontend:plugin
       plugin.class: org.hippoecm.frontend.service.navappsettings.NavAppSettingsService
-
-
-
+      /helpLinks:
+        jcr:primaryType: frontend:pluginconfig
+        /support:
+          jcr:primaryType: frontend:pluginconfig
+          link: https://support.bloomreach.com/
+          translationKey: helplinks-support
+          visible: true
+        /content:
+          jcr:primaryType: frontend:pluginconfig
+          link: https://documentation.bloomreach.com/library/end-user-manual/end-user-manual-introduction.html
+          translationKey: helplinks-content
+          visible: true
+        /discovery:
+          jcr:primaryType: frontend:pluginconfig
+          link: https://documentation.bloomreach.com/search-and-merchandising
+          translationKey: helplinks-discovery
+          visible: true
