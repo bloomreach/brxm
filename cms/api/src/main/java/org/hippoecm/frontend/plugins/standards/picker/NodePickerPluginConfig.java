@@ -17,8 +17,12 @@
 package org.hippoecm.frontend.plugins.standards.picker;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -39,6 +43,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NodePickerPluginConfig extends JavaPluginConfig {
 
+    private final Set<String> VALID_PARAMETER_KEYS = Stream.of("branchId",
+                    "channelId",
+                    "componentId",
+                    "documentId",
+                    "documentPath",
+                    "fieldId",
+                    "fieldIndex",
+                    "fieldPath",
+                    "folderPath",
+                    "locale")
+            .collect(Collectors.toSet());
+
     public NodePickerPluginConfig(final IPluginConfig config, final Map<String, Object> parameters) {
         super(config);
 
@@ -52,6 +68,14 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
         final Map<String, Object> params  = new HashMap<>();
         if (parameters != null) {
             params.putAll(parameters);
+        }
+
+        final Set<String> nonSupportedParameterKeys = new HashSet<>();
+        nonSupportedParameterKeys.addAll(parameters.keySet());
+        nonSupportedParameterKeys.removeAll(VALID_PARAMETER_KEYS);
+        if (!nonSupportedParameterKeys.isEmpty()){
+            log.warn("The following supplied parameters are not supported: {}", String.join(",",
+                    nonSupportedParameterKeys));
         }
 
         params.putIfAbsent("branchId", BranchConstants.MASTER_BRANCH_ID);
@@ -113,6 +137,30 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
         }
 
         return params;
+    }
+
+    private void addDefaultValuesForAbsentParameters(final Map<String, Object> params,
+                           final Set<String> absentValidParametersKeys) {
+        if (absentValidParametersKeys.contains("locale")) {
+            final Locale locale = UserSession.get().getLocale();
+            params.put("locale",
+                    locale != null
+                            ? locale.getLanguage()
+                            : LocalizationService.DEFAULT_LOCALE.getLanguage());
+            absentValidParametersKeys.remove("locale");
+        }
+
+        if (absentValidParametersKeys.contains("branchId")) {
+            params.put("branchId",
+                    BranchConstants.MASTER_BRANCH_ID);
+            absentValidParametersKeys.remove("branchId");
+        }
+
+        // fill the remainder of the absent parameters
+        for (final String absentValidParameter : absentValidParametersKeys) {
+            params.put(absentValidParameter,
+                    StringUtils.EMPTY);
+        }
     }
 
 }
