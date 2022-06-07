@@ -94,8 +94,8 @@
     <h2.version>1.3.175</h2.version>
 
     <!-- Before updating the swagger version verify swagger yaml works. See HSTTWO-4537 -->
-    <swagger-core.version>1.5.15</swagger-core.version>
-    <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
+    <swagger-core.version>1.6.2</swagger-core.version>
+    <swagger-jaxrs.version>1.6.2</swagger-jaxrs.version>
 
     <bytebuddy.version>1.9.10</bytebuddy.version>
   </properties>
