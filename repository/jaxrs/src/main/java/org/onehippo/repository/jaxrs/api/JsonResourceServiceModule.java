@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
@@ -108,6 +109,7 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
         return new JacksonJsonProvider(
                 new ObjectMapper()
                         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                        .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS));
+                        .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
+                        .setDateFormat((new StdDateFormat().withColonInTimeZone(false))));
     }
 }
