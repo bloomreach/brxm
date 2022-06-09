@@ -24,6 +24,7 @@ export class AppSettingsMock implements AppSettings {
   initialPath = '/initial/path';
   navAppResourceLocation = '/testLocation';
   helpLinks = [];
+
   navConfigResources = [
     new ConfigResourceMock({
       resourceType: 'IFRAME',
