@@ -257,6 +257,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
         final Node currentNode = currentNodeModel.getNode();
         try {
             context.put("fieldId", currentNode.getIdentifier());
+            context.put("fieldIndex", currentNode.getIndex());
         } catch (RepositoryException e) {
             log.error("Failed to lookup identifier of field {}", JcrUtils.getNodePathQuietly(currentNode));
         }
