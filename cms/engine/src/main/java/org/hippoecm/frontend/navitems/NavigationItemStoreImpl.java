@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.hippoecm.frontend.navitems;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import javax.jcr.Node;
@@ -31,8 +30,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.frontend.navigation.NavigationItem;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +41,7 @@ public class NavigationItemStoreImpl implements NavigationItemStore {
     static final String NAVIGATIONITEM_MIXIN = "frontend:navigationitem";
     static final String PLUGIN_PROPERTY_APP_PATH = "frontend:appPath";
     static final String PLUGIN_PROPERTY_PLUGIN_CLASS = "plugin.class";
+    public static final String CMS_STATIC_PATH = "/hippo:configuration/hippo:frontend/cms/cms-static";
 
     private static Logger log = LoggerFactory.getLogger(NavigationItemStoreImpl.class);
 
@@ -52,31 +51,66 @@ public class NavigationItemStoreImpl implements NavigationItemStore {
         this.hasAccess = hasAccess;
     }
 
+    /**
+     * Collects all navigation items in the following order:
+     * <ol>
+     * <li>the items in {@value #CMS_STATIC_PATH} in the order of the repository</li>
+     * <li>the remaining navitems in arbitrary order</li>
+     * </ol>
+     *
+     * See <a href="https://documentation.bloomreach.com/14/library/concepts/editor-interface/cms-perspectives.html">Create a Custom Perspective.</a>
+     *
+     * @param session a jcr session.
+     * @return All navigation items
+     * @throws RepositoryException
+     */
     @Override
     public List<NavigationItem> getNavigationItems(Session session) throws RepositoryException {
-        final NodeIterator perspectiveNodes = queryAll(session);
-        final int size = (int) perspectiveNodes.getSize();
-        log.debug("Found {} nav item nodes", size);
-        return getNavigationItems(perspectiveNodes);
+        final List<NavigationItem> navigationItems = new ArrayList<>();
+        final Node cmsStatic = session.getNode(CMS_STATIC_PATH);
+        navigationItems.addAll(createList(cmsStatic.getNodes(), this::isNavigationItem));
+        navigationItems.addAll(createList(queryAll(session), node -> isNoChildOfCmsStatic(cmsStatic, node)));
+        log.debug("navigation items: {}", navigationItems);
+        return navigationItems;
+    }
+
+    private boolean isNavigationItem(final Node node) {
+        try {
+            return node.isNodeType(NAVIGATIONITEM_MIXIN);
+        } catch (RepositoryException exception) {
+            log.warn("Could not determine nodetype of node: { path : {} }", JcrUtils.getNodePathQuietly(node));
+        }
+        return false;
+    }
+
+    private List<NavigationItem> createList(NodeIterator it, Predicate<Node> shouldAdd) throws RepositoryException {
+        List<NavigationItem> list = new ArrayList<>();
+        while (it.hasNext()) {
+            final Node node = it.nextNode();
+            if (shouldAdd.test(node)){
+                final NavigationItem navigationItem = createNavigationItem(node);
+                if (navigationItem != null) {
+                    list.add(navigationItem);
+                }
+            }
+        }
+        return list;
+    }
+
+    private boolean isNoChildOfCmsStatic(final Node cmsStatic, final Node navItemNode){
+        try {
+            return !cmsStatic.getIdentifier().equals(navItemNode.getParent().getIdentifier());
+        } catch (RepositoryException exception) {
+            log.warn("Could not determine parent or identifier of node : { path: {} } and/or node: { path : {} }"
+                    , JcrUtils.getNodePathQuietly(cmsStatic), JcrUtils.getNodePathQuietly(navItemNode));
+        }
+        return true;
     }
 
     @Override
     public NavigationItem getNavigationItem(String pluginClass, Session session) throws RepositoryException {
         final Node navigationItemNode = queryByPluginClass(pluginClass, session);
         return createNavigationItem(navigationItemNode);
-    }
-
-    private List<NavigationItem> getNavigationItems(NodeIterator perspectiveNodes) throws RepositoryException {
-        final List<NavigationItem> navigationItems = new ArrayList<>();
-        while (perspectiveNodes.hasNext()) {
-            final Node navItemNode = perspectiveNodes.nextNode();
-            final NavigationItem navigationItem = createNavigationItem(navItemNode);
-            if (navigationItem != null) {
-                navigationItems.add(navigationItem);
-            }
-        }
-        log.debug("navigation items: {}", navigationItems);
-        return navigationItems;
     }
 
     private NavigationItem createNavigationItem(Node navItemNode) throws RepositoryException {
