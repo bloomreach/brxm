@@ -62,8 +62,11 @@
     },
 
     _firePickEvent: function (currentValue, pickerConfig, pickerContext) {
-      var config = JSON.parse(JSON.stringify(pickerConfig));
-      var context = JSON.parse(JSON.stringify(pickerContext || ''));
+      var config, context;
+
+      config = JSON.parse(JSON.stringify(pickerConfig));
+      context = JSON.parse(JSON.stringify(pickerContext || ''));
+
       config.rootPath = encodeURI(pickerConfig.rootPath || '');
       config.initialPath = encodeURI(pickerConfig.initialPath || '');
 
