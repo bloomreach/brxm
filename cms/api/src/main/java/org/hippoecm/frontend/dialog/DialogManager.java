@@ -66,7 +66,7 @@ public class DialogManager<ModelType> implements IDetachable {
 
     public DialogManager(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
-        this.config = config;
+        this.config = config != null ? config : new JavaPluginConfig();
 
         behavior = new DialogBehavior() {
             @Override
