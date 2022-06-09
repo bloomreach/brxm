@@ -80,6 +80,20 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
                 put(key, stringSubstitutor.replace(get(key)));
             }
         });
+
+        // The NodePickerController for PAAS is based on the baseUUID i/o the basePath, so we need to make sure it is
+        // available when the basePath is set.
+        if (containsKey(NodePickerControllerSettings.BASE_PATH) && !containsKey(NodePickerControllerSettings.BASE_UUID)) {
+            final String basePath = (String) get(NodePickerControllerSettings.BASE_PATH);
+            try {
+                final Node baseNode = JcrUtils.getNodeIfExists(basePath, UserSession.get().getJcrSession());
+                if (baseNode != null) {
+                    put(NodePickerControllerSettings.BASE_UUID, baseNode.getIdentifier());
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to retrieve identifier for node '{}'", basePath);
+            }
+        }
     }
 
     private Map<String, Object> createContextParameters(final Map<String, Object> parameters) {
