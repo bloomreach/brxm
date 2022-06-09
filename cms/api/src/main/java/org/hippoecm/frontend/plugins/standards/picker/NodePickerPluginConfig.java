@@ -86,6 +86,7 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
 
         if (!unsupportedParams.isEmpty()){
             log.warn("The following supplied parameters are not supported: {}", String.join(",", unsupportedParams));
+            unsupportedParams.forEach(params::remove);
         }
 
         params.putIfAbsent("branchId", BranchConstants.MASTER_BRANCH_ID);
