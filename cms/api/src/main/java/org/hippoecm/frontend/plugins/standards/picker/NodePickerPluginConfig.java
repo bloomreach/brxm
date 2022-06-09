@@ -37,11 +37,12 @@ import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.l10n.LocalizationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class NodePickerPluginConfig extends JavaPluginConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(NodePickerPluginConfig.class);
 
     private final Set<String> VALID_PARAMETER_KEYS = Stream.of("branchId",
                     "channelId",
