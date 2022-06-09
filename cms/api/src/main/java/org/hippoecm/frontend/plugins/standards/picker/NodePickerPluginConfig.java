@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,17 +45,23 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
 
     private static final Logger log = LoggerFactory.getLogger(NodePickerPluginConfig.class);
 
-    private static final Set<String> VALID_PARAMETER_KEYS = Stream.of("branchId",
-                    "channelId",
-                    "componentId",
-                    "documentId",
-                    "documentPath",
-                    "fieldId",
-                    "fieldIndex",
-                    "fieldPath",
-                    "folderPath",
-                    "locale")
-            .collect(Collectors.toSet());
+    private static final Map<String, Supplier<String>> VALID_PARAMETERS =  Map.of(
+            "branchId", () -> BranchConstants.MASTER_BRANCH_ID,
+            "channelId", () -> StringUtils.EMPTY,
+            "componentId", () -> StringUtils.EMPTY,
+            "documentId", () -> StringUtils.EMPTY,
+            "documentPath", () -> StringUtils.EMPTY,
+            "fieldId", () -> StringUtils.EMPTY,
+            "fieldIndex", () -> StringUtils.EMPTY,
+            "fieldPath", () -> StringUtils.EMPTY,
+            "folderPath", () -> StringUtils.EMPTY,
+            "locale", () -> {
+                final Locale locale = UserSession.get().getLocale();
+                return locale != null
+                        ? locale.getLanguage()
+                        : LocalizationService.DEFAULT_LOCALE.getLanguage();
+            }
+    );
 
     private static final Set<String> VALID_SUBSTITUTION_KEYS = Stream.of(
                     NodePickerControllerSettings.BASE_PATH,
@@ -81,28 +89,15 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
         }
 
         final Set<String> unsupportedParams = params.keySet().stream()
-                .filter(VALID_PARAMETER_KEYS::contains)
+                .filter(Predicate.not(VALID_PARAMETERS::containsKey))
                 .collect(Collectors.toSet());
 
         if (!unsupportedParams.isEmpty()){
-            log.warn("The following supplied parameters are not supported: {}", String.join(",", unsupportedParams));
+            log.debug("The following supplied parameters are not supported: {}", String.join(",", unsupportedParams));
             unsupportedParams.forEach(params::remove);
         }
 
-        params.putIfAbsent("branchId", BranchConstants.MASTER_BRANCH_ID);
-        params.putIfAbsent("channelId", StringUtils.EMPTY);
-        params.putIfAbsent("componentId", StringUtils.EMPTY);
-        params.putIfAbsent("documentId", StringUtils.EMPTY);
-        params.putIfAbsent("documentPath", StringUtils.EMPTY);
-        params.putIfAbsent("fieldId", StringUtils.EMPTY);
-        params.putIfAbsent("fieldIndex", StringUtils.EMPTY);
-        params.putIfAbsent("fieldPath", StringUtils.EMPTY);
-        params.putIfAbsent("folderPath", StringUtils.EMPTY);
-
-        final Locale locale = UserSession.get().getLocale();
-        params.putIfAbsent("locale", locale != null
-                ? locale.getLanguage()
-                : LocalizationService.DEFAULT_LOCALE.getLanguage());
+        VALID_PARAMETERS.forEach((parameterName, defaultValue) -> params.putIfAbsent(parameterName, defaultValue.get()));
 
         final HippoSession jcrSession = UserSession.get().getJcrSession();
         Node handleNode = null;
