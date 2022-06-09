@@ -178,8 +178,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     private Dialog<String> createLinkPickerDialog() {
         final JcrPropertyValueModel<String> docBaseModel = getDocBaseModel();
-        final Map<String, Object> options = Map.of("fieldId", docBaseModel.getJcrPropertymodel().getItemModel().getUuid());
-        final NodePickerPluginConfig pluginConfig = new NodePickerPluginConfig(getPluginConfig(), options);
+        final NodePickerPluginConfig pluginConfig = new NodePickerPluginConfig(getPluginConfig(), getPickerParameters());
         final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(pluginConfig, docBaseModel);
         final IModel<String> linkPickerModel = new IModel<>() {
 
@@ -202,6 +201,20 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
         final IPluginContext context = getPluginContext();
         return new LinkPickerDialog(context, dialogConfig, linkPickerModel);
+    }
+
+    private Map<String, Object> getPickerParameters() {
+        final JcrNodeModel model = (JcrNodeModel) getModel();
+        try {
+            final Node fieldNode = model.getNode();
+            return Map.of(
+                    "fieldId", fieldNode.getIdentifier(),
+                    "fieldIndex", fieldNode.getIndex());
+        } catch (RepositoryException e) {
+            log.error("Error loading UUID and index of field node", e);
+        }
+
+        return Map.of("fieldId", model.getItemModel().getUuid());
     }
 
     private String getMirrorPath() {
