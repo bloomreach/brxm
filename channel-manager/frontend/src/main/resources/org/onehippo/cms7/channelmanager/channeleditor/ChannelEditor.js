@@ -251,14 +251,14 @@
       this._showPicker(config.config, config.context, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
     },
 
-    _showRichTextImagePicker: function(fieldId, dialogConfig, dialogContext, selectedImage, successCallback, cancelCallback) {
+    _showRichTextImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
       selectedImage.fieldId = fieldId;
-      this._showPicker(dialogConfig, dialogContext, selectedImage, successCallback, cancelCallback, this.initialConfig.richTextImagePickerWicketUrl);
+      this._showPicker(dialogConfig, { fieldId: fieldId }, selectedImage, successCallback, cancelCallback, this.initialConfig.richTextImagePickerWicketUrl);
     },
 
-    _showRichTextLinkPicker: function(fieldId, dialogConfig, dialogContext, selectedLink, successCallback, cancelCallback) {
+    _showRichTextLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
       selectedLink.fieldId = fieldId;
-      this._showPicker(dialogConfig, dialogContext, selectedLink, successCallback, cancelCallback, this.initialConfig.richTextLinkPickerWicketUrl);
+      this._showPicker(dialogConfig, { fieldId: fieldId }, selectedLink, successCallback, cancelCallback, this.initialConfig.richTextLinkPickerWicketUrl);
     },
 
     _showPicker: function(dialogConfig, dialogContext, parameters, successCallback, cancelCallback, wicketUrl) {
