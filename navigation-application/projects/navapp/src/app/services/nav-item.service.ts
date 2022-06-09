@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2022 Bloomreach (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,17 @@ import { Subject } from 'rxjs';
 })
 export class NavItemService {
   private sortedNavItems: NavItem[] = [];
+  private navItems: NavItem[];
 
   constructor(private readonly logger: NGXLogger) {}
 
-  get navItems(): NavItem[] {
-    return this.sortedNavItems;
-  }
 
   registerNavItems(navItems: NavItem[]): NavItem[] {
     this.logger.debug('Register nav items', navItems);
 
-    navItems.sort((a, b) => b.appPath.length - a.appPath.length);
-
-    this.sortedNavItems = navItems;
-
-    return navItems;
+    this.sortedNavItems = [...navItems].sort((a, b) => b.appPath.length - a.appPath.length);
+    this.navItems = navItems;
+    return this.navItems;
   }
 
   findNavItem(path: string, iframeUrlOrPath?: string): NavItem {
@@ -62,6 +58,6 @@ export class NavItemService {
       }
     };
 
-    return this.navItems.find(x => iframeUrlOrPath ? iframeUrlPredicate(x) && appPathPredicate(x) : appPathPredicate(x));
+    return this.sortedNavItems.find(x => iframeUrlOrPath ? iframeUrlPredicate(x) && appPathPredicate(x) : appPathPredicate(x));
   }
 }
