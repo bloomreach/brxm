@@ -170,6 +170,10 @@ public class DialogManager<ModelType> implements IDetachable {
             return jsonValue.asBoolean();
         }
 
+        if (jsonValue.isInt()) {
+            return jsonValue.asInt();
+        }
+
         if (jsonValue.isArray()) {
             // always assume an array of strings
             final ArrayNode array = (ArrayNode) jsonValue;
