@@ -65,7 +65,7 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
         super(config);
 
         final Map<String, Object> params = createContextParameters(parameters);
-        final StringSubstitutor stringSubstitutor = new StringSubstitutor(params);
+        final StringSubstitutor stringSubstitutor = new StringSubstitutor(params, "#{", "}");
 
         VALID_SUBSTITUTION_KEYS.forEach(key -> {
             if (containsKey(key)) {
