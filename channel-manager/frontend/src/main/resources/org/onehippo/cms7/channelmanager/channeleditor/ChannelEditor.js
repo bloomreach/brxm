@@ -218,14 +218,14 @@
       );
     },
 
-    _showPathPicker: function(currentPath, pickerConfig, pickerContext, successCallback, cancelCallback) {
+    _showPathPicker: function(pickerConfig, currentPath, successCallback, cancelCallback) {
       this.pathPickerSuccessCallback = successCallback;
       this.pathPickerCancelCallback = cancelCallback;
 
       Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
         currentPath,
-        pickerConfig,
-        pickerContext,
+        pickerConfig.config,
+        pickerConfig.context,
         this._onPathPicked.bind(this),
         this._onPathCanceled.bind(this)
       );
@@ -243,12 +243,12 @@
       }
     },
 
-    _showImagePicker: function(selectedImage, dialogConfig, dialogContext, successCallback, cancelCallback) {
-      this._showPicker(dialogConfig, dialogContext, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
+    _showImagePicker: function(config, selectedImage, successCallback, cancelCallback) {
+      this._showPicker(config.config, config.context, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
     },
 
-    _showLinkPicker: function(selectedLink, dialogConfig, dialogContext, successCallback, cancelCallback) {
-      this._showPicker(dialogConfig, dialogContext, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
+    _showLinkPicker: function(config, selectedLink, successCallback, cancelCallback) {
+      this._showPicker(config.config, config.context, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
     },
 
     _showRichTextImagePicker: function(fieldId, dialogConfig, dialogContext, selectedImage, successCallback, cancelCallback) {
