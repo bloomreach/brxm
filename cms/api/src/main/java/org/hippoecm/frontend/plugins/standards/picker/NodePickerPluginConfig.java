@@ -17,7 +17,6 @@
 package org.hippoecm.frontend.plugins.standards.picker;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
 
     private static final Logger log = LoggerFactory.getLogger(NodePickerPluginConfig.class);
 
-    private final Set<String> VALID_PARAMETER_KEYS = Stream.of("branchId",
+    private static final Set<String> VALID_PARAMETER_KEYS = Stream.of("branchId",
                     "channelId",
                     "componentId",
                     "documentId",
@@ -56,13 +55,23 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
                     "locale")
             .collect(Collectors.toSet());
 
+    private static final Set<String> VALID_SUBSTITUTION_KEYS = Stream.of(
+                    NodePickerControllerSettings.BASE_PATH,
+                    NodePickerControllerSettings.LAST_VISITED_KEY,
+                    NodePickerControllerSettings.CLUSTER_NAME)
+            .collect(Collectors.toSet());
+
     public NodePickerPluginConfig(final IPluginConfig config, final Map<String, Object> parameters) {
         super(config);
 
         final Map<String, Object> params = createContextParameters(parameters);
         final StringSubstitutor stringSubstitutor = new StringSubstitutor(params);
 
-        replaceAll((k, v) -> stringSubstitutor.replace(v));
+        VALID_SUBSTITUTION_KEYS.forEach(key -> {
+            if (containsKey(key)) {
+                put(key, stringSubstitutor.replace(get(key)));
+            }
+        });
     }
 
     private Map<String, Object> createContextParameters(final Map<String, Object> parameters) {
@@ -71,12 +80,12 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
             params.putAll(parameters);
         }
 
-        final Set<String> nonSupportedParameterKeys = new HashSet<>();
-        nonSupportedParameterKeys.addAll(parameters.keySet());
-        nonSupportedParameterKeys.removeAll(VALID_PARAMETER_KEYS);
-        if (!nonSupportedParameterKeys.isEmpty()){
-            log.warn("The following supplied parameters are not supported: {}", String.join(",",
-                    nonSupportedParameterKeys));
+        final Set<String> unsupportedParams = params.keySet().stream()
+                .filter(VALID_PARAMETER_KEYS::contains)
+                .collect(Collectors.toSet());
+
+        if (!unsupportedParams.isEmpty()){
+            log.warn("The following supplied parameters are not supported: {}", String.join(",", unsupportedParams));
         }
 
         params.putIfAbsent("branchId", BranchConstants.MASTER_BRANCH_ID);
@@ -139,29 +148,4 @@ public class NodePickerPluginConfig extends JavaPluginConfig {
 
         return params;
     }
-
-    private void addDefaultValuesForAbsentParameters(final Map<String, Object> params,
-                           final Set<String> absentValidParametersKeys) {
-        if (absentValidParametersKeys.contains("locale")) {
-            final Locale locale = UserSession.get().getLocale();
-            params.put("locale",
-                    locale != null
-                            ? locale.getLanguage()
-                            : LocalizationService.DEFAULT_LOCALE.getLanguage());
-            absentValidParametersKeys.remove("locale");
-        }
-
-        if (absentValidParametersKeys.contains("branchId")) {
-            params.put("branchId",
-                    BranchConstants.MASTER_BRANCH_ID);
-            absentValidParametersKeys.remove("branchId");
-        }
-
-        // fill the remainder of the absent parameters
-        for (final String absentValidParameter : absentValidParametersKeys) {
-            params.put(absentValidParameter,
-                    StringUtils.EMPTY);
-        }
-    }
-
 }
