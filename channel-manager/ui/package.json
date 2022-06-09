@@ -46,7 +46,7 @@
     "document-register-element": "1.7.2",
     "material-icons": "1.10.0",
     "moment": "2.29.3",
-    "moment-timezone": "0.5.33",
+    "moment-timezone": "0.5.34",
     "penpal": "4.1.1",
     "rxjs": "6.6.6",
     "tslib": "2.1.0",
