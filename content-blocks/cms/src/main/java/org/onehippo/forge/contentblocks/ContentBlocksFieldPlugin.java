@@ -91,8 +91,11 @@ import org.onehippo.forge.contentblocks.model.ContentBlockComparer;
 import org.onehippo.forge.contentblocks.model.DropDownOption;
 import org.onehippo.forge.contentblocks.sort.SortHelper;
 import org.onehippo.forge.contentblocks.validator.ContentBlocksValidator;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 /**
  * ContentBlocksFieldPlugin provides authors with the ability to add different "content blocks" to a document with the
@@ -452,7 +455,13 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     protected String getBlockName(final JcrNodeModel jcrNodeModel) {
         if (showCompoundNames && jcrNodeModel != null) {
             try {
-                final String nodeType = jcrNodeModel.getNode().getPrimaryNodeType().getName();
+                Node node = jcrNodeModel.getNode();
+                final String nodeType;
+                if (node.isNodeType(NT_FROZEN_NODE)) {
+                    nodeType = node.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
+                } else {
+                    nodeType  = node.getPrimaryNodeType().getName();
+                }
                 final IModel<String> compoundName = new TypeTranslator(new JcrNodeTypeModel(nodeType)).getTypeName();
                 return compoundName.getObject();
             } catch (final RepositoryException e) {
