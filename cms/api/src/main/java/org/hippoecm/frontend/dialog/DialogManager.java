@@ -25,12 +25,12 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.onehippo.cms.json.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Base manager for showing a dialog.
@@ -50,8 +50,9 @@ import lombok.extern.slf4j.Slf4j;
  * </ul>
  * </p>
  */
-@Slf4j
 public class DialogManager<ModelType> implements IDetachable {
+
+    private static final Logger log = LoggerFactory.getLogger(DialogManager.class);
 
     private static final String DIALOG_CONFIG = "dialogConfig";
     private static final String DIALOG_CONTEXT = "dialogContext";
