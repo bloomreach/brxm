@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 
 describe('PickerService', () => {
   let $rootScope;
+  let $state;
   let CmsService;
   let PickerService;
 
   beforeEach(() => {
     CmsService = jasmine.createSpyObj('CmsService', ['publish']);
+    $state = { params: {} };
 
     angular.mock.module(($provide) => {
+      $provide.value('$state', $state);
       $provide.value('CmsService', CmsService);
     });
 
@@ -35,12 +38,13 @@ describe('PickerService', () => {
   describe('pickPath', () => {
     it('opens the picker dialog', () => {
       const pickerConfig = {};
+      const pickerContext = {};
       const currentPath = '/test';
 
-      PickerService.pickPath(pickerConfig, currentPath);
+      PickerService.pickPath(currentPath, pickerConfig, pickerContext);
       expect(CmsService.publish).toHaveBeenCalledWith(
         'show-path-picker',
-        pickerConfig,
+        { config: pickerConfig, context: pickerContext },
         currentPath,
         jasmine.any(Function),
         jasmine.any(Function),
@@ -73,12 +77,13 @@ describe('PickerService', () => {
   describe('pickLink', () => {
     it('opens the picker dialog', () => {
       const pickerConfig = {};
+      const pickerContext = {};
       const currentLink = { uuid: '1' };
 
-      PickerService.pickLink(pickerConfig, currentLink);
+      PickerService.pickLink(currentLink, pickerConfig, pickerContext);
       expect(CmsService.publish).toHaveBeenCalledWith(
         'show-link-picker',
-        pickerConfig,
+        { config: pickerConfig, context: pickerContext },
         currentLink,
         jasmine.any(Function),
         jasmine.any(Function),
@@ -86,7 +91,7 @@ describe('PickerService', () => {
     });
 
     it('resolves the returned promise with the picked link', (done) => {
-      const promise = PickerService.pickLink({}, { uuid: '1' });
+      const promise = PickerService.pickLink({ uuid: '1' }, {});
       const onSuccess = CmsService.publish.calls.mostRecent().args[3];
       onSuccess({ uuid: '2' });
 
@@ -98,7 +103,7 @@ describe('PickerService', () => {
     });
 
     it('rejects the returns promise when the dialog is canceled', (done) => {
-      const promise = PickerService.pickLink({}, { uuid: '1' });
+      const promise = PickerService.pickLink({ uuid: '1' }, {});
       const onCancel = CmsService.publish.calls.mostRecent().args[4];
       onCancel();
 
@@ -110,12 +115,14 @@ describe('PickerService', () => {
   describe('pickImage', () => {
     it('opens the picker dialog', () => {
       const pickerConfig = {};
+      const pickerContext = {};
+
       const currentImage = { uuid: '1' };
 
-      PickerService.pickImage(pickerConfig, currentImage);
+      PickerService.pickImage(currentImage, pickerConfig);
       expect(CmsService.publish).toHaveBeenCalledWith(
         'show-image-picker',
-        pickerConfig,
+        { config: pickerConfig, context: pickerContext },
         currentImage,
         jasmine.any(Function),
         jasmine.any(Function),
@@ -123,7 +130,7 @@ describe('PickerService', () => {
     });
 
     it('resolves the returned promise with the picked image', (done) => {
-      const promise = PickerService.pickImage({}, { uuid: '1' });
+      const promise = PickerService.pickImage({ uuid: '1' }, {});
       const onSuccess = CmsService.publish.calls.mostRecent().args[3];
       onSuccess({ uuid: '2' });
 
@@ -135,12 +142,38 @@ describe('PickerService', () => {
     });
 
     it('rejects the returns promise when the dialog is canceled', (done) => {
-      const promise = PickerService.pickImage({}, { uuid: '1' });
+      const promise = PickerService.pickImage({ uuid: '1' }, {});
       const onCancel = CmsService.publish.calls.mostRecent().args[4];
       onCancel();
 
       promise.catch(done);
       $rootScope.$digest();
+    });
+  });
+
+  describe('creates a picker context from the $state', () => {
+    it('merges the input context with the $state context and filters out empty values', () => {
+      $state.params = {
+        'empty': '',
+        'state-a': 'a',
+        'state-b': 'b',
+      };
+
+      const pickerConfig = {};
+      const pickerContext = { 'state-b': 'bb' };
+      const currentPath = '/test';
+
+      PickerService.pickPath(currentPath, pickerConfig, pickerContext);
+      expect(CmsService.publish).toHaveBeenCalledWith(
+        'show-path-picker',
+        { config: pickerConfig, context: {
+          'state-a': 'a',
+          'state-b': 'bb',
+        } },
+        currentPath,
+        jasmine.any(Function),
+        jasmine.any(Function),
+      );
     });
   });
 });

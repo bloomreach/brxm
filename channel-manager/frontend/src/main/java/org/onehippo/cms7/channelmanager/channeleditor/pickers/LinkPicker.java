@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.frontend.dialog.DialogManager;
 import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.picker.NodePickerPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms.json.Json;
@@ -54,7 +55,7 @@ public class LinkPicker extends ChannelEditorPicker<String> {
 
     @Override
     protected DialogManager<String> createDialogManager(final IPluginContext context, final IPluginConfig config) {
-        return new DialogManager<String>(context, config) {
+        return new DialogManager<>(context, config) {
             @Override
             protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
                 return new LinkPickerDialog(context, config, dialogModel);
@@ -63,6 +64,11 @@ public class LinkPicker extends ChannelEditorPicker<String> {
             @Override
             protected void beforeShowDialog(final Map<String, String> parameters) {
                 dialogModel.setObject(parameters.get("uuid"));
+            }
+
+            @Override
+            protected IPluginConfig createPluginConfig(final IPluginConfig template, final IPluginConfig context) {
+                return new NodePickerPluginConfig(template, context);
             }
         };
     }
