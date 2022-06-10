@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Bloomreach (https://www.bloomreach.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,5 +19,5 @@ import org.apache.wicket.util.io.IClusterable;
 
 public interface IDialogFactory extends IClusterable {
 
-    public IDialogService.Dialog createDialog();
+    IDialogService.Dialog createDialog();
 }

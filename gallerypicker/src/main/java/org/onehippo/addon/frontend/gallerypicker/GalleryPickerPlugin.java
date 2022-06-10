@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package org.onehippo.addon.frontend.gallerypicker;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -45,10 +48,12 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.picker.NodePickerPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -247,7 +252,18 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 valueModel.detach();
             }
         };
-        return new GalleryPickerDialog(getPluginContext(), getPluginConfig(), dialogModel);
+
+        final Map<String,Object> context = new HashMap<>();
+        final Node currentNode = currentNodeModel.getNode();
+        try {
+            context.put("fieldId", currentNode.getIdentifier());
+            context.put("fieldIndex", currentNode.getIndex());
+        } catch (RepositoryException e) {
+            log.error("Failed to lookup identifier of field {}", JcrUtils.getNodePathQuietly(currentNode));
+        }
+
+        final NodePickerPluginConfig pluginConfig = new NodePickerPluginConfig(getPluginConfig(), context);
+        return new GalleryPickerDialog(getPluginContext(), pluginConfig, dialogModel);
     }
 
     @Override

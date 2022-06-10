@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
+import java.util.Map;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -43,6 +45,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.picker.NodePickerPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -175,7 +178,8 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     private Dialog<String> createLinkPickerDialog() {
         final JcrPropertyValueModel<String> docBaseModel = getDocBaseModel();
-        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docBaseModel);
+        final NodePickerPluginConfig pluginConfig = new NodePickerPluginConfig(getPluginConfig(), getPickerParameters());
+        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(pluginConfig, docBaseModel);
         final IModel<String> linkPickerModel = new IModel<>() {
 
             @Override
@@ -197,6 +201,20 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
         final IPluginContext context = getPluginContext();
         return new LinkPickerDialog(context, dialogConfig, linkPickerModel);
+    }
+
+    private Map<String, Object> getPickerParameters() {
+        final JcrNodeModel model = (JcrNodeModel) getModel();
+        try {
+            final Node fieldNode = model.getNode();
+            return Map.of(
+                    "fieldId", fieldNode.getIdentifier(),
+                    "fieldIndex", fieldNode.getIndex());
+        } catch (RepositoryException e) {
+            log.error("Error loading UUID and index of field node", e);
+        }
+
+        return Map.of("fieldId", model.getItemModel().getUuid());
     }
 
     private String getMirrorPath() {
