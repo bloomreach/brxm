@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2022 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -29,7 +29,6 @@ import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { TimeoutError } from '../error-handling/models/timeout-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
-import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
 import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
@@ -389,7 +388,13 @@ export class NavigationService implements OnDestroy {
       url = this.homeUrl;
     }
 
-    return this.routes.find(x => url.startsWith(x.path));
+    return this.findRouteWithLongestCommonPrefix(url);
+  }
+
+  private findRouteWithLongestCommonPrefix(url: string): Route {
+    return this.routes
+    .filter(route => route.path.startsWith(url))
+    .reduce((prev, curr) => curr.path.length > prev.path.length ? prev : curr);
   }
 
   private setAppError(error: any): void {
