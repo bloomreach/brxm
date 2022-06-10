@@ -316,7 +316,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
           expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
-          expect(HippoIframeService.reload).toHaveBeenCalled();
+          expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
         });
         $scope.$digest();
@@ -330,7 +330,7 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
           expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
-          expect(HippoIframeService.reload).toHaveBeenCalled();
+          expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
         });
         $scope.$digest();
