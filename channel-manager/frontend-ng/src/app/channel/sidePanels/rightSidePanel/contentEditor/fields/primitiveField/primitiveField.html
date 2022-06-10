@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@
               aria-label="{{$ctrl.fieldType.displayName}}"
               ng-required="$ctrl.fieldType.required"
               ng-focus="$ctrl.focusPrimitive($event)"
+              ng-disabled="$ctrl.fieldType.readOnly"
               ng-blur="$ctrl.blurPrimitive($event)">
 
         <input ng-switch-when="LONG"
@@ -77,6 +78,7 @@
               ng-focus="$ctrl.focusPrimitive($event)"
               ng-blur="$ctrl.blurPrimitive($event)"
               ng-required="$ctrl.fieldType.required"
+              ng-disabled="$ctrl.fieldType.readOnly"
               ng-pattern="/^-?[0-9]\d*(\.\d+)?$/">
 
         <input ng-switch-when="DOUBLE"
@@ -87,6 +89,7 @@
               ng-focus="$ctrl.focusPrimitive($event)"
               ng-blur="$ctrl.blurPrimitive($event)"
               ng-required="$ctrl.fieldType.required"
+              ng-disabled="$ctrl.fieldType.readOnly"
               ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
 
         <div ng-switch-when="BOOLEAN">
@@ -97,6 +100,7 @@
                       class="md-primary"
                       name="{{$ctrl.getFieldName($index)}}"
                       ng-focus="$ctrl.focusPrimitive($event)"
+                      ng-disabled="$ctrl.fieldType.readOnly"
                       ng-blur="$ctrl.blurPrimitive($event)">
             {{$ctrl.fieldType.displayName}}
             <md-icon ng-if="$ctrl.fieldType.hint"
