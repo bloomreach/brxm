@@ -224,7 +224,8 @@
 
       Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
         currentPath,
-        pickerConfig,
+        pickerConfig.config,
+        pickerConfig.context,
         this._onPathPicked.bind(this),
         this._onPathCanceled.bind(this)
       );
@@ -242,29 +243,30 @@
       }
     },
 
-    _showImagePicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
-      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
+    _showImagePicker: function(config, selectedImage, successCallback, cancelCallback) {
+      this._showPicker(config.config, config.context, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
     },
 
-    _showLinkPicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
-      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
+    _showLinkPicker: function(config, selectedLink, successCallback, cancelCallback) {
+      this._showPicker(config.config, config.context, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
     },
 
     _showRichTextImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
       selectedImage.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.richTextImagePickerWicketUrl);
+      this._showPicker(dialogConfig, { fieldId: fieldId }, selectedImage, successCallback, cancelCallback, this.initialConfig.richTextImagePickerWicketUrl);
     },
 
     _showRichTextLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
       selectedLink.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.richTextLinkPickerWicketUrl);
+      this._showPicker(dialogConfig, { fieldId: fieldId }, selectedLink, successCallback, cancelCallback, this.initialConfig.richTextLinkPickerWicketUrl);
     },
 
-    _showPicker: function(dialogConfig, parameters, successCallback, cancelCallback, wicketUrl) {
+    _showPicker: function(dialogConfig, dialogContext, parameters, successCallback, cancelCallback, wicketUrl) {
       this.pickerSuccessCallback = successCallback;
       this.pickerCancelCallback = cancelCallback;
 
       parameters.dialogConfig = JSON.stringify(dialogConfig);
+      parameters.dialogContext = JSON.stringify(dialogContext);
 
       Wicket.Ajax.post({
         u: wicketUrl,

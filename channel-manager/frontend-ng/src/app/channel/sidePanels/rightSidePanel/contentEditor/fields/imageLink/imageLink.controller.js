@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,12 @@ import NodeLinkController from '../../../fields/nodeLink/nodeLink.controller';
 export default class ImageLinkController extends NodeLinkController {
   async _showPicker() {
     const { uuid: value, url: displayName } = await this.PickerService.pickImage(
-      this.config.imagepicker,
       { uuid: this.ngModel.$modelValue },
+      this.config.imagepicker,
+      {
+        fieldIndex: this.index,
+        fieldPath: this.name,
+      }
     );
 
     return { value, displayName };

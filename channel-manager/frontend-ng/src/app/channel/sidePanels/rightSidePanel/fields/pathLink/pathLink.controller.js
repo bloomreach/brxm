@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,13 @@
 import NodeLinkController from '../nodeLink/nodeLink.controller';
 
 export default class PathLinkController extends NodeLinkController {
+  constructor($element, $scope, $timeout, ComponentEditor, PickerService) {
+    'ngInject';
+
+    super($element, $scope, $timeout, PickerService);
+    this.ComponentEditor = ComponentEditor;
+  }
+
   $onInit() {
     super.$onInit();
 
@@ -32,8 +39,11 @@ export default class PathLinkController extends NodeLinkController {
 
   async _showPicker() {
     const { path: value, displayName } = await this.PickerService.pickPath(
-      this.config.linkpicker,
       this.ngModel.$modelValue,
+      this.config.linkpicker,
+      {
+        fieldPath: this.name,
+      }
     );
 
     return { value, displayName };
