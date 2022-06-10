@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,7 @@ describe('imageLinkController', () => {
       config,
       displayName: 'TestDisplayName',
       name: 'TestField',
+      index: 0,
       ngModel,
     });
   });
@@ -68,7 +69,10 @@ describe('imageLinkController', () => {
 
       $ctrl.open();
 
-      expect(PickerService.pickImage).toHaveBeenCalledWith(config.imagepicker, { uuid: ngModel.$modelValue });
+      expect(PickerService.pickImage).toHaveBeenCalledWith({ uuid: ngModel.$modelValue }, config.imagepicker, {
+        fieldIndex: 0,
+        fieldPath: 'TestField',
+      });
     });
 
     it('updates the preview when an image has been picked', (done) => {

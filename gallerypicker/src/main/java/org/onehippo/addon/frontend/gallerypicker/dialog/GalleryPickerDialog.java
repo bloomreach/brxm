@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 public class GalleryPickerDialog extends LinkPickerDialog {
-
-    private static Logger log = LoggerFactory.getLogger(GalleryPickerDialog.class);
 
     private final boolean enableUpload;
     private GalleryUploadPanel uploadPanel;
