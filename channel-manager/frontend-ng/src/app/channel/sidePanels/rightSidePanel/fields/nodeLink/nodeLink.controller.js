@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,8 +107,12 @@ export default class NodeLinkController {
 
   async _showPicker() {
     const { uuid: value, displayName } = await this.PickerService.pickLink(
-      this.config.linkpicker,
       { uuid: this.ngModel.$modelValue },
+      this.config.linkpicker,
+      {
+        fieldIndex: this.index,
+        fieldPath: this.name,
+      }
     );
 
     return { value, displayName };

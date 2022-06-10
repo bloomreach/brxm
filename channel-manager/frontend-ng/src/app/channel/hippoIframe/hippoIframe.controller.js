@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -280,7 +280,11 @@ class HippoIframeCtrl {
       }
 
       const data = this._getButtonData(config);
-      const { path } = await this.PickerService.pickPath(data.pickerConfig, data.parameterValue);
+      const { path } = await this.PickerService.pickPath(data.parameterValue, data.pickerConfig, {
+        componentId: config.containerItemId,
+        documentId: config.documentUuid,
+        fieldPath: config.parameterName,
+      });
 
       this._onPathPicked(data.containerItem, data.parameterName, path, data.parameterBasePath);
     });

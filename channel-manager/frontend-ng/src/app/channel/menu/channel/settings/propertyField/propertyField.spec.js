@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -283,14 +283,16 @@ describe('Property field component', () => {
       $ctrl.showPathPicker();
       $rootScope.$digest();
 
-      expect(PickerService.pickPath).toHaveBeenCalledWith({
+      expect(PickerService.pickPath).toHaveBeenCalledWith('testValue', {
         configuration: 'testPickerConfiguration',
         initialPath: 'testInitialPath',
         isRelativePath: 'testIsRelative',
         remembersLastVisited: 'testRemembersLastVisited',
         rootPath: 'testRootPath',
         selectableNodeTypes: ['testNodeType'],
-      }, 'testValue');
+      }, {
+        fieldPath: 'testField',
+      });
     });
 
     it('uses a channel\'s content root path as the default value of the picker\'s root path', () => {
@@ -305,14 +307,16 @@ describe('Property field component', () => {
       $ctrl.showPathPicker();
       $rootScope.$digest();
 
-      expect(PickerService.pickPath).toHaveBeenCalledWith({
+      expect(PickerService.pickPath).toHaveBeenCalledWith('testValue', {
         configuration: undefined,
         initialPath: undefined,
         isRelativePath: undefined,
         remembersLastVisited: undefined,
         rootPath: 'testChannelContentRootPath',
         selectableNodeTypes: undefined,
-      }, 'testValue');
+      }, {
+        fieldPath: 'testField',
+      });
     });
 
     it('updates the value to the picked path', (done) => {

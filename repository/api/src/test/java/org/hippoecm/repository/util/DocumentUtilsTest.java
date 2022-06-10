@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class DocumentUtilsTest {
 
@@ -120,5 +121,45 @@ public class DocumentUtilsTest {
         Log4jInterceptor.onWarn().deny(DocumentUtils.class).run( () -> {
             DocumentUtils.getVariantNodeType(handle).get();
         });
+    }
+
+    @Test
+    public void findHandle() throws Exception {
+        final Session session = createMock(Session.class);
+        final Node root = createMock(Node.class);
+        final Node handle = createMock(Node.class);
+        final Node field = createMock(Node.class);
+
+        expect(session.getRootNode()).andReturn(root);
+        expect(root.isSame(field)).andReturn(false);
+        expect(root.isSame(handle)).andReturn(false);
+
+        expect(handle.isNodeType(HippoNodeType.NT_HANDLE)).andReturn(true);
+        expect(field.isNodeType(HippoNodeType.NT_HANDLE)).andReturn(false);
+        expect(field.getParent()).andReturn(handle);
+        expect(field.getSession()).andReturn(session);
+
+        replay(root, handle, field, session);
+
+        assertThat(DocumentUtils.findHandle(field).get(), equalTo(handle));
+    }
+
+    @Test
+    public void findHandleNoHandleAncestor() throws Exception {
+        final Session session = createMock(Session.class);
+        final Node root = createMock(Node.class);
+        final Node node = createMock(Node.class);
+
+        expect(session.getRootNode()).andReturn(root);
+        expect(root.isSame(node)).andReturn(false);
+        expect(root.isSame(root)).andReturn(true);
+
+        expect(node.isNodeType(HippoNodeType.NT_HANDLE)).andReturn(false);
+        expect(node.getParent()).andReturn(root);
+        expect(node.getSession()).andReturn(session);
+
+        replay(root, node, session);
+
+        assertTrue(DocumentUtils.findHandle(node).isEmpty());
     }
 }
