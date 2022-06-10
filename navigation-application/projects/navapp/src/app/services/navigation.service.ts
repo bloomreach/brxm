@@ -393,7 +393,7 @@ export class NavigationService implements OnDestroy {
 
   private findRouteWithLongestCommonPrefix(url: string): Route {
     return this.routes
-    .filter(route => route.path.startsWith(url))
+    .filter(route => url.startsWith(route.path))
     .reduce((prev, curr) => curr.path.length > prev.path.length ? prev : curr);
   }
 
