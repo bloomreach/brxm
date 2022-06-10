@@ -508,7 +508,7 @@ class ContentEditorService {
 
   _askSaveOrDiscardChanges(messageKey, messageParams = {}, titleKey = 'SAVE_DOCUMENT_CHANGES_TITLE') {
     if (this.isPristine()) {
-      return this.$q.resolve('DISCARD');
+      return this.$q.resolve();
     }
 
     const translateParams = angular.copy(messageParams);
