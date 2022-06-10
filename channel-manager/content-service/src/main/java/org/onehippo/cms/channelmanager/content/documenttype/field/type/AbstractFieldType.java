@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private String jcrType;
     private String effectiveType;
     private boolean orderable;
+    private boolean readOnly;
     private int minValues = 1;
     private int maxValues = 1;
     private boolean hasMaxValues;
@@ -194,6 +195,16 @@ public abstract class AbstractFieldType implements BaseFieldType {
         this.orderable = orderable;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    @Override
+    public void setReadOnly(final boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
     final void setJcrType(final String jcrType) {
         this.jcrType = jcrType;
     }
@@ -226,6 +237,8 @@ public abstract class AbstractFieldType implements BaseFieldType {
         final Optional<Node> editorFieldConfig = fieldContext.getEditorConfigNode();
 
         setLocalizedLabels(resourceBundle, editorFieldConfig);
+        setReadOnly(FieldTypeUtils.isReadOnly(editorFieldConfig));
+
 
         final List<String> validators = fieldContext.getValidators();
 
