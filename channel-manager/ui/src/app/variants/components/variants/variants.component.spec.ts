@@ -112,6 +112,7 @@ describe('VariantsComponent', () => {
       getComponent: () => mockComponent,
       propertiesAsFormData: () => mockFormData,
       isReadOnly: () => false,
+      isForeignPage: () => false,
     };
     const variantsServiceMock = {
       extractExpressions: jest.fn(),
