@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,18 +90,11 @@ public class SiteMapPageRepresentation {
         id = handleNode.getIdentifier();
         parentId = handleNode.getParent().getIdentifier();
 
-        if (hstLink.representsIndex()) {
-            // the hstLink was the result of a document matching the _index_ sitemap item : as a result, it will be
-            // accessed via the 'parent url'. Instead of typically having 'index' as name in the sitemap, use the
-            // parent name to get the logical sitemap name in the CM
-            if (hstLink.getHstSiteMapItem().isWildCard()) {
-                name = handleNode.getParent().getName();
-            } else {
-                name = hstLink.getHstSiteMapItem().getValue();
-            }
-        } else {
-            name = handleNode.getName();
+        String sitemapElement = StringUtils.substringAfterLast(hstLink.getPath(), "/");
+        if (StringUtils.isEmpty(sitemapElement)) {
+            sitemapElement = handleNode.getName();
         }
+        name = sitemapElement;
 
         pageTitle = ((HippoNode)handleNode).getDisplayName();
         // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above
