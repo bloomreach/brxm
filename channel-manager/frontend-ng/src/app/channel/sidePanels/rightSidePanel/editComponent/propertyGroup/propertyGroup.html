@@ -34,7 +34,7 @@
     layout-margin
     ng-click="collapse.toggle()"
     ng-if="$ctrl.group.collapse"
-    md-colors="$ctrl.readOnly && { color: 'grey' }"
+    md-colors="!!$ctrl.readOnly && { color: 'grey' }"
   >
     <md-icon
       class="collapse-icon"
