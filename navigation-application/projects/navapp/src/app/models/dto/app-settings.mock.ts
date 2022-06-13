@@ -1,5 +1,5 @@
-/*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*!
+ * Copyright 2019-2022 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ export class AppSettingsMock implements AppSettings {
   loginPath = '/login/path';
   initialPath = '/initial/path';
   navAppResourceLocation = '/testLocation';
+  helpLinks = [];
   navConfigResources = [
     new ConfigResourceMock({
       resourceType: 'IFRAME',
