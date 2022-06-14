@@ -68,7 +68,7 @@
     "emittery": "0.4.1",
     "es6-shim": "0.35.3",
     "jquery": "3.5.1",
-    "moment-timezone": "0.5.14",
+    "moment-timezone": "0.5.34",
     "mutation-summary": "0.1.1",
     "ng-device-detector": "4.0.3",
     "ng-focus-if": "1.0.7",
