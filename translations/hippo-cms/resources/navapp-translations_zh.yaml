@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/navapp:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        helplinks-content: Content 文件
+        helplinks-discovery: Discovery 文件
+        helplinks-support: 支持门户
