@@ -1,17 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2008-2022 Bloomreach
  */
 
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
@@ -30,6 +18,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
+import org.hippoecm.frontend.plugins.standards.list.ListCell;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -48,7 +37,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
  * and icon should be used to represent the state. Can be used with handles, documents and (document)
  * versions.</p>
  * <p></p>
- * <p>The {@link org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin} adds a
+ * <p>The org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin adds a
  * {@link ListColumn} to display the documents in the "Document Area", that lists documents inside folders.
  * </p>
  * <p></p>
