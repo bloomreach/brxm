@@ -1,17 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2011-2022 Bloomreach
  */
 package org.hippoecm.hst.core.component;
 
@@ -26,7 +14,7 @@ import org.hippoecm.hst.core.request.ParameterConfiguration;
 /**
  * HstParameterInfoProxyFactory is a factory interface for creating a proxy for an interface that is referred to by a {@link ParametersInfo} annotation.
  * The {@link ParametersInfo} annotation is used to annotate {@link HstComponent} classes. The interface referred to by the {@link ParametersInfo} annotation
- * is returned as proxy by the {@link #createParameterInfoProxy(ParametersInfo, ComponentConfiguration, HstRequest, HstParameterValueConverter)} method. The getters in the interface that are
+ * is returned as proxy by the {@link #createParameterInfoProxy(ParametersInfo, ParameterConfiguration, HttpServletRequest, HstParameterValueConverter)} method. The getters in the interface that are
  * annotated with the {@link Parameter} annotation  are delegated through the proxy to the backing {@link ComponentConfiguration} 
  */
 
