@@ -1,17 +1,5 @@
 /*
- *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2018-2022 Bloomreach
  */
 package org.onehippo.cms7.services;
 
@@ -40,9 +28,9 @@ import org.slf4j.LoggerFactory;
  *     interface of generic type T.
  * </p>
  * <p>
- *     For example with the following (complete) {@link org.onehippo.repository.events.PersistedHippoEventListenerRegistry
- *     PersistedHippoEventListenerRegistry} implementation from the hippo-repository-api module using interface type
- *     {@link org.onehippo.repository.events.PersistedHippoEventListener PersistedHippoEventListener}, service objects
+ *     For example with the following (complete) org.onehippo.repository.events.PersistedHippoEventListenerRegistry
+ *     implementation from the hippo-repository-api module using interface type
+ *     org.onehippo.repository.events.PersistedHippoEventListener, service objects
  *     implementing that interface can be registered:
  *     <pre><code>
  *     public final class PersistedHippoEventListenerRegistry extends WhiteboardProxiedServiceRegistry&lt;PersistedHippoEventListener&gt; {
@@ -58,8 +46,8 @@ import org.slf4j.LoggerFactory;
  * </p>
  * <p>
  *     For a typical usage of a WhiteboardProxiedServiceRegistry see the javadoc for the
- *     {@link org.onehippo.repository.events.PersistedHippoEventListenerRegistry PersistedHippoEventListenerRegistry} and
- *     {@link org.onehippo.repository.events.PersistedHippoEventListener PersistedHippoEventListener} service interface
+ *     org.onehippo.repository.events.PersistedHippoEventListenerRegistry and
+ *     org.onehippo.repository.events.PersistedHippoEventListener service interface
  *     in the hippo-repository-api module.
  * </p>
  * <p>
