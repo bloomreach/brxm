@@ -1,17 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2008-2022 Bloomreach
  */
 package org.hippoecm.hst.configuration.components;
 
@@ -50,7 +38,7 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
  * parent <code>referencePath</code> to the <code>referenceName</code>,  separated by a configurable character. As a
  * <code>HstComponent</code> its referencePath is furthermore used to uniquely (prefix) request parameters which might
  * end up in an external URL, a <code>referenceName</code> is not allowed to contain any of the following characters
- * (bracket not included): <code>[.,:/\'"?& |-+#$%~]</code>
+ * (bracket not included): {@code [.,:/\'"?& |-+#$%~]}
  * <p/>
  * For a <code>root HstComponentConfiguration</code> however, the HstComponent referencePath will only contain the
  * (root) ".", not its own referenceName which is simply ignored, and as such there is no restriction on which
@@ -60,8 +48,8 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
  * among other root HstComponentConfiguration objects. This id is used for lookup from the {@link
  * HstComponentsConfiguration} and as reference by a {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}.
  * <p/>
- * A HstComponentConfiguration provides access to its children through a <code>LinkedHashMap<String,
- * HstComponentConfiguration></code>, allowing the HST2 runtime to look them up by <code>referenceName</code> and/or
+ * A HstComponentConfiguration provides access to its children through a {@code LinkedHashMap<String,
+ * HstComponentConfiguration>}, allowing the HST2 runtime to look them up by <code>referenceName</code> and/or
  * <code>referencePath</code>, as well as process them in a sorted order. As the ordering in which
  * <code>HstComponent</code> children are processed might be significant, the <code>HstComponentConfiguration</code>
  * implementation is required to use a <code>LinkedHashMap</code> implementation (like a TreeMap) which returns the
