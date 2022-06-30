@@ -1,17 +1,5 @@
 /*
- *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2017-2022 Bloomreach
  */
 package org.onehippo.cms7.crisp.api.resource;
 
@@ -345,7 +333,6 @@ public interface ResourceResolver extends ResourceCacheResolvable {
      * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
      * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
      * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
-     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
      * @param absPath absolute path of a {@link Resource}
      * @return URI representation by {@code absPath}
      * @throws ResourceException if resource resolution operation fails
@@ -363,7 +350,6 @@ public interface ResourceResolver extends ResourceCacheResolvable {
      * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
      * and {@code absPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
      * <code>".../some/path/hello/world/overview"</code> by the {@code pathVariables}.</p>
-     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
      * @param absPath absolute path of a {@link Resource}
      * @param pathVariables the variables to expand the template given by {@code absPath}
      * @return URI representation by {@code absPath}
