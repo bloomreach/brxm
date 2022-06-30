@@ -1,17 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *  http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2012-2022 Bloomreach
  */
 package org.hippoecm.frontend.extjs;
 
@@ -34,7 +22,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  * Here's a simple example of an Ext widget.</p>
  * <p>
  * <strong>Repository configuration:</strong>
- * <pre>
+ * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
  * <sv:node sv:name="my-ext-widget" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
  *   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -44,12 +32,12 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  *     <sv:value>com.example.MyExtWidget</sv:value>
  *   </sv:property>
  * </sv:node>
- * </pre>
+ * }</pre>
  * </p>
  * <p>
  * <strong>MyExtWidget.java:</strong>
- * <pre>
- * {@literal @}ExtClass("MyExtWidget")
+ * <pre><code>
+ *{@code @ExtClass("MyExtWidget")}
  * public class MyExtWidget extends ExtWidget {
  *
  *     public MyExtWidget(IPluginContext context, IPluginConfig config) {
@@ -57,17 +45,17 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  *         add(JavascriptPackageResource.getHeaderContribution(MyExtWidget.class, "MyExtWidget.js"));
  *     }
  *
- *     {@literal @}Override
+ *    {@code @Override}
  *     protected void onRenderProperties(final JSONObject properties) throws JSONException {
  *         super.onRenderProperties(properties);
  *         properties.put("exampleProperty", "somevalue");
  *     }
  * }
- * </pre>
+ * </code></pre>
  * </p>
  * <p>
  * <strong>MyExtWidget.js</strong>:
- * <pre>
+ * <pre>{@code
  * MyExtWidget = Ext.extend(Ext.Panel, {
  *
  *     constructor: function(config) {
@@ -76,7 +64,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  *     }
  *
  * }
- * </pre>
+ * }</pre>
  * </p>
  * <p>
  * The xtype 'myextwidget' is passed to the Java superclass, and automatically registered with the Ext component
@@ -84,28 +72,28 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  * <p>
  * An Ext widget can also be registered from Javascript alone:
  * <strong>MyExtWidget.js</strong>:
- * <pre>
+ * <pre>{@code
  * MyExtWidget = ...
  * Hippo.ExtWidgets.register('myextwidget', MyExtWidget);
- * </pre>
+ * }</pre>
  * </p>
  * <p>
  * Using the widget, like adding it to a panel, could be then done with:</strong>
- * <pre>
+ * <pre>{@code
  * var somePanel = new Ext.Panel({
  *     items: [ Hippo.ExtWidgets.getConfig('myextwidget') ]
  * });
- * </pre>
+ * }</pre>
  * Instantiating a widget can also be done by the registry itself:
- * <pre>
+ * <pre>{@code
  * var myWidget = Hippo.ExtWidgets.create('myextwidget');
- * </pre>
+ * }</pre>
  * It is also possible to provide additional configuration when instantiating a widget:
- * <pre>
+ * <pre>{@code
  * var myWidget = Hippo.ExtWidgets.create('myextwidget', {
  *     someproperty: 'foo'
  * });
- * </pre>
+ * }</pre>
  * </p>
  */
 public abstract class ExtWidget extends ExtObservable implements IPlugin {
