@@ -1,17 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2008-2022 Bloomreach
  */
 package org.hippoecm.hst.content.beans.query;
 
@@ -56,7 +44,7 @@ public interface HstQueryManager {
      * @param scope
      * @param filterBean
      * @param includeSubTypes
-     * @return a new <code>{@link HstQuery}</code> with scope & filter
+     * @return a new <code>{@link HstQuery}</code> with scope {@literal &} filter
      * @throws QueryException
      */
     HstQuery createQuery(Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
@@ -68,7 +56,7 @@ public interface HstQueryManager {
      * @param scope
      * @param nodeType
      * @param includeSubTypes
-     * @return a new <code>{@link HstQuery}</code> with scope & filter
+     * @return a new <code>{@link HstQuery}</code> with scope {@literal &} filter
      * @throws QueryException
      */
     HstQuery createQuery(Node scope, String nodeType, boolean includeSubTypes) throws QueryException;
@@ -87,7 +75,7 @@ public interface HstQueryManager {
      * @param scope
      * @param filterBean
      * @param includeSubTypes
-     * @return a new <code>{@link HstQuery}</code> with scope & filter
+     * @return a new <code>{@link HstQuery}</code> with scope {@literal &} filter
      * @throws QueryException
      */
     HstQuery createQuery(HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
@@ -98,7 +86,7 @@ public interface HstQueryManager {
      * 
      * @param scope
      * @param filterBeans
-     * @return a new <code>{@link HstQuery}</code> with scope & filter on jcr primary nodetype of the filterBean
+     * @return a new <code>{@link HstQuery}</code> with scope {@literal &} filter on jcr primary nodetype of the filterBean
      * @throws QueryException
      */
     HstQuery createQuery(Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException;
@@ -115,7 +103,7 @@ public interface HstQueryManager {
      * 
      * @param scope
      * @param primaryNodeTypes
-     * @return a new <code>{@link HstQuery}</code> with scope & filter on jcr primary nodetype of the filterBean
+     * @return a new <code>{@link HstQuery}</code> with scope {@literal &} filter on jcr primary nodetype of the filterBean
      * @throws QueryException
      */
     HstQuery createQuery(Node scope, String ... primaryNodeTypes) throws QueryException;
