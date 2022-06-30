@@ -1,17 +1,5 @@
 /*
- *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2008-2022 Bloomreach
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
@@ -63,16 +51,26 @@ import net.sf.json.JsonConfig;
  *
  * <p> When a wireframe is rendered, it will create a new node structure inside it's body-element. It will than move the
  * elements representing the units into their new container elements. For example, our wireframe's root element is
- * identified by id 'root' and contains two units: top and center.<br/>
+ * identified by id 'root' and contains two units: top and center.<br>
  * After the wireframe has rendered it will look something like (this is a slimmed down version of the real deal for the
- * sake of readability) <br/><br/> &lt;div id="root" class="yui-layout"&gt;<br/> &nbsp;&nbsp;&lt;div
- * class="yui-layout-doc"&gt;<br/> &nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="yui-layout-unit yui-layout-unit-top"&gt;<br/>
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;..<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div id="top"&gt;[ Top
- * ]&lt;/div&gt;<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;..<br/> &nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br/><br/>
- * &nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="yui-layout-unit yui-layout-unit-center"&gt;<br/>
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;..<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div id="center"&gt;[
- * Center ]&lt;/div&gt;<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;..<br/> &nbsp;&nbsp;&nbsp;&nbsp;&lt;/div><br/>
- * &nbsp;&nbsp;&lt;/div><br/> &lt;/div></p>
+ * sake of readability) <br>
+ * <pre>{@code
+ *<div id="root" class="yui-layout">
+ *   <div class="yui-layout-doc">
+ *     <div class="yui-layout-unit yui-layout-unit-top">
+ *       ..
+ *         <div id="top">[ Top ]</div>
+ *       ..
+ *     </div>
+ *
+ *     <div class="yui-layout-unit yui-layout-unit-center">
+ *       ..
+ *         <div id="center">[ Center ]</div>
+ *       ..
+ *     </div>
+ *   </div>
+ * </div>
+ * }</pre>
  *
  * <p> As stated before, the id's of the wireframe's root element and all of it's units body elements, should be known
  * at render time. If our application only contains one single wireframe with two static unit, we can hard-code the id
@@ -89,7 +87,7 @@ import net.sf.json.JsonConfig;
  * extension points for units, and know nothing about them except their position until render time. </p>
  *
  * <p> To integrate the YUI layouts into Wicket, we have added a clientside manager component that handles the lifecycle,
- * rendering and resizing behavior of the wireframes. For more info see {@link /api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager-debug.js}
+ * rendering and resizing behavior of the wireframes. For more info see /api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager-debug.js
  * </p>
  *
  * @see org.hippoecm.frontend.plugins.yui.layout.WireframeSettings
