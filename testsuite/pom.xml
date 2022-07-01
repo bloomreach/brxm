@@ -439,6 +439,7 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>**/overlays/**</exclude>
                 <exclude>conf/catalina-logging.properties</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/css/style.css</exclude>
