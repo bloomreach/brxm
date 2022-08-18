@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,8 @@ import org.slf4j.LoggerFactory;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("taxonomyplugin")
 public class TaxonomyResource {
+
+    private  static final String EDITOR_TEMPLATES_DEFAULT = "/editor:templates/_default_";
 
     private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
     
@@ -121,7 +123,7 @@ public class TaxonomyResource {
 
         final Session session = jcrService.createSession();
         try {
-            final String editorTemplatePath = contentTypeService.jcrBasePathForContentType(jcrContentType);
+            final String editorTemplatePath = contentTypeService.jcrBasePathForContentType(jcrContentType) + EDITOR_TEMPLATES_DEFAULT;
             if (session.nodeExists(editorTemplatePath)) {
                 final Node editorTemplateNode = session.getNode(editorTemplatePath);
                 final NodeIterator it = editorTemplateNode.getNodes();
@@ -186,7 +188,7 @@ public class TaxonomyResource {
         try {
             for (TaxonomyField field : taxonomyFields) {
                 final String jcrContentType = field.getJcrContentType();
-                final String editorTemplatePath = contentTypeService.jcrBasePathForContentType(jcrContentType) + "/editor:templates/_default_";
+                final String editorTemplatePath = contentTypeService.jcrBasePathForContentType(jcrContentType) + EDITOR_TEMPLATES_DEFAULT;
                 if (!session.nodeExists(editorTemplatePath)) {
                     feedback.addError("Document type '" + jcrContentType + "' not suitable for adding taxonomy field");
                     continue;
