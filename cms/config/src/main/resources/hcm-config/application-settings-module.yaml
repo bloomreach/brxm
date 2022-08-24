@@ -37,7 +37,8 @@ definitions:
             'pendo-static-5285379033268224.storage.googleapis.com',
             'storage.googleapis.com/pendo-static-5285379033268224/',
             'maps.googleapis.com',
-            'maps.gstatic.com'
+            'maps.gstatic.com',
+            'data:'
           ]
           script-src: [
             'app.pendo.io',
