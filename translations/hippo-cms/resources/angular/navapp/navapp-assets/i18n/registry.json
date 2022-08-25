@@ -732,6 +732,16 @@
     "CONTENT_DOCUMENTATION_LINK" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "MENU_ITEM_SETUP_DISCOVERY_USAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
