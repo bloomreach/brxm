@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -259,16 +259,33 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
      */
     protected Locale getPreferredLocale() {
         final Node node = getModel().getObject();
-        try {
-            if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
-                    && node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                return TaxonomyUtil.toLocale(node.getProperty(HippoTranslationNodeType.LOCALE).getString());
-            }
-        } catch (final RepositoryException e) {
-            log.error("Failed to detect " + HippoTranslationNodeType.LOCALE + " to choose the preferred locale", e);
+        final String locale = getDocumentLocale(node);
+        if (locale != null) {
+            return TaxonomyUtil.toLocale(locale);
         }
 
         return getLocale();
+    }
+
+    /**
+     * Get the document's locale as string, from a node that can be either a compound or document
+     */
+    private String getDocumentLocale(final Node node) {
+        if (node != null) {
+            try {
+                if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
+                        && node.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                    return node.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                }
+
+                // recurse up on behalf of compounds
+                return getDocumentLocale(node.getParent());
+            } catch (final RepositoryException e) {
+                log.error("Failed to detect " + HippoTranslationNodeType.LOCALE + " to choose the preferred locale", e);
+            }
+        }
+
+        return null;
     }
 
     /**
