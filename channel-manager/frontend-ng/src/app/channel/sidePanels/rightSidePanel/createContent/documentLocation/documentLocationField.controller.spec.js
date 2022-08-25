@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +215,7 @@ describe('DocumentLocationField', () => {
         component.pickerPath = 'current-location';
         component.pickerConfig = pickerConfig;
         component.openPicker();
-        expect(PickerService.pickPath).toHaveBeenCalledWith(pickerConfig, 'current-location');
+        expect(PickerService.pickPath).toHaveBeenCalledWith('current-location', pickerConfig);
       });
     });
 
