@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ class DocumentLocationFieldController {
   }
 
   openPicker() {
-    this.PickerService.pickPath(this.pickerConfig, this.pickerPath)
+    this.PickerService.pickPath(this.pickerPath, this.pickerConfig)
       .then(({ path }) => this.onPathPicked(path))
       .catch(() => this.onPathCanceled());
     this.CmsService.reportUsageStatistic('DocumentLocationPicker (create content panel)');

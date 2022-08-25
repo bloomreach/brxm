@@ -52,7 +52,7 @@ describe('PickerService', () => {
     });
 
     it('resolves the returned promise with the picked path', (done) => {
-      const promise = PickerService.pickPath({}, '/test');
+      const promise = PickerService.pickPath('/test', {},);
       const onSuccess = CmsService.publish.calls.mostRecent().args[3];
       onSuccess({ path: '/pickedPath', displayName: 'Picked Path' });
 
@@ -65,7 +65,7 @@ describe('PickerService', () => {
     });
 
     it('rejects the returns promise when the dialog is canceled', (done) => {
-      const promise = PickerService.pickPath({}, '/test');
+      const promise = PickerService.pickPath('/test', {});
       const onCancel = CmsService.publish.calls.mostRecent().args[4];
       onCancel();
 
