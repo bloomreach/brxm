@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Bloomreach (https://www.bloomreach.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -243,8 +243,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             // then generate the field as a string value
             if (CmsFieldType.STRING == CmsFieldType.getCmsFieldType(type)) {
                 builder.addBeanMethodString(methodName, propertyName, multiple);
-            }
-            if (CmsFieldType.BOOLEAN == CmsFieldType.getCmsFieldType(type)) {
+            } else if (CmsFieldType.BOOLEAN == CmsFieldType.getCmsFieldType(type)) {
                 builder.addBeanMethodBoolean(methodName, propertyName, multiple);
             } else {
                 log.warn("Failed to create getter for property: {} of type: {}", propertyName, cmsType);
