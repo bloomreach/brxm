@@ -23,8 +23,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.jcr.Credentials;
@@ -36,6 +39,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.security.AccessControlManager;
@@ -87,6 +91,8 @@ import com.bloomreach.xm.repository.security.AbstractRole;
 import com.bloomreach.xm.repository.security.RepositorySecurityProviders;
 import com.bloomreach.xm.repository.security.Role;
 import com.bloomreach.xm.repository.security.impl.RepositorySecurityProvidersImpl;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import static org.onehippo.repository.security.SecurityConstants.CONFIG_SECURITY_PATH;
 
@@ -107,6 +113,14 @@ public class SecurityManager implements HippoSecurityManager {
     private RepositorySecurityProvidersImpl securityProviders;
 
     private AuthContextProvider authCtxProvider;
+
+    /*
+    Cache the set of FacetAuthDomains matching the user for a day as it can be expensive to recreate. The cached data
+    is considered 'raw', because we have to resolve paths to uuid later, but we don't want to cache that, since the
+    uuids might change if the nodes get deleted and recreated
+    */
+    private final Cache<UserGroupsRolesCacheKey, Set<FacetAuthDomain>> cache = CacheBuilder.newBuilder().expireAfterAccess(1,
+            TimeUnit.DAYS).build();
 
     public void configure() throws RepositoryException {
         SecurityProviderFactory spf = new SecurityProviderFactory(maintenanceMode);
@@ -149,6 +163,17 @@ public class SecurityManager implements HippoSecurityManager {
         }
         // the following must be done after the above configuration: only from here on session.impersonate is possible!
         securityProviders = new RepositorySecurityProvidersImpl(systemSession);
+
+        systemSession.getWorkspace().getObservationManager().addEventListener(events -> invalidate(),
+                Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
+                "/",
+                true,
+                null,
+                new String[]{HippoNodeType.NT_DOMAIN, HippoNodeType.NT_DOMAINFOLDER,
+                        HippoNodeType.NT_FEDERATEDDOMAINFOLDER, HippoNodeType.NT_DOMAINRULE,
+                        HippoNodeType.NT_FACETRULE},
+                false);
+
     }
 
     class HippoJAASAuthContext extends JAASAuthContext {
@@ -440,45 +465,87 @@ public class SecurityManager implements HippoSecurityManager {
         }
     }
 
+    /**
+     * this must be synchronized as should not happen concurrently with building new getDomains(userId, groupIds,
+     * userRoles);
+     */
+    private synchronized void invalidate() {
+        log.info("Invalidating Set<FacetAuthDomain> cache");
+        cache.invalidateAll();
+    }
+
     private Set<FacetAuthDomain> getFacetAuthDomains(final String userId, final Set<String> groupIds,
-                                                        final Set<String> userRoles) {
-        // Find domains that the user is associated with
-        Set<Domain> domains = getDomains(userId, groupIds, userRoles);
+                                                     final Set<String> userRoles) {
 
-        HashSet<FacetAuthDomain> facetAuthDomains = new HashSet<>();
+        final UserGroupsRolesCacheKey cacheKey = new UserGroupsRolesCacheKey(userId, groupIds, userRoles);
 
-        for (Domain domain : domains) {
+        try {
+            // first check if present in cache without synchronization
+            Set<FacetAuthDomain> rawFacetAuthDomains = cache.getIfPresent(cacheKey);
+            if (rawFacetAuthDomains == null) {
 
-            // get roles for a user for a domain
-            log.debug("User {} has domain {}", userId, domain.getName());
-            final Set<String> roleNames = new HashSet<>();
-            roleNames.addAll(domain.getRolesForUser(userId));
-            for (final String groupName : groupIds) {
-                roleNames.addAll(domain.getRolesForGroup(groupName));
-            }
-            for (final String userRoleName : userRoles) {
-                roleNames.addAll(domain.getRolesForUserRole(userRoleName));
-            }
-            Set<Role> resolvedRoles = securityProviders.getRolesProvider().resolveRoles(roleNames);
-            Set<String> roles = resolvedRoles.stream().map(AbstractRole::getName).collect(Collectors.toSet());
-            Set<String> privileges = new HashSet<>();
-            resolvedRoles.forEach(role -> privileges.addAll(role.getPrivileges()));
+                // we do want this synchronized as
+                // 1. getDomains(userId, groupIds, userRoles) becomes *slower* if it is requested concurrently due to more
+                // thread context switches
+                // 2. The invalidation of the cache should never happen while a new result might be added to the cache
+                synchronized (this) {
+                    rawFacetAuthDomains = cache.get(cacheKey, () -> {
+                        log.debug("fetching and caching Set<FacetAuthDomain> for user '{}'", userId);
+                        // Find domains that the user is associated with
+                        Set<Domain> domains = getDomains(userId, groupIds, userRoles);
 
-            log.info("User {} has roles {} for domain {} ", userId, roles, domain.getName());
-            log.info("User {} has privileges {} for domain {} ", userId, privileges, domain.getName());
+                        Set<FacetAuthDomain> facetAuthDomains = new HashSet<>();
 
-            if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
-                // create and add facet auth domain
-                FacetAuthDomain fad =
-                        new FacetAuthDomain(domain.getName(), domain.getPath(), domain.getDomainRules(), roles,
-                                privileges, permissionManager.getOrCreatePermissionNames(privileges));
-                if (!facetAuthDomains.add(fad)) {
-                    log.error("FacetAuthDomain '{}' is not added because already present in set. This should never happen " +
-                            "meaning that FacetAuthDomain has an incorrect #equals implementation", fad);
+                        for (Domain domain : domains) {
+
+                            // get roles for a user for a domain
+                            log.debug("User {} has domain {}", userId, domain.getName());
+                            final Set<String> roleNames = new HashSet<>();
+                            roleNames.addAll(domain.getRolesForUser(userId));
+                            for (final String groupName : groupIds) {
+                                roleNames.addAll(domain.getRolesForGroup(groupName));
+                            }
+                            for (final String userRoleName : userRoles) {
+                                roleNames.addAll(domain.getRolesForUserRole(userRoleName));
+                            }
+                            Set<Role> resolvedRoles = securityProviders.getRolesProvider().resolveRoles(roleNames);
+                            Set<String> roles =
+                                    resolvedRoles.stream().map(AbstractRole::getName).collect(Collectors.toSet());
+                            Set<String> privileges = new HashSet<>();
+                            resolvedRoles.forEach(role -> privileges.addAll(role.getPrivileges()));
+
+                            log.info("User {} has roles {} for domain {} ", userId, roles, domain.getName());
+                            log.info("User {} has privileges {} for domain {} ", userId, privileges, domain.getName());
+
+                            if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
+                                // create and add facet auth domain
+                                FacetAuthDomain fad =
+                                        new FacetAuthDomain(domain.getName(), domain.getPath(), domain.getDomainRules(),
+                                                roles,
+                                                privileges, permissionManager.getOrCreatePermissionNames(privileges));
+                                if (!facetAuthDomains.add(fad)) {
+                                    log.error("FacetAuthDomain '{}' is not added because already present in set. This " +
+                                            "should never happen " +
+                                            "meaning that FacetAuthDomain has an incorrect #equals implementation", fad);
+                                }
+                            }
+                        }
+                        return facetAuthDomains;
+                    });
                 }
             }
+
+            return rawFacetAuthDomains.stream().map(facetAuthDomain -> facetAuthDomain.getResolved(systemSession)).collect(Collectors.toSet());
+        } catch (ExecutionException e) {
+            final String errorMessage = String.format("Exception happened while trying to get FacetDomains for user " +
+                    "%s", userId);
+            if (log.isDebugEnabled()) {
+                log.error(errorMessage, e);
+            } else {
+                log.error(errorMessage);
+            }
+            throw new RuntimeException(e);
         }
-        return facetAuthDomains;
     }
 
     public String getUserID(final Subject subject, final String workspace) {
@@ -630,6 +697,37 @@ public class SecurityManager implements HippoSecurityManager {
         @Override
         public GroupManager getGroupManager(final Session session) throws RepositoryException {
             return groupManager;
+        }
+    }
+
+    private class UserGroupsRolesCacheKey {
+
+        final private String userId;
+        final private Set<String> groups;
+        final private Set<String> userRoles;
+
+        public UserGroupsRolesCacheKey(final String userId, final Set<String> groups, final Set<String> userRoles) {
+            this.userId = userId;
+            this.groups = groups;
+            this.userRoles = userRoles;
+        }
+
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            final UserGroupsRolesCacheKey that = (UserGroupsRolesCacheKey) o;
+            return Objects.equals(userId, that.userId) && Objects.equals(groups, that.groups) && Objects.equals(userRoles, that.userRoles);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(userId, groups, userRoles);
         }
     }
 
