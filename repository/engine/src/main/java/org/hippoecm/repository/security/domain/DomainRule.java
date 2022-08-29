@@ -19,10 +19,12 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -134,5 +136,20 @@ public class DomainRule implements Serializable {
      */
     public int hashCode() {
         return name.hashCode();
+    }
+
+    protected boolean isResolved() {
+        return false;
+    }
+    
+    public DomainRule getResolved(final Session systemSession) {
+        return isResolved() ? this :
+                new DomainRule(name, domainName, 
+                        facetRules.stream().map(qFacetRule -> qFacetRule.getResolvedQFacetRule(systemSession)).collect(Collectors.toSet())) {
+
+                    protected boolean isResolved() {
+                        return true;
+                    }
+                };
     }
 }
