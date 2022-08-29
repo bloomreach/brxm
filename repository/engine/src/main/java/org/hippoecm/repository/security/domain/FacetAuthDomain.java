@@ -18,6 +18,9 @@ package org.hippoecm.repository.security.domain;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.jcr.Session;
 
 /**
  * A user applicable {@link Domain} with all the active/expanded/resolved roles and privileges based on the matching
@@ -151,5 +154,22 @@ public class FacetAuthDomain implements Serializable {
 
     public int hashCode() {
         return domainPath.hashCode();
+    }
+
+    protected boolean isResolved() {
+        return false;
+    }
+
+    public FacetAuthDomain getResolved(final Session systemSession) {
+        return isResolved() ? this :
+                new FacetAuthDomain(domainName, domainPath,
+                        rules.stream().map(rule -> rule.getResolved(systemSession)).collect(Collectors.toSet()),
+                        roles, privileges, resolvedPrivileges) {
+
+                    @Override
+                    protected boolean isResolved() {
+                        return true;
+                    }
+                };
     }
 }
