@@ -120,8 +120,6 @@ public class QFacetRule implements Serializable {
     // the non QFacetRule equivalent of this
     private FacetRule facetRule;
 
-
-
     public enum FacetRuleType {
         NODETYPE,
         NODENAME,
@@ -418,22 +416,32 @@ public class QFacetRule implements Serializable {
         return hash;
     }
 
+    protected boolean isResolved() {
+        return !referenceRule;
+    }
+
     public QFacetRule getResolvedQFacetRule(final Session systemSession) {
         try {
 
-            if (referenceRule) {
-                final Node facetNode = systemSession.getNodeByIdentifier(facetUUID);
-
-                // convert to a String matcher on UUID
-                int resolvedType = PropertyType.STRING;
-                String resolvedValue = parseReferenceTypeValue(facetNode);
-
-                FacetRule resolvedFacetRule = new FacetRule(facet, resolvedValue, equals, optional, resolvedType);
-
-                return new QFacetRule(resolvedType, facet, facetName, resolvedValue,
-                        referenceRule, facetUUID, valueName, equals, optional, facetRuleType, resolvedFacetRule);
+            if (isResolved()) {
+                return this;
             }
-            return this;
+            final Node facetNode = systemSession.getNodeByIdentifier(facetUUID);
+
+            // convert to a String matcher on UUID
+            int resolvedType = PropertyType.STRING;
+            String resolvedValue = parseReferenceTypeValue(facetNode);
+
+            FacetRule resolvedFacetRule = new FacetRule(facet, resolvedValue, equals, optional, resolvedType);
+
+            return new QFacetRule(resolvedType, facet, facetName, resolvedValue,
+                    referenceRule, facetUUID, valueName, equals, optional, facetRuleType, resolvedFacetRule) {
+
+                @Override
+                protected boolean isResolved() {
+                    return true;
+                }
+            };
 
         } catch (RepositoryException e) {
             log.error("There was a problem resolving the FacetRule");
