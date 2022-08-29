@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -119,15 +120,16 @@ public class QFacetRule implements Serializable {
     // the non QFacetRule equivalent of this
     private FacetRule facetRule;
 
+
+
     public enum FacetRuleType {
         NODETYPE,
         NODENAME,
         JCR_UUID,
         JCR_PATH,
         JCR_PRIMARYTYPE,
-        OTHER
+        OTHER;
     }
-
     public QFacetRule(FacetRule facetRule, NameResolver nameResolver) throws RepositoryException {
         // TODO this is used by Session delegation but DOES not work for PropertyType.REFERENCE !! FIX??
         this.referenceRule = false;
@@ -140,6 +142,22 @@ public class QFacetRule implements Serializable {
         this.valueName = nameResolver.getQName(value);
         this.equals = facetRule.isEqual();
         this.optional = facetRule.isOptional();
+        this.facetRule = facetRule;
+    }
+
+    public QFacetRule(final int type, final String facet, final Name facetName, final String value,
+                      final boolean referenceRule, final String facetUUID, final Name valueName, final boolean equals
+            , final boolean optional, final FacetRuleType facetRuleType, final FacetRule facetRule) {
+        this.type = type;
+        this.facet = facet;
+        this.facetName = facetName;
+        this.value = value;
+        this.referenceRule = referenceRule;
+        this.facetUUID = facetUUID;
+        this.valueName = valueName;
+        this.equals = equals;
+        this.optional = optional;
+        this.facetRuleType = facetRuleType;
         this.facetRule = facetRule;
     }
 
@@ -163,25 +181,15 @@ public class QFacetRule implements Serializable {
 
         optional = getBooleanProperty(node, HippoNodeType.HIPPOSYS_FILTER, false);
 
-        int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString());
-        String tmpValue = node.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
+        type = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString());
+        value = node.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
 
-        Name tmpName = null;
+        referenceRule = type == PropertyType.REFERENCE;
 
-        referenceRule = tmpType == PropertyType.REFERENCE;
-        if (referenceRule) {
-            // convert to a String matcher on UUID
-            tmpType = PropertyType.STRING;
-            tmpValue = parseReferenceTypeValue(node);
-        } else if (tmpType == PropertyType.NAME && !tmpValue.equals(FacetAuthConstants.WILDCARD)) {
-            tmpName = NameParser.parse(tmpValue, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
-        }
-
-        // set final values
-        type = tmpType;
-        value = tmpValue;
-        valueName = tmpName;
-
+        valueName = (type == PropertyType.NAME && !value.equals(FacetAuthConstants.WILDCARD)) ?
+                NameParser.parse(value, new SessionNamespaceResolver(node.getSession()),
+                        NameFactoryImpl.getInstance()) :
+                null;
         facetRule = new FacetRule(facet, value, equals, optional, type);
 
     }
@@ -408,5 +416,28 @@ public class QFacetRule implements Serializable {
         result = 31 * result + (optional ? 1 : 0);
         hash = result;
         return hash;
+    }
+
+    public QFacetRule getResolvedQFacetRule(final Session systemSession) {
+        try {
+
+            if (referenceRule) {
+                final Node facetNode = systemSession.getNodeByIdentifier(facetUUID);
+
+                // convert to a String matcher on UUID
+                int resolvedType = PropertyType.STRING;
+                String resolvedValue = parseReferenceTypeValue(facetNode);
+
+                FacetRule resolvedFacetRule = new FacetRule(facet, resolvedValue, equals, optional, resolvedType);
+
+                return new QFacetRule(resolvedType, facet, facetName, resolvedValue,
+                        referenceRule, facetUUID, valueName, equals, optional, facetRuleType, resolvedFacetRule);
+            }
+            return this;
+
+        } catch (RepositoryException e) {
+            log.error("There was a problem resolving the FacetRule");
+            return this;
+        }
     }
 }
