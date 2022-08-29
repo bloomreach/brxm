@@ -68,6 +68,7 @@ import org.apache.jackrabbit.core.security.authentication.ImpersonationCallback;
 import org.apache.jackrabbit.core.security.authentication.JAASAuthContext;
 import org.apache.jackrabbit.core.security.authentication.LocalAuthContext;
 import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
+import org.apache.jackrabbit.core.security.principal.DefaultPrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
@@ -169,9 +170,12 @@ public class SecurityManager implements HippoSecurityManager {
                 "/",
                 true,
                 null,
-                new String[]{HippoNodeType.NT_DOMAIN, HippoNodeType.NT_DOMAINFOLDER,
-                        HippoNodeType.NT_FEDERATEDDOMAINFOLDER, HippoNodeType.NT_DOMAINRULE,
-                        HippoNodeType.NT_FACETRULE},
+                new String[]{HippoNodeType.NT_DOMAIN, HippoNodeType.NT_DOMAINRULE, HippoNodeType.NT_FACETRULE,
+                        HippoNodeType.NT_DOMAINFOLDER, HippoNodeType.NT_FEDERATEDDOMAINFOLDER,
+                        HippoNodeType.NT_AUTHROLE,
+                        /* Roles need to be added here, because the set of privileges stored in the FacetAuthDomain
+                        * objects that get cached, depend on roles */
+                        HippoNodeType.NT_ROLE, HippoNodeType.NT_ROLEFOLDER},
                 false);
 
     }
