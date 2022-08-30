@@ -445,7 +445,7 @@ public class QFacetRule implements Serializable {
 
         } catch (RepositoryException e) {
             log.error("There was a problem resolving the FacetRule");
-            return this;
+            return null;
         }
     }
 }
