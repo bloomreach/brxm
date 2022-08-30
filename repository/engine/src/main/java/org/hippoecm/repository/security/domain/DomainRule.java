@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.domain;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -145,7 +146,10 @@ public class DomainRule implements Serializable {
     public DomainRule getResolved(final Session systemSession) {
         return isResolved() ? this :
                 new DomainRule(name, domainName, 
-                        facetRules.stream().map(qFacetRule -> qFacetRule.getResolvedQFacetRule(systemSession)).collect(Collectors.toSet())) {
+                        facetRules.stream()
+                                .map(qFacetRule -> qFacetRule.getResolvedQFacetRule(systemSession))
+                                .filter(Objects::nonNull)
+                                .collect(Collectors.toSet())) {
 
                     protected boolean isResolved() {
                         return true;
