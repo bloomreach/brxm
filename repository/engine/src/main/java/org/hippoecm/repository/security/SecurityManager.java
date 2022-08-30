@@ -56,6 +56,7 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.LoginModuleConfig;
 import org.apache.jackrabbit.core.config.SecurityConfig;
+import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.SecurityConstants;
@@ -68,7 +69,6 @@ import org.apache.jackrabbit.core.security.authentication.ImpersonationCallback;
 import org.apache.jackrabbit.core.security.authentication.JAASAuthContext;
 import org.apache.jackrabbit.core.security.authentication.LocalAuthContext;
 import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
-import org.apache.jackrabbit.core.security.principal.DefaultPrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
@@ -165,8 +165,12 @@ public class SecurityManager implements HippoSecurityManager {
         // the following must be done after the above configuration: only from here on session.impersonate is possible!
         securityProviders = new RepositorySecurityProvidersImpl(systemSession);
 
-        systemSession.getWorkspace().getObservationManager().addEventListener(events -> invalidate(),
-                Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
+        systemSession.getWorkspace().getObservationManager().addEventListener(
+                /* Use a synchronous listener because otherwise we can't guarantee that we won't return outdated data
+                from our cache, this is especially problematic for the tests */
+                (SynchronousEventListener) events -> invalidate(),
+                Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED | Event.PROPERTY_ADDED |
+                        Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
                 "/",
                 true,
                 null,
