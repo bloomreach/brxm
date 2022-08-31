@@ -364,6 +364,8 @@ export class MenuStructureService {
               this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SUGGEST_OVERVIEW')),
           ]),
         ]),
+        new MenuItemLink('setup/discovery/usage',
+          this.translate('MENU_ITEM_SETUP_DISCOVERY_USAGE')),
       ],
       'settings',
     );
