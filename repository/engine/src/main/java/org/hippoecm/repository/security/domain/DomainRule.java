@@ -18,11 +18,14 @@ package org.hippoecm.repository.security.domain;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -84,6 +87,12 @@ public class DomainRule implements Serializable {
         this.domainName = node.getParent().getName();
     }
 
+    public DomainRule(final String name, final String domainName, final Set<QFacetRule> rules) {
+        this.name = name;
+        this.domainName = domainName;
+        this.facetRules = rules;
+    }
+
     /**
      * Get the name of this DomainRule.
      */
@@ -134,5 +143,13 @@ public class DomainRule implements Serializable {
      */
     public int hashCode() {
         return name.hashCode();
+    }
+
+    protected DomainRule getResolved(final Session systemSession) {
+        return new DomainRule(name, domainName,
+                        facetRules.stream()
+                                .map(qFacetRule -> qFacetRule.getResolvedQFacetRule(systemSession))
+                                .filter(Objects::nonNull)
+                                .collect(Collectors.toSet()));
     }
 }
