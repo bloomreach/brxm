@@ -124,7 +124,7 @@
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
 
-    <tika.version>1.28.3</tika.version>
+    <tika.version>1.28.4</tika.version>
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.3.9</maven.required.version>
 
