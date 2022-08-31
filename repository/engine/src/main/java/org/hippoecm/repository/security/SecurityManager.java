@@ -167,7 +167,10 @@ public class SecurityManager implements HippoSecurityManager {
 
         systemSession.getWorkspace().getObservationManager().addEventListener(
                 /* Use a synchronous listener because otherwise we can't guarantee that we won't return outdated data
-                from our cache, this is especially problematic for the tests */
+                from our cache, this is especially problematic for the tests
+                We cannot use org.hippoecm.repository.api.SynchronousEventListener as this systemSession is not
+                decorated, therefore we have to use org.apache.jackrabbit.core.observation.SynchronousEventListener
+                 */
                 (SynchronousEventListener) events -> invalidate(),
                 Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED | Event.PROPERTY_ADDED |
                         Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,

@@ -145,21 +145,11 @@ public class DomainRule implements Serializable {
         return name.hashCode();
     }
 
-    protected boolean isResolved() {
-        return false;
-    }
-    
-    public DomainRule getResolved(final Session systemSession) {
-        return isResolved() ? this :
-                new DomainRule(name, domainName, 
+    protected DomainRule getResolved(final Session systemSession) {
+        return new DomainRule(name, domainName,
                         facetRules.stream()
                                 .map(qFacetRule -> qFacetRule.getResolvedQFacetRule(systemSession))
                                 .filter(Objects::nonNull)
-                                .collect(Collectors.toSet())) {
-
-                    protected boolean isResolved() {
-                        return true;
-                    }
-                };
+                                .collect(Collectors.toSet()));
     }
 }
