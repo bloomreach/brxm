@@ -130,7 +130,7 @@
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
     <javassist.version>3.27.0-GA</javassist.version>
 
-    <tika.version>1.28.3</tika.version>
+    <tika.version>1.28.4</tika.version>
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.5.0</maven.required.version>
 
