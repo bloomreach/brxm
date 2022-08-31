@@ -87,6 +87,12 @@ public class DomainRule implements Serializable {
         this.domainName = node.getParent().getName();
     }
 
+    public DomainRule(final String name, final String domainName, final Set<QFacetRule> rules) {
+        this.name = name;
+        this.domainName = domainName;
+        this.facetRules = rules;
+    }
+
     /**
      * Get the name of this DomainRule.
      */
