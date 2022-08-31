@@ -156,20 +156,9 @@ public class FacetAuthDomain implements Serializable {
         return domainPath.hashCode();
     }
 
-    protected boolean isResolved() {
-        return false;
-    }
-
-    public FacetAuthDomain getResolved(final Session systemSession) {
-        return isResolved() ? this :
-                new FacetAuthDomain(domainName, domainPath,
+    public synchronized FacetAuthDomain getResolved(final Session systemSession) {
+        return new FacetAuthDomain(domainName, domainPath,
                         rules.stream().map(rule -> rule.getResolved(systemSession)).collect(Collectors.toSet()),
-                        roles, privileges, resolvedPrivileges) {
-
-                    @Override
-                    protected boolean isResolved() {
-                        return true;
-                    }
-                };
+                        roles, privileges, resolvedPrivileges);
     }
 }
