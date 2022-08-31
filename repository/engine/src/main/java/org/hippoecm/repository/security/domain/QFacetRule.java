@@ -403,14 +403,10 @@ public class QFacetRule implements Serializable {
         return hash;
     }
 
-    protected boolean isResolved() {
-        return !referenceRule;
-    }
-
-    public QFacetRule getResolvedQFacetRule(final Session systemSession) {
+    protected QFacetRule getResolvedQFacetRule(final Session systemSession) {
         try {
 
-            if (isResolved()) {
+            if (!referenceRule) {
                 return this;
             }
             final Node facetNode = systemSession.getNodeByIdentifier(facetUUID);
@@ -421,13 +417,7 @@ public class QFacetRule implements Serializable {
 
 
             return new QFacetRule(resolvedType, facet, facetName, resolvedValue,
-                    referenceRule, facetUUID, valueName, equals, optional, facetRuleType) {
-
-                @Override
-                protected boolean isResolved() {
-                    return true;
-                }
-            };
+                    referenceRule, facetUUID, valueName, equals, optional, facetRuleType);
 
         } catch (RepositoryException e) {
             log.error("There was a problem resolving the FacetRule");
