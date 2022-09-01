@@ -22,15 +22,15 @@
 }
 
 .home {
-  align-items: center;
   display: grid;
+  grid-template-columns: $menu-collapsed-width 1fr;
   height: $menu-top-item-height;
   min-height: $menu-top-item-height;
+  place-items: center;
 
   .mat-icon {
     color: $menu-text-color-light;
     display: grid;
-    grid-template-columns: $menu-collapsed-width 1fr;
     height: 28px;
     width: 28px;
   }
