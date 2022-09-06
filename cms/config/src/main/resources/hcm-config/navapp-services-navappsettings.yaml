@@ -12,11 +12,11 @@ definitions:
           visible: true
         /content:
           jcr:primaryType: frontend:pluginconfig
-          link: https://documentation.bloomreach.com/library/end-user-manual/end-user-manual-introduction.html
+          link: https://xmdocumentation.bloomreach.com
           translationKey: helplinks-content
           visible: true
         /discovery:
           jcr:primaryType: frontend:pluginconfig
-          link: https://documentation.bloomreach.com/search-and-merchandising
+          link: https://documentation.bloomreach.com/discovery/docs
           translationKey: helplinks-discovery
           visible: true
