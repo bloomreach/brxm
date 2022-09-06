@@ -480,7 +480,7 @@
   "OFFLINE": "offline",
   "SUBPAGE_CHANNEL_EDIT_TITLE": "Bearbeiten von Channel '{{channelName}}'",
   "FEEDBACK_DOCUMENT_INVALID_TITLE": "Ungültige ausstehende Änderungen gefunden",
-  "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_SCHEDULEDPUBLISH": "Geplante Veröffentlichungsanfrage ablehnen",
+  "TOOLBAR_MENU_XPAGE_ACCEPT_REQUEST_SCHEDULEDPUBLISH": "Geplante Veröffentlichungsanfrage annehmen",
   "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_PUBLISH": "Veröffentlichungsanfrage ablehnen",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Keine Elemente im Menü",
   "ERROR_NO_HOLDER": "Speichern nicht möglich. Dieses Dokument können Sie nicht länger bearbeiten",
