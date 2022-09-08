@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -524,7 +524,7 @@ public class ChannelManagerImpl implements ChannelManager {
      * </p>
      *
      */
-    private static Set<String> findSubstitutedNodeNames(final String hostNameSegment) {
+    static Set<String> findSubstitutedNodeNames(final String hostNameSegment) {
         final Properties properties = System.getProperties();
 
         // loop through all String system properties, then if the value of the system property is equal to
@@ -532,13 +532,15 @@ public class ChannelManagerImpl implements ChannelManager {
         // be a present host node, see #getOrAddNode
         return properties.stringPropertyNames().stream().filter(propName -> {
             String value = properties.getProperty(propName);
-            if (hostNameSegment.equals(value)) {
+            if (StringUtils.isNotBlank(value) && hostNameSegment.contains(value)) {
                 // found a replaced host nodename like ${env} by a system property 'env'. The nodename was before the
-                // substition thus ${value}.
+                // substitution thus ${value}.
                 return true;
             }
             return false;
-        }).map(propName -> "${" + propName + "}").collect(Collectors.toSet());
+        }).map(propName ->
+                hostNameSegment.replace(properties.getProperty(propName), "${" + propName + "}"))
+                .collect(Collectors.toSet());
 
     }
 
