@@ -120,7 +120,6 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
     <snakeyaml.version>1.26</snakeyaml.version>
-    <eclipse.jetty.version>9.4.44.v20210927</eclipse.jetty.version>
     <nimbus-jose-jwt.version>8.22.1</nimbus-jose-jwt.version>
     <jdom2.version>2.0.6.1</jdom2.version>
     <!-- test dependencies -->
