@@ -32,7 +32,7 @@
 
   <properties>
     <javax.inject.version>1</javax.inject.version>
-    <maven-core.version>3.8.1</maven-core.version>
+    <maven-core.version>3.8.2</maven-core.version>
     <maven-model.version>3.5.4</maven-model.version>
     <maven-archetype.version>3.2.0</maven-archetype.version>
     <core.jdt.version>3.10.0</core.jdt.version>
