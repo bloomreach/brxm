@@ -110,6 +110,7 @@ import org.hippoecm.frontend.settings.ApplicationSettings;
 import org.hippoecm.frontend.settings.ContentSecurityPolicy;
 import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.util.RequestUtils;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -131,6 +132,7 @@ import nl.basjes.parse.useragent.UserAgentAnalyzer;
 import static org.apache.wicket.coop.CrossOriginOpenerPolicyConfiguration.CoopMode.SAME_ORIGIN_ALLOW_POPUPS;
 import static org.apache.wicket.csp.CSPDirectiveSrcValue.SELF;
 import static org.apache.wicket.markup.head.filter.FilteringHeaderResponse.DEFAULT_HEADER_FILTER_NAME;
+import static org.hippoecm.frontend.util.RequestUtils.getFarthestRequestHost;
 
 public class Main extends PluginApplication {
 
@@ -823,19 +825,37 @@ public class Main extends PluginApplication {
                     HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
                     final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
-                    if (cmsSessionContext == null) {
-                        throw new IllegalStateException("SSO handshake not possible since there is no valid CMS session " +
-                                "Context");
-                    }
-
                     if (destinationPath != null && destinationPath.startsWith("/")) {
 
                         requestTarget = new IRequestHandler() {
 
                             @Override
                             public void respond(IRequestCycle requestCycle) {
-                                String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
+
                                 WebResponse response = (WebResponse) RequestCycle.get().getResponse();
+
+                                if (cmsSessionContext == null) {
+                                    log.info("Cannot create sso handshake to delivery webapp when cms session context is null");
+                                    // do not throw an exception as this gets caught in SwallowExceptionMapper which in
+                                    // the end results in a 200. Instead, set a bad request directly on the response and
+                                    // return
+                                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No session context");
+                                    return;
+                                }
+
+                                // validate whether the host to redirect to is a valid host and not some random
+                                // (malicious) host set as X-Forwarded-Host header
+
+                                final String host = getFarthestRequestHost(((ServletWebRequest) request).getContainerRequest());
+                                if (RequestContextProvider.get() == null ||
+                                        RequestContextProvider.get().getVirtualHost().getVirtualHosts().matchVirtualHost(host) == null) {
+                                    log.info("Cannot redirect to delivery webapp: the request host '{}' to redirect to does " +
+                                            "not match a platform host or hst request context is null", host);
+                                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid host");
+                                    return;
+                                }
+
+                                String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
                                 String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
                                 if (!cmsContextService.getId().equals(cmsCSID)) {
                                     // redirect to destinationURL and include marker that it is a retry. This way
