@@ -69,7 +69,7 @@
 
     <xalan.version>2.7.2</xalan.version>
 
-    <ehcache-core.version>2.10.6</ehcache-core.version>
+    <ehcache.repackaged.version>2.10.6-repackaged</ehcache.repackaged.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
 
     <javadoc.base.version>13.1</javadoc.base.version>
@@ -232,9 +232,9 @@
       </dependency>
 
       <dependency>
-        <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-        <version>${ehcache-core.version}</version>
+        <groupId>org.onehippo</groupId>
+        <artifactId>ehcache-repackaged</artifactId>
+        <version>${ehcache.repackaged.version}</version>
       </dependency>
 
       <dependency>
