@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    test:
+      uri: http://www.hippoecm.org/editor/test/nt/0.1
+      cnd: test.cnd
