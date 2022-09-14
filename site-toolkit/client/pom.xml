@@ -199,10 +199,10 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <scope>test</scope>
-    </dependency>
+      <dependency>
+          <groupId>org.onehippo</groupId>
+          <artifactId>ehcache-repackaged</artifactId>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 </project>
