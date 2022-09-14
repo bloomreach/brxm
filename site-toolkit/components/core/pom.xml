@@ -100,8 +100,8 @@
     </dependency>
 
     <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
+      <groupId>org.onehippo</groupId>
+      <artifactId>ehcache-repackaged</artifactId>
     </dependency>
 
     <dependency>
