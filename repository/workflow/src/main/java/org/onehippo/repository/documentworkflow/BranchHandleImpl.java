@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,10 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 public class BranchHandleImpl implements BranchHandle {
 
@@ -51,7 +51,7 @@ public class BranchHandleImpl implements BranchHandle {
     }
 
     public BranchHandleImpl(final String branchId, final Node handle) throws WorkflowException {
-        this(branchId, newDocumentHandle(handle));
+        this(branchId, newDocumentHandle(handle, branchId));
     }
 
     @Override
@@ -231,9 +231,9 @@ public class BranchHandleImpl implements BranchHandle {
         return documentHandle.getDocuments().get(variant.getState());
     }
 
-    private static DocumentHandle newDocumentHandle(Node handleNode) throws WorkflowException {
+    private static DocumentHandle newDocumentHandle(Node handleNode, final String branchId) throws WorkflowException {
         final DocumentHandle documentHandle = new DocumentHandle(handleNode);
-        documentHandle.initialize();
+        documentHandle.initialize(branchId);
         return documentHandle;
     }
 }
