@@ -93,19 +93,19 @@
         Below are only the defined versions of some dependencies that are used in multiple projects.
         Note that there is *no* dependency management for the version properties below.
     -->
-    <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
+    <google-api-services-analytics.version>v3-rev20190807-2.0.0</google-api-services-analytics.version>
     <cxf.version>3.4.5</cxf.version>
     <jaxrs.version>2.1.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.13.4</jackson2.version>
     <jackson2-databind.version>2.13.4</jackson2-databind.version>
-    <spring.version>5.3.20</spring.version>
-    <spring-boot.version>2.5.14</spring-boot.version>
+    <spring.version>5.3.22</spring.version>
+    <spring-boot.version>2.6.10</spring-boot.version>
     <!-- spring-data-redis version is not in sync with spring, caching module needs to be updated. See ENT-2061 -->
     <spring-data-redis.version>1.8.23.RELEASE</spring-data-redis.version>
-    <spring-integration-ftp.version>5.5.12</spring-integration-ftp.version>
-    <spring-integration-sftp.version>5.5.12</spring-integration-sftp.version>
-    <spring-security.version>5.6.5</spring-security.version>
+    <spring-integration-ftp.version>5.5.14</spring-integration-ftp.version>
+    <spring-integration-sftp.version>5.5.14</spring-integration-sftp.version>
+    <spring-security.version>5.6.7</spring-security.version>
     <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.9.7</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.5.14</groovy.version>
@@ -115,7 +115,6 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.10</httpcore.version>
     <snakeyaml.version>1.26</snakeyaml.version>
-    <eclipse.jetty.version>9.4.44.v20210927</eclipse.jetty.version>
     <nimbus-jose-jwt.version>8.22.1</nimbus-jose-jwt.version>
     <jdom2.version>2.0.6.1</jdom2.version>
     <!-- test dependencies -->
@@ -124,7 +123,7 @@
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
 
-    <tika.version>1.28.3</tika.version>
+    <tika.version>1.28.4</tika.version>
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.3.9</maven.required.version>
 
@@ -172,7 +171,7 @@
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>9</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>9.0.54</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>9.0.59</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>https://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
