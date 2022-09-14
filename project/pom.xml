@@ -104,8 +104,8 @@
     <cxf.version>3.4.5</cxf.version>
     <jaxrs.version>2.1.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
-    <jackson2.version>2.13.3</jackson2.version>
-    <jackson2-databind.version>2.13.3</jackson2-databind.version>
+    <jackson2.version>2.13.4</jackson2.version>
+    <jackson2-databind.version>2.13.4</jackson2-databind.version>
     <spring.version>5.3.22</spring.version>
     <spring-boot.version>2.6.10</spring-boot.version>
     <spring-integration-ftp.version>5.5.14</spring-integration-ftp.version>
@@ -114,7 +114,7 @@
     <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.9.7</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>3.0.9</groovy.version>
-    <freemarker.version>2.3.28</freemarker.version>
+    <freemarker.version>2.3.30</freemarker.version>
     <nodejs.version>v14.19.3</nodejs.version>
     <npm.version>7.11.2</npm.version>
     <httpclient.version>4.5.13</httpclient.version>
