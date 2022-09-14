@@ -51,7 +51,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.SecurityUtils;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.AnalyticsScopes;
@@ -64,7 +64,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
 
     private static final double RANGE = 62.0;
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     private enum Period {
 
