@@ -109,7 +109,7 @@
     <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.9.7</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.21</groovy.version>
-    <freemarker.version>2.3.28</freemarker.version>
+    <freemarker.version>2.3.30</freemarker.version>
     <nodejs.version>v12.22.1</nodejs.version>
     <npm.version>6.14.12</npm.version>
     <httpclient.version>4.5.13</httpclient.version>
