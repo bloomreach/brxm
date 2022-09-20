@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
@@ -35,6 +33,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
+
+import com.google.common.net.InetAddresses;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -48,6 +48,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerExcepti
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
@@ -66,8 +67,6 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.net.InetAddresses;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_NAME;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
@@ -422,7 +421,7 @@ public class ChannelManagerImpl implements ChannelManager {
         return getOrCreateVirtualHost(configRoot, hostName, getHostGroupNameFromContext());
     }
 
-    private Node getOrCreateVirtualHost(final Node configRoot, final String hostName, final String hostGroupName) throws RepositoryException, ChannelException {
+    protected static Node getOrCreateVirtualHost(final Node configRoot, final String hostName, final String hostGroupName) throws RepositoryException, ChannelException {
         String[] elements;
 
         if (InetAddresses.isInetAddress(hostName)) {
@@ -484,22 +483,6 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    private static Node getOrAddNode(Node parent, String nodeName, String nodeType) throws RepositoryException {
-        if (parent.hasNode(nodeName)) {
-            return parent.getNode(nodeName);
-        } else {
-            final Set<String> substitutedNodeNames = findSubstitutedNodeNames(nodeName);
-            for (String substitutedNodeName : substitutedNodeNames) {
-                if (parent.hasNode(substitutedNodeName)) {
-                    log.info("Found the substituted child node '{}' for '{}'", substitutedNodeName, nodeName);
-                    return parent.getNode(substitutedNodeName);
-                }
-            }
-
-            return parent.addNode(nodeName, nodeType);
-        }
-    }
-
     /**
      * <p>
      *   A 'host' name can be substituted by a system property. For example a host configuration like this:
@@ -511,8 +494,17 @@ public class ChannelManagerImpl implements ChannelManager {
      *           + ${brc_stack}
      *             + ${brc_environment}
      *    </pre>
+     *    or even
+     *    <pre>
+     *         + hst:host
+     *           + brc
+     *             + cloud
+     *               + bloomreach
+     *                 + ${brc_stack}
+     *                   + dev-${brc_environment}-${brc_environment2}
+     *    </pre>
      *    might be bootstrapped, but runtime ${brc_stack} is for example replaced by 'customer' and ${brc_environment}
-     *    by 'prod'. Therefor when the new channel must be added for host 'prod.customer.bloomreach.cloud', then it
+     *    by 'prod'. Therefore when the new channel must be added for host 'prod.customer.bloomreach.cloud', then it
      *    must be added below 'prod.customer.${brc_stack}.${brc_environment}' in JCR.
      * </p>
      * <p>
@@ -524,22 +516,28 @@ public class ChannelManagerImpl implements ChannelManager {
      * </p>
      *
      */
-    private static Set<String> findSubstitutedNodeNames(final String hostNameSegment) {
-        final Properties properties = System.getProperties();
+    private static Node getOrAddNode(Node parent, String nodeName, String nodeType) throws RepositoryException {
+        if (parent.hasNode(nodeName)) {
+            return parent.getNode(nodeName);
+        } else {
+            final PropertyParser pp = new PropertyParser(System.getProperties());
+            for (Node child : new NodeIterable(parent.getNodes())) {
 
-        // loop through all String system properties, then if the value of the system property is equal to
-        // 'hostNameSegment', return the system property name prepended with '${' and appended with '}' : this *can*
-        // be a present host node, see #getOrAddNode
-        return properties.stringPropertyNames().stream().filter(propName -> {
-            String value = properties.getProperty(propName);
-            if (hostNameSegment.equals(value)) {
-                // found a replaced host nodename like ${env} by a system property 'env'. The nodename was before the
-                // substition thus ${value}.
-                return true;
+                final String substitutedName = (String) pp.resolveProperty("hostNodeName", child.getName());
+
+                if (substitutedName == null) {
+                    continue;
+                }
+                if (substitutedName.equals(nodeName) && parent.hasNode(child.getName())) {
+                    // the virtualhost for 'nodeName' matches a 'placeholder expansion with system property' so we can use
+                    // an existing virtual node (in the form of eg {$brc.environment}
+                    return parent.getNode(child.getName());
+                }
+
             }
-            return false;
-        }).map(propName -> "${" + propName + "}").collect(Collectors.toSet());
 
+            return parent.addNode(nodeName, nodeType);
+        }
     }
 
     static Node copyNodes(Node source, Node parent, String name) throws RepositoryException {
