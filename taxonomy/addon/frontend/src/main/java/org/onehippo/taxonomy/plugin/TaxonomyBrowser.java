@@ -15,12 +15,7 @@
  */
 package org.onehippo.taxonomy.plugin;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.tree.TreeNode;
 
@@ -459,6 +454,32 @@ public class TaxonomyBrowser extends Panel {
                     keys.add(key);
                     if (keys.size()==1 && isCanonised()) {
                         setCanonicalKey(key);
+                    }
+                    TaxonomyBrowser.this.modelChanged();
+                    target.add(container);
+                }
+
+                @Override
+                public boolean isVisible() {
+                    String key = getModelObject().getKey();
+                    return !detailsReadOnly && !getKeys().contains(key);
+                }
+            });
+
+            add(new AjaxLink<Category>("addancestors", model) {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    List<String> keys = getKeys();
+                    List<? extends Category> ancestors = getModelObject().getAncestors();
+                    for (Category ancestor : ancestors){
+                        if (getKeys().contains(ancestor.getKey())) {
+                            continue;
+                        }
+                        keys.add(ancestor.getKey());
+                    }
+                    if (keys.size()>=1 && isCanonised()) {
+                        //if canonised, set the selected key as canonical (last index)
+                        setCanonicalKey(ancestors.get(ancestors.size()-1).getKey());
                     }
                     TaxonomyBrowser.this.modelChanged();
                     target.add(container);
