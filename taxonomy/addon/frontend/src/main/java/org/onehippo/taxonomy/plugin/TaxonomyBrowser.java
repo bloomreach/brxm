@@ -470,16 +470,14 @@ public class TaxonomyBrowser extends Panel {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     List<String> keys = getKeys();
-                    List<? extends Category> ancestors = getModelObject().getAncestors();
-                    for (Category ancestor : ancestors){
-                        if (getKeys().contains(ancestor.getKey())) {
+                    for (Category ancestor : getModelObject().getAncestors()){
+                        if (keys.contains(ancestor.getKey())) {
                             continue;
                         }
                         keys.add(ancestor.getKey());
                     }
-                    if (keys.size()>=1 && isCanonised()) {
-                        //if canonised, set the selected key as canonical (last index)
-                        setCanonicalKey(ancestors.get(ancestors.size()-1).getKey());
+                    if (keys.size()==1 && isCanonised()) {
+                        setCanonicalKey(getModelObject().getKey());
                     }
                     TaxonomyBrowser.this.modelChanged();
                     target.add(container);
