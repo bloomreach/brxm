@@ -359,7 +359,7 @@ public class TaxonomyBrowser extends Panel {
     }
 
     private void executeSearch(final AjaxRequestTarget target) {
-        final TaxonomyNode root  = (TaxonomyNode) treeModel.getRoot();
+        final TaxonomyNode root = (TaxonomyNode) treeModel.getRoot();
         if (root == null) {
             log.warn("Taxonomy root is null, can not perform search for '{}'", query);
             return;
@@ -452,7 +452,7 @@ public class TaxonomyBrowser extends Panel {
                     String key = getModelObject().getKey();
                     List<String> keys = getKeys();
                     keys.add(key);
-                    if (keys.size()==1 && isCanonised()) {
+                    if (keys.size() == 1 && isCanonised()) {
                         setCanonicalKey(key);
                     }
                     TaxonomyBrowser.this.modelChanged();
@@ -470,13 +470,13 @@ public class TaxonomyBrowser extends Panel {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     List<String> keys = getKeys();
-                    for (Category ancestor : getModelObject().getAncestors()){
+                    for (Category ancestor : getModelObject().getAncestors()) {
                         if (keys.contains(ancestor.getKey())) {
                             continue;
                         }
                         keys.add(ancestor.getKey());
                     }
-                    if (keys.size()==1 && isCanonised()) {
+                    if (keys.size() == 1 && isCanonised()) {
                         setCanonicalKey(getModelObject().getKey());
                     }
                     TaxonomyBrowser.this.modelChanged();
@@ -486,6 +486,9 @@ public class TaxonomyBrowser extends Panel {
                 @Override
                 public boolean isVisible() {
                     String key = getModelObject().getKey();
+                    if (getModelObject().getParent() == null) {
+                        return false;
+                    }
                     return !detailsReadOnly && !getKeys().contains(key);
                 }
             });
@@ -494,7 +497,7 @@ public class TaxonomyBrowser extends Panel {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     List<String> keys = getKeys();
-                    for (Category ancestor : getModelObject().getAncestors()){
+                    for (Category ancestor : getModelObject().getAncestors()) {
                         if (!keys.contains(ancestor.getKey())) {
                             continue;
                         }
@@ -529,7 +532,7 @@ public class TaxonomyBrowser extends Panel {
                 public boolean isVisible() {
                     String key = getModelObject().getKey();
                     Category directAncestor = getModelObject().getParent();
-                    if(directAncestor==null){
+                    if (directAncestor == null) {
                         return false;
                     }
                     return !detailsReadOnly && getKeys().contains(key) && getKeys().contains(directAncestor.getKey());
@@ -549,7 +552,7 @@ public class TaxonomyBrowser extends Panel {
                 @Override
                 public boolean isVisible() {
                     String key = getModelObject().getKey();
-                    boolean canonical = getCanonicalKey()!=null && getCanonicalKey().equals(key);
+                    boolean canonical = getCanonicalKey() != null && getCanonicalKey().equals(key);
                     boolean selected = getKeys().contains(key);
                     return !detailsReadOnly && selected && !canonical && isCanonised();
                 }
