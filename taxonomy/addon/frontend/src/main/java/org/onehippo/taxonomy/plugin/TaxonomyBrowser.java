@@ -490,6 +490,53 @@ public class TaxonomyBrowser extends Panel {
                 }
             });
 
+            add(new AjaxLink<Category>("removeancestors", model) {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    List<String> keys = getKeys();
+                    for (Category ancestor : getModelObject().getAncestors()){
+                        if (!keys.contains(ancestor.getKey())) {
+                            continue;
+                        }
+
+                        if (ancestor.getKey().equals(getCanonicalKey())) {
+                            removeAndReassignCanonical(keys, ancestor);
+                        } else {
+                            keys.remove(ancestor.getKey());
+                        }
+                    }
+                    TaxonomyBrowser.this.modelChanged();
+                    target.add(container);
+                }
+
+                private void removeAndReassignCanonical(List<String> keys, Category ancestor) {
+                    setCanonicalKey(null);
+                    keys.remove(ancestor.getKey());
+                    if (keys.size() > 0) {
+                        final String siblingKey = keys.get(0);
+                        setCanonicalKey(siblingKey);
+                    }
+                }
+
+                /**
+                 * This method decides if the "Remove term and ancestors" button will be visible.
+                 * If the selected node and its direct ancestor are in the keys list, then show the remove button.
+                 * If it is the top level key (no parent) then do not show even if it is in the list.
+                 *
+                 * Handles the ancestor being null in a separate if due to NullPointerException().
+                 */
+                @Override
+                public boolean isVisible() {
+                    String key = getModelObject().getKey();
+                    Category directAncestor = getModelObject().getParent();
+                    if(directAncestor==null){
+                        return false;
+                    }
+                    return !detailsReadOnly && getKeys().contains(key) && getKeys().contains(directAncestor.getKey());
+
+                }
+            });
+
             add(new AjaxLink<Category>("makecanonical", model) {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
