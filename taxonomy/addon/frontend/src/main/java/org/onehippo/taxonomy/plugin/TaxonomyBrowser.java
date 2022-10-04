@@ -493,6 +493,40 @@ public class TaxonomyBrowser extends Panel {
                 }
             });
 
+            add(new AjaxLink<Category>("removeterm", model) {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    List<String> keys = getKeys();
+                    if (isCanonised()) {
+                        // change canonical key if current is the one that is removed
+                        if (getModelObject().getKey().equals(getCanonicalKey())) {
+                            removeAndReassignCanonical(keys);
+                        } else {
+                            keys.remove(getModelObject().getKey());
+                        }
+                    } else {
+                        keys.remove(getModelObject().getKey());
+                    }
+                    TaxonomyBrowser.this.modelChanged();
+                    target.add(container);
+                }
+
+                private void removeAndReassignCanonical(List<String> keys) {
+                    setCanonicalKey(null);
+                    keys.remove(getModelObject().getKey());
+                    if (keys.size() > 0) {
+                        final String siblingKey = keys.get(0);
+                        setCanonicalKey(siblingKey);
+                    }
+                }
+
+                @Override
+                public boolean isVisible() {
+                    String key = getModelObject().getKey();
+                    return !detailsReadOnly && getKeys().contains(key);
+                }
+            });
+
             add(new AjaxLink<Category>("removeancestors", model) {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
