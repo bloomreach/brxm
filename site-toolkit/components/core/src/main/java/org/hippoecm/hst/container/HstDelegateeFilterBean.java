@@ -788,10 +788,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         if (!requestContext.isChannelManagerPreviewRequest()) {
             return;
         }
-        final HttpSession session = requestContext.getServletRequest().getSession(false);
-        if (session == null) {
-            return;
-        }
+
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         // we must not set the CMS_REQUEST_RENDERING_MOUNT_ID on the cmsSessionContext in case the resolved sitemap item
         // is a 'container resource' : A container resource always matches the root mount, and loading an image, css, js
@@ -806,13 +803,26 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         if (mount.isExplicit() && mount.getHstSite() != null && mount.getHstSite().getChannel() != null &&
                 (resolvedSiteMapItem == null || !resolvedSiteMapItem.getHstSiteMapItem().isContainerResource())) {
 
-            final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+            // for PageDeliveryAPI requests, the http session is always null for /delivery hence use
+            // HstRequestUtils.getCmsSessionContext(req) which can also get the cms session context via the auth token
+            final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(requestContext.getServletRequest());
             if (cmsSessionContext == null) {
                 // no cms
                 return;
             }
             final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
-            contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, requestContext.getResolvedMount().getMount().getIdentifier());
+
+            final Mount renderingMount;
+
+            // in case the request is for page model api or content model api, the actual 'rendering mount' relevant
+            // for the Channel mgr is the parent as this is the mount for the channel
+            if (requestContext.isPageModelApiRequest()) {
+                renderingMount = mount.getParent();
+            } else {
+                renderingMount = mount;
+            }
+
+            contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, renderingMount.getIdentifier());
             contextPayload.put(RENDERING_HOST, renderingHost);
         }
     }
