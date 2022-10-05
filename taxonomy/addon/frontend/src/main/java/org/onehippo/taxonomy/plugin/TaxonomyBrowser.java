@@ -497,15 +497,16 @@ public class TaxonomyBrowser extends Panel {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     List<String> keys = getKeys();
+                    String key = getModelObject().getKey();
                     if (isCanonised()) {
                         // change canonical key if current is the one that is removed
-                        if (getModelObject().getKey().equals(getCanonicalKey())) {
+                        if (key.equals(getCanonicalKey())) {
                             removeAndReassignCanonical(keys);
                         } else {
-                            keys.remove(getModelObject().getKey());
+                            keys.remove(key);
                         }
                     } else {
-                        keys.remove(getModelObject().getKey());
+                        keys.remove(key);
                     }
                     TaxonomyBrowser.this.modelChanged();
                     target.add(container);
