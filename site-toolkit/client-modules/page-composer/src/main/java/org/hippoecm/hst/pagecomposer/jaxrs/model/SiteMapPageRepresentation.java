@@ -56,19 +56,26 @@ public class SiteMapPageRepresentation {
         this.parentId = parentId;
         name = NodeNameCodec.decode(item.getValue());
         pageTitle = item.getPageTitle();
-        pathInfo =  HstSiteMapUtils.getPath(item, null);
 
+        final boolean pageExists;
+        if (item.getComponentConfigurationId() == null && item.getRelativeContentPath() == null) {
+            // structural sitemap item, not for rendering a page so do not set pathInfo/renderPathInfo
+            pageExists = false;
+        } else {
+            pageExists = true;
+        }
+        pathInfo = HstSiteMapUtils.getPath(item, null);
         if (StringUtils.isBlank(pathInfo)) {
             pathInfo = "/";
-            renderPathInfo = StringUtils.isBlank(mountPath) ? "/" : mountPath;
+            renderPathInfo = pageExists ? (StringUtils.isBlank(mountPath) ? "/" : mountPath) : null ;
         } else if (pathInfo.equals(homePagePathInfo)) {
             pathInfo = "/";
-            renderPathInfo = StringUtils.isBlank(mountPath) ? "/" : mountPath;
+            renderPathInfo = pageExists ? (StringUtils.isBlank(mountPath) ? "/" : mountPath) : null;
         } else {
-            if (pathInfo.startsWith("/")){
+            if (pathInfo.startsWith("/")) {
                 renderPathInfo = mountPath + pathInfo;
             } else {
-               renderPathInfo = mountPath + "/" + pathInfo;
+                renderPathInfo = pageExists ? mountPath + "/" + pathInfo : null;
             }
         }
 
