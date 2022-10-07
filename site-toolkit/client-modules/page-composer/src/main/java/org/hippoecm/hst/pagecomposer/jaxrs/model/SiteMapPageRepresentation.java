@@ -28,6 +28,9 @@ import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
 
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+import static org.hippoecm.hst.configuration.HstNodeTypes.INDEX;
+
 public class SiteMapPageRepresentation {
 
     private String id;
@@ -90,13 +93,30 @@ public class SiteMapPageRepresentation {
         id = handleNode.getIdentifier();
         parentId = handleNode.getParent().getIdentifier();
 
-        String sitemapElement = StringUtils.substringAfterLast(hstLink.getPath(), "/");
-        if (StringUtils.isEmpty(sitemapElement)) {
-            sitemapElement = handleNode.getName();
+        final String path = hstLink.getPath();
+        if (StringUtils.isEmpty(path)) {
+            name = handleNode.getName();
+        } else if (path.contains("/")) {
+            name = substringAfterLast(path, "/");
+        } else {
+            name = path;
         }
-        name = sitemapElement;
 
-        pageTitle = ((HippoNode)handleNode).getDisplayName();
+        if (hstLink.representsIndex()) {
+            final HstSiteMapItem indexItem = hstLink.getHstSiteMapItem().getChild(INDEX);
+            if (indexItem != null && substringAfterLast(indexItem.getRelativeContentPath(), "/").equals(((HippoNode)handleNode).getDisplayName())) {
+                // the 'index' document its display name is the same as the path in the relative content path for the
+                // sitemap item: this means that the pageTitle is typically something like 'index'. In this case, do not
+                // use the display name from the index document but instead fallback to the folder display name as this
+                // makes more sense than having eg 'index' as pageTitle for the 'folder' in the SiteMap tree
+
+                pageTitle = ((HippoNode) handleNode.getParent()).getDisplayName();
+            } else{
+                pageTitle = ((HippoNode)handleNode).getDisplayName();
+            }
+        } else {
+            pageTitle = ((HippoNode)handleNode).getDisplayName();
+        }
         // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above
         final Mount mount = hstLink.getMount();
         pathInfo = hstLink.getPath();

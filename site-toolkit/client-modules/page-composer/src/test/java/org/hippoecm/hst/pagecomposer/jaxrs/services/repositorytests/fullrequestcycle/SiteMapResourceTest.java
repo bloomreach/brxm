@@ -35,6 +35,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -369,6 +370,97 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
         } finally {
             if (index != null) {
                 index.remove();
+                admin.save();
+            }
+            admin.logout();
+        }
+    }
+
+    @Test
+    public void pageNames_for_index_sitemap_items() throws Exception {
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+
+        Node index = null;
+        Node index2 = null;
+        try {
+
+            admin.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
+
+            JcrUtils.copy(admin, "/unittestcontent/documents/unittestproject/experiences/expPage1",
+                    "/unittestcontent/documents/unittestproject/experiences/index");
+
+            JcrUtils.copy(admin, "/unittestcontent/documents/unittestproject/experiences/expPage1",
+                    "/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
+
+            index = admin.getNode("/unittestcontent/documents/unittestproject/experiences/index");
+            for (Node doc : new NodeIterable(index.getNodes())) {
+                admin.move(doc.getPath(), doc.getParent().getPath() + "/index");
+            }
+
+            index2 = admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
+            for (Node doc : new NodeIterable(index2.getNodes())) {
+                admin.move(doc.getPath(), doc.getParent().getPath() + "/index");
+            }
+
+            String[] content = new String[] {
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap", "hst:sitemap",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_", "hst:sitemapitem",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_index_", "hst:sitemapitem",
+                    "hst:relativecontentpath" , "${1}/index",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_default_", "hst:sitemapitem",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_default_/_index_", "hst:sitemapitem",
+                    "hst:relativecontentpath" , "${1}/${2}/index"
+            };
+
+            RepositoryTestCase.build(content, admin);
+
+            admin.save();
+
+            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final List<String> responsePageNames = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "name");
+
+            Assertions.assertThat(responsePageNames)
+                    .as("The sitemap tree should contain the name 'experience' and 'experience-subfolder' as these " +
+                            "are the actual URL elements and, and thus NOT 'index' as the name of the document is")
+                    .containsExactlyInAnyOrder("experiences", "experiences-subfolder");
+
+            // assertions on the pageTitle field : the implemented heuristic is as follows: the pageTitle should be the
+            // displayName of the FOLDER for an *index* document UNLESS the index document has an explicit displayName:
+            // then use that one
+
+            final Node expFolder = admin.getNode("/unittestcontent/documents/unittestproject/experiences");
+            expFolder.addMixin(HippoNodeType.NT_NAMED);
+            expFolder.setProperty(HippoNodeType.HIPPO_NAME, "Experiences!!");
+            admin.save();
+
+            {
+                final List<String> responsePageTitles = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "pageTitle");
+
+                Assertions.assertThat(responsePageTitles)
+                        .as("The title should be from the containing parent folder for an index document which does " +
+                                "not have an explicit displayName")
+                        .containsExactlyInAnyOrder("Experiences!!", "experiences-subfolder");
+            }
+            index.addMixin(HippoNodeType.NT_NAMED);
+            index.setProperty(HippoNodeType.HIPPO_NAME, "Index Experiences!!");
+            admin.save();
+
+            {
+                final List<String> responsePageTitles = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "pageTitle");
+
+                Assertions.assertThat(responsePageTitles)
+                        .as("The title should be from the containing parent folder for an index document which does " +
+                                "not have an explicit displayName")
+                        .containsExactlyInAnyOrder("Index Experiences!!", "experiences-subfolder");
+            }
+        } finally {
+            if (index != null) {
+                index.remove();
+                index2.remove();
+                final Node expFolder = admin.getNode("/unittestcontent/documents/unittestproject/experiences");
+                expFolder.getProperty(HippoNodeType.HIPPO_NAME).remove();
+                expFolder.removeMixin(HippoNodeType.NT_NAMED);
                 admin.save();
             }
             admin.logout();
