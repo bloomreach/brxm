@@ -185,14 +185,23 @@ public class SiteMapResource extends AbstractConfigResource {
                     getPageComposerContextService().getRequestContext());
 
 
-            // from xpages, filter out the XPages that are already represented by an explicit sitemap item whic
+            // from xpages, filter out the XPages that are already represented by an explicit sitemap item which
             // can happen : We can filter them out on the 'renderPathInfo' since there is no point in including
             // to sitemap pages with the exact same link (and thus a duplicate)
 
-            final List<SiteMapPageRepresentation> filteredDuplicates = xpages.stream().filter(xpage ->
-                    // only if there is NO hst config sitemap page representation for the XPage include the xpage
-                    !pages.getPages().stream().filter(page -> page.getRenderPathInfo().equals(xpage.getRenderPathInfo())).findFirst().isPresent()
-            ).collect(Collectors.toList());
+            final List<SiteMapPageRepresentation> filteredDuplicates = xpages.stream()
+                    .filter(xpage ->
+                            // only if there is NO hst config sitemap page representation for the XPage include the xpage
+                            !pages.getPages().stream()
+                                    .anyMatch(page ->
+                                    {
+                                        if (page.getRenderPathInfo() == null) {
+                                            return false;
+                                        }
+                                        return page.getRenderPathInfo().equals(xpage.getRenderPathInfo());
+                                    })
+                    )
+                    .collect(Collectors.toList());
 
             pages.getPages().addAll(filteredDuplicates);
 
@@ -200,7 +209,7 @@ public class SiteMapResource extends AbstractConfigResource {
             Collections.sort(pages.getPages(), Comparator.comparing(SiteMapPageRepresentation::getPathInfo));
 
         } catch (Exception e) {
-            log.warn("Exception occured while trying to load XPage Documents for the sitemap. Only the SiteMap " +
+            log.warn("Exception occurred while trying to load XPage Documents for the sitemap. Only the SiteMap " +
                     "Pages are returned" , e);
         }
         return pages;
