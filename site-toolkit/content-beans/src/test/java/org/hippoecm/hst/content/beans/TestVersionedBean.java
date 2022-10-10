@@ -24,7 +24,6 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
@@ -151,6 +150,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         versionHistoryHome = versionManager.getVersionHistory(
                 getDocumentVariantNode(homeHandle, UNPUBLISHED).get().getPath());
 
+        // TODO why is this done via version and not via branching workflow?
         final Document doc = wf.version();
         assertThat(doc.getNode(session).getName()).isEqualTo("1.1");
         versionHistoryHome.addVersionLabel("1.1", "christmas-published", true);
@@ -218,6 +218,10 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         if (newContent != null) {
             draft.getNode("unittestproject:body").setProperty("hippostd:content", newContent);
         }
+
+        // TODO we need to explicitly set which branches are available on the handle as we do not use workflow branching
+        handle.setProperty(HIPPO_BRANCHES_PROPERTY, new String[]{"master", "christmas"});
+        handle.getSession().save();
 
         session.save();
         wf.commitEditableInstance();
@@ -419,6 +423,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
                 .obtainEditableInstance();
 
         final String branchId = "id";
+
         documentHandle.addMixin(NT_HIPPO_VERSION_INFO);
         documentHandle.setProperty(HIPPO_BRANCHES_PROPERTY, new String[]{branchId});
         documentHandle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).remove();
@@ -429,14 +434,12 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         unpublishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchId);
         session.save();
 
-        final MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.setContentTypes(HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes());
-        ModifiableRequestContextProvider.set(requestContext);
+        initContext("id");
+
         final HippoDocumentBean bean = (HippoDocumentBean) objectConverter.getObject(unpublishedVariant);
 
         assertThat(bean).isNotNull();
 
-        //
         final Node node = bean.getNode();
         assertThat(node.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
         assertThat(node.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)).isFalse();
