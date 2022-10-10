@@ -38,7 +38,6 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -59,6 +58,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_COMPOUND;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.JcrUtils.getStringListProperty;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_NODE;
@@ -362,41 +362,20 @@ public class ObjectConverterImpl implements ObjectConverter {
                 return node;
             }
 
-            // should we serve a versioned history node or just workspace.
+            final List<String> branches = getStringListProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, Collections.emptyList());
 
-
-            if (!handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)) {
-                // Without a version history identifier we can't find it in version history
-                return node;
-            }
-
-            final Node versionHistory = session.getNodeByIdentifier(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString());
-            if (!versionHistory.isNodeType(NT_VERSION_HISTORY)) {
-                log.warn("'{}/@{}' does not point to a node of type '{}' which is not allowed. Correct the handle manually.",
-                        handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY, NT_VERSION_HISTORY);
-                return node;
-            }
-
-            final boolean preview = requestContext.getResolvedMount().getMount().isPreview();
-            Optional<Node> version = getVersionForLabel(versionHistory, branchId, preview);
-            if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
-                // lookup master revision in absence of a branch version
-                if (branchIdOfNode.equals(MASTER_BRANCH_ID)) {
-                    // current node is for master, thus return current one
+            if (!branches.contains(branchId)) {
+                // make sure to return master branch id
+                if (MASTER_BRANCH_ID.equals(branchIdOfNode)) {
+                    // current workspace node is for master
                     return node;
                 }
-                version = getVersionForLabel(versionHistory, MASTER_BRANCH_ID, preview);
-            }
-            if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
-                // return current (published or unpublished) in absence of a branch and master version
-                return node;
+                // we need to find master from version history, and in case missing, just return the workspace node
+                return getNodeFromVersionHistory(node, canonicalNode, requestContext.getResolvedMount().getMount().isPreview(), MASTER_BRANCH_ID);
             }
 
-            log.info("Found version '{}' to use for rendering.", version.get().getPath());
-
-            final Node frozenNode = version.get().getNode(JCR_FROZEN_NODE);
-            // we can only decorate a frozen node to the canonical location
-            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(frozenNode, canonicalNode.getPath(), canonicalNode.getName());
+            // should we serve a versioned history node or just workspace.
+            return getNodeFromVersionHistory(node, canonicalNode, requestContext.getResolvedMount().getMount().isPreview(), branchId);
 
         } catch (ItemNotFoundException e) {
             log.warn("Version history node with id stored on '{}/@{}' does not exist. Correct the handle manually.",
@@ -408,6 +387,33 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
+    }
+
+    private Node getNodeFromVersionHistory(final Node documentNode, final Node canonicalDocumentNode,
+                                           final boolean preview, final String branchId) throws RepositoryException {
+
+        final Node handle = canonicalDocumentNode.getParent();
+
+        if (!handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)) {
+            // Without a version history identifier we can't find it in version history
+            return documentNode;
+        }
+
+        final Node versionHistory = documentNode.getSession().getNodeByIdentifier(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString());
+        if (!versionHistory.isNodeType(NT_VERSION_HISTORY)) {
+            log.warn("'{}/@{}' does not point to a node of type '{}' which is not allowed. Correct the handle manually.",
+                    handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY, NT_VERSION_HISTORY);
+            return documentNode;
+        }
+        Optional<Node> version = getVersionForLabel(versionHistory, branchId, preview);
+        if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
+            // return current (published or unpublished) in absence of a branch version
+            return documentNode;
+        }
+        log.info("Found version '{}' to use for rendering.", version.get().getPath());
+        final Node frozenNode = version.get().getNode(JCR_FROZEN_NODE);
+        // we can only decorate a frozen node to the canonical location
+        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(frozenNode, canonicalDocumentNode.getPath(), canonicalDocumentNode.getName());
     }
 
     private Optional<Node> getVersionForLabel(final Node versionHistory, final String branchId, final boolean preview) throws RepositoryException {
