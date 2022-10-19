@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite</artifactId>
-    <version>15.1.3-SNAPSHOT</version>
+    <version>15.1.3</version>
   </parent>
 
   <name>Hippo Test Suite Dependencies</name>
