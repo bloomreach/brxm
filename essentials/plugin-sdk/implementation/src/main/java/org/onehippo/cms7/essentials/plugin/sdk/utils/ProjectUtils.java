@@ -27,7 +27,7 @@ public final class ProjectUtils {
     static final String ENT_RELEASE_ID = "hippo-cms7-enterprise-release";
     static final String ENT_REPO_ID = "hippo-maven2-enterprise";
     static final String ENT_REPO_NAME = "Hippo Enterprise Maven 2";
-    static final String ENT_REPO_URL = "https://maven.onehippo.com/maven2-enterprise";
+    static final String ENT_REPO_URL = "https://maven.bloomreach.com/repository/maven2-enterprise";
 
     public static String getBaseProjectDirectory() {
         final String basePath = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);

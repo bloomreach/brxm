@@ -122,7 +122,7 @@
    <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
-      <url>https://maven.onehippo.com/maven2/</url>
+      <url>https://maven.bloomreach.com/repository/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
