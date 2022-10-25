@@ -36,7 +36,7 @@ public class EnterpriseInstruction implements Instruction {
     static {
         ENTERPRISE_REPOSITORY.setId("hippo-maven2-enterprise");
         ENTERPRISE_REPOSITORY.setName("Hippo Enterprise Maven 2");
-        ENTERPRISE_REPOSITORY.setUrl("https://maven.onehippo.com/maven2-enterprise");
+        ENTERPRISE_REPOSITORY.setUrl("https://maven.bloomreach.com/repository/maven2-enterprise");
         final MavenRepository.Policy releasePolicy = new MavenRepository.Policy();
         releasePolicy.setUpdatePolicy("never");
         releasePolicy.setChecksumPolicy("fail");
