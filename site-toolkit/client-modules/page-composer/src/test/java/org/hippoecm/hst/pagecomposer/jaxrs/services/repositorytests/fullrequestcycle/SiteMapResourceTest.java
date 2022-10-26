@@ -28,13 +28,16 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.servlet.ServletException;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
@@ -96,7 +99,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
             List<String> expectedSiteMapItemNames = getExpectedSiteMapItemNames(mount);
 
             // expected XPage Pages
-            final List<String> expectedXPagesItemNames = collectExpectedXPageDocumentNames(admin, mount);
+            final List<String> expectedXPagesItemNames = collectExpectedXPageLastPathElement(admin, mount);
 
             assertThat(responsePages.size())
                     .as("Expected the pages in response to consist of sitemap item and XPages")
@@ -159,7 +162,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
         }
     }
 
-    private List<String> collectExpectedXPageDocumentNames(final Session admin, final Mount mount) throws RepositoryException {
+    private List<String> collectExpectedXPageLastPathElement(final Session admin, final Mount mount) throws RepositoryException {
 
         List<String> expectedXPageDocuments = new ArrayList<>();
 
@@ -169,7 +172,7 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
         final Query xPagesQuery = admin.getWorkspace().getQueryManager().createQuery(statement, "xpath");
 
         for (Node unpublishedVariant : new NodeIterable(xPagesQuery.execute().getNodes())) {
-            expectedXPageDocuments.add(unpublishedVariant.getName());
+            expectedXPageDocuments.add(unpublishedVariant.getName() + ".html");
         }
         return expectedXPageDocuments;
     }
@@ -211,10 +214,10 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
                     .isTrue();
 
             // expected XPage Pages
-            final List<String> expectedXPagesItemNames = collectExpectedXPageDocumentNames(admin, mount);
+            final List<String> expectedXPagesItemNames = collectExpectedXPageLastPathElement(admin, mount);
 
             // remove 'expPage1' from the 'expectedXPagesItemNames' since represented by "expPage1.html" as sitemap item
-            expectedXPagesItemNames.remove("expPage1");
+            expectedXPagesItemNames.remove("expPage1.html");
 
             assertThat(responsePages.size())
                     .as("Expected the pages in response to consist of sitemap item and XPages but ONE LESS " +
@@ -314,4 +317,153 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
     }
 
 
+    /**
+     * See SiteMapPageRepresentation#represent(org.hippoecm.hst.core.linking.HstLink, javax.jcr.Node) : in general, the
+     * XPage docs its JCR Nodename is the same as the last 'pathInfo' element, *however*, this is not the case for eg
+     * a sitemap structure as follows:
+     *
+     * /experiences/_default_
+     *    - hst:relativecontentpath = experiences/${1}/index
+     *
+     * Above, the matched document will have name 'index' but the URL for it is '/blog/_default_' , and thus the sitemap
+     * should not show 'index' but the value for _default_
+     */
+    @Test
+    public void path_element_is_used_in_sitemap_instead_of_document_nodename() throws Exception {
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+
+        Node index = null;
+        try {
+
+            admin.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
+
+            // below 'experiences' bootstrapped folder there is already an empty folder 'experiences-subfolder' bootstrapped
+
+            JcrUtils.copy(admin, "/unittestcontent/documents/unittestproject/experiences/expPage1",
+                    "/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
+
+            index = admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
+            for (Node doc : new NodeIterable(index.getNodes())) {
+                admin.move(doc.getPath(), doc.getParent().getPath() + "/index");
+            }
+
+            String[] content = new String[] {
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap", "hst:sitemap",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/experiences", "hst:sitemapitem",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/experiences/_default_", "hst:sitemapitem",
+                    "hst:relativecontentpath" , "experiences/${1}/index"
+            };
+
+            RepositoryTestCase.build(content, admin);
+
+            admin.save();
+
+            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final List<String> responsePageNames = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "name");
+
+            Assertions.assertThat(responsePageNames)
+                    .as("The sitemap tree should contain the name 'experience' and 'experience-subfolder' as these " +
+                            "are the actual URL elements and, and thus NOT 'index' as the name of the document is")
+                    .containsExactlyInAnyOrder("experiences", "experiences-subfolder");
+
+        } finally {
+            if (index != null) {
+                index.remove();
+                admin.save();
+            }
+            admin.logout();
+        }
+    }
+
+    @Test
+    public void pageNames_for_index_sitemap_items() throws Exception {
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+
+        Node index = null;
+        Node index2 = null;
+        try {
+
+            admin.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
+
+            JcrUtils.copy(admin, "/unittestcontent/documents/unittestproject/experiences/expPage1",
+                    "/unittestcontent/documents/unittestproject/experiences/index");
+
+            JcrUtils.copy(admin, "/unittestcontent/documents/unittestproject/experiences/expPage1",
+                    "/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
+
+            index = admin.getNode("/unittestcontent/documents/unittestproject/experiences/index");
+            for (Node doc : new NodeIterable(index.getNodes())) {
+                admin.move(doc.getPath(), doc.getParent().getPath() + "/index");
+            }
+
+            index2 = admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
+            for (Node doc : new NodeIterable(index2.getNodes())) {
+                admin.move(doc.getPath(), doc.getParent().getPath() + "/index");
+            }
+
+            String[] content = new String[] {
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap", "hst:sitemap",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_", "hst:sitemapitem",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_index_", "hst:sitemapitem",
+                    "hst:relativecontentpath" , "${1}/index",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_default_", "hst:sitemapitem",
+                    "/hst:hst/hst:configurations/unittestproject/hst:sitemap/_default_/_default_/_index_", "hst:sitemapitem",
+                    "hst:relativecontentpath" , "${1}/${2}/index"
+            };
+
+            RepositoryTestCase.build(content, admin);
+
+            admin.save();
+
+            final String mountId = getNodeId(admin, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+
+            final List<String> responsePageNames = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "name");
+
+            Assertions.assertThat(responsePageNames)
+                    .as("The sitemap tree should contain the name 'experience' and 'experience-subfolder' as these " +
+                            "are the actual URL elements and, and thus NOT 'index' as the name of the document is")
+                    .containsExactlyInAnyOrder("experiences", "experiences-subfolder");
+
+            // assertions on the pageTitle field : the implemented heuristic is as follows: the pageTitle should be the
+            // displayName of the FOLDER for an *index* document UNLESS the index document has an explicit displayName:
+            // then use that one
+
+            final Node expFolder = admin.getNode("/unittestcontent/documents/unittestproject/experiences");
+            expFolder.addMixin(HippoNodeType.NT_NAMED);
+            expFolder.setProperty(HippoNodeType.HIPPO_NAME, "Experiences!!");
+            admin.save();
+
+            {
+                final List<String> responsePageTitles = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "pageTitle");
+
+                Assertions.assertThat(responsePageTitles)
+                        .as("The title should be from the containing parent folder for an index document which does " +
+                                "not have an explicit displayName")
+                        .containsExactlyInAnyOrder("Experiences!!", "experiences-subfolder");
+            }
+            index.addMixin(HippoNodeType.NT_NAMED);
+            index.setProperty(HippoNodeType.HIPPO_NAME, "Index Experiences!!");
+            admin.save();
+
+            {
+                final List<String> responsePageTitles = getResponseSiteMapPages(admin, mountId, ADMIN_CREDENTIALS, "pageTitle");
+
+                Assertions.assertThat(responsePageTitles)
+                        .as("The title should be from the containing parent folder for an index document which does " +
+                                "not have an explicit displayName")
+                        .containsExactlyInAnyOrder("Index Experiences!!", "experiences-subfolder");
+            }
+        } finally {
+            if (index != null) {
+                index.remove();
+                index2.remove();
+                final Node expFolder = admin.getNode("/unittestcontent/documents/unittestproject/experiences");
+                expFolder.getProperty(HippoNodeType.HIPPO_NAME).remove();
+                expFolder.removeMixin(HippoNodeType.NT_NAMED);
+                admin.save();
+            }
+            admin.logout();
+        }
+    }
 }
