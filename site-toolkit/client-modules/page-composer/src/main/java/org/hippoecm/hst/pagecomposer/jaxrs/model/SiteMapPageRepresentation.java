@@ -48,6 +48,26 @@ public class SiteMapPageRepresentation {
     private String relativeContentPath;
     // flag to indicate whether this 'sitemap page' (not a real sitemap page) is the result of an experience page or not
     private boolean experiencePage;
+    private boolean expandable;
+
+    public static SiteMapPageRepresentation structural(final String pathInfo, final boolean expandable) {
+        final SiteMapPageRepresentation structural = new SiteMapPageRepresentation();
+        structural.pathInfo = pathInfo;
+        structural.id = getIdFromPathInfo(pathInfo);
+        structural.name = structural.id;
+        structural.expandable = expandable;
+        return structural;
+    }
+
+    private static String getIdFromPathInfo(final String pathInfo) {
+        if (StringUtils.isEmpty(pathInfo)) {
+            return "/";
+        }
+        if (pathInfo.contains("/")) {
+            return StringUtils.substringAfterLast(pathInfo, "/");
+        }
+        return pathInfo;
+    }
 
     public SiteMapPageRepresentation represent(final HstSiteMapItem item,
                                                final String parentId,
@@ -216,5 +236,13 @@ public class SiteMapPageRepresentation {
 
     public void setExperiencePage(final boolean experiencePage) {
         this.experiencePage = experiencePage;
+    }
+
+    public boolean isExpandable() {
+        return expandable;
+    }
+
+    public void setExpandable(final boolean expandable) {
+        this.expandable = expandable;
     }
 }
