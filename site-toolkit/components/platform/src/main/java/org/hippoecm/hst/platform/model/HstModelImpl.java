@@ -307,6 +307,11 @@ public class HstModelImpl implements InternalHstModel {
         return channelManager;
     }
 
+    @Override
+    public Object getSiteMapConfigurationIdentity(final String configurationPath) {
+        return hstConfigurationLoadingCache.getSiteMapConfigurationIdentity(configurationPath);
+    }
+
     // internal api!
     @Override
     public String getConfigurationRootPath() {

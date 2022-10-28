@@ -325,7 +325,7 @@ public class HstSiteService implements HstSite {
         }
     }
 
-    // TODO why doesn't the getSiteMap use configLoadingCache?? See HSTTWO-3966
+    // getSiteMap CANNOT configLoadingCache because the HstSiteService keeps a reference to this HstSiteService instance
     public HstSiteMap getSiteMap() {
         if (siteMap != null) {
             return siteMap.get();

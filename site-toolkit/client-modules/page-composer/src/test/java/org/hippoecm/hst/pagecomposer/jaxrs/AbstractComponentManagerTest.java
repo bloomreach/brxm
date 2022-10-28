@@ -80,6 +80,7 @@ public abstract class AbstractComponentManagerTest {
 
         final PropertiesConfiguration platformConfiguration = new PropertiesConfiguration();
         platformConfiguration.addProperty("hst.configuration.rootPath", "/hst:platform");
+        platformConfiguration.setProperty("root.contentPath", "/unittestcontent");
 
         platformComponentManager = new SpringComponentManager(platformConfiguration);
         platformComponentManager.setConfigurationResources(getConfigurations(true));
