@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -148,15 +148,19 @@ public class ChannelServiceIT extends AbstractBeanTestCase {
 
         final Session admin = createSession();
 
-        final Node extraContentFacetRule =
-                admin.getNode("/hippo:configuration/hippo:domains/content/extracontent-domain/extracontent-and-descendants");
+        final Node extraContentFacetRule1 =
+                admin.getNode("/hippo:configuration/hippo:domains/content/extracontent-domain-general/extracontent-and-descendants");
+        final Node extraContentFacetRule2 =
+                admin.getNode("/hippo:configuration/hippo:domains/content/extracontent-domain-master/extracontent-and-descendants");
 
-        final String originalValue = extraContentFacetRule.getProperty(HIPPOSYS_VALUE).getString();
+        final String originalValue1 = extraContentFacetRule1.getProperty(HIPPOSYS_VALUE).getString();
+        final String originalValue2 = extraContentFacetRule2.getProperty(HIPPOSYS_VALUE).getString();
 
         try {
 
             // after the change below, 'cms-users' should not have read-access to '/extracontent' any more
-            extraContentFacetRule.setProperty(HIPPOSYS_VALUE, "/non-existing");
+            extraContentFacetRule1.setProperty(HIPPOSYS_VALUE, "/non-existing");
+            extraContentFacetRule2.setProperty(HIPPOSYS_VALUE, "/non-existing");
             admin.save();
 
             final Session author = repository.login(new SimpleCredentials("author", "author".toCharArray()));
@@ -177,7 +181,8 @@ public class ChannelServiceIT extends AbstractBeanTestCase {
 
             author.logout();
         } finally {
-            extraContentFacetRule.setProperty(HIPPOSYS_VALUE, originalValue);
+            extraContentFacetRule1.setProperty(HIPPOSYS_VALUE, originalValue1);
+            extraContentFacetRule2.setProperty(HIPPOSYS_VALUE, originalValue2);
             admin.save();
             admin.logout();
         }
