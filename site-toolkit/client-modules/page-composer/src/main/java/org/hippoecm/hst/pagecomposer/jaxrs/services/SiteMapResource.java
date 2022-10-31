@@ -236,6 +236,8 @@ public class SiteMapResource extends AbstractConfigResource {
                             routeItem -> {
                                 if (xpagesBasedItem.getChild(routeItem.getId()) == null) {
                                     xpagesBasedItem.addChild(routeItem);
+                                    // in case the xpagesBasedItem was not yet expandable, mark it to be so now
+                                    xpagesBasedItem.setExpandable(true);
                                 }
                             }
                     );
