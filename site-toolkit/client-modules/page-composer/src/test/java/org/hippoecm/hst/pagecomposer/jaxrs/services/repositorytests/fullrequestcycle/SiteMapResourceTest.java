@@ -393,11 +393,15 @@ public class SiteMapResourceTest extends AbstractFullRequestCycleTest {
                     "/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
 
             index = admin.getNode("/unittestcontent/documents/unittestproject/experiences/index");
+            index.getProperty(HippoNodeType.HIPPO_NAME).remove();
+            index.removeMixin(HippoNodeType.NT_NAMED);
             for (Node doc : new NodeIterable(index.getNodes())) {
                 admin.move(doc.getPath(), doc.getParent().getPath() + "/index");
             }
 
             index2 = admin.getNode("/unittestcontent/documents/unittestproject/experiences/experiences-subfolder/index");
+            index2.getProperty(HippoNodeType.HIPPO_NAME).remove();
+            index2.removeMixin(HippoNodeType.NT_NAMED);
             for (Node doc : new NodeIterable(index2.getNodes())) {
                 admin.move(doc.getPath(), doc.getParent().getPath() + "/index");
             }

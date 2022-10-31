@@ -212,8 +212,9 @@ definitions:
             hippostd:foldertype: [new-folder, new-document]
             /expPage1:
               jcr:primaryType: hippo:handle
-              jcr:mixinTypes: ['mix:referenceable']
+              jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
               jcr:uuid: 0da7bebd-fec6-4703-b690-a47b1b3fc7e6
+              hippo:name: Experience Page Number1
               /expPage1:
                 jcr:primaryType: unittestproject:newspage
                 jcr:mixinTypes: ['mix:versionable', 'hst:xpagemixin']
