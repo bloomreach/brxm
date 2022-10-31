@@ -22,7 +22,7 @@ public class XPageSiteMapTreeItemUtils {
     private final static Logger log = LoggerFactory.getLogger(XPageSiteMapTreeItemUtils.class.getName());
 
     public static Optional<XPageSiteMapShallowItem> getReadableItem(final XPageSiteMapTreeItem root, final Session userSession, final String pathInfo) {
-        Optional<XPageSiteMapTreeItem> pathInfoItem =  findPathInfoItem(root, pathInfo);
+        Optional<XPageSiteMapTreeItem> pathInfoItem = findPathInfoItem(root, pathInfo);
         if (!pathInfoItem.isPresent()) {
             return Optional.empty();
         }
@@ -33,7 +33,7 @@ public class XPageSiteMapTreeItemUtils {
                                                                 final Session userSession,
                                                                 final String pathInfo) {
 
-        Optional<XPageSiteMapTreeItem> pathInfoItem =  findPathInfoItem(root, pathInfo);
+        Optional<XPageSiteMapTreeItem> pathInfoItem = findPathInfoItem(root, pathInfo);
         if (!pathInfoItem.isPresent()) {
             return new XPageSiteMapShallowItem[0];
         }
@@ -45,6 +45,22 @@ public class XPageSiteMapTreeItemUtils {
                 .map(item -> item.get())
                 .toArray(XPageSiteMapShallowItem[]::new);
 
+    }
+
+    public static boolean hasReadableChildren(final XPageSiteMapTreeItem root,
+                                              final Session userSession,
+                                              final String pathInfo) {
+
+        Optional<XPageSiteMapTreeItem> pathInfoItem = findPathInfoItem(root, pathInfo);
+        if (!pathInfoItem.isPresent()) {
+            return false;
+        }
+
+        final Collection<XPageSiteMapTreeItem> children = pathInfoItem.get().getChildren().values();
+
+        return children.stream().map(child -> getReadableXPageSiteMapShallowItem(userSession, child))
+                .filter(item -> item.isPresent())
+                .findAny().isPresent();
     }
 
     private static Optional<XPageSiteMapTreeItem> findPathInfoItem(final XPageSiteMapTreeItem root, final String pathInfo) {
@@ -64,7 +80,7 @@ public class XPageSiteMapTreeItemUtils {
         return Optional.of(current);
     }
 
-    private static Optional<XPageSiteMapShallowItem> getReadableXPageSiteMapShallowItem(final Session userSession, final XPageSiteMapTreeItem item) {
+    public static Optional<XPageSiteMapShallowItem> getReadableXPageSiteMapShallowItem(final Session userSession, final XPageSiteMapTreeItem item) {
 
         XPageSiteMapShallowItem xPageSiteMapShallowItem = null;
 
@@ -111,19 +127,17 @@ public class XPageSiteMapTreeItemUtils {
 
     /**
      * <p>
-     *     Checks whether {@code current} has at least one readable descendant document, and if found at least one, returns
-     *     true
+     * Checks whether {@code current} has at least one readable descendant document, and if found at least one, returns
+     * true
      * </p>
      * <p>
-     *     As this is based on a privilege check on XPage docs for the descendant XPageSiteMapTreeItem's, and since
-     *     privileges are typically configured hierarchically on folders, it is important to NOT check for privileges
-     *     following a depth first traversal. Even bread first traversal is NOT optimal : if a user is not allowed to
-     *     read below some folder as privileges are frequently hierarchically oriented, we should avoid trying eg
-     *     10.000 xpage docs which might be all unreadable : instead, we need random selected descendants to attempt
-     *     a privilege access, such that it is less likely some folder is fully checked while all documents do not meet
-     *     the required privileges
+     * As this is based on a privilege check on XPage docs for the descendant XPageSiteMapTreeItem's, and since
+     * privileges are typically configured hierarchically on folders, it is important to NOT check for privileges
+     * following a depth first traversal. Even bread first traversal is NOT optimal : if a user is not allowed to read
+     * below some folder as privileges are frequently hierarchically oriented, we should avoid trying eg 10.000 xpage
+     * docs which might be all unreadable : instead, we need random selected descendants to attempt a privilege access,
+     * such that it is less likely some folder is fully checked while all documents do not meet the required privileges
      * </p>
-     *
      */
     private static boolean isExpandable(final AccessControlManager accessControlManager,
                                         final Privilege[] requiredPrivilege, final XPageSiteMapTreeItem check) {
@@ -138,6 +152,5 @@ public class XPageSiteMapTreeItemUtils {
                 })
                 .findAny().isPresent();
     }
-
 
 }
