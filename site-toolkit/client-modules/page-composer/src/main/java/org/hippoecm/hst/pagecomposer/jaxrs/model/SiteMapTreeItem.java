@@ -199,6 +199,10 @@ public class SiteMapTreeItem {
         children.clear();
     }
 
+    public void setExpandable(final boolean expandable) {
+        this.expandable = expandable;
+    }
+
     /**
      * <p>
      *     A copy (new instance) of this {@link SiteMapTreeItem} only with descendants below its direct children removed
