@@ -64,6 +64,7 @@ public class SiteMapTreeItem {
                 root.name = page.getName();
                 root.pageTitle = page.getPageTitle();
                 root.experiencePage = page.isExperiencePage();
+                root.expandable = page.isExpandable();
                 return;
             }
 
@@ -104,6 +105,7 @@ public class SiteMapTreeItem {
                         next.pathInfo = page.getPathInfo();
                         next.renderPathInfo = page.getRenderPathInfo();
                         next.experiencePage = page.isExperiencePage();
+                        next.expandable = page.isExpandable();
                     } else {
                         current = next;
                     }

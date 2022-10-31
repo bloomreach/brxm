@@ -8,6 +8,8 @@ public class XPageSiteMapShallowItem extends XPageSiteMapBaseItem {
     boolean expandable;
 
     public XPageSiteMapShallowItem(final XPageSiteMapTreeItem source) {
+        setName(source.getName());
+        setPageTitle(source.getPageTitle());
         setPathInfo(source.getPathInfo());
         setAbsoluteJcrPath(source.getAbsoluteJcrPath());
     }

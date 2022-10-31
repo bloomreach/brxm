@@ -58,20 +58,7 @@ public class SiteMapPagesRepresentation {
                           final SiteMapPageRepresentation parent,
                           final String homePagePathInfo,
                           final String previewConfigurationPath) {
-        if (!siteMapItem.isExplicitElement()) {
-            // wildcards are not the pages we want to expose
-            log.debug("Skip '{}' from page overview because only explicit non-wildcard sitemap items can be shown as 'pages'" +
-                    " in the channel manager", siteMapItem);
-            return;
-        }
-        if (INDEX.equals(siteMapItem.getValue())) {
-            log.debug("Skip '{}' from page overview because '{}' items do not need to be shown as pages since the " +
-                    "parent item shows the same page", siteMapItem, INDEX);
-            return;
-        }
-        if (siteMapItem.isContainerResource() || siteMapItem.isHiddenInChannelManager()) {
-            log.debug("Skip '{}' from page overview because represents container resource or is marked " +
-                    "explicitly to be hidden in channel manager", siteMapItem);
+        if (!isIncludedSitemapItem(siteMapItem)) {
             return;
         }
         final SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
@@ -84,6 +71,26 @@ public class SiteMapPagesRepresentation {
         for (HstSiteMapItem child : siteMapItem.getChildren()) {
             addPages(child, siteMapPageRepresentation, homePagePathInfo, previewConfigurationPath);
         }
+    }
+
+    public static boolean isIncludedSitemapItem(final HstSiteMapItem siteMapItem) {
+        if (!siteMapItem.isExplicitElement()) {
+            // wildcards are not the pages we want to expose
+            log.debug("Skip '{}' from page overview because only explicit non-wildcard sitemap items can be shown as 'pages'" +
+                    " in the channel manager", siteMapItem);
+            return false;
+        }
+        if (INDEX.equals(siteMapItem.getValue())) {
+            log.debug("Skip '{}' from page overview because '{}' items do not need to be shown as pages since the " +
+                    "parent item shows the same page", siteMapItem, INDEX);
+            return false;
+        }
+        if (siteMapItem.isContainerResource() || siteMapItem.isHiddenInChannelManager()) {
+            log.debug("Skip '{}' from page overview because represents container resource or is marked " +
+                    "explicitly to be hidden in channel manager", siteMapItem);
+            return false;
+        }
+        return true;
     }
 
     public String getId() {

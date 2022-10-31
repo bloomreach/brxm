@@ -21,8 +21,22 @@ public class XPageSiteMapTreeItem extends XPageSiteMapBaseItem {
     // Make sure to *intern* Strings as the memory usage most be as low as possible and since every branch has its
     // own in memory model but has a lot of the same Strings, it is important to share String instances
     @Override
+    public void setPageTitle(final String pageTitle) {
+        super.setPageTitle(pageTitle == null ? null : pageTitle.intern());
+    }
+
+    // Make sure to *intern* Strings as the memory usage most be as low as possible and since every branch has its
+    // own in memory model but has a lot of the same Strings, it is important to share String instances
+    @Override
+    public void setName(final String name) {
+        super.setName(name == null ? null : name.intern());
+    }
+
+    // Make sure to *intern* Strings as the memory usage most be as low as possible and since every branch has its
+    // own in memory model but has a lot of the same Strings, it is important to share String instances
+    @Override
     public void setPathInfo(final String pathInfo) {
-        super.setPathInfo(pathInfo.intern());
+        super.setPathInfo(pathInfo == null ? pathInfo : pathInfo.intern());
     }
 
 
@@ -30,7 +44,7 @@ public class XPageSiteMapTreeItem extends XPageSiteMapBaseItem {
     // own in memory model but has a lot of the same Strings, it is important to share String instances
     @Override
     public void setAbsoluteJcrPath(final String absoluteJcrPath) {
-        super.setAbsoluteJcrPath(absoluteJcrPath.intern());
+        super.setAbsoluteJcrPath(absoluteJcrPath == null ? null : absoluteJcrPath.intern());
     }
 
     public XPageSiteMapTreeItem getParent() {

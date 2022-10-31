@@ -33,6 +33,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
@@ -316,6 +317,8 @@ public class XPageSiteMapRepresentationService {
         child.setParent(parent);
 
         if (position == pathElements.length - 1) {
+            child.setName(toAdd.getName());
+            child.setPageTitle(toAdd.getPageTitle());
             child.setPathInfo(toAdd.getPathInfo());
             child.setAbsoluteJcrPath(toAdd.getAbsoluteJcrPath());
 
@@ -330,6 +333,7 @@ public class XPageSiteMapRepresentationService {
                 }
             }
         } else {
+            child.setName(pathElements[position]);
             // do set the pathInfo as we are dealing with a structural sitemap tree item
             if (StringUtils.isEmpty(parent.getPathInfo())) {
                 child.setPathInfo(pathElements[position]);
@@ -343,6 +347,9 @@ public class XPageSiteMapRepresentationService {
     private XPageSiteMapTreeItem createXPageSiteMapTreeItem(final HstLink hstLink, final HippoNode handle) throws RepositoryException {
 
         final XPageSiteMapTreeItem xPageSiteMapTreeItem = new XPageSiteMapTreeItem();
+
+        xPageSiteMapTreeItem.setName(SiteMapPageRepresentation.getName(hstLink, handle));
+        xPageSiteMapTreeItem.setPageTitle(SiteMapPageRepresentation.getPageTitle(hstLink, handle));
         xPageSiteMapTreeItem.setPathInfo(hstLink.getPath());
         xPageSiteMapTreeItem.setAbsoluteJcrPath(handle.getPath());
         return xPageSiteMapTreeItem;
