@@ -87,7 +87,7 @@ public class XmLoggingSystem extends Log4J2LoggingSystem {
     }
  
     @Override
-    protected void loadConfiguration(String location, LogFile logFile) {
+    protected void loadConfiguration(String location, LogFile logFile, List<String> overrides) {
         Assert.notNull(location, "Location must not be null");
         try {
             LoggerContext ctx = getLoggerContext();
