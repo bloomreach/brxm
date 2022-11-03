@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -193,7 +192,7 @@ public class SiteMapTreeItem {
         return children.get(id);
     }
 
-    public void addChild(SiteMapTreeItem child) {
+    public void addOrReplaceChild(SiteMapTreeItem child) {
         children.put(child.getId(), child);
     }
 
@@ -214,7 +213,7 @@ public class SiteMapTreeItem {
 
         final SiteMapTreeItem shallowClone = new SiteMapTreeItem(id, name, pageTitle, pathInfo, renderPathInfo, experiencePage, expandable);
         getChildren().forEach(
-                child -> shallowClone.addChild(new SiteMapTreeItem(child.id, child.name, child.pageTitle, child.pathInfo,
+                child -> shallowClone.addOrReplaceChild(new SiteMapTreeItem(child.id, child.name, child.pageTitle, child.pathInfo,
                         child.renderPathInfo, child.experiencePage, child.expandable))
         );
         return shallowClone;

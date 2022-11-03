@@ -88,12 +88,15 @@ import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapTreeItemUtils;
 import org.hippoecm.hst.platform.configuration.sitemap.HstNoopSiteMap;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
@@ -148,15 +151,17 @@ public class SiteMapResource extends AbstractConfigResource {
     @Path("/sitemapitem")
     @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getSiteMapShallowItem(final @Context HttpServletRequest request) {
-        return getSiteMapShallowItem(request, StringUtils.EMPTY);
+        return getSiteMapShallowItem(request, EMPTY, false);
     }
 
     @GET
     @Path("/sitemapitem/{pathInfo: .*}")
     @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getSiteMapShallowItem(final @Context HttpServletRequest request,
-                                          final @PathParam("pathInfo") String pathInfo) {
+                                          final @PathParam("pathInfo") String pathInfo,
+                                          final @QueryParam("ancestry") boolean ancestry) {
         return tryGet(() -> {
+            final String normalizedPathInfo = PathUtils.normalizePath(pathInfo);
             final Mount editingPreviewMount = getPageComposerContextService().getEditingMount();
             final HstSiteMap siteMap = editingPreviewMount.getHstSite().getSiteMap();
 
@@ -168,32 +173,28 @@ public class SiteMapResource extends AbstractConfigResource {
 
             final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
 
-            final Optional<XPageSiteMapShallowItem> readableItem = XPageSiteMapTreeItemUtils.getReadableItem(xPageSiteMapTreeItem, previewSecurityDelegate, pathInfo);
+            SiteMapTreeItem siteMapTreeItem;
 
-            SiteMapTreeItem pathInfoItem = null;
-            if (readableItem.isPresent()) {
-                final XPageSiteMapShallowItem pathInfoRoot = readableItem.get();
-                final Optional<SiteMapPageRepresentation> pathInfoRootRepresentation = getSiteMapPageRepresentation(previewSecurityDelegate, pathInfoRoot);
+            if (ancestry && StringUtils.isNotEmpty(normalizedPathInfo)) {
+                siteMapTreeItem = getShallowSiteMapTreeItemForXPages(EMPTY, xPageSiteMapTreeItem, previewSecurityDelegate);
 
-                if (pathInfoRoot.isExpandable()) {
-                    final XPageSiteMapShallowItem[] readableChildren = XPageSiteMapTreeItemUtils.getReadableChildren(xPageSiteMapTreeItem, previewSecurityDelegate, pathInfo);
-                    pathInfoItem = new SiteMapTreeItem(pathInfoRootRepresentation.get());
-
-                    for (XPageSiteMapShallowItem item : readableChildren) {
-
-                        try {
-                            // read access guaranteed because of XPageSiteMapTreeItemUtils.getReadableChildren
-                            final Optional<SiteMapPageRepresentation> siteMapPageRepresentation = getSiteMapPageRepresentation(previewSecurityDelegate, item);
-                            if (siteMapPageRepresentation.isPresent()) {
-                                pathInfoItem.addChild(new SiteMapTreeItem(siteMapPageRepresentation.get()));
-                            }
-                        } catch (Exception e) {
-                            log.warn("Exception while trying to add '{}'. Skipping this sitemap item. Reason : {}", item.getPathInfo(), e.getMessage());
-                        }
+                final String[] split = normalizedPathInfo.split("/");
+                SiteMapTreeItem currentLevel = siteMapTreeItem;
+                String nextPathInfo = null;
+                for (String pathElement : split) {
+                    nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                    final SiteMapTreeItem nextLevel = getShallowSiteMapTreeItemForXPages(nextPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+                    if (nextLevel == null) {
+                        break;
                     }
+                    // merge the next level into currentLevel
+                    currentLevel.addOrReplaceChild(nextLevel);
+                    currentLevel = nextLevel;
                 }
-            }
 
+            } else {
+                siteMapTreeItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+            }
 
             // MERGE HST sitemap routes
             // try to get it from the HST routes (sitemap)
@@ -203,37 +204,142 @@ public class SiteMapResource extends AbstractConfigResource {
 
             final SiteMapTreeItem routes = SiteMapTreeItem.transform(pages);
 
-            // no XPage document matched for pathInfo, check sitemap
-            if (pathInfoItem == null) {
+            // no XPage document matched for normalizedPathInfo, check sitemap
+            if (siteMapTreeItem == null) {
 
-                if (StringUtils.isEmpty(pathInfo)) {
+                if (StringUtils.isEmpty(normalizedPathInfo)) {
                     // the root item
-                    pathInfoItem = routes.shallowClone();
+                    siteMapTreeItem = routes.shallowClone();
                 } else {
-                    final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(pathInfo, routes);
-                    if (!routesItem.isPresent()) {
-                        throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", pathInfo), ClientError.ITEM_NOT_FOUND);
+                    if (ancestry) {
+                        final Optional<SiteMapTreeItem> routesRoot = getShallowSiteMapTreeItem(EMPTY, routes);
+                        if (!routesRoot.isPresent()) {
+                            throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
+                        }
+                        siteMapTreeItem = siteMapTreeItem == null ? routesRoot.get() : siteMapTreeItem;
+                        final String[] split = normalizedPathInfo.split("/");
+                        SiteMapTreeItem currentLevel = siteMapTreeItem;
+                        String nextPathInfo = null;
+                        for (String pathElement : split) {
+                            if (EMPTY.equals(pathElement)) {
+                                continue;
+                            }
+                            nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                            final Optional<SiteMapTreeItem> nextRoutesLevel = getShallowSiteMapTreeItem(nextPathInfo, routes);
+                            if (!nextRoutesLevel.isPresent()) {
+                                break;
+                            }
+                            // merge the next level into currentLevel
+                            currentLevel.addOrReplaceChild(nextRoutesLevel.get());
+                            currentLevel = currentLevel.getChild(nextRoutesLevel.get().getId());
+                        }
+                    } else {
+                        final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(normalizedPathInfo, routes);
+                        if (!routesItem.isPresent()) {
+                            throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
+                        }
+                        siteMapTreeItem = routesItem.get().shallowClone();
                     }
-                    pathInfoItem = routesItem.get().shallowClone();
                 }
 
             } else {
-                final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(pathInfo, routes);
-                if (routesItem.isPresent()) {
-                    // merge sitemap routes with XPage documents if needed
-                    final SiteMapTreeItem xpagesBasedItem = pathInfoItem;
-                    routesItem.get().getChildren().stream().forEach(
-                            routeItem -> {
-                                if (xpagesBasedItem.getChild(routeItem.getId()) == null) {
-                                    xpagesBasedItem.addChild(routeItem);
-                                }
+                if (ancestry) {
+                    final Optional<SiteMapTreeItem> routesRoot = getShallowSiteMapTreeItem(EMPTY, routes);
+                    if (routesRoot.isPresent()) {
+                        // merge routesRoot children into siteMapTreeItem
+                        mergeChildren(siteMapTreeItem, routesRoot.get());
+
+                        final String[] split = normalizedPathInfo.split("/");
+                        SiteMapTreeItem currentLevel = siteMapTreeItem;
+
+                        String nextPathInfo = null;
+                        for (String pathElement : split) {
+                            if (EMPTY.equals(pathElement)) {
+                                continue;
                             }
-                    );
+                            nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                            final Optional<SiteMapTreeItem> nextRoutesLevel = getShallowSiteMapTreeItem(nextPathInfo, routes);
+
+                            if (!nextRoutesLevel.isPresent()) {
+                                break;
+                            }
+                            // merge the next level into currentLevel
+                            if (currentLevel.getChild(nextRoutesLevel.get().getId()) == null) {
+                                currentLevel.addOrReplaceChild(nextRoutesLevel.get());
+                                // in case the xpagesBasedItem was not yet expandable, mark it to be so now
+                                currentLevel.setExpandable(true);
+                            } else {
+                                mergeChildren(currentLevel, nextRoutesLevel.get());
+                            }
+                            currentLevel = currentLevel.getChild(nextRoutesLevel.get().getId());
+                        }
+                    }
+                } else {
+                    final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(normalizedPathInfo, routes);
+                    if (routesItem.isPresent()) {
+                        // merge sitemap routes with XPage documents if needed
+                        final SiteMapTreeItem xpagesBasedItem = siteMapTreeItem;
+                        routesItem.get().getChildren().stream().forEach(
+                                routeItem -> {
+                                    if (xpagesBasedItem.getChild(routeItem.getId()) == null) {
+                                        xpagesBasedItem.addOrReplaceChild(routeItem);
+                                        // in case the xpagesBasedItem was not yet expandable, mark it to be so now
+                                        xpagesBasedItem.setExpandable(true);
+                                    }
+                                }
+                        );
+                    }
                 }
             }
 
-            return ok(format("Item for pathInfo '%s'", pathInfo), pathInfoItem);
+            return ok(format("Item for pathInfo '%s'", pathInfo), siteMapTreeItem);
         });
+    }
+
+    private void mergeChildren(final SiteMapTreeItem target, final SiteMapTreeItem source) {
+        source.getChildren().stream().forEach(child -> {
+                    if (target.getChild(child.getId()) != null) {
+                        // already present, only inherit expandable if source is expandable
+                        if (source.isExpandable()) {
+                            target.getChild(child.getId()).setExpandable(true);
+                        }
+                    } else {
+                        target.addOrReplaceChild(child);
+                    }
+                }
+        );
+    }
+
+    @Nullable
+    private SiteMapTreeItem getShallowSiteMapTreeItemForXPages(final String pathInfo,
+                                                               final XPageSiteMapTreeItem xPageSiteMapTreeItem,
+                                                               final Session previewSecurityDelegate) throws RepositoryException {
+        final Optional<XPageSiteMapShallowItem> readableItem = XPageSiteMapTreeItemUtils.getReadableItem(xPageSiteMapTreeItem, previewSecurityDelegate, pathInfo);
+
+        SiteMapTreeItem pathInfoItem = null;
+        if (readableItem.isPresent()) {
+            final XPageSiteMapShallowItem pathInfoRoot = readableItem.get();
+            final Optional<SiteMapPageRepresentation> pathInfoRootRepresentation = getSiteMapPageRepresentation(previewSecurityDelegate, pathInfoRoot);
+
+            if (pathInfoRoot.isExpandable()) {
+                final XPageSiteMapShallowItem[] readableChildren = XPageSiteMapTreeItemUtils.getReadableChildren(xPageSiteMapTreeItem, previewSecurityDelegate, pathInfo);
+                pathInfoItem = new SiteMapTreeItem(pathInfoRootRepresentation.get());
+
+                for (XPageSiteMapShallowItem item : readableChildren) {
+
+                    try {
+                        // read access guaranteed because of XPageSiteMapTreeItemUtils.getReadableChildren
+                        final Optional<SiteMapPageRepresentation> siteMapPageRepresentation = getSiteMapPageRepresentation(previewSecurityDelegate, item);
+                        if (siteMapPageRepresentation.isPresent()) {
+                            pathInfoItem.addOrReplaceChild(new SiteMapTreeItem(siteMapPageRepresentation.get()));
+                        }
+                    } catch (Exception e) {
+                        log.warn("Exception while trying to add '{}'. Skipping this sitemap item. Reason : {}", item.getPathInfo(), e.getMessage());
+                    }
+                }
+            }
+        }
+        return pathInfoItem;
     }
 
     private XPageSiteMapTreeItem getSharedXPageSiteMapTreeItem(final Mount editingPreviewMount, final HstSiteMap routes) {
