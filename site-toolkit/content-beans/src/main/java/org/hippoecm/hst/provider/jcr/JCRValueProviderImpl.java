@@ -122,7 +122,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 populateIdentifier();
             }
         } catch (RepositoryException e) {
-            throw new RuntimeRepositoryException(e);
+            throw new RuntimeRepositoryException(String.format("Could not instantiate JCRValueProvider for node '%s'",
+                                                               nodePath), e);
         }
     }
 
