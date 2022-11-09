@@ -337,6 +337,8 @@ public class SiteMapResource extends AbstractConfigResource {
                         log.warn("Exception while trying to add '{}'. Skipping this sitemap item. Reason : {}", item.getPathInfo(), e.getMessage());
                     }
                 }
+            } else {
+                pathInfoItem = new SiteMapTreeItem(pathInfoRootRepresentation.get());
             }
         }
         return pathInfoItem;
