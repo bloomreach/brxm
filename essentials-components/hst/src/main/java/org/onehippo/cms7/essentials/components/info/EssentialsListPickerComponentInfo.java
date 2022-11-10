@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,6 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 }
         )
 })
-/**
- * @deprecated Not used by any supported plugin. Will be removed in 14.0.0.
- */
-@Deprecated
 public interface EssentialsListPickerComponentInfo extends EssentialsPageable {
     String HIPPO_DOCUMENT = "hippo:document";
 
