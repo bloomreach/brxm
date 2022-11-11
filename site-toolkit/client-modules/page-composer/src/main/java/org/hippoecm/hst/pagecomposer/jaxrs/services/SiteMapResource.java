@@ -176,20 +176,31 @@ public class SiteMapResource extends AbstractConfigResource {
             SiteMapTreeItem siteMapTreeItem;
 
             if (ancestry && StringUtils.isNotEmpty(normalizedPathInfo)) {
-                siteMapTreeItem = getShallowSiteMapTreeItemForXPages(EMPTY, xPageSiteMapTreeItem, previewSecurityDelegate);
+                SiteMapTreeItem requestedItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+                if (requestedItem != null) {
+                    siteMapTreeItem = getShallowSiteMapTreeItemForXPages(EMPTY, xPageSiteMapTreeItem, previewSecurityDelegate);
 
-                final String[] split = normalizedPathInfo.split("/");
-                SiteMapTreeItem currentLevel = siteMapTreeItem;
-                String nextPathInfo = null;
-                for (String pathElement : split) {
-                    nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
-                    final SiteMapTreeItem nextLevel = getShallowSiteMapTreeItemForXPages(nextPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
-                    if (nextLevel == null) {
-                        break;
+                    final String[] split = normalizedPathInfo.split("/");
+                    SiteMapTreeItem currentLevel = siteMapTreeItem;
+                    String nextPathInfo = null;
+                    for (String pathElement : split) {
+                        nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                        final SiteMapTreeItem nextLevel;
+                        if (nextPathInfo == normalizedPathInfo) {
+                            // already loaded
+                            nextLevel = requestedItem;
+                        } else {
+                            nextLevel = getShallowSiteMapTreeItemForXPages(nextPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+                        }
+                        if (nextLevel == null) {
+                            break;
+                        }
+                        // merge the next level into currentLevel
+                        currentLevel.addOrReplaceChild(nextLevel);
+                        currentLevel = nextLevel;
                     }
-                    // merge the next level into currentLevel
-                    currentLevel.addOrReplaceChild(nextLevel);
-                    currentLevel = nextLevel;
+                } else {
+                    siteMapTreeItem = null;
                 }
 
             } else {
@@ -212,6 +223,9 @@ public class SiteMapResource extends AbstractConfigResource {
                     siteMapTreeItem = routes.shallowClone();
                 } else {
                     if (ancestry) {
+                        if (!getShallowSiteMapTreeItem(normalizedPathInfo, routes).isPresent()) {
+                            throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
+                        }
                         final Optional<SiteMapTreeItem> routesRoot = getShallowSiteMapTreeItem(EMPTY, routes);
                         if (!routesRoot.isPresent()) {
                             throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
