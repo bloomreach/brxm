@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -288,9 +288,7 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
             // XPage configuration instance...also we only set it on the 'root component' since it is really only used
             // from the root component
 
-            // the copy has a MUTABLE list so we can 'just' add any new variants to it
-            copy.getMountVariants().addAll(copy.getVariants());
-
+            copy.addMountVariants(copy.getVariants());
             return copy;
         } catch (ModelLoadingException e) {
             String msg = String.format("Exception trying to load Experience Page for '%s' : %s", hstPage, e.getMessage());
