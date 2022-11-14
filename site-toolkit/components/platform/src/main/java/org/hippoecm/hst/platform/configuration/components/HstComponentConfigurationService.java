@@ -785,6 +785,32 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
+    /**
+     * <p>
+     *     Will add the {@code variants} to the available mount variants on this component IF and only IF this component
+     *     is either {@code detached} or is an {@code experiencePageComponent} : this method is used for XPage documents
+     *     which should never be able to modify hst component from the hst configuration model but only for XPage
+     *     documents
+     * </p>
+     * @param variants
+     */
+    public void addMountVariants(final List<String> variants) {
+        if (detached || experiencePageComponent) {
+            try {
+                // create new mount variants list in case it is immutable
+                mountVariants = mountVariants.stream().collect(Collectors.toList());
+                mountVariants.addAll(variants);
+            } catch (Exception e) {
+                log.warn("Cannot add variants to immutable collection", e);
+            }
+        } else {
+            log.warn("Not allowed to add mount variants to 'undetached' or non xpage page component for HstComponent Configuration '{}'", getCanonicalStoredLocation());
+        }
+        for (HstComponentConfigurationService child : orderedListConfigs) {
+            child.addMountVariants(variants);
+        }
+    }
+
     @Override
     public List<String> getMountVariants() {
         return mountVariants;
