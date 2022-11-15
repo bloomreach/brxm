@@ -79,14 +79,14 @@
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-imaging.version>1.0-alpha2</commons-imaging.version>
     <commons-io.version>2.8.0</commons-io.version>
-    <commons-lang3.version>3.9</commons-lang3.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
     <!-- commons-logging-api and commons-logging are set to test level -->
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-proxy.version>1.0</commons-proxy.version>
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>
-    <commons-text.version>1.8</commons-text.version>
+    <commons-text.version>1.10.0</commons-text.version>
     <commons-validator.version>1.6</commons-validator.version>
 
     <!-- legacy Apache Commons releases used in projects-->
@@ -229,13 +229,13 @@
     <repository>
       <name>Hippo Maven 2 Enterprise Repository</name>
       <id>hippo-maven2-enterprise</id>
-      <url>https://maven.onehippo.com/content/repositories/enterprise-releases/</url>
+      <url>https://maven.bloomreach.com/repository/enterprise-releases/</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
       <name>Hippo Maven 2 Enterprise Snapshots</name>
       <id>hippo-maven2-enterprise-snapshots</id>
-      <url>https://maven.onehippo.com/content/repositories/enterprise-snapshots/</url>
+      <url>https://maven.bloomreach.com/repository/enterprise-snapshots/</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
@@ -250,7 +250,7 @@
     <repository>
       <id>hippo-maven2</id>
       <name>Hippo Maven 2</name>
-      <url>https://maven.onehippo.com/maven2/</url>
+      <url>https://maven.bloomreach.com/repository/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -276,7 +276,7 @@
     <pluginRepository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
-      <url>https://maven.onehippo.com/maven2/</url>
+      <url>https://maven.bloomreach.com/repository/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
