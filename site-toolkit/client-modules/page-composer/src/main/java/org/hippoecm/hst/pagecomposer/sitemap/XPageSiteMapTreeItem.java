@@ -53,6 +53,10 @@ public class XPageSiteMapTreeItem extends XPageSiteMapBaseItem {
         return randomOrderXPageDescendants;
     }
 
+    public void setRandomOrderXPageDescendants(final List<XPageSiteMapTreeItem> randomOrderXPageDescendants) {
+        this.randomOrderXPageDescendants = randomOrderXPageDescendants;
+    }
+
     /**
      * Make this XPageSiteMapTreeItem partly immutable and optimizes storage
      */

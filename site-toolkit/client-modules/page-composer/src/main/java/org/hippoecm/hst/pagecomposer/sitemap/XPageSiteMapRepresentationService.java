@@ -250,6 +250,7 @@ public class XPageSiteMapRepresentationService {
                             // channel home page, replace the root!
                             xPageSiteMapTreeItem.setChildren(root.getChildren());
                             xPageSiteMapTreeItem.getChildren().values().forEach(child -> child.setParent(xPageSiteMapTreeItem));
+                            xPageSiteMapTreeItem.setRandomOrderXPageDescendants(root.getRandomOrderXPageDescendants());
                             root = xPageSiteMapTreeItem;
                         } else {
                             place(root, xPageSiteMapTreeItem, xPageSiteMapTreeItem.getPathInfo().split("/"), 0);
@@ -321,7 +322,7 @@ public class XPageSiteMapRepresentationService {
             if (toAdd.getAbsoluteJcrPath() != null) {
                 XPageSiteMapTreeItem ancestor = parent;
                 while (ancestor != null) {
-                    // add availabel XPage backed descendants in random order: this is because we want random descendant
+                    // add available XPage backed descendants in random order: this is because we want random descendant
                     // xpage docs checking for finding out whether some user is allowed to see a structural sitemap folder
                     ancestor.getRandomOrderXPageDescendants()
                             .add(ancestor.getRandomOrderXPageDescendants().size() == 0 ? 0 : random.nextInt(ancestor.getRandomOrderXPageDescendants().size()), child);
