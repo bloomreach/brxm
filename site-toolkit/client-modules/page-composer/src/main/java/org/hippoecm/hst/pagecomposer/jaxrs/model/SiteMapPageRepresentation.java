@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
+
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+import static org.hippoecm.hst.configuration.HstNodeTypes.INDEX;
 
 public class SiteMapPageRepresentation {
 
@@ -56,19 +59,26 @@ public class SiteMapPageRepresentation {
         this.parentId = parentId;
         name = NodeNameCodec.decode(item.getValue());
         pageTitle = item.getPageTitle();
-        pathInfo =  HstSiteMapUtils.getPath(item, null);
 
+        final boolean pageExists;
+        if (item.getComponentConfigurationId() == null && item.getRelativeContentPath() == null) {
+            // structural sitemap item, not for rendering a page so do not set pathInfo/renderPathInfo
+            pageExists = false;
+        } else {
+            pageExists = true;
+        }
+        pathInfo = HstSiteMapUtils.getPath(item, null);
         if (StringUtils.isBlank(pathInfo)) {
             pathInfo = "/";
-            renderPathInfo = StringUtils.isBlank(mountPath) ? "/" : mountPath;
+            renderPathInfo = pageExists ? (StringUtils.isBlank(mountPath) ? "/" : mountPath) : null ;
         } else if (pathInfo.equals(homePagePathInfo)) {
             pathInfo = "/";
-            renderPathInfo = StringUtils.isBlank(mountPath) ? "/" : mountPath;
+            renderPathInfo = pageExists ? (StringUtils.isBlank(mountPath) ? "/" : mountPath) : null;
         } else {
-            if (pathInfo.startsWith("/")){
+            if (pathInfo.startsWith("/")) {
                 renderPathInfo = mountPath + pathInfo;
             } else {
-               renderPathInfo = mountPath + "/" + pathInfo;
+                renderPathInfo = pageExists ? mountPath + "/" + pathInfo : null;
             }
         }
 
@@ -83,20 +93,30 @@ public class SiteMapPageRepresentation {
         id = handleNode.getIdentifier();
         parentId = handleNode.getParent().getIdentifier();
 
-        if (hstLink.representsIndex()) {
-            // the hstLink was the result of a document matching the _index_ sitemap item : as a result, it will be
-            // accessed via the 'parent url'. Instead of typically having 'index' as name in the sitemap, use the
-            // parent name to get the logical sitemap name in the CM
-            if (hstLink.getHstSiteMapItem().isWildCard()) {
-                name = handleNode.getParent().getName();
-            } else {
-                name = hstLink.getHstSiteMapItem().getValue();
-            }
-        } else {
+        final String path = hstLink.getPath();
+        if (StringUtils.isEmpty(path)) {
             name = handleNode.getName();
+        } else if (path.contains("/")) {
+            name = substringAfterLast(path, "/");
+        } else {
+            name = path;
         }
 
-        pageTitle = ((HippoNode)handleNode).getDisplayName();
+        if (hstLink.representsIndex()) {
+            final HstSiteMapItem indexItem = hstLink.getHstSiteMapItem().getChild(INDEX);
+            if (indexItem != null && substringAfterLast(indexItem.getRelativeContentPath(), "/").equals(((HippoNode)handleNode).getDisplayName())) {
+                // the 'index' document its display name is the same as the path in the relative content path for the
+                // sitemap item: this means that the pageTitle is typically something like 'index'. In this case, do not
+                // use the display name from the index document but instead fallback to the folder display name as this
+                // makes more sense than having eg 'index' as pageTitle for the 'folder' in the SiteMap tree
+
+                pageTitle = ((HippoNode) handleNode.getParent()).getDisplayName();
+            } else{
+                pageTitle = ((HippoNode)handleNode).getDisplayName();
+            }
+        } else {
+            pageTitle = ((HippoNode)handleNode).getDisplayName();
+        }
         // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above
         final Mount mount = hstLink.getMount();
         pathInfo = hstLink.getPath();
