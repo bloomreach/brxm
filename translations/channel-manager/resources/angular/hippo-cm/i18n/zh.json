@@ -90,7 +90,7 @@
   "TOOLBAR_MENU_XPAGE_PUBLISH": "发布",
   "SUBPAGE_PAGE_PROPERTIES_TITLE": "'{{pageName}}'的属性",
   "EXPERIMENT_VARIANT_STATUS_MESSAGE": "{{ variantName }} 的估计转换率为 {{ conversion.low }}% 到 {{ conversion.high }}% 之间，最佳猜测值为 {{ conversion.mean }}%。",
-  "ERROR_MENU_LOCKED_BY": "通过'{{lockedBy}'锁定菜单",
+  "ERROR_MENU_LOCKED_BY": "通过'{{lockedBy}}'锁定菜单",
   "LIVE": "实时",
   "ERROR_MOVE_COMPONENT_FAILED": "移动组件'{{component}}'失败",
   "FEEDBACK_XPAGE_HELD_BY_OTHER_USER_MESSAGE": "此页面已被 {{user}} 锁定。",
