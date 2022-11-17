@@ -1072,6 +1072,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.async = source.async;
         copy.asyncMode = source.asyncMode;
         copy.cacheable = source.cacheable;
+        copy.compositeCacheable = source.compositeCacheable;
         copy.suppressWasteMessage = source.suppressWasteMessage;
         copy.parameters = new LinkedHashMap<String, String>(source.parameters);
         copy.parameterNamePrefixSet = new HashSet<String>(source.parameterNamePrefixSet);
