@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ describe('ChannelSettings', () => {
   let FeedbackService;
   let HippoIframeService;
   let ConfigService;
+  let DialogService;
   let channelInfoDescription;
   const channel = {
     properties: {
@@ -49,6 +50,7 @@ describe('ChannelSettings', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _ConfigService_,
+      _DialogService_,
     ) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -58,6 +60,7 @@ describe('ChannelSettings', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       ConfigService = _ConfigService_;
+      DialogService = _DialogService_;
     });
 
     channelInfoDescription = {
@@ -231,4 +234,14 @@ describe('ChannelSettings', () => {
     compileDirectiveAndGetController();
     expect(FeedbackService.showError).not.toHaveBeenCalled();
   });
+
+  it('shows renegerate url dialog when clicking regenerate button', () => {
+    spyOn(DialogService, 'show').and.returnValue($q.reject());
+    compileDirectiveAndGetController();
+
+    $element.find('.qa-regenerate').click();
+
+    expect(DialogService.show).toHaveBeenCalled();
+  });
+
 });

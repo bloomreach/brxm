@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -66,6 +66,15 @@
                         class="qa-toggle-content"
                         tooltip="{{ $ctrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
         </overlay-toggle>
+
+        <md-button
+          aria-label="{{ 'TOOLBAR_BUTTON_PREVIEW' | translate }}"
+          class="toolbar-button-add"
+          ng-click="$ctrl.openProjectChannelPreviewUrl()"
+          ng-if="$ctrl.isExternalPreviewEnabled()"
+          >
+          <md-icon md-font-icon="mdi-open-in-new"></md-icon>{{ 'TOOLBAR_BUTTON_PREVIEW' | translate }}
+        </md-button>
 
         <md-button
           aria-label="{{ 'TOOLBAR_BUTTON_ADD' | translate }}"
