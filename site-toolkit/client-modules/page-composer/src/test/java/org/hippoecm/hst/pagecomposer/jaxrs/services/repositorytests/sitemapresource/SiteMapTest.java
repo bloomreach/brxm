@@ -3,6 +3,9 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
@@ -15,9 +18,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapTreeItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Test;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -48,7 +53,7 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
 
 
     @Test
-    public void assert_some_expected_routes_and_xpages_to_be_present() throws Exception {
+    public void shallow_tree_item_some_expected_routes_and_xpages_to_be_present() throws Exception {
 
         {
             HstRequestContext ctx = initContext(session);
@@ -65,6 +70,29 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             assertThat(news.isExpandable())
                     .as("Expected news to be an expandable folder")
                     .isTrue();
+            assertThat(news.getChildren().size())
+                    .as("Expected news children NOT yet loaded")
+                    .isEqualTo(0);
+
+            final SiteMapTreeItem aboutUs = root.getChild("about-us");
+            assertThat(aboutUs)
+                    .as("Expected about-us from HST sitemap routes")
+                    .isNotNull();
+            assertThat(aboutUs.isExpandable())
+                    .as("Expected about-us from HST sitemap route to NOT be an expandable folder")
+                    .isFalse();
+
+            final SiteMapTreeItem experiences = root.getChild("experiences");
+            assertThat(experiences)
+                    .as("Expected experiences from XPage documents")
+                    .isNotNull();
+            assertThat(experiences.isExpandable())
+                    .as("Expected experiences to be an expandable folder")
+                    .isTrue();
+
+            assertThat(experiences.getChildren().size())
+                    .as("Expected experiences children NOT yet loaded")
+                    .isEqualTo(0);
         }
 
         {
@@ -72,7 +100,7 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
 
             // unittestcontent/documents/unittestproject/News/2009/May/articleAsExpPage is an XPage document so expected
             // to be present in the sitemap
-            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "about-us");
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "about-us", false);
 
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             SiteMapTreeItem aboutUsSitemapTreeItem =
@@ -92,22 +120,49 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
         {
             HstRequestContext ctx = initContext(session);
 
-            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "news");
+            // pathInfo with leading or trailing slashes is same as without the leading or trailing slashes
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "/about-us/", false);
+
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem aboutUsSitemapTreeItem =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(aboutUsSitemapTreeItem)
+                    .as("Expected 'about-us' to exist in HST routes")
+                    .isNotNull();
+            assertThat(aboutUsSitemapTreeItem.isExpandable())
+                    .as("Expected 'about-us' NOT to be expandable")
+                    .isFalse();
+            assertThat(aboutUsSitemapTreeItem.isExperiencePage())
+                    .as("Expected 'about-us' to NOT be an XPage")
+                    .isFalse();
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "news", false);
 
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             SiteMapTreeItem newsSiteMapTreeItem =
                     (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
 
-            final SiteMapTreeItem news = newsSiteMapTreeItem.getChild("2009");
-            assertThat(news)
+
+            assertThat(newsSiteMapTreeItem.getChildren().size())
+                    .as("Expected news children HAVE BEEN loaded")
+                    .isGreaterThan(0);
+
+            final SiteMapTreeItem news2009 = newsSiteMapTreeItem.getChild("2009");
+            assertThat(news2009)
                     .as("Expected 2009")
                     .isNotNull();
-            assertThat(news.isExpandable())
+            assertThat(news2009.isExpandable())
                     .as("Expected 2009 to be an expandable folder")
                     .isTrue();
-            assertThat(news.isExperiencePage())
+            assertThat(news2009.isExperiencePage())
                     .as("Expected 2009 to NOT be an experience page")
                     .isFalse();
+
         }
 
         {
@@ -115,7 +170,7 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
 
             // unittestcontent/documents/unittestproject/News/2009/May/articleAsExpPage is an XPage document so expected
             // to be present in the sitemap
-            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "news/2009/May");
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "news/2009/May", false);
 
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             SiteMapTreeItem maySiteMapTreeItem =
@@ -148,7 +203,7 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
         {
             HstRequestContext ctx = initContext(session);
 
-            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "experiences");
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "experiences", false);
 
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             SiteMapTreeItem experiencesSiteMapTreeItem =
@@ -176,6 +231,534 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
                     .isTrue();
         }
 
+        // fetch sitemap item for an XPage item
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "experiences/expPage1.html", false);
+
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem expPage1Item =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(expPage1Item)
+                    .as("Expected 'expPage1.html' to exist in sitemap as result of XPage docs")
+                    .isNotNull();
+            assertThat(expPage1Item.isExpandable())
+                    .as("Expected 'expPage1.html' to NOT be expandable")
+                    .isFalse();
+            assertThat(expPage1Item.isExperiencePage())
+                    .as("Expected 'expPage1' to be an XPage")
+                    .isTrue();
+        }
+
+        // Test a not found
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "some-non-existing-path", false);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        }
+        // Test a not found but existing parent
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "/news/some-non-existing-path", false);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+    }
+
+    @Test
+    public void site_map_search_basic_test_response_contract() throws Exception {
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "home");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getName())
+                    .isEqualTo("home");
+            assertThat(result.isExpandable())
+                    .isTrue();
+            assertThat(result.getChildren().isEmpty())
+                    .as("Children are not expected to be loaded already")
+                    .isTrue();
+
+        }
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "alsonews");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getName())
+                    .as("Root (home page) of tree is always expected to be present")
+                    .isEqualTo("home");
+            assertThat(result.isExpandable())
+                    .isTrue();
+            assertThat(result.isExpandable())
+                    .isTrue();
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("alsonews");
+
+            final SiteMapTreeItem alsonews = result.getChild("alsonews");
+
+            assertThat(alsonews.isExpandable())
+                    .as("'alsonews' has explicit 'news2' item in SiteMap so should be expandable")
+                    .isTrue();
+            assertThat(alsonews.getChild("news2"))
+                    .as("Because 'news2' does NOt match the filter query, it should NOT be in the result")
+                    .isNull();
+
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "news");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("alsonews", "news", "newsCtxOnly", "newswith_linkrewriting_excluded");
+
+            final SiteMapTreeItem alsonews = result.getChild("alsonews");
+            assertThat(alsonews.isExpandable())
+                    .as("'alsonews' has explicit 'news2' item in SiteMap")
+                    .isTrue();
+            assertThat(alsonews.getChild("news2"))
+                    .as("Because 'news2' matches the filter query, it should be in the result")
+                    .isNotNull();
+            assertThat(alsonews.getChild("news2").isExpandable())
+                    .as("no XPage documents match below 'news2'")
+                    .isFalse();
+
+            final SiteMapTreeItem newswith_link_rewriting_excluded = result.getChild("newswith_linkrewriting_excluded");
+            assertThat(newswith_link_rewriting_excluded.isExpandable())
+                    .as("'newswith_link_rewriting_excluded' does not have route descendants and XPAge docs never match there")
+                    .isFalse();
+
+            final SiteMapTreeItem news = result.getChild("news");
+            assertThat(news.isExpandable())
+                    .as("'news' only wildcard routes below it but has a readable XPage document 'articleAsExpPage' below it " +
+                            "hence expandable = true")
+                    .isTrue();
+            assertThat(news.getChildren().isEmpty())
+                    .as("The children should not be loaded yet")
+                    .isTrue();
+
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "articleAsExp");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("news");
+
+            assertThat(result.getChild("news").isExpandable())
+                    .isTrue();
+
+            final SiteMapTreeItem articleAsExpPage = result.getChild("news").getChild("2009").getChild("May").getChild("articleAsExpPage.html");
+
+            assertThat(articleAsExpPage.getName())
+                    .isEqualTo("articleAsExpPage.html");
+
+            assertThat(articleAsExpPage.isExpandable())
+                    .isFalse();
+
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "experiences");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("experiences");
+
+            assertThat(result.getChild("experiences").isExpandable())
+                    .isTrue();
+            assertThat(result.getChild("experiences").getChildren().isEmpty())
+                    .as("The children are NOT expected in the search result")
+                    .isTrue();
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "expPage");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("news", "experiences");
+
+            assertThat(result.getChild("news").isExpandable())
+                    .isTrue();
+            assertThat(result.getChild("news").getChildren().isEmpty())
+                    .as("The children ARE expected in the search result")
+                    .isFalse();
+            assertThat(result.getChild("news").getChild("2009").getChild("May").getChild("articleAsExpPage.html"))
+                    .isNotNull();
+
+            assertThat(result.getChild("experiences").isExpandable())
+                    .isTrue();
+            assertThat(result.getChild("experiences").getChildren().isEmpty())
+                    .as("The children ARE expected in the search result")
+                    .isFalse();
+
+            assertThat(result.getChild("experiences").getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("expPage1.html", "expPage2.html", "expPage-with-static-components.html");
+
+            assertThat(result.getChild("experiences").getChild("expPage1.html").getPageTitle())
+                    .isEqualTo("Experience Page Number1");
+        }
+
+        // Search is also done in pageTitle field
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "Experience Page Number1");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("experiences");
+
+            assertThat(result.getChild("experiences").getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("expPage1.html");
+
+        }
+    }
+
+
+    @Test
+    public void site_map_search_no_hits_returns_only_home() throws Exception {
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), UUID.randomUUID().toString());
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getName())
+                    .isEqualTo("home");
+            assertThat(result.isExpandable())
+                    .isTrue();
+            assertThat(result.isExpandable())
+                    .isTrue();
+        }
+
+    }
+
+    @Test
+    public void assert_site_map_search_case_insensitive() throws Exception {
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "ExPeRIENce PAge NuMber1");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("experiences");
+
+            assertThat(result.getChild("experiences").getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("expPage1.html");
+
+        }
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "EXPpage1");
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(result.getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("experiences");
+
+            assertThat(result.getChild("experiences").getChildren().stream().map(child -> child.getName()).collect(Collectors.toList()))
+                    .containsExactlyInAnyOrder("expPage1.html");
+
+        }
+    }
+
+    @Test
+    public void assert_site_map_search_minimum_length_3chars() throws Exception {
+        HstRequestContext ctx = initContext(session);
+
+        final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "ex");
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertThat(((ResponseRepresentation) response.getEntity()).getErrorCode())
+                .isEqualTo(ClientError.INVALID_FILTER_QUERY.toString());
+    }
+
+    /**
+     * <p>
+     *     With {@code ancestry = true} we expect the ancestors to be also present in the response
+     * </p>
+     */
+    @Test
+    public void ancestry_tree_item_some_expected_routes_and_xpages_to_be_present() throws Exception {
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), EMPTY, true);
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem root =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(root.getChild("/"))
+                    .as("Expected the home page from sitemap routes to have been merged with XPage docs root")
+                    .isNull();
+
+            final SiteMapTreeItem news = root.getChild("news");
+            assertThat(news)
+                    .as("Expected news")
+                    .isNotNull();
+            assertThat(news.isExpandable())
+                    .as("Expected news to be an expandable folder")
+                    .isTrue();
+            assertThat(news.getChildren().size())
+                    .as("Expected news children NOT yet loaded")
+                    .isEqualTo(0);
+
+            final SiteMapTreeItem aboutUs = root.getChild("about-us");
+            assertThat(aboutUs)
+                    .as("Expected about-us from HST sitemap routes")
+                    .isNotNull();
+            assertThat(aboutUs.isExpandable())
+                    .as("Expected about-us from HST sitemap route to NOT be an expandable folder")
+                    .isFalse();
+
+            final SiteMapTreeItem experiences = root.getChild("experiences");
+            assertThat(experiences)
+                    .as("Expected experiences from XPage documents")
+                    .isNotNull();
+
+            assertThat(experiences.isExpandable())
+                    .as("Expected experiences to be an expandable folder")
+                    .isTrue();
+            assertThat(experiences.getChildren().size())
+                    .as("Expected news children NOT yet loaded")
+                    .isEqualTo(0);
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "/news", true);
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+            // since we request ANCESTRY, we do expect 'news' to have its children as well loaded but still have the
+            // root returned
+            SiteMapTreeItem root =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(root.getChild("/"))
+                    .as("Expected the home page from sitemap routes to have been merged with XPage docs root")
+                    .isNull();
+
+            final SiteMapTreeItem news = root.getChild("news");
+            assertThat(news)
+                    .as("Expected news")
+                    .isNotNull();
+            assertThat(news.isExpandable())
+                    .as("Expected news to be an expandable folder")
+                    .isTrue();
+
+            assertThat(news.getChildren().size())
+                    .as("Expected news children to HAVE BEEN loaded")
+                    .isGreaterThan(0);
+
+            final SiteMapTreeItem news2009 = news.getChild("2009");
+            assertThat(news2009.isExpandable())
+                    .as("Expected news/2009 to be an expandable folder")
+                    .isTrue();
+            assertThat(news2009.getChildren().size())
+                    .as("Expected 2009 children to NOT HAVE BEEN loaded")
+                    .isEqualTo(0);
+
+            final SiteMapTreeItem aboutUs = root.getChild("about-us");
+            assertThat(aboutUs)
+                    .as("Expected about-us from HST sitemap routes")
+                    .isNotNull();
+            assertThat(aboutUs.isExpandable())
+                    .as("Expected about-us from HST sitemap route to NOT be an expandable folder")
+                    .isFalse();
+
+            final SiteMapTreeItem experiences = root.getChild("experiences");
+            assertThat(experiences)
+                    .as("Expected experiences from XPage documents")
+                    .isNotNull();
+
+            assertThat(experiences.isExpandable())
+                    .as("Expected experiences to be an expandable folder")
+                    .isTrue();
+            assertThat(experiences.getChildren().size())
+                    .as("Expected experiences children to NOT have been loaded")
+                    .isEqualTo(0);
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "/news/2009", true);
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+            // since we request ANCESTRY, we do expect 'news' to have its children as well loaded but still have the
+            // root returned
+            SiteMapTreeItem root =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(root.getChild("/"))
+                    .as("Expected the home page from sitemap routes to have been merged with XPage docs root")
+                    .isNull();
+
+            final SiteMapTreeItem news = root.getChild("news");
+            assertThat(news)
+                    .as("Expected news")
+                    .isNotNull();
+            assertThat(news.isExpandable())
+                    .as("Expected news to be an expandable folder")
+                    .isTrue();
+
+            assertThat(news.getChildren().size())
+                    .as("Expected news children to HAVE BEEN loaded")
+                    .isGreaterThan(0);
+
+            final SiteMapTreeItem news2009 = news.getChild("2009");
+            assertThat(news2009.isExpandable())
+                    .as("Expected news/2009 to be an expandable folder")
+                    .isTrue();
+            assertThat(news2009.getChildren().size())
+                    .as("Expected news/2009 children to HAVE BEEN loaded")
+                    .isGreaterThan(0);
+
+            final SiteMapTreeItem news2009May = news2009.getChild("May");
+            assertThat(news2009May.isExpandable())
+                    .as("Expected news/2009/May to be an expandable folder")
+                    .isTrue();
+            assertThat(news2009May.getChildren().size())
+                    .as("Expected news/2009/May children to HAVE BEEN loaded")
+                    .isEqualTo(0);
+
+            final SiteMapTreeItem aboutUs = root.getChild("about-us");
+            assertThat(aboutUs)
+                    .as("Expected about-us from HST sitemap routes")
+                    .isNotNull();
+            assertThat(aboutUs.isExpandable())
+                    .as("Expected about-us from HST sitemap route to NOT be an expandable folder")
+                    .isFalse();
+
+            final SiteMapTreeItem experiences = root.getChild("experiences");
+            assertThat(experiences)
+                    .as("Expected experiences from XPage documents")
+                    .isNotNull();
+
+            assertThat(experiences.isExpandable())
+                    .as("Expected experiences to be an expandable folder")
+                    .isTrue();
+            assertThat(experiences.getChildren().size())
+                    .as("Expected experiences children to NOT have been loaded")
+                    .isEqualTo(0);
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "/experiences", true);
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+            // since we request ANCESTRY, we do expect 'experiences' to have its children as well loaded but still have the
+            // root returned
+            SiteMapTreeItem root =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            assertThat(root.getChild("/"))
+                    .as("Expected the home page from sitemap routes to have been merged with XPage docs root")
+                    .isNull();
+
+            final SiteMapTreeItem experiences = root.getChild("experiences");
+            assertThat(experiences)
+                    .as("Expected experiences from XPage documents")
+                    .isNotNull();
+
+            assertThat(experiences.isExpandable())
+                    .as("Expected experiences to be an expandable folder")
+                    .isTrue();
+            assertThat(experiences.getChildren().size())
+                    .as("Expected experiences children to HAVE been loaded")
+                    .isGreaterThan(0);
+        }
+
+        // fetch sitemap item for an XPage item
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "experiences/expPage1.html", true);
+
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            SiteMapTreeItem root =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+            final SiteMapTreeItem expPage1 = root.getChild("experiences").getChild("expPage1.html");
+            assertThat(expPage1)
+                    .as("Expected experiences from XPage documents")
+                    .isNotNull();
+            assertThat(expPage1.isExpandable())
+                    .isFalse();
+            assertThat(expPage1.isExperiencePage())
+                    .isTrue();
+
+        }
+
+        // Test a not found
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "some-non-existing-path", true);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        }
+        // Test a not found
+        {
+            HstRequestContext ctx = initContext(session);
+
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "/news/some-non-existing-path", true);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        }
     }
 
 }
