@@ -1022,76 +1022,76 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private HstComponentConfigurationService deepCopy(final HstComponentConfigurationService parent, String newId,
-                                                      final HstComponentConfigurationService child,
+                                                      final HstComponentConfigurationService source,
                                                       final Map<String, HstComponentConfiguration> rootComponentConfigurations,
                                                       final boolean includeContainerItems) {
         if (rootComponentConfigurations == null) {
-            if (isNotBlank(child.getReferenceComponent()) && !child.referencesPopulated) {
+            if (isNotBlank(source.getReferenceComponent()) && !source.referencesPopulated) {
                 throw new IllegalStateException("If 'rootComponentConfigurations' is null, all components references " +
                         "are expected to be resolved already");
             }
         } else {
-            if (child.getReferenceComponent() != null) {
+            if (source.getReferenceComponent() != null) {
                 // populate child component if not yet happened
-                child.populateComponentReferences(rootComponentConfigurations);
+                source.populateComponentReferences(rootComponentConfigurations);
             }
         }
         HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.parent = parent;
-        copy.componentClassName = child.componentClassName;
-        copy.parametersInfoClassName = child.parametersInfoClassName;
-        copy.name = child.name;
-        copy.referenceName = child.referenceName;
-        copy.hstTemplate = child.hstTemplate;
-        copy.label = child.label;
-        copy.hippoIdentifier = child.hippoIdentifier;
-        copy.xpage = child.xpage;
-        copy.xpageLayoutComponent = child.xpageLayoutComponent;
-        copy.iconPath = child.iconPath;
-        copy.renderPath = child.renderPath;
-        copy.isNamedRenderer = child.isNamedRenderer;
-        copy.hstResourceTemplate = child.hstResourceTemplate;
-        copy.serveResourcePath = child.serveResourcePath;
-        copy.isNamedResourceServer = child.isNamedResourceServer;
-        copy.referenceComponent = child.referenceComponent;
-        copy.pageErrorHandlerClassName = child.pageErrorHandlerClassName;
-        copy.xtype = child.xtype;
-        copy.ctype = child.ctype;
-        copy.type = child.type;
-        copy.canonicalStoredLocation = child.canonicalStoredLocation;
-        copy.canonicalIdentifier = child.canonicalIdentifier;
-        copy.componentFilterTag = child.componentFilterTag;
-        copy.inherited = child.inherited;
+        copy.componentClassName = source.componentClassName;
+        copy.parametersInfoClassName = source.parametersInfoClassName;
+        copy.name = source.name;
+        copy.referenceName = source.referenceName;
+        copy.hstTemplate = source.hstTemplate;
+        copy.label = source.label;
+        copy.hippoIdentifier = source.hippoIdentifier;
+        copy.xpage = source.xpage;
+        copy.xpageLayoutComponent = source.xpageLayoutComponent;
+        copy.iconPath = source.iconPath;
+        copy.renderPath = source.renderPath;
+        copy.isNamedRenderer = source.isNamedRenderer;
+        copy.hstResourceTemplate = source.hstResourceTemplate;
+        copy.serveResourcePath = source.serveResourcePath;
+        copy.isNamedResourceServer = source.isNamedResourceServer;
+        copy.referenceComponent = source.referenceComponent;
+        copy.pageErrorHandlerClassName = source.pageErrorHandlerClassName;
+        copy.xtype = source.xtype;
+        copy.ctype = source.ctype;
+        copy.type = source.type;
+        copy.canonicalStoredLocation = source.canonicalStoredLocation;
+        copy.canonicalIdentifier = source.canonicalIdentifier;
+        copy.componentFilterTag = source.componentFilterTag;
+        copy.inherited = source.inherited;
         // a copy is always shared unless the child IS an XPage Document Component: in that case it is never shared
-        if (child.isExperiencePageComponent()) {
+        if (source.isExperiencePageComponent()) {
             copy.shared = false;
         } else {
             copy.shared = true;
         }
-        copy.standalone = child.standalone;
-        copy.async = child.async;
-        copy.asyncMode = child.asyncMode;
-        copy.cacheable = child.cacheable;
-        copy.suppressWasteMessage = child.suppressWasteMessage;
-        copy.parameters = new LinkedHashMap<String, String>(child.parameters);
-        copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
+        copy.standalone = source.standalone;
+        copy.async = source.async;
+        copy.asyncMode = source.asyncMode;
+        copy.cacheable = source.cacheable;
+        copy.suppressWasteMessage = source.suppressWasteMessage;
+        copy.parameters = new LinkedHashMap<String, String>(source.parameters);
+        copy.parameterNamePrefixSet = new HashSet<String>(source.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied
-        copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
-        copy.usedChildReferenceNames = new HashSet<>(child.usedChildReferenceNames);
+        copy.localParameters = new LinkedHashMap<String, String>(source.localParameters);
+        copy.usedChildReferenceNames = new HashSet<>(source.usedChildReferenceNames);
         copy.variants = new ArrayList<>(variants);
         copy.mountVariants = new ArrayList<>(mountVariants);
-        copy.lockedBy = child.lockedBy;
-        copy.lockedOn = child.lockedOn;
-        copy.lastModified = child.lastModified;
-        copy.markedDeleted = child.markedDeleted;
-        copy.fieldGroups = child.fieldGroups;
-        copy.hstDynamicComponentParameters = child.hstDynamicComponentParameters;
-        copy.xpageLayoutComponent = child.xpageLayoutComponent;
-        copy.experiencePageComponent = child.experiencePageComponent;
-        copy.containerComponentReference = child.containerComponentReference;
+        copy.lockedBy = source.lockedBy;
+        copy.lockedOn = source.lockedOn;
+        copy.lastModified = source.lastModified;
+        copy.markedDeleted = source.markedDeleted;
+        copy.fieldGroups = source.fieldGroups;
+        copy.hstDynamicComponentParameters = source.hstDynamicComponentParameters;
+        copy.xpageLayoutComponent = source.xpageLayoutComponent;
+        copy.experiencePageComponent = source.experiencePageComponent;
+        copy.containerComponentReference = source.containerComponentReference;
 
         if (type != Type.CONTAINER_COMPONENT || includeContainerItems) {
-            for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
+            for (HstComponentConfigurationService descendant : source.orderedListConfigs) {
                 String descId = StringPool.get(copy.id + descendant.id);
                 HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant,
                         rootComponentConfigurations, includeContainerItems);
