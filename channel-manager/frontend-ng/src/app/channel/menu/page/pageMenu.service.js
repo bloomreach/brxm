@@ -116,11 +116,18 @@ class PageMenuService extends MenuService {
 
   onCopyToClipboard() {
     const siteMapItem = this.SiteMapItemService.get();
-    navigator.clipboard.writeText(siteMapItem.pagePreviewUrl)
+    navigator.clipboard.writeText(this.appendPort(siteMapItem.pagePreviewUrl))
       .then(() => this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_SUCCESSFUL'))
       .catch(() => {
         this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_FAILED')
       });
+  }
+
+  appendPort(baseUrl) {
+    if (window.location.host) {
+      return baseUrl.replace(window.location.hostname, window.location.host);
+    }
+    return baseUrl;
   }
 
   onOpenMenu() {

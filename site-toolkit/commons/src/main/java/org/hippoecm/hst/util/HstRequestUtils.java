@@ -593,9 +593,18 @@ public class HstRequestUtils {
      * mounts
      */
     public static String createURLForMount(final Mount mount, final HttpServletRequest req) {
+        return createURLForMount(mount, req, true);
+    }
+
+    /**
+     * Creates a fully qualified URL for the scheme, host, port, and pathInfo for the
+     * matched mount : note that this pathInfo for the matched mount does not include the _cmsinternal for preview matched
+     * mounts
+     */
+    public static String createURLForMount(final Mount mount, final HttpServletRequest req, boolean addPort) {
         return new StringBuilder(mount.getScheme()).append("://").append(mount.getVirtualHost().getHostName())
                 // do not use mount.getPort() since always 0
-                .append(mount.isPortInUrl() ? ":" + getRequestServerPort(req, mount.getScheme()) : "")
+                .append(addPort && mount.isPortInUrl() ? ":" + getRequestServerPort(req, mount.getScheme()) : "")
                 .append(mount.isContextPathInUrl() ? mount.getContextPath() : "").append(mount.getMountPath()).toString();
     }
 

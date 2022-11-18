@@ -238,23 +238,30 @@ export default class XPageMenuService extends MenuService {
     });
 
     this._menu = this
-    .addAction('copy-preview-url', {
-      isEnabled: () => this._isEnabled('copy-preview-url'),
-      isVisible: () => this._isVisible('copy-preview-url'),
-      onClick: () => this.onCopyToClipboard(),
-      translationKey: 'TOOLBAR_MENU_PAGE_COPY_PREVIEW_URL',
-      iconName: 'mdi-share-variant-outline'
-    });
+      .addAction('copy-preview-url', {
+        isEnabled: () => this._isEnabled('copy-preview-url'),
+        isVisible: () => this._isVisible('copy-preview-url'),
+        onClick: () => this._onCopyToClipboard(),
+        translationKey: 'TOOLBAR_MENU_PAGE_COPY_PREVIEW_URL',
+        iconName: 'mdi-share-variant-outline'
+      });
 
   }
 
-  onCopyToClipboard() {
+  _onCopyToClipboard() {
     console.log(this._getPagePreviewUrl());
-    navigator.clipboard.writeText(this._getPagePreviewUrl())
+    navigator.clipboard.writeText(this._appendPort(this._getPagePreviewUrl()))
       .then(() => this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_SUCCESSFUL'))
       .catch(() => {
         this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_FAILED')
       });
+  }
+
+  _appendPort(baseUrl) {
+    if (window.location.host) {
+      return baseUrl.replace(window.location.hostname, window.location.host);
+    }
+    return baseUrl;
   }
 
   _addWorkflowAction(id, onClick, config = {}) {
