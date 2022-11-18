@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 Bloomreach
+ * Copyright 2020-2023 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +31,8 @@ final class HstStateProvider {
     Map<NamedCategory, Object> getStates(final ActionStateProviderContext context) {
         final Map<NamedCategory, Object> states = new HashMap<>();
         final ChannelContext channelContext = context.getChannelContext();
-        states.put(HstState.CHANNEL_XPAGE_LAYOUTS, channelContext.getXPageLayouts().stream()
-                .collect(toMap(XPageLayout::getKey, XPageLayout::getLabel)));
+
+        states.put(HstState.CHANNEL_XPAGE_LAYOUTS, getXPageLayouts(channelContext));
         states.put(HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES, channelContext.getXPageTemplateQueries());
 
         if (context.isExperiencePageRequest()) {
@@ -42,6 +44,16 @@ final class HstStateProvider {
         }
 
         return states;
+    }
+
+    private Map<String, String> getXPageLayouts(ChannelContext channelContext) {
+
+        final Map<String, String> layouts = channelContext.getXPageLayouts().stream()
+                .collect(toMap(XPageLayout::getKey, XPageLayout::getLabel));
+        // apply natural sorting on label
+        return layouts.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.naturalOrder()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     private Map<NamedCategory, Object> xPageStates(XPageContext xPageContext) {
@@ -58,5 +70,4 @@ final class HstStateProvider {
 
         return states;
     }
-
 }
