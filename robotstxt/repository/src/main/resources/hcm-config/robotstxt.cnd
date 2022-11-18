@@ -24,7 +24,8 @@
 
 [robotstxt:section]
   - robotstxt:useragent (string) mandatory
-  - robotstxt:disallow (string) multiple 
+  - robotstxt:disallow (string) multiple
+  - robotstxt:allow (string) multiple
 
 [robotstxt:robotstxt] > hippo:document, hippostdpubwf:document,hippostd:publishableSummary
   - robotstxt:disallowfacnav (boolean)
