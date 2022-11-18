@@ -53,6 +53,7 @@ public enum HstAction implements NamedCategory {
     XPAGE_COPY("copy", HstCategory.XPAGE),
     XPAGE_MOVE("move", HstCategory.XPAGE),
     XPAGE_DELETE("delete", HstCategory.XPAGE),
+    XPAGE_COPY_PREVIEW_URL("copy-preview-url", HstCategory.XPAGE),
     ;
 
     private final String name;

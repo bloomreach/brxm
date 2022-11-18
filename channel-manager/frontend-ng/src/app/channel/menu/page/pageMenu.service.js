@@ -110,6 +110,7 @@ class PageMenuService extends MenuService {
         isVisible: () => isVisible('copy-preview-url'),
         onClick: () => this.onCopyToClipboard(),
         translationKey: 'TOOLBAR_MENU_PAGE_COPY_PREVIEW_URL',
+        iconName: 'mdi-share-variant-outline'
       });
   }
 

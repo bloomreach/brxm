@@ -31,7 +31,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
-import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.hst.Channel;
@@ -162,24 +162,8 @@ public class SiteMapItemRepresentation {
                 throw new IllegalArgumentException(String.format("Expected to be able to create an HstLink for the site map item '%s'", item.getId()));
             }
 
-            if (channel.getSpaUrl() == null) {
-                final String siteUrl = HstRequestUtils.createURLForMount(editingMount,
-                        requestContext.getServletRequest()) + "/" + hstLink.getPath();
-                return siteUrl + "?preview-token="
-                        + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
-            } else {
-                final String spaHostUrl = channel.getSpaUrl().contains("endpoint=")
-                        ? channel.getSpaUrl().substring(0, channel.getSpaUrl().lastIndexOf('?'))
-                        : channel.getSpaUrl();
-                final String siteUrlWithToken = spaHostUrl
-                        + (StringUtils.isEmpty(hstLink.getPath()) ? ""
-                                : (spaHostUrl.endsWith("/") ? "" : "/") + hstLink.getPath())
-                        + "?token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
-                return siteUrlWithToken + "&endpoint="
-                        + HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest()) + "/"
-                        + editingMount.getPageModelApi();
-            }
-        } catch (HstConfigurationException e) {
+            return HstConfigurationUtils.getPagePreviewUrl(channel, hstLink, editingMount);
+          } catch (HstConfigurationException e) {
             throw new ClientException("Invalid item", ClientError.ITEM_NOT_FOUND);
         }
     }
