@@ -198,8 +198,8 @@ public class HstConfigurationUtils {
     public static String getPagePreviewUrl(final Channel channel, final HstLink hstLink, final Mount editingMount) {
         HstRequestContext requestContext = getRequestContext();
         if (channel.getSpaUrl() == null) {
-            final String siteUrl = HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest())
-                    + "/" + hstLink.getPath();
+            final String siteUrl = HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest(),
+                    false) + "/" + hstLink.getPath();
             return siteUrl + "?preview-token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
         } else {
             final String spaHostUrl = channel.getSpaUrl().contains("endpoint=")
@@ -210,7 +210,7 @@ public class HstConfigurationUtils {
                             : (spaHostUrl.endsWith("/") ? "" : "/") + hstLink.getPath())
                     + "?token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
             return siteUrlWithToken + "&endpoint="
-                    + HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest()) + "/"
+                    + HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest(), false) + "/"
                     + editingMount.getPageModelApi();
         }
     }
