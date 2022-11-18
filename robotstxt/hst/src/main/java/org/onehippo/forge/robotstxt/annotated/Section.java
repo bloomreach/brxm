@@ -39,4 +39,9 @@ public class Section extends HippoItem {
         final String[] disallows = this.getMultipleProperty("robotstxt:disallow");
         return Arrays.asList(disallows);
     }
+
+    public List<String> getAllows() {
+        final String[] disallows = this.getMultipleProperty("robotstxt:allow");
+        return Arrays.asList(disallows);
+    }
 }
