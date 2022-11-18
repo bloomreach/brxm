@@ -29,11 +29,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.VersionHistory;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.DocumentStateUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.ScheduledRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.component.state.util.WorkflowRequest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.DocumentUtils;
@@ -108,6 +111,10 @@ final class XPageContextFactory {
         final boolean workingVersion = isWorkingVersion(WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED),
                 unpublishedRequestVariant, useXPageDocBranch);
 
+        final Mount editingMount = contextService.getEditingMount();
+        final HstLink hstLink = contextService.getEditingMountLinkCreator().create(handle, editingMount);
+        final String pagePreviewUrl = HstConfigurationUtils.getPagePreviewUrl(editingMount.getChannel(), hstLink,
+                editingMount);
 
         // the XPageContext is for branchId and documentState uses the actual USED branch (branch or in case missing)
         // master. The available actions *really* uses the hints of the currently viewed channel branch, regardless
@@ -128,7 +135,9 @@ final class XPageContextFactory {
                 // We disallow these actions if the branches are different
                 .setRenameAllowed(TRUE.equals(hints.get("rename")) && unpublishedBranchId.equals(selectedBranchId))
                 .setMoveAllowed(TRUE.equals(hints.get("move")) && unpublishedBranchId.equals(selectedBranchId))
-                .setDeleteAllowed(TRUE.equals(hints.get("delete")) && unpublishedBranchId.equals(selectedBranchId));
+                .setDeleteAllowed(TRUE.equals(hints.get("delete")) && unpublishedBranchId.equals(selectedBranchId))
+                .setPagePreviewUrl(pagePreviewUrl);
+ 
         final Map<String, Map<String, Serializable>> requestsHints = (Map<String, Map<String, Serializable>>) hints.get("requests");
         parseRequestsHints(requestsHints, workflowRequests, xPageContext);
 

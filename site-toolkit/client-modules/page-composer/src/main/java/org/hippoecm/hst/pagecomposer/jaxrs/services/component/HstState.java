@@ -26,6 +26,7 @@ public enum HstState implements NamedCategory {
     XPAGE_LOCKED_BY("lockedBy", HstCategory.XPAGE),
     XPAGE_NAME("name", HstCategory.XPAGE),
     XPAGE_STATE("state", HstCategory.XPAGE),
+    XPAGE_PREVIEW_URL("pagePreviewUrl", HstCategory.XPAGE),
 
     REQUESTS("requests", HstCategory.WORKFLOW),
     ;

@@ -116,6 +116,8 @@ public final class HstActionProvider {
         actions.put(HstAction.XPAGE_COPY, xPageContext.isCopyAllowed());
         actions.put(HstAction.XPAGE_MOVE, xPageContext.isMoveAllowed());
         actions.put(HstAction.XPAGE_DELETE, xPageContext.isDeleteAllowed());
+        actions.put(HstAction.XPAGE_COPY_PREVIEW_URL, context.getChannelContext().getChannel() != null
+                && context.getChannelContext().getChannel().isExternalPreviewEnabled());
 
         final ScheduledRequest scheduledRequest = xPageContext.getScheduledRequest();
         if (scheduledRequest != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,6 +228,33 @@ export default class XPageMenuService extends MenuService {
         }),
       { iconName: 'mdi-delete' },
     );
+
+    this._menu.addDivider({
+      isVisible: () => this.PageService.hasSomeAction('xpage',
+        'rename',
+        'move',
+        'copy',
+        'delete'),
+    });
+
+    this._menu = this
+    .addAction('copy-preview-url', {
+      isEnabled: () => this._isEnabled('copy-preview-url'),
+      isVisible: () => this._isVisible('copy-preview-url'),
+      onClick: () => this.onCopyToClipboard(),
+      translationKey: 'TOOLBAR_MENU_PAGE_COPY_PREVIEW_URL',
+      iconName: 'mdi-share-variant-outline'
+    });
+
+  }
+
+  onCopyToClipboard() {
+    console.log(this._getPagePreviewUrl());
+    navigator.clipboard.writeText(this._getPagePreviewUrl())
+      .then(() => this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_SUCCESSFUL'))
+      .catch(() => {
+        this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_FAILED')
+      });
   }
 
   _addWorkflowAction(id, onClick, config = {}) {
@@ -336,6 +363,10 @@ export default class XPageMenuService extends MenuService {
 
   _getDocumentName() {
     return this.PageService.getState('xpage').name;
+  }
+
+  _getPagePreviewUrl() {
+    return this.PageService.getState('xpage').pagePreviewUrl;
   }
 
   _isEditingCurrentPage() {

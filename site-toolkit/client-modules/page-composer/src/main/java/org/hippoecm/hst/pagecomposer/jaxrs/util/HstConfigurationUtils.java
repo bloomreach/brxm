@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,16 +23,20 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,6 +193,26 @@ public class HstConfigurationUtils {
     }
     public static HstRequestContext getRequestContext() {
         return RequestContextProvider.get();
+    }
+
+    public static String getPagePreviewUrl(final Channel channel, final HstLink hstLink, final Mount editingMount) {
+        HstRequestContext requestContext = getRequestContext();
+        if (channel.getSpaUrl() == null) {
+            final String siteUrl = HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest())
+                    + "/" + hstLink.getPath();
+            return siteUrl + "?preview-token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
+        } else {
+            final String spaHostUrl = channel.getSpaUrl().contains("endpoint=")
+                    ? channel.getSpaUrl().substring(0, channel.getSpaUrl().lastIndexOf('?'))
+                    : channel.getSpaUrl();
+            final String siteUrlWithToken = spaHostUrl
+                    + (StringUtils.isEmpty(hstLink.getPath()) ? ""
+                            : (spaHostUrl.endsWith("/") ? "" : "/") + hstLink.getPath())
+                    + "?token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
+            return siteUrlWithToken + "&endpoint="
+                    + HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest()) + "/"
+                    + editingMount.getPageModelApi();
+        }
     }
 
 }
