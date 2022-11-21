@@ -122,7 +122,7 @@
   "DOCUMENT_NEW_TOOLTIP": "离线",
   "SAVE_CHANGES_TO_COMPONENT": "组件 '{{componentLabel}}' 包含未保存的更改。是要保存还是放弃这些更改？",
   "TOOLBAR_VIEW_ON_LABEL": "在：",
-  "ERROR_MENU_LOCKED_BY": "通过'{{lockedBy}'锁定菜单",
+  "ERROR_MENU_LOCKED_BY": "通过'{{lockedBy}}'锁定菜单",
   "ERROR_MOVE_COMPONENT_FAILED": "移动组件'{{component}}'失败",
   "SEARCH_COMPONENTS_NAME": "组件",
   "ERROR_DELETE_COMPONENT": "不能删除'{{component}}'",
