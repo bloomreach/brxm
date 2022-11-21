@@ -532,7 +532,7 @@
   "CHANNEL_SETTINGS_TOKEN_IS_CREATED_FIRST_TIME": "Links have been generated for the first time",
   "COPY_TO_CLIPBOARD_SUCCESSFUL": "Link copied to clipboard",
   "COPY_TO_CLIPBOARD_FAILED": "An error occured while copying the link to the clipboard",
-  "REGENERATE_URL_CONFIRM_DIALOG_TITLE": "Regenerate links",
+  "REGENERATE_URL_CONFIRM_DIALOG_TITLE": "Regenerate links?",
   "REGENERATE_URL_CONFIRM_DIALOG_MESSAGE": "Previously generated links will not be accessible once the changes are saved. The regenerated links will be different and need to be shared again",
   "REGENERATE_URL_CONFIRM_DIALOG_ACTION_BUTTON": "Regenerate",
   "REGENERATE_URL_CONFIRM_DIALOG_SUCCESS_MESSAGE": "Links have been regenerated"
