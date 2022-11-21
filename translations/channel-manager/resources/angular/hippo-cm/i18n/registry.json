@@ -2246,7 +2246,7 @@
       }
     },
     "CHANNEL_SETTINGS_ENABLED_PREVIEW_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -2266,7 +2266,7 @@
       }
     },
     "CHANNEL_SETTINGS_DISABLED_PREVIEW_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
