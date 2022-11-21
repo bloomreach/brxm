@@ -47,6 +47,7 @@ public class XPageContext {
     private Boolean rejectRequest;
     private Boolean rejectedRequest;
     private Boolean publishableBranch;
+    private String pagePreviewUrl;
 
     public String getXPageId() {
         return xPageId;
@@ -231,6 +232,15 @@ public class XPageContext {
 
     public void setRejectedRequest(final Boolean rejectedRequest) {
         this.rejectedRequest = rejectedRequest;
+    }
+
+    public XPageContext setPagePreviewUrl(String pagePreviewUrl) {
+        this.pagePreviewUrl = pagePreviewUrl;
+        return this;
+    }
+
+    public String getPagePreviewUrl() {
+        return pagePreviewUrl;
     }
 
     public boolean hasBlockingRequest() {

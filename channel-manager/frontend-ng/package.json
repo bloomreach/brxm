@@ -82,7 +82,8 @@
     "penpal": "4.1.1",
     "rxjs": "6.6.2",
     "sortablejs": "^1.13.0",
-    "throttle-debounce": "2.1.0"
+    "throttle-debounce": "2.1.0",
+    "uuid": "8.3.2"
   },
   "devDependencies": {
     "@abogaart/blc": "0.1.2",
