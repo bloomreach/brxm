@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,34 @@ class PageMenuService extends MenuService {
         onClick: () => this.showSubPage('page-new'),
         translationKey: 'TOOLBAR_MENU_PAGE_NEW',
         tooltipTranslationKey: 'CREATE_PAGE_TOOLTIP_HST',
+      })
+      .addDivider({
+        isVisible: () => isVisible('copy-preview-url') && (isVisible('new') || isVisible('copy') 
+        || isVisible('move') || isVisible('delete')),
+      })
+      .addAction('copy-preview-url', {
+        isEnabled: () => isEnabled('copy-preview-url'),
+        isVisible: () => isVisible('copy-preview-url'),
+        onClick: () => this.onCopyToClipboard(),
+        translationKey: 'TOOLBAR_MENU_PAGE_COPY_PREVIEW_URL',
+        iconName: 'mdi-share-variant-outline'
       });
+  }
+
+  onCopyToClipboard() {
+    const siteMapItem = this.SiteMapItemService.get();
+    navigator.clipboard.writeText(this.appendPort(siteMapItem.pagePreviewUrl))
+      .then(() => this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_SUCCESSFUL'))
+      .catch(() => {
+        this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_FAILED')
+      });
+  }
+
+  appendPort(baseUrl) {
+    if (window.location.port) {
+      return baseUrl.replace(window.location.hostname, window.location.host);
+    }
+    return baseUrl;
   }
 
   onOpenMenu() {

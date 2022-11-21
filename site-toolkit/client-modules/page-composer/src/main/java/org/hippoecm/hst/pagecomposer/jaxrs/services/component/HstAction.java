@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ public enum HstAction implements NamedCategory {
     PAGE_MOVE("move", HstCategory.PAGE),
     PAGE_DELETE("delete", HstCategory.PAGE),
     PAGE_NEW("new", HstCategory.PAGE),
+    PAGE_COPY_PREVIEW_URL("copy-preview-url", HstCategory.PAGE),
 
     XPAGE_PUBLISH("publish", HstCategory.XPAGE),
     XPAGE_SCHEDULE_PUBLICATION("schedule-publish", HstCategory.XPAGE),
@@ -52,6 +53,7 @@ public enum HstAction implements NamedCategory {
     XPAGE_COPY("copy", HstCategory.XPAGE),
     XPAGE_MOVE("move", HstCategory.XPAGE),
     XPAGE_DELETE("delete", HstCategory.XPAGE),
+    XPAGE_COPY_PREVIEW_URL("copy-preview-url", HstCategory.XPAGE),
     ;
 
     private final String name;

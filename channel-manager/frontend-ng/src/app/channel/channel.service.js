@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -306,6 +306,11 @@ class ChannelService {
     this.channel.properties = properties;
   }
 
+  setExternalPreviewProperties(externalPreviewEnabled, externalPreviewToken) {
+    this.channel.externalPreviewEnabled = externalPreviewEnabled;
+    this.channel.externalPreviewToken = externalPreviewToken;
+  }
+
   saveChannel() {
     return this.HstService.doPut(this.channel, this.ConfigService.rootUuid, 'channels', this.channel.id);
   }
@@ -396,6 +401,46 @@ class ChannelService {
     } catch (error) {
       this.$log.error(`Invalid url for '${channel.id}'.`, error.message);
     }
+  }
+
+  getBaseDeliveryApiURL() {
+    return this.getUrlWithPort(this.channel.url.concat('/resourceapi'));
+  }
+
+  getDeliveryApiPreviewURL(externalPreviewToken) {
+    const endpointUrlParameter = this.getEndpointUrlParameter();
+    if (endpointUrlParameter) {
+      return endpointUrlParameter.concat('?preview-token=').concat(externalPreviewToken);
+    }
+    return this.getBaseDeliveryApiURL().concat('?preview-token=').concat(externalPreviewToken);
+  }
+
+  getUrlWithPort(baseUrl) {
+    if (window.location.port !== "" && !baseUrl.includes(window.location.port)) {
+      const url = new URL(baseUrl);
+      return baseUrl.replace(url.host, window.location.hostname
+        .concat(':').concat(window.location.port));
+    }
+    return baseUrl;
+  }
+
+  getEndpointUrlParameter() {
+    if (this.channel.spaUrl) {
+      const url = new URL(this.channel.spaUrl);
+      return url.searchParams.get('endpoint');
+    }
+    return null;
+  }
+
+  getProjectChannelPreviewURL(externalPreviewToken) {
+    if (this.channel.spaUrl) {
+      if (this.getEndpointUrlParameter()) {
+        return this.channel.spaUrl.concat('&token=').concat(externalPreviewToken);
+      }
+      return this.channel.spaUrl.concat('?token=').concat(externalPreviewToken)
+        .concat('&endpoint=').concat(this.getBaseDeliveryApiURL());
+    }
+    return this.getUrlWithPort(this.channel.url).concat('?preview-token=').concat(externalPreviewToken);
   }
 }
 

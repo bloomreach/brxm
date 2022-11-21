@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,16 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +68,7 @@ public class SiteMapItemRepresentation {
     private boolean containsAny;
     private boolean isExplicitElement;
     private Location parentLocation;
+    private String pagePreviewUrl;
 
     // whether the page has at least one container item in its page definition.
     // Note that although the backing {@link HstComponentConfiguration} might have containers,
@@ -125,6 +134,8 @@ public class SiteMapItemRepresentation {
 
         numberOfChildren = getTotalNumberOfChildren(item);
 
+        setPagePreviewUrl(preparePagePreviewUrl(item, mount));
+
         return this;
     }
 
@@ -134,6 +145,27 @@ public class SiteMapItemRepresentation {
             numChildren += getTotalNumberOfChildren(item);
         }
         return numChildren;
+    }
+
+	private String preparePagePreviewUrl(final HstSiteMapItem item , final Mount editingMount) {
+        final HstRequestContext requestContext =   RequestContextProvider.get();
+
+        try {
+            final Channel channel = editingMount.getChannel();
+            if (channel == null) {
+                throw new HstConfigurationException("Expected a channel for the edint mount");
+            }
+
+            // the hstLink for the website, however not taking the spaURL into account
+            final HstLink hstLink = requestContext.getHstLinkCreator().create(item, editingMount);
+            if (hstLink == null) {
+                throw new IllegalArgumentException(String.format("Expected to be able to create an HstLink for the site map item '%s'", item.getId()));
+            }
+
+            return HstConfigurationUtils.getPagePreviewUrl(channel, hstLink, editingMount);
+          } catch (HstConfigurationException e) {
+            throw new ClientException("Invalid item", ClientError.ITEM_NOT_FOUND);
+        }
     }
 
     Location findParentLocation(final Mount mount, final HstSiteMapItem item) {
@@ -396,5 +428,13 @@ public class SiteMapItemRepresentation {
 
     public int getNumberOfChildren() {
         return numberOfChildren;
+    }
+
+    public void setPagePreviewUrl(final String pagePreviewUrl) {
+        this.pagePreviewUrl = pagePreviewUrl;
+    }
+
+    public String getPagePreviewUrl() {
+        return pagePreviewUrl;
     }
 }

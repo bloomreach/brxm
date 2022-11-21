@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,6 +116,8 @@ public final class HstActionProvider {
         actions.put(HstAction.XPAGE_COPY, xPageContext.isCopyAllowed());
         actions.put(HstAction.XPAGE_MOVE, xPageContext.isMoveAllowed());
         actions.put(HstAction.XPAGE_DELETE, xPageContext.isDeleteAllowed());
+        actions.put(HstAction.XPAGE_COPY_PREVIEW_URL, context.getChannelContext().getChannel() != null
+                && context.getChannelContext().getChannel().isExternalPreviewEnabled());
 
         final ScheduledRequest scheduledRequest = xPageContext.getScheduledRequest();
         if (scheduledRequest != null) {
@@ -170,6 +172,9 @@ public final class HstActionProvider {
 
         actions.put(HstAction.PAGE_NEW,
                 channelContext.hasWorkspace() && !channelContext.hasPrototypes());
+
+        actions.put(HstAction.PAGE_COPY_PREVIEW_URL,
+                channelContext.getChannel() != null && channelContext.getChannel().isExternalPreviewEnabled());
 
         actions.put(HstAction.PAGE_PROPERTIES,
                 !pageContext.isHomePage()
