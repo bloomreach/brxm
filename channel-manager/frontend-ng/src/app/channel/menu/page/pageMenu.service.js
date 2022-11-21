@@ -124,7 +124,7 @@ class PageMenuService extends MenuService {
   }
 
   appendPort(baseUrl) {
-    if (window.location.host) {
+    if (window.location.port) {
       return baseUrl.replace(window.location.hostname, window.location.host);
     }
     return baseUrl;

@@ -249,7 +249,6 @@ export default class XPageMenuService extends MenuService {
   }
 
   _onCopyToClipboard() {
-    console.log(this._getPagePreviewUrl());
     navigator.clipboard.writeText(this._appendPort(this._getPagePreviewUrl()))
       .then(() => this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_SUCCESSFUL'))
       .catch(() => {
@@ -258,7 +257,7 @@ export default class XPageMenuService extends MenuService {
   }
 
   _appendPort(baseUrl) {
-    if (window.location.host) {
+    if (window.location.port) {
       return baseUrl.replace(window.location.hostname, window.location.host);
     }
     return baseUrl;

@@ -101,7 +101,7 @@
       <md-icon md-font-icon="mdi-eye-off-outline"
                ng-if="!$ctrl.externalPreviewEnabled"></md-icon>
       {{ $ctrl.externalPreviewEnabled ? 'CHANNEL_SETTINGS_ENABLED_PREVIEW_MESSAGE'
-        : 'CHANNEL_SETTINGS_DISABLED_PREVIEW_MESSAGE' | translate }}
+        : 'CHANNEL_SETTINGS_DISABLED_PREVIEW_MESSAGE' | translate: { projectName: $ctrl.projectName } }}
     </div>
 
     <div>
