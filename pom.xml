@@ -40,7 +40,7 @@
     <module>dashboard-document-wizard</module>
     <module>essentials-components</module>
     <module>essentials</module>
-    <module>gallerypicker</module>
+    <module>gallerypicker-parent</module>
     <module>l10n-tooling</module>
     <module>navigation-application</module>
     <module>packages</module>

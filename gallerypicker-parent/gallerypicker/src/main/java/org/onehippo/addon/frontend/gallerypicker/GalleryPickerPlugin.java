@@ -77,8 +77,6 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     private static final String HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME = "hippogallery:stdgalleryset";
     private static final String SUPPORTED_PATHS_KEY = "supported.paths";
 
-    public static final String GALLERY_ROOT_PATH = "/content/gallery/";
-
     private final IModel<String> valueModel;
     private final JcrNodeModel currentNodeModel;
     private final ImageItemFactory imageFactory;
@@ -318,7 +316,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 final Node selectedNode = getJCRSession().getNodeByIdentifier(uuid);
                 if (getNodeTypeName(selectedNode).equals(HIPPO_GALLERY_EXAMPLE_IMAGESET_NODETYPE_NAME) ||
                         getNodeTypeName(selectedNode).equals(HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME) ||
-                        selectedNode.getPath().startsWith(GALLERY_ROOT_PATH) ||
+                        selectedNode.getPath().startsWith(GalleryPickerConstants.GALLERY_ROOT_PATH) ||
                         arrayContainsStartWith(supportedPaths, selectedNode.getPath())) {
                     return true;
                 }
