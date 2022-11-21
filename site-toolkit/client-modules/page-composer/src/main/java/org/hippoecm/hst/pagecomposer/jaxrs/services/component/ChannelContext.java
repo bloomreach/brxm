@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ public class ChannelContext {
         this.channel = channel;
         // note channel id can be for -preview and for a branch
         this.channelId = channel.getId();
-        this.hasCustomProperties = channel.getHasCustomProperties();
+        this.hasCustomProperties = true; //enable channel settings page even if no channel properties are defined
         this.changeBySet = channel.getChangedBySet();
         this.workspaceExists = channel.isWorkspaceExists();
         return this;

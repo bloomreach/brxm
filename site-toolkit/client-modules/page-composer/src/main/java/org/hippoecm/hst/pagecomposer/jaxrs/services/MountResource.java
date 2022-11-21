@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,6 +75,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
@@ -418,6 +420,8 @@ public class MountResource extends AbstractConfigResource {
             siteMenuHelper.publishChanges(userIds);
             templateHelper.publishChanges(userIds);
 
+            removeExternalPreviewPropertiesFromCore(liveConfigurationPath, session);
+
             final ChannelEvent event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
                     requestContext, ChannelEvent.ChannelEventType.PUBLISH,
                     userIds,
@@ -440,6 +444,33 @@ public class MountResource extends AbstractConfigResource {
             return logAndReturnServerError(e);
         }
     }
+
+    /**
+     * After copying the preview channel config to a live, remove external preview properties from live channel
+     * @param liveConfigurationPath Live configuration path
+     * @param session Current JCR session
+     */
+    private static void removeExternalPreviewPropertiesFromCore(final String liveConfigurationPath, final Session session)
+            throws RepositoryException {
+        if (!session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:channel")) {
+            return;
+        }
+
+        final Node liveChannelNode = session.getNode(liveConfigurationPath + "/hst:workspace/hst:channel");
+        if (liveChannelNode.hasProperty(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED)) {
+            liveChannelNode.getProperty(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED).remove();
+            log.debug(String.format("Property '%s' has been removed from live channel: %s", GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED,
+                    liveConfigurationPath));
+        }
+
+        if (liveChannelNode.hasProperty(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN)) {
+            liveChannelNode.getProperty(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN).remove();
+            log.debug(String.format("Property '%s' has been removed from live channel: %s", GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN,
+                    liveConfigurationPath));
+        }
+    }
+
+
 
     /**
      * Method that returns a {@link Response} containing the list of document of (sub)type <code>docType</code> that

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
@@ -159,6 +161,14 @@ public class ChannelPropertyMapper {
                         ? channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)
                         : null;
 
+        if (channelNode.getValueProvider().hasProperty(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED)) {
+            channel.setExternalPreviewEnabled(channelNode.getValueProvider().getBoolean(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED));
+        }
+
+        if (channelNode.getValueProvider().hasProperty(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN)) {
+            channel.setExternalPreviewToken(channelNode.getValueProvider().getString(GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN));
+        }
+
         final String[] channelInfoMixins = (channelNode.getValueProvider()
                 .hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_MIXINS))
                         ? channelNode.getValueProvider().getStrings(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_MIXINS)
@@ -254,6 +264,8 @@ public class ChannelPropertyMapper {
         savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_NAME, channel.getName());
         savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_TYPE, channel.getType());
         savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE, channel.getDefaultDevice());
+        channelNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED, channel.isExternalPreviewEnabled());
+        savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN, channel.getExternalPreviewToken());
 
         if (channel.getDevices() != null) {
             channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES, channel.getDevices().toArray(new String[0]));

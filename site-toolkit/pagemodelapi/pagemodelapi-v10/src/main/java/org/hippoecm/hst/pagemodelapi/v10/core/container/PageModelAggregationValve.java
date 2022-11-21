@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2021 Bloomreach
+ *  Copyright 2018-2022 Bloomreach
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -490,7 +490,7 @@ public class PageModelAggregationValve extends AggregationValve {
     }
 
     private void addPreviewFlagToPageModel(final AggregatedPageModel aggregatedPageModel, final HstRequestContext requestContext) {
-        if (requestContext.isChannelManagerPreviewRequest()) {
+        if (requestContext.isPreview()) {
             aggregatedPageModel.putMetadata(PAGE_PREVIEW_METADATA, true);
         }
     }
