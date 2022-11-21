@@ -220,6 +220,17 @@ public interface HstNodeTypes {
 
     String BLUEPRINT_PROPERTY_NAME = "hst:name";
     String BLUEPRINT_PROPERTY_DESCRIPTION = "hst:description";
+
+    /**
+     * Channel property that controls whether external preview is enabled or not
+     */
+    String GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_ENABLED = "hst:externalpreviewenabled";
+
+    /**
+     * External Preview token
+     */
+    String GENERAL_PROPERTY_HST_EXTERNAL_PREVIEW_TOKEN = "hst:externalpreviewtoken";
+
     String BLUEPRINT_PROPERTY_CONTENT_ROOT = "hst:contentRoot";
 
     String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";

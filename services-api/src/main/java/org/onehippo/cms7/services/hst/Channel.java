@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -88,6 +88,9 @@ public class Channel implements Serializable {
     // if true the entire configuration is locked
     private boolean configurationLocked;
 
+    private boolean externalPreviewEnabled = false;
+    private String externalPreviewToken;
+
     /**
      * {@link Channel} default constructor it is required for REST de/serialization
      */
@@ -151,6 +154,8 @@ public class Channel implements Serializable {
         lastModified = channel.lastModified;
         branchId = channel.branchId;
         branchOf = channel.branchOf;
+        externalPreviewEnabled = channel.externalPreviewEnabled;
+        externalPreviewToken = channel.externalPreviewToken;
     }
 
     /**
@@ -522,6 +527,21 @@ public class Channel implements Serializable {
         return 31 * result + (mountId != null ? mountId.hashCode() : 0);
     }
 
+    public boolean isExternalPreviewEnabled() {
+        return externalPreviewEnabled;
+    }
+
+    public void setExternalPreviewEnabled(final boolean externalPreviewEnabled) {
+        this.externalPreviewEnabled = externalPreviewEnabled;
+    }
+
+    public String getExternalPreviewToken() {
+        return externalPreviewToken;
+    }
+
+    public void setExternalPreviewToken(final String externalPreviewToken) {
+        this.externalPreviewToken = externalPreviewToken;
+    }
 
     public boolean equals(Object other) {
         if (other == this) {
