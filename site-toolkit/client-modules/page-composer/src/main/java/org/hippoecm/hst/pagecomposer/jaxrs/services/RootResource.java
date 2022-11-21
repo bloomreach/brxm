@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -200,9 +201,10 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().entity(channel).build();
-        } catch (RepositoryException | IllegalStateException | ChannelException e) {
+        } catch (Exception e) {
             log.error("Failed to saveChannel channel", e);
-            return Response.serverError().build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+                    Collections.singletonMap("errorMessage", e.getMessage())).build();
         }
     }
 
