@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Bloomreach
+ * Copyright 2016-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundExceptio
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.container.security.TokenException;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.ValueListProvider;
@@ -63,6 +64,7 @@ import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.hippoecm.hst.platform.api.experiencepages.XPageLayout;
+import org.hippoecm.hst.platform.utils.UUIDUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -330,7 +332,30 @@ public class ChannelServiceImpl implements ChannelService {
                     "not part of the HST workspace");
         }
 
+        validateExernalPreviewToken(channel, hostGroup);
+
         getPreviewHstModel().getChannelManager().save(session, hostGroup, channel);
+    }
+
+    /**
+     * Check if specified external preview token has correct UUID format & unique within other channels across same hostgroup
+     */
+    private void validateExernalPreviewToken(final Channel channel, final String hostGroup) {
+        if (channel.getExternalPreviewToken() != null) {
+            if (!UUIDUtils.isValidUUID(channel.getExternalPreviewToken())) {
+                throw new TokenException(String.format("The specified preview token '%s' does not comply with UUID format",
+                        channel.getExternalPreviewToken()));
+            }
+            final List<Channel> channels = channelService.getChannels(hostGroup, true);
+            for (Channel channelInfo : channels) {
+                if (!channel.getId().equals(channelInfo.getId()) && Objects.equals(channelInfo.getExternalPreviewToken(),
+                        channel.getExternalPreviewToken())) {
+                    throw new IllegalArgumentException(String.format("Token '%s' is already specified for another channel: '%s'",
+                            channel.getExternalPreviewToken(), channelInfo.getId()));
+                }
+            }
+
+        }
     }
 
     @Override

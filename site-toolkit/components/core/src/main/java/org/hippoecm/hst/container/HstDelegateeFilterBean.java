@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.jcr.Repository;
 import javax.servlet.FilterChain;
@@ -47,6 +48,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.container.security.JwtTokenService;
 import org.hippoecm.hst.container.security.TokenException;
+import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -86,6 +88,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.ServletContextAware;
 
 import static java.lang.Boolean.TRUE;
+import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -93,10 +96,12 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
+import static org.hippoecm.hst.core.container.ContainerConstants.EXTERNAL_PREVIEW_ACCESS_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDERING_HOST;
@@ -108,11 +113,15 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 import static org.hippoecm.hst.util.HstRequestUtils.getRenderingHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getRequestHosts;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 
 public class HstDelegateeFilterBean extends AbstractFilterBean implements ServletContextAware, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(HstDelegateeFilterBean.class);
+
+    static final Pattern UUID_PATTERN = Pattern.compile(
+            "^[\\p{XDigit}]{8}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{12}$");
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstDelegateeFilterBean.class.getName();
 
@@ -120,6 +129,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private static final String HST_MODE_QUERYSTRING_ATTR = "HstMode";
     private static final String SKIP_HST_SESSION_ATTR = HstDelegateeFilterBean.class.getName() + ".SkipHstMode";
+
+    private static final String PREVIEW_TOKEN_QUERY_PARAM = "preview-token";
 
     private ServletContext servletContext;
 
@@ -272,13 +283,13 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         try {
 
             if (isAutoReloadEndpoint(containerRequest)) {
-                log.info("Auto reload websocket endpoint request for {}, skip hst request processing", containerRequest);
+                log.info("Auto reload websocket endpoint request for {}, skip hst request processing",
+                         containerRequest);
                 chain.doFilter(request, response);
                 return;
             }
 
             VirtualHosts vHosts = hstManager.getVirtualHosts();
-
 
             // we always want to have the virtualhost available, even when we do not have hst request processing:
             // We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
@@ -289,10 +300,27 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             final String authorization = StringUtils.trim(req.getHeader(jwtTokenAuthorizationHeader));
 
-            if (startsWithIgnoreCase(authorization, "Bearer")) {
-                final String jwtToken = StringUtils.trim(StringUtils.substringAfter(authorization, "Bearer"));
-                final AccessToken accessToken = HippoServiceRegistry.getService(JwtTokenService.class).getAccessToken(jwtToken);
-                req.setAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE, accessToken);
+            boolean isExternalPreview = false;
+            String token = null;
+            if (startsWithIgnoreCase(authorization, "Bearer") || req.getParameter(PREVIEW_TOKEN_QUERY_PARAM) != null) {
+                if (authorization != null) {
+                    token = StringUtils.trim(StringUtils.substringAfter(authorization, "Bearer"));
+                } else {
+                    token = req.getParameter(PREVIEW_TOKEN_QUERY_PARAM);
+                    if (!isExternalPreviewToken(token)) {
+                        log.debug("Token {} does not comply with external preview token UUID format", token);
+                        sendError(req, res, HttpServletResponse.SC_NOT_ACCEPTABLE);
+                        return;
+                    }
+                }
+                if (isExternalPreviewToken(token)) {
+                    isExternalPreview = true;
+                    req.setAttribute(EXTERNAL_PREVIEW_ACCESS_REQUEST_ATTRIBUTE, true);
+                } else {
+                    final AccessToken accessToken =
+                            HippoServiceRegistry.getService(JwtTokenService.class).getAccessToken(token);
+                    req.setAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE, accessToken);
+                }
                 // just set the rendering host to the request host name: rendering host is needed to render preview
                 renderingHost = hostName;
             }
@@ -300,6 +328,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (renderingHost == null) {
                 renderingHost = getRenderingHost(containerRequest);
             }
+
+            final boolean channelManagerPreviewRequest = isRequestForChannelManagerPreview(vHosts, renderingHost, req);
 
             if (isCmsSessionContextBindingRequest(req)) {
                 if (CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
@@ -313,14 +343,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 }
                 return;
 
-            } else if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)
-                    && !CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)
-                    && !CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
+            } else if (channelManagerPreviewRequest
+                       && !CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)
+                       && !CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
                 return;
             }
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-            if ((containerRequest.getPathSuffix() == null && vHosts.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
+            if ((containerRequest.getPathSuffix() == null && vHosts.isHstFilterExcludedPath(
+                    containerRequest.getPathInfo()))) {
                 log.info("'{}' part of excluded paths for hst request matching.", containerRequest);
                 chain.doFilter(request, response);
                 return;
@@ -337,10 +368,13 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             // when resolvedVirtualHost = null, we cannot do anything else then fall through to the next filter
             if (resolvedVirtualHost == null) {
                 if (isLocalhostIpPlatformRequest(containerRequest, hostName)) {
-                    log.debug("'{}' can not be matched to a host. Skip HST Filter and request processing since most likely it " +
+                    log.debug(
+                            "'{}' can not be matched to a host. Skip HST Filter and request processing since most likely it "
+                            +
                             "is a hosting environment internal request, like a pinger. ", containerRequest);
                 } else {
-                    log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
+                    log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ",
+                             containerRequest);
                 }
                 chain.doFilter(request, response);
                 return;
@@ -362,16 +396,20 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
                     if (vHosts.matchVirtualHost(requestHostName) != null) {
                         log.debug("Request host '{}' is legit since can be matched in the site model", requestHostName);
-                    } else if (HstRequestUtils.getPlatformHstModel().getVirtualHosts().matchVirtualHost(requestHostName) != null) {
-                        log.debug("Request host '{}' is legit since can be matched in the platform model", requestHostName);
+                    } else if (HstRequestUtils.getPlatformHstModel().getVirtualHosts().matchVirtualHost(requestHostName)
+                               != null) {
+                        log.debug("Request host '{}' is legit since can be matched in the platform model",
+                                  requestHostName);
                     } else {
                         // There are several causes why this might happen:
                         // - hst host and reverse proxy configuration mismatch
                         // - forwarded host header spoofing (either by a developer or a malicious attacker)
-                        log.warn("Request host '{}' for {} does not match any virtual host, skip hst request processing " +
-                                        "and return status {} (NOT_FOUND) now. To avoid this 404, eg in case " +
-                                        "If X-Forwarded-Host spoofing most be supported, set site webapp hst-config " +
-                                        "property 'x.forwarded.host.spoofing.protection = false'",
+                        log.warn(
+                                "Request host '{}' for {} does not match any virtual host, skip hst request processing "
+                                +
+                                "and return status {} (NOT_FOUND) now. To avoid this 404, eg in case " +
+                                "If X-Forwarded-Host spoofing most be supported, set site webapp hst-config " +
+                                "property 'x.forwarded.host.spoofing.protection = false'",
                                 requestHostName, containerRequest, HttpServletResponse.SC_NOT_FOUND);
                         res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                         return;
@@ -394,7 +432,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 // we are dealing with client side redirect from the container after JAAS login. This redirect typically
                 // fails in case of proxy taking care of the hippoWebappContext path in front of the application.
                 // hence we need another redirect.
-                String resourceURL = (String)session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                String resourceURL = (String) session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
                 session.removeAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
                 session.removeAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN);
                 log.debug("Redirect {} to '{}'", containerRequest, resourceURL);
@@ -404,7 +442,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
 
-            HstMutableRequestContext requestContext = (HstMutableRequestContext) containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            HstMutableRequestContext requestContext =
+                    (HstMutableRequestContext) containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 
             if (requestContext == null) {
                 requestContext = requestContextComponent.create();
@@ -414,7 +453,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             requestContext.setServletRequest(containerRequest);
             requestContext.setServletResponse(res);
             requestContext.setPathSuffix(containerRequest.getPathSuffix());
-
 
             if (BooleanUtils.toBoolean(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
                 requestContext.setFullyQualifiedURLs(true);
@@ -454,7 +492,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 requestContext.setPageModelApiRequest(true);
             }
 
-
             log.debug("{} matched to mount '{}'", containerRequest, resolvedMount.getMount());
 
             // sets filterChain for ValveContext to be able to retrieve...
@@ -462,7 +499,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             setHstServletPath(containerRequest, resolvedMount);
             HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
 
-            if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)) {
+            if (channelManagerPreviewRequest) {
                 requestContext.setRenderHost(renderingHost);
                 if (!authenticated) {
                     res.sendError(SC_UNAUTHORIZED);
@@ -471,39 +508,80 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 }
 
                 requestContext.setChannelManagerPreviewRequest();
+            }
 
+            // making the request a preview
+            if (channelManagerPreviewRequest || isExternalPreview) {
                 if (resolvedMount instanceof MutableResolvedMount) {
                     Mount undecoratedMount = resolvedMount.getMount();
                     if (!(undecoratedMount instanceof ContextualizableMount)) {
-                        String msg = String.format("The matched mount for request '%s' is not an instanceof of a ContextualizableMount. " +
-                                "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.", containerRequest);
+                        String msg =
+                                format("The matched mount for request '%s' is not an instanceof of a ContextualizableMount. "
+                                       +
+                                       "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.",
+                                       containerRequest);
                         throw new MatchException(msg);
                     }
                     Mount decoratedMount = previewDecorator.decorateMountAsPreview(undecoratedMount);
                     if (decoratedMount == undecoratedMount) {
-                        log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO hippoWebappContext to decorate the mount to a preview", undecoratedMount.getMountPoint());
+                        log.debug(
+                                "Matched mount pointing to site '{}' is already a preview so no need for CMS SSO hippoWebappContext to decorate the mount to a preview",
+                                undecoratedMount.getMountPoint());
                     } else {
-                        log.debug("Matched mount pointing to site '{}' is because of CMS SSO hippoWebappContext replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
+                        log.debug(
+                                "Matched mount pointing to site '{}' is because of CMS SSO hippoWebappContext replaced by preview decorated mount pointing to site '{}'",
+                                undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
                     }
                     ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
                 } else {
-                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
+                    throw new MatchException(
+                            "ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for "
+                            + hostName + " and " + containerRequest.getRequestURI());
+                }
+            }
+
+            final HstSite hstSite = resolvedMount.getMount().getHstSite();
+
+            if (isExternalPreview && hstSite instanceof CompositeHstSite) {
+                final Map<String, HstSite> siteBranches = ((CompositeHstSite) hstSite).getBranches();
+                boolean tokenMatchingFound = false;
+                for (String branchId : siteBranches.keySet()) {
+                    final HstSite branchSite = siteBranches.get(branchId);
+                    final Channel channel = branchSite.getChannel();
+                    if (channel != null) {
+                        // token cannot be null if 'isExternalPreview'
+                        if (channel.isExternalPreviewEnabled() && token.equals(channel.getExternalPreviewToken())) {
+                            tokenMatchingFound = true;
+                            requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, branchId); // use PREFER_RENDER_BRANCH_ID
+                        }
+                    }
                 }
 
-                final HstSite hstSite = resolvedMount.getMount().getHstSite();
-                // if there is is not an access token on the request AND if the request is not for the Page Model API
-                // and there is a preview URL configured on the Channel, then we should redirect to this URL including
-                // a token
-                if (hstSite != null && hstSite.getChannel() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null
-                        && !requestContext.isPageModelApiRequest()) {
-
-                    final Channel channel = hstSite.getChannel();
-                    if (channel.getSpaUrl() != null) {
-
-                        doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(),
-                                channel.getSpaUrl(), resolvedMount.getMount());
+                //If token is not found in any of the branches, check if it exists in core channel
+                if (!tokenMatchingFound) {
+                    final Channel channel = ((CompositeHstSite) hstSite).getMaster().getChannel();
+                    if (channel.isExternalPreviewEnabled() && token.equals(channel.getExternalPreviewToken())) {
+                        requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, MASTER_BRANCH_ID);
+                    } else {
+                        log.debug("Token {} was not found for either master or branched site", token);
+                        sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                         return;
                     }
+                }
+            }
+
+            // if there is is not an access token on the request AND if the request is not for the Page Model API
+            // and there is a preview URL configured on the Channel, then we should redirect to this URL including
+            // a token
+            if (hstSite != null && hstSite.getChannel() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null
+                && !requestContext.isPageModelApiRequest()) {
+
+                final Channel channel = hstSite.getChannel();
+                if (channel.getSpaUrl() != null) {
+
+                    doRedirectPreviewURL(req, res, hstContainerUrl.getPathInfo(), hstContainerUrl.getParameterMap(),
+                                         channel.getSpaUrl(), resolvedMount.getMount());
+                    return;
                 }
             }
 
@@ -1148,5 +1226,19 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         return null;
     }
+
+    /**
+     * <p>
+     *     If the token complies to a UUID format, the functional idea is that the token then is not a real
+     *     authentication/authorization token but a public preview token : the preview is only hidden by obfuscation,
+     *     no real authentication
+     * </p>
+     * @param token input token
+     * @return {@code true} if the token has a 'external preview token' format
+     */
+    private boolean isExternalPreviewToken(final String token) {
+        return StringUtils.isNotBlank(token) && UUID_PATTERN.matcher(token).matches();
+    }
+
 
 }
