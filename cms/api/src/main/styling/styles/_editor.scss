@@ -424,6 +424,17 @@
   right: 0;
   top: 0;
 
+  &.hippo-editor-field-subfield-controls-float {
+    background-color: $white;
+    border: 1px solid $lighter-shade;
+    border-radius: 4px;
+    display: flex;
+    gap: 8px;
+    padding: 2px 10px;
+    top: 6px;
+    box-shadow: 0 2px 4px 0 #00000040;
+  }
+
   .hippo-editor-field-subfield:hover > & {
     opacity: 1;
   }
