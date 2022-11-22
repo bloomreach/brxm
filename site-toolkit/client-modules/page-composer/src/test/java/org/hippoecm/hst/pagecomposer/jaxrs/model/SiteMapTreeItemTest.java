@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -62,10 +62,10 @@ public class SiteMapTreeItemTest {
 
         {
             List<String> childPathInfos = getChildPathInfos(rootItem);
-            assertThat(childPathInfos).containsExactly("/news", "/about", "/contact");
+            assertThat(childPathInfos).containsExactly("/about", "/contact", "/news");
 
             List<String> childNames = getChildNames(rootItem);
-            assertThat(childNames).containsExactly("News", "About", "Contact");
+            assertThat(childNames).containsExactly("About", "Contact", "News");
         }
 
         {
@@ -99,15 +99,15 @@ public class SiteMapTreeItemTest {
 
         {
             List<String> childPathInfos = getChildPathInfos(rootItem);
-            assertThat(childPathInfos).containsExactly("news", "about", "contact");
+            assertThat(childPathInfos).containsExactly("about", "contact", "news");
 
             List<String> childNames = getChildNames(rootItem);
-            assertThat(childNames).containsExactly("News", "About", "Contact");
+            assertThat(childNames).containsExactly("About", "Contact", "News");
         }
 
         {
             List<String> childPathInfos = getChildRenderPathInfos(rootItem);
-            assertThat(childPathInfos).containsExactly("/foo/news", "/foo/about", "/foo/contact");
+            assertThat(childPathInfos).containsExactly("/foo/about", "/foo/contact", "/foo/news");
         }
 
         {
@@ -136,7 +136,7 @@ public class SiteMapTreeItemTest {
             // pathInfo for 'news' and 'contact' should be null since no URL for those
 
             List<String> childNames = getChildNames(siteMapTreeItem);
-            assertThat(childNames).containsExactly("news", "contact");
+            assertThat(childNames).containsExactly("contact", "news");
 
             List<String> childPathInfos = getChildPathInfos(siteMapTreeItem);
             assertThat(childPathInfos).containsExactly(null, null);
@@ -176,7 +176,7 @@ public class SiteMapTreeItemTest {
 
         // make sure children are loaded as normal
         List<String> childNames = getChildNames(siteMapTreeItem);
-        assertThat(childNames).containsExactly("News", "contact");
+        assertThat(childNames).containsExactly("contact", "News");
     }
 
 

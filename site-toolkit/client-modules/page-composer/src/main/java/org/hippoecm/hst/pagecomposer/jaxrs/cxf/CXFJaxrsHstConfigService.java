@@ -268,6 +268,11 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         }
 
         @Override
+        public Object getSiteMapConfigurationIdentity(final String configurationPath) {
+            return delegatee.getSiteMapConfigurationIdentity(configurationPath);
+        }
+
+        @Override
         public String getConfigurationRootPath() {
             return delegatee.getConfigurationRootPath();
         }

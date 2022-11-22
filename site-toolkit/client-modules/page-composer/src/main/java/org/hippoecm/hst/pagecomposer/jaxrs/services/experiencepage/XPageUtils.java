@@ -42,6 +42,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
@@ -110,14 +111,20 @@ public class XPageUtils {
     }
 
     public static boolean isXPageDocument(final Node node) {
-        final Optional<Node> unpublished = WorkflowUtils.getDocumentVariantNode(node, WorkflowUtils.Variant.UNPUBLISHED);
-        if (!unpublished.isPresent()) {
-            return false;
-        }
-
         try {
-            return unpublished.get().isNodeType(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN);
+
+            final Node variant = WorkflowUtils.getDocumentVariantNode(node, UNPUBLISHED).orElse(
+                    WorkflowUtils.getDocumentVariantNode(node, WorkflowUtils.Variant.PUBLISHED).orElse(
+                            WorkflowUtils.getDocumentVariantNode(node, WorkflowUtils.Variant.DRAFT).orElse(null)
+                    )
+            );
+            if (variant == null) {
+                return false;
+            }
+            return variant.isNodeType(HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN);
+
         } catch (RepositoryException e) {
+            log.error("Exception while checking '{}' for being an XPage document", JcrUtils.getNodePathQuietly(node), e);
             return false;
         }
     }

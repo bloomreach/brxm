@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,4 +30,16 @@ public interface InternalHstModel extends HstModel {
     ChannelManager getChannelManager();
 
     void invalidate();
+
+    /**
+     * <p>
+     *     Returns the same Object instance as long as the jcr nodes for the HST SiteMap belonging to the mount having
+     *     configuration at {@code configurationPath} is backed by the same JCR Nodes. Note that also inherited HST
+     *     configurations (like hst:default) must be taken into account
+     * </p>
+     * @param configurationPath path to an hst:configuration node
+     * @return an object which can be used for caching purposes
+     */
+
+    Object getSiteMapConfigurationIdentity(final String configurationPath);
 }

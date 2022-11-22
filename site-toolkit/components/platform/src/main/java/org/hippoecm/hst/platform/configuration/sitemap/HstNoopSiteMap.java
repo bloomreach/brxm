@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2021 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package org.hippoecm.hst.platform.configuration.sitemap;
 import java.util.Collections;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.internal.InternalHstSiteMap;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
-public class HstNoopSiteMap implements HstSiteMap {
+public class HstNoopSiteMap implements InternalHstSiteMap {
 
     private final HstSite hstSite;
 
@@ -56,4 +56,18 @@ public class HstNoopSiteMap implements HstSiteMap {
         return null;
     }
 
+    @Override
+    public String getCanonicalIdentifier() {
+        return null;
+    }
+
+    @Override
+    public String getCanonicalPath() {
+        return null;
+    }
+
+    @Override
+    public boolean isWorkspaceConfiguration() {
+        return false;
+    }
 }

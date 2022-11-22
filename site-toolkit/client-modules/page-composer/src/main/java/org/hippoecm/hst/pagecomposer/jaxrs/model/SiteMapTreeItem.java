@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 public class SiteMapTreeItem {
 
@@ -30,8 +33,14 @@ public class SiteMapTreeItem {
     // mountPath + sitemap item path = renderPathInfo
     private String renderPathInfo;
     private boolean experiencePage;
+    private boolean expandable;
 
-    private final LinkedHashMap<String, SiteMapTreeItem> children = new LinkedHashMap<>();
+    /**
+     * <p>
+     * We need a sorted map based in the pathInfo elements which are the keys
+     * </p>
+     */
+    private final SortedMap<String, SiteMapTreeItem> children = new TreeMap<>();
 
     // no sorting needed: we keep the order of siteMapPagesRepresentation.getPages()
     public static SiteMapTreeItem transform(final SiteMapPagesRepresentation siteMapPagesRepresentation) {
@@ -54,6 +63,7 @@ public class SiteMapTreeItem {
                 root.name = page.getName();
                 root.pageTitle = page.getPageTitle();
                 root.experiencePage = page.isExperiencePage();
+                root.expandable = page.isExpandable();
                 return;
             }
 
@@ -66,24 +76,26 @@ public class SiteMapTreeItem {
             SiteMapTreeItem next;
             int total = elements.length;
             // skip i = 0 since pathInfo always starts with '/' so first element is ""
-            int start =  page.getPathInfo().startsWith("/") ? 1 : 0;
+            int start = page.getPathInfo().startsWith("/") ? 1 : 0;
             for (int i = start; i < total; i++) {
                 final String itemId = elements[i];
                 next = current.children.get(itemId);
                 if (next == null) {
                     // if last element, create SiteMapTreeItem for 'page', if not last element, create a
                     // structural place holder SiteMapTreeItem and continue
-                    if (i == total - 1 ) {
+                    if (i == total - 1) {
                         // last element
                         current.children.put(itemId, new SiteMapTreeItem(itemId, page));
+                        current.expandable = true;
                     } else {
                         // structural element
                         SiteMapTreeItem siteMapTreeItem = new SiteMapTreeItem(itemId);
                         current.children.put(itemId, siteMapTreeItem);
+                        current.expandable = true;
                         current = siteMapTreeItem;
                     }
                 } else {
-                    if (i == total - 1 ) {
+                    if (i == total - 1) {
                         // last element
                         // this item might have been added earlier as structural, now set the pathInfo, title, etc
                         next.id = itemId;
@@ -92,6 +104,7 @@ public class SiteMapTreeItem {
                         next.pathInfo = page.getPathInfo();
                         next.renderPathInfo = page.getRenderPathInfo();
                         next.experiencePage = page.isExperiencePage();
+                        next.expandable = page.isExpandable();
                     } else {
                         current = next;
                     }
@@ -108,13 +121,39 @@ public class SiteMapTreeItem {
         this.name = name;
     }
 
-    private SiteMapTreeItem(final String id, final SiteMapPageRepresentation siteMapPageRepresentation) {
+    public SiteMapTreeItem(final SiteMapPageRepresentation siteMapPageRepresentation) {
+        this(getIdFromPathInfo(siteMapPageRepresentation.getPathInfo()), siteMapPageRepresentation);
+    }
+
+    public SiteMapTreeItem(final String id, final SiteMapPageRepresentation siteMapPageRepresentation) {
         this.id = id;
         this.name = siteMapPageRepresentation.getName();
         this.pageTitle = siteMapPageRepresentation.getPageTitle();
         this.pathInfo = siteMapPageRepresentation.getPathInfo();
         this.renderPathInfo = siteMapPageRepresentation.getRenderPathInfo();
         this.experiencePage = siteMapPageRepresentation.isExperiencePage();
+        this.expandable = siteMapPageRepresentation.isExpandable();
+    }
+
+    public SiteMapTreeItem(final String id, final String name, final String pageTitle, final String pathInfo,
+                           final String renderPathInfo, final boolean experiencePage, final boolean expandable) {
+        this.id = id;
+        this.name = name;
+        this.pageTitle = pageTitle;
+        this.pathInfo = pathInfo;
+        this.renderPathInfo = renderPathInfo;
+        this.experiencePage = experiencePage;
+        this.expandable = expandable;
+    }
+
+    private static String getIdFromPathInfo(final String pathInfo) {
+        if (StringUtils.isEmpty(pathInfo)) {
+            return "/";
+        }
+        if (pathInfo.contains("/")) {
+            return StringUtils.substringAfterLast(pathInfo, "/");
+        }
+        return pathInfo;
     }
 
     public String getId() {
@@ -141,7 +180,42 @@ public class SiteMapTreeItem {
         return experiencePage;
     }
 
+    public boolean isExpandable() {
+        return expandable;
+    }
+
     public Collection<SiteMapTreeItem> getChildren() {
         return children.values();
+    }
+
+    public SiteMapTreeItem getChild(final String id) {
+        return children.get(id);
+    }
+
+    public void addOrReplaceChild(SiteMapTreeItem child) {
+        children.put(child.getId(), child);
+    }
+
+    public void removeChildren() {
+        children.clear();
+    }
+
+    public void setExpandable(final boolean expandable) {
+        this.expandable = expandable;
+    }
+
+    /**
+     * <p>
+     *     A copy (new instance) of this {@link SiteMapTreeItem} only with descendants below its direct children removed
+     * </p>>
+     */
+    public SiteMapTreeItem shallowClone() {
+
+        final SiteMapTreeItem shallowClone = new SiteMapTreeItem(id, name, pageTitle, pathInfo, renderPathInfo, experiencePage, expandable);
+        getChildren().forEach(
+                child -> shallowClone.addOrReplaceChild(new SiteMapTreeItem(child.id, child.name, child.pageTitle, child.pathInfo,
+                        child.renderPathInfo, child.experiencePage, child.expandable))
+        );
+        return shallowClone;
     }
 }

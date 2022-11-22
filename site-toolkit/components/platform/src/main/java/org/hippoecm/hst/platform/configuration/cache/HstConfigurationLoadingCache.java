@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,9 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
     private WeakTaggedCache<List<UUID>, HstComponentsConfiguration, String> componentsConfigurationCache = new WeakTaggedCache<>();
     private WeakTaggedCache<List<UUID>, HstSiteMapItemHandlersConfiguration, String> siteMapItemHandlerConfigurationCache = new WeakTaggedCache<>();
 
+
+    private WeakTaggedCache<List<UUID>, Object, String> siteMapMutatedObjectIdentity = new WeakTaggedCache<>();
+
     private final HstNodeLoadingCache hstNodeLoadingCache;
     private final String rootConfigurationsPrefix;
     private final String commonCatalogPath;
@@ -97,6 +100,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             previewChannelsCache.evictKeysByTag(eventPath);
             componentsConfigurationCache.evictKeysByTag(eventPath);
             siteMapItemHandlerConfigurationCache.evictKeysByTag(eventPath);
+            siteMapMutatedObjectIdentity.evictKeysByTag(eventPath);
         }
     }
 
@@ -240,6 +244,35 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         componentsConfigurationCache.put(cachekey, hstComponentsConfiguration, events.toArray(new String[events.size()]));
 
         return hstComponentsConfiguration;
+    }
+
+    /**
+     * <p>
+     *     Returns a unique Object instance representing the HST SiteMap for the channel belonging to
+     *     {@code configurationPath} : note that also inherited sitemap configs like from hst:default are taken into
+     *     account
+     * </p>
+     */
+    public synchronized Object getSiteMapConfigurationIdentity(final String configurationPath) throws ModelLoadingException {
+
+        final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath,
+                HstNodeTypes.NODENAME_HST_SITEMAP);
+
+        List<UUID> cachekey = ccn.getCacheKey();
+
+        Object identity = siteMapMutatedObjectIdentity.get(cachekey);
+        if (identity != null) {
+            // sitemap identity is same as previous request for sitemap identity of 'configurationPath'
+            return identity;
+        }
+
+        identity = new Object();
+
+        final List<String> events = ccn.getCompositeConfigurationDependencyPaths();
+
+        siteMapMutatedObjectIdentity.put(cachekey, identity, events.toArray(new String[events.size()]));
+
+        return identity;
     }
 
     public synchronized HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration(final String configurationPath,
