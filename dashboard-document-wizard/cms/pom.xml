@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2022 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -54,9 +54,21 @@
       <artifactId>hippo-plugin-selections-addon-cms</artifactId>
     </dependency>
 
+    <!-- testng brings in an older version of snakeyaml -->
     <dependency>
       <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
+      <artifactId>testng</artifactId>      <exclusions>
+      <exclusion>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+      </exclusion>
+    </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
     </dependency>
 
   </dependencies>
