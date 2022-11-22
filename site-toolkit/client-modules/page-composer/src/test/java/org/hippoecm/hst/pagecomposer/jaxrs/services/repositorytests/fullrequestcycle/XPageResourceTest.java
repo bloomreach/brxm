@@ -392,7 +392,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
 
         try {
             xpageWithoutCoreHandle = JcrUtils.copy(handle, "xpageDocWithoutCore", handle.getParent());
-
+            xpageWithoutCoreHandle.getProperty(HippoNodeType.HIPPO_NAME).remove();
+            xpageWithoutCoreHandle.removeMixin(HippoNodeType.NT_NAMED);
             final Session session = handle.getSession();
             xpageWithoutCoreHandle.addMixin(NT_HIPPO_VERSION_INFO);
             xpageWithoutCoreHandle.setProperty(HIPPO_BRANCHES_PROPERTY, new String[]{"foo"});
@@ -426,6 +427,8 @@ public class XPageResourceTest extends AbstractXPageComponentResourceTest {
         Node xpageWithoutCoreHandle = null;
         try {
             xpageWithoutCoreHandle = JcrUtils.copy(handle, "xpageDocWithoutCore", handle.getParent());
+            xpageWithoutCoreHandle.getProperty(HippoNodeType.HIPPO_NAME).remove();
+            xpageWithoutCoreHandle.removeMixin(HippoNodeType.NT_NAMED);
             final Session session = handle.getSession();
             xpageWithoutCoreHandle.addMixin(NT_HIPPO_VERSION_INFO);
             xpageWithoutCoreHandle.setProperty(HIPPO_BRANCHES_PROPERTY, new String[]{"bar"});

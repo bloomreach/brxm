@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2020 Bloomreach
+  Copyright 2010-2022 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -192,6 +192,13 @@
     <property name="templateHelper" ref="templateHelper"/>
   </bean>
 
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource" class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource" parent="abstractConfigResource">
+    <property name="siteMapHelper" ref="siteMapHelper"/>
+    <property name="validatorFactory" ref="validatorFactory"/>
+    <property name="hideXPages" value="${channelmanager.sitemap.hide.xpages:false}"/>
+    <property name="xPageSiteMapRepresentationService" ref="org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapRepresentationService"/>
+  </bean>
+
   <bean id="jaxrsHstConfigCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/"/>
     <property name="providers">
@@ -244,11 +251,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource" parent="abstractConfigResource">
-              <property name="siteMapHelper" ref="siteMapHelper"/>
-              <property name="validatorFactory" ref="validatorFactory"/>
-              <property name="hideXPages" value="${channelmanager.sitemap.hide.xpages:false}"/>
-            </bean>
+            <ref bean="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
@@ -400,5 +403,11 @@
     </property>
   </bean>
 
-</beans>
+  <bean id="org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapRepresentationService"
+        class="org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapRepresentationService" destroy-method="destroy" init-method="init">
+    <property name="repository" ref="javax.jcr.Repository.delegating"/>
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+    <property name="rootContentPath" value="${hst.contentRoot:/content}"/>
+  </bean>
 
+</beans>

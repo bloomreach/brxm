@@ -48,6 +48,26 @@ public class SiteMapPageRepresentation {
     private String relativeContentPath;
     // flag to indicate whether this 'sitemap page' (not a real sitemap page) is the result of an experience page or not
     private boolean experiencePage;
+    private boolean expandable;
+
+    public static SiteMapPageRepresentation structural(final String pathInfo, final boolean expandable) {
+        final SiteMapPageRepresentation structural = new SiteMapPageRepresentation();
+        structural.pathInfo = pathInfo;
+        structural.id = getIdFromPathInfo(pathInfo);
+        structural.name = structural.id;
+        structural.expandable = expandable;
+        return structural;
+    }
+
+    private static String getIdFromPathInfo(final String pathInfo) {
+        if (StringUtils.isEmpty(pathInfo)) {
+            return "/";
+        }
+        if (pathInfo.contains("/")) {
+            return StringUtils.substringAfterLast(pathInfo, "/");
+        }
+        return pathInfo;
+    }
 
     public SiteMapPageRepresentation represent(final HstSiteMapItem item,
                                                final String parentId,
@@ -86,6 +106,13 @@ public class SiteMapPageRepresentation {
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
         inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
         relativeContentPath = item.getRelativeContentPath();
+
+        // homepage "/" we make by default expandable
+        expandable = pathInfo.equals("/") ||  item.getChildren().stream()
+                .filter(child -> SiteMapPagesRepresentation.isIncludedSitemapItem(child))
+                .findAny()
+                .isPresent();
+
         return this;
     }
 
@@ -93,30 +120,10 @@ public class SiteMapPageRepresentation {
         id = handleNode.getIdentifier();
         parentId = handleNode.getParent().getIdentifier();
 
-        final String path = hstLink.getPath();
-        if (StringUtils.isEmpty(path)) {
-            name = handleNode.getName();
-        } else if (path.contains("/")) {
-            name = substringAfterLast(path, "/");
-        } else {
-            name = path;
-        }
+        name = getName(hstLink, handleNode);
 
-        if (hstLink.representsIndex()) {
-            final HstSiteMapItem indexItem = hstLink.getHstSiteMapItem().getChild(INDEX);
-            if (indexItem != null && substringAfterLast(indexItem.getRelativeContentPath(), "/").equals(((HippoNode)handleNode).getDisplayName())) {
-                // the 'index' document its display name is the same as the path in the relative content path for the
-                // sitemap item: this means that the pageTitle is typically something like 'index'. In this case, do not
-                // use the display name from the index document but instead fallback to the folder display name as this
-                // makes more sense than having eg 'index' as pageTitle for the 'folder' in the SiteMap tree
+        pageTitle = getPageTitle(hstLink, handleNode);
 
-                pageTitle = ((HippoNode) handleNode.getParent()).getDisplayName();
-            } else{
-                pageTitle = ((HippoNode)handleNode).getDisplayName();
-            }
-        } else {
-            pageTitle = ((HippoNode)handleNode).getDisplayName();
-        }
         // from the pathInfo, remove the 'Mount path part' just like SiteMapPageRepresentation for a sitemap item above
         final Mount mount = hstLink.getMount();
         pathInfo = hstLink.getPath();
@@ -129,6 +136,36 @@ public class SiteMapPageRepresentation {
         experiencePage = XPageUtils.isXPageDocument(handleNode);
         return this;
     }
+
+    public static String getName(final HstLink hstLink, final Node handleNode) throws RepositoryException {
+        final String path = hstLink.getPath();
+        if (StringUtils.isEmpty(path)) {
+            return handleNode.getName();
+        } else if (path.contains("/")) {
+            return substringAfterLast(path, "/");
+        } else {
+            return path;
+        }
+    }
+
+    public static String getPageTitle(final HstLink hstLink, final Node handleNode) throws RepositoryException {
+        if (hstLink.representsIndex()) {
+            final HstSiteMapItem indexItem = hstLink.getHstSiteMapItem().getChild(INDEX);
+            if (indexItem != null && substringAfterLast(indexItem.getRelativeContentPath(), "/").equals(((HippoNode) handleNode).getDisplayName())) {
+                // the 'index' document its display name is the same as the path in the relative content path for the
+                // sitemap item: this means that the pageTitle is typically something like 'index'. In this case, do not
+                // use the display name from the index document but instead fallback to the folder display name as this
+                // makes more sense than having eg 'index' as pageTitle for the 'folder' in the SiteMap tree
+
+                return ((HippoNode) handleNode.getParent()).getDisplayName();
+            } else{
+                return ((HippoNode) handleNode).getDisplayName();
+            }
+        } else {
+            return ((HippoNode) handleNode).getDisplayName();
+        }
+    }
+
 
     public String getId() {
         return id;
@@ -216,5 +253,13 @@ public class SiteMapPageRepresentation {
 
     public void setExperiencePage(final boolean experiencePage) {
         this.experiencePage = experiencePage;
+    }
+
+    public boolean isExpandable() {
+        return expandable;
+    }
+
+    public void setExpandable(final boolean expandable) {
+        this.expandable = expandable;
     }
 }

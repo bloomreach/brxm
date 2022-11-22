@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -35,6 +37,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -71,18 +74,30 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapTreeItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.NotNullValidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapRepresentationService;
+import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapShallowItem;
+import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapTreeItem;
+import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapTreeItemUtils;
+import org.hippoecm.hst.platform.configuration.sitemap.HstNoopSiteMap;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_XPAGE_MIXIN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
@@ -90,7 +105,6 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailab
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.getDocumentRepresentationHstConfigUser;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
-import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAP + "/")
@@ -102,6 +116,7 @@ public class SiteMapResource extends AbstractConfigResource {
     private SiteMapHelper siteMapHelper;
     private ValidatorFactory validatorFactory;
     private boolean hideXPages;
+    private XPageSiteMapRepresentationService xPageSiteMapRepresentationService;
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
@@ -115,6 +130,10 @@ public class SiteMapResource extends AbstractConfigResource {
         this.hideXPages = hideXPages;
     }
 
+    public void setxPageSiteMapRepresentationService(final XPageSiteMapRepresentationService xPageSiteMapRepresentationService) {
+        this.xPageSiteMapRepresentationService = xPageSiteMapRepresentationService;
+    }
+
     @GET
     @Path("/mount")
     @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
@@ -126,6 +145,392 @@ public class SiteMapResource extends AbstractConfigResource {
                 return ok("Hostname loaded successfully", new MountRepresentation().represent(mount));
             }
         });
+    }
+
+    @GET
+    @Path("/sitemapitem")
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
+    public Response getSiteMapShallowItem(final @Context HttpServletRequest request) {
+        return getSiteMapShallowItem(request, EMPTY, false);
+    }
+
+    @GET
+    @Path("/sitemapitem/{pathInfo: .*}")
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
+    public Response getSiteMapShallowItem(final @Context HttpServletRequest request,
+                                          final @PathParam("pathInfo") String pathInfo,
+                                          final @QueryParam("ancestry") boolean ancestry) {
+        return tryGet(() -> {
+            final String normalizedPathInfo = PathUtils.normalizePath(pathInfo);
+            final Mount editingPreviewMount = getPageComposerContextService().getEditingMount();
+            final HstSiteMap siteMap = editingPreviewMount.getHstSite().getSiteMap();
+
+            final XPageSiteMapTreeItem xPageSiteMapTreeItem = getSharedXPageSiteMapTreeItem(editingPreviewMount, siteMap);
+
+            final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(request.getSession());
+
+            final SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
+
+            final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
+
+            SiteMapTreeItem siteMapTreeItem;
+
+            if (ancestry && StringUtils.isNotEmpty(normalizedPathInfo)) {
+                SiteMapTreeItem requestedItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+                if (requestedItem != null) {
+                    siteMapTreeItem = getShallowSiteMapTreeItemForXPages(EMPTY, xPageSiteMapTreeItem, previewSecurityDelegate);
+
+                    final String[] split = normalizedPathInfo.split("/");
+                    SiteMapTreeItem currentLevel = siteMapTreeItem;
+                    String nextPathInfo = null;
+                    for (String pathElement : split) {
+                        nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                        final SiteMapTreeItem nextLevel;
+                        if (nextPathInfo == normalizedPathInfo) {
+                            // already loaded
+                            nextLevel = requestedItem;
+                        } else {
+                            nextLevel = getShallowSiteMapTreeItemForXPages(nextPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+                        }
+                        if (nextLevel == null) {
+                            break;
+                        }
+                        // merge the next level into currentLevel
+                        currentLevel.addOrReplaceChild(nextLevel);
+                        currentLevel = nextLevel;
+                    }
+                } else {
+                    siteMapTreeItem = null;
+                }
+
+            } else {
+                siteMapTreeItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+            }
+
+            // MERGE HST sitemap routes
+            // try to get it from the HST routes (sitemap)
+
+            final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
+                    editingPreviewMount, getPreviewConfigurationPath());
+
+            final SiteMapTreeItem routes = SiteMapTreeItem.transform(pages);
+
+            // no XPage document matched for normalizedPathInfo, check sitemap
+            if (siteMapTreeItem == null) {
+
+                if (StringUtils.isEmpty(normalizedPathInfo)) {
+                    // the root item
+                    siteMapTreeItem = routes.shallowClone();
+                } else {
+                    if (ancestry) {
+                        if (!getShallowSiteMapTreeItem(normalizedPathInfo, routes).isPresent()) {
+                            throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
+                        }
+                        final Optional<SiteMapTreeItem> routesRoot = getShallowSiteMapTreeItem(EMPTY, routes);
+                        if (!routesRoot.isPresent()) {
+                            throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
+                        }
+                        siteMapTreeItem = siteMapTreeItem == null ? routesRoot.get() : siteMapTreeItem;
+                        final String[] split = normalizedPathInfo.split("/");
+                        SiteMapTreeItem currentLevel = siteMapTreeItem;
+                        String nextPathInfo = null;
+                        for (String pathElement : split) {
+                            if (EMPTY.equals(pathElement)) {
+                                continue;
+                            }
+                            nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                            final Optional<SiteMapTreeItem> nextRoutesLevel = getShallowSiteMapTreeItem(nextPathInfo, routes);
+                            if (!nextRoutesLevel.isPresent()) {
+                                break;
+                            }
+                            // merge the next level into currentLevel
+                            currentLevel.addOrReplaceChild(nextRoutesLevel.get());
+                            currentLevel = currentLevel.getChild(nextRoutesLevel.get().getId());
+                        }
+                    } else {
+                        final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(normalizedPathInfo, routes);
+                        if (!routesItem.isPresent()) {
+                            throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
+                        }
+                        siteMapTreeItem = routesItem.get().shallowClone();
+                    }
+                }
+
+            } else {
+                if (ancestry) {
+                    final Optional<SiteMapTreeItem> routesRoot = getShallowSiteMapTreeItem(EMPTY, routes);
+                    if (routesRoot.isPresent()) {
+                        // merge routesRoot children into siteMapTreeItem
+                        mergeChildren(siteMapTreeItem, routesRoot.get());
+
+                        final String[] split = normalizedPathInfo.split("/");
+                        SiteMapTreeItem currentLevel = siteMapTreeItem;
+
+                        String nextPathInfo = null;
+                        for (String pathElement : split) {
+                            if (EMPTY.equals(pathElement)) {
+                                continue;
+                            }
+                            nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                            final Optional<SiteMapTreeItem> nextRoutesLevel = getShallowSiteMapTreeItem(nextPathInfo, routes);
+
+                            if (!nextRoutesLevel.isPresent()) {
+                                break;
+                            }
+                            // merge the next level into currentLevel
+                            if (currentLevel.getChild(nextRoutesLevel.get().getId()) == null) {
+                                currentLevel.addOrReplaceChild(nextRoutesLevel.get());
+                                // in case the xpagesBasedItem was not yet expandable, mark it to be so now
+                                currentLevel.setExpandable(true);
+                            } else {
+                                mergeChildren(currentLevel, nextRoutesLevel.get());
+                            }
+                            currentLevel = currentLevel.getChild(nextRoutesLevel.get().getId());
+                        }
+                    }
+                } else {
+                    final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(normalizedPathInfo, routes);
+                    if (routesItem.isPresent()) {
+                        // merge sitemap routes with XPage documents if needed
+                        final SiteMapTreeItem xpagesBasedItem = siteMapTreeItem;
+                        routesItem.get().getChildren().stream().forEach(
+                                routeItem -> {
+                                    if (xpagesBasedItem.getChild(routeItem.getId()) == null) {
+                                        xpagesBasedItem.addOrReplaceChild(routeItem);
+                                        // in case the xpagesBasedItem was not yet expandable, mark it to be so now
+                                        xpagesBasedItem.setExpandable(true);
+                                    }
+                                }
+                        );
+                    }
+                }
+            }
+
+            return ok(format("Item for pathInfo '%s'", pathInfo), siteMapTreeItem);
+        });
+    }
+
+    private void mergeChildren(final SiteMapTreeItem target, final SiteMapTreeItem source) {
+        source.getChildren().stream().forEach(child -> {
+                    if (target.getChild(child.getId()) != null) {
+                        // already present, only inherit expandable if source is expandable
+                        if (source.isExpandable()) {
+                            target.getChild(child.getId()).setExpandable(true);
+                        }
+                    } else {
+                        target.addOrReplaceChild(child);
+                    }
+                }
+        );
+    }
+
+    @Nullable
+    private SiteMapTreeItem getShallowSiteMapTreeItemForXPages(final String pathInfo,
+                                                               final XPageSiteMapTreeItem xPageSiteMapTreeItem,
+                                                               final Session previewSecurityDelegate) throws RepositoryException {
+        final Optional<XPageSiteMapShallowItem> readableItem = XPageSiteMapTreeItemUtils.getReadableItem(xPageSiteMapTreeItem, previewSecurityDelegate, pathInfo);
+
+        SiteMapTreeItem pathInfoItem = null;
+        if (readableItem.isPresent()) {
+            final XPageSiteMapShallowItem pathInfoRoot = readableItem.get();
+            final Optional<SiteMapPageRepresentation> pathInfoRootRepresentation = getSiteMapPageRepresentation(previewSecurityDelegate, pathInfoRoot);
+
+            if (pathInfoRoot.isExpandable()) {
+                final XPageSiteMapShallowItem[] readableChildren = XPageSiteMapTreeItemUtils.getReadableChildren(xPageSiteMapTreeItem, previewSecurityDelegate, pathInfo);
+                pathInfoItem = new SiteMapTreeItem(pathInfoRootRepresentation.get());
+
+                for (XPageSiteMapShallowItem item : readableChildren) {
+
+                    try {
+                        // read access guaranteed because of XPageSiteMapTreeItemUtils.getReadableChildren
+                        final Optional<SiteMapPageRepresentation> siteMapPageRepresentation = getSiteMapPageRepresentation(previewSecurityDelegate, item);
+                        if (siteMapPageRepresentation.isPresent()) {
+                            pathInfoItem.addOrReplaceChild(new SiteMapTreeItem(siteMapPageRepresentation.get()));
+                        }
+                    } catch (Exception e) {
+                        log.warn("Exception while trying to add '{}'. Skipping this sitemap item. Reason : {}", item.getPathInfo(), e.getMessage());
+                    }
+                }
+            } else {
+                pathInfoItem = new SiteMapTreeItem(pathInfoRootRepresentation.get());
+            }
+        }
+        return pathInfoItem;
+    }
+
+    private XPageSiteMapTreeItem getSharedXPageSiteMapTreeItem(final Mount editingPreviewMount, final HstSiteMap routes) {
+        final String siteMapIdentifier = getPageComposerContextService().getRequestConfigIdentifier();
+        if (!(routes instanceof CanonicalInfo)) {
+            throw new IllegalStateException(format("Expected a siteMap instance of type %s", CanonicalInfo.class.getName()));
+        }
+
+        if (!siteMapIdentifier.equals(((CanonicalInfo) routes).getCanonicalIdentifier())) {
+            throw new ClientException(format("Sitemap identifier '%s' does not belong to the currently edited channel '%s'",
+                    siteMapIdentifier, editingPreviewMount.getChannel().getName()), ClientError.UNKNOWN);
+        }
+
+        final XPageSiteMapTreeItem xPageSiteMapTreeItem =
+                xPageSiteMapRepresentationService.getSiteMapTree(editingPreviewMount, HstConfigurationUtils.getPreviewHstModel());
+        return xPageSiteMapTreeItem;
+    }
+
+    @GET
+    @Path("/search")
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
+    public Response filterSiteMap(final @Context HttpServletRequest request, final @QueryParam("fq") String fq) {
+        return tryGet(() -> {
+
+            if (StringUtils.length(fq) < 3) {
+                throw new ClientException("The filter query must as least have 3 chars", ClientError.INVALID_FILTER_QUERY);
+            }
+
+            final Mount mount = getPageComposerContextService().getEditingMount();
+            final HstSiteMap routes = mount.getHstSite().getSiteMap();
+
+            final XPageSiteMapTreeItem xPageSiteMapTreeItem = getSharedXPageSiteMapTreeItem(mount, routes);
+
+            final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(request.getSession());
+
+            final SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
+
+            final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
+
+            final List<SiteMapPageRepresentation> xpages = Stream.concat(Stream.of(xPageSiteMapTreeItem), xPageSiteMapTreeItem.getRandomOrderXPageDescendants().stream())
+                    .filter(item -> {
+                                final String name = item.getName();
+                                final String pageTitle = item.getPageTitle();
+                                return containsIgnoreCase(name, fq) || containsIgnoreCase(pageTitle, fq);
+                            }
+                    )
+                    .map(item -> XPageSiteMapTreeItemUtils.getReadableXPageSiteMapShallowItem(previewSecurityDelegate, item))
+                    .filter(readableItem -> readableItem.isPresent())
+                    .map(readableItem -> readableItem.get())
+                    .map(readableItem -> {
+                        try {
+                            return getSiteMapPageRepresentation(previewSecurityDelegate, readableItem);
+                        } catch (RepositoryException e) {
+                            log.warn("Repository Exception while trying to get SiteMapPageRepresentation for '{}'", readableItem.getAbsoluteJcrPath());
+                            return null;
+                        }
+                    })
+                    .filter(item -> item != null && item.isPresent())
+                    .map(item -> item.get())
+                    .collect(Collectors.toList());
+
+            final List<SiteMapPageRepresentation> routesPages = getFilteredRoutesPages(routes, xPageSiteMapTreeItem, previewSecurityDelegate, mount, getPreviewConfigurationPath(), fq);
+
+            final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation();
+
+            pages.represent(new HstNoopSiteMap(mount.getHstSite()), mount, getPreviewConfigurationPath());
+
+            // always include the homepage
+            routes.getSiteMapItems().stream()
+                    .filter(item -> item.getValue().equals(mount.getHomePage()))
+                    .findAny()
+                    .ifPresent(homePage ->
+                            {
+                                final SiteMapPageRepresentation homePagePresentation = new SiteMapPageRepresentation();
+                                homePagePresentation.represent(homePage, null, mount.getMountPath(),
+                                        HstSiteMapUtils.getPath(mount, mount.getHomePage()),
+                                        getPreviewConfigurationPath());
+
+                                pages.getPages().add(homePagePresentation);
+                            }
+                    );
+
+
+            pages.getPages().addAll(routesPages);
+
+            // xpages and sitemap routes can have overlapping result
+            final List<SiteMapPageRepresentation> filteredDuplicates = filterDuplicates(pages, xpages);
+
+            pages.getPages().addAll(filteredDuplicates);
+
+            // sort now the XPage have been added again on pathInfo
+            Collections.sort(pages.getPages(), Comparator.comparing(SiteMapPageRepresentation::getPathInfo));
+
+            return ok("Search result successfully", SiteMapTreeItem.transform(pages));
+
+        });
+    }
+
+    private List<SiteMapPageRepresentation> getFilteredRoutesPages(final HstSiteMap routes,
+                                                                   final XPageSiteMapTreeItem root,
+                                                                   final Session userSession,
+                                                                   final Mount mount,
+                                                                   final String previewConfigurationPath, final String fq) {
+        final List<SiteMapPageRepresentation> populate = new ArrayList<>();
+
+        for (HstSiteMapItem route : routes.getSiteMapItems()) {
+            getFilteredRoutesPages(route, root, userSession, mount, previewConfigurationPath, HstSiteMapUtils.getPath(mount, mount.getHomePage()), fq, populate);
+        }
+        return populate;
+    }
+
+    private void getFilteredRoutesPages(final HstSiteMapItem route,
+                                        final XPageSiteMapTreeItem root,
+                                        final Session userSession,
+                                        final Mount mount,
+                                        final String previewConfigurationPath,
+                                        final String homePagePathInfo,
+                                        final String fq,
+                                        final List<SiteMapPageRepresentation> populate) {
+
+        if (!route.isExplicitPath()) {
+            // skip sitemap items having _default_ or _any_ in the path
+            return;
+        }
+        final SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
+        final SiteMapPageRepresentation represent = siteMapPageRepresentation.represent(route, route.getParentItem() == null ? null : route.getParentItem().getId(),
+                mount.getMountPath(), homePagePathInfo, previewConfigurationPath);
+
+        if (containsIgnoreCase(represent.getName(), fq) || containsIgnoreCase(represent.getPageTitle(), fq)) {
+
+            if (!represent.isExpandable()) {
+                // find out if there will be a readable XPage document matched below a wildcard sitemap item of this item : if so,
+                // it means the item must be expandable
+                represent.setExpandable(XPageSiteMapTreeItemUtils.hasReadableChildren(root, userSession, represent.getPathInfo()));
+            }
+
+            populate.add(siteMapPageRepresentation);
+        }
+
+        for (HstSiteMapItem child : route.getChildren()) {
+            getFilteredRoutesPages(child, root, userSession, mount, previewConfigurationPath, homePagePathInfo, fq, populate);
+        }
+    }
+
+    /**
+     * <p>
+     * Returns shallow sitemap tree item in which children from the children for SiteMapTreeItem belonging to {@code
+     * pathInfo} are removed.
+     * </p>
+     */
+    private Optional<SiteMapTreeItem> getShallowSiteMapTreeItem(final String pathInfo, final SiteMapTreeItem routes) {
+        SiteMapTreeItem pathInfoItem = routes;
+        if (StringUtils.isNotEmpty(pathInfo) && !pathInfo.equals("/")) {
+            final String[] elements = pathInfo.split("/");
+            for (String element : elements) {
+                pathInfoItem = pathInfoItem.getChild(element);
+                if (pathInfoItem == null) {
+                    return Optional.empty();
+                }
+            }
+        }
+
+        return Optional.of(pathInfoItem.shallowClone());
+    }
+
+    private Optional<SiteMapPageRepresentation> getSiteMapPageRepresentation(final Session previewSecurityDelegate, final XPageSiteMapShallowItem item) throws RepositoryException {
+        final String absoluteJcrPath = item.getAbsoluteJcrPath();
+        if (absoluteJcrPath == null) {
+            // structural sitemap item, not backed by an actual XPage document but will be expandable
+
+            return Optional.of(SiteMapPageRepresentation.structural(item.getPathInfo(), item.isExpandable()));
+        } else {
+            final Node handle = previewSecurityDelegate.getNode(absoluteJcrPath);
+            return getSiteMapPageRepresentation(getPageComposerContextService().getRequestContext(), handle, item.isExpandable());
+        }
     }
 
     // below CHANNEL_VIEWER_PRIVILEGE_NAME privilege since web authors not being allowed to modify hst config still
@@ -173,13 +578,12 @@ public class SiteMapResource extends AbstractConfigResource {
 
         // we need a preview security delegate to make sure that we get to see the PREVIEW XPages which are
         // readable by the current cms user *or* by the HST preview user
-
         try {
             final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
 
             final SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
 
-            final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
+            Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
 
             List<SiteMapPageRepresentation> xpages = getXPageRepresentations(editingMount, previewSecurityDelegate,
                     getPageComposerContextService().getRequestContext());
@@ -189,19 +593,7 @@ public class SiteMapResource extends AbstractConfigResource {
             // can happen : We can filter them out on the 'renderPathInfo' since there is no point in including
             // to sitemap pages with the exact same link (and thus a duplicate)
 
-            final List<SiteMapPageRepresentation> filteredDuplicates = xpages.stream()
-                    .filter(xpage ->
-                            // only if there is NO hst config sitemap page representation for the XPage include the xpage
-                            !pages.getPages().stream()
-                                    .anyMatch(page ->
-                                    {
-                                        if (page.getRenderPathInfo() == null) {
-                                            return false;
-                                        }
-                                        return page.getRenderPathInfo().equals(xpage.getRenderPathInfo());
-                                    })
-                    )
-                    .collect(Collectors.toList());
+            final List<SiteMapPageRepresentation> filteredDuplicates = filterDuplicates(pages, xpages);
 
             pages.getPages().addAll(filteredDuplicates);
 
@@ -210,9 +602,26 @@ public class SiteMapResource extends AbstractConfigResource {
 
         } catch (Exception e) {
             log.warn("Exception occurred while trying to load XPage Documents for the sitemap. Only the SiteMap " +
-                    "Pages are returned" , e);
+                    "Pages are returned", e);
         }
         return pages;
+    }
+
+    private List<SiteMapPageRepresentation> filterDuplicates(final SiteMapPagesRepresentation pages, final List<SiteMapPageRepresentation> xpages) {
+        final List<SiteMapPageRepresentation> filteredDuplicates = xpages.stream()
+                .filter(xpage ->
+                        // only if there is NO hst config sitemap page representation for the XPage include the xpage
+                        !pages.getPages().stream()
+                                .anyMatch(page ->
+                                {
+                                    if (page.getRenderPathInfo() == null) {
+                                        return false;
+                                    }
+                                    return page.getRenderPathInfo().equals(xpage.getRenderPathInfo());
+                                })
+                )
+                .collect(Collectors.toList());
+        return filteredDuplicates;
     }
 
     private List<SiteMapPageRepresentation> getXPageRepresentations(final Mount editingMount, final Session session,
@@ -230,32 +639,42 @@ public class SiteMapResource extends AbstractConfigResource {
         final Query xPagesQuery = session.getWorkspace().getQueryManager().createQuery(statement, "xpath");
 
         for (Node unpublishedVariant : new NodeIterable(xPagesQuery.execute().getNodes())) {
-            final Node handle = unpublishedVariant.getParent();
-            if (!unpublishedVariant.isNodeType(NT_DOCUMENT) || !handle.isNodeType(NT_HANDLE)) {
-                log.info("Skipping unexpected node '{}' with mixin '{}' : only document variants are expected",
-                        MIXINTYPE_HST_XPAGE_MIXIN, unpublishedVariant.getPath());
-                continue;
-            }
 
-            // use the link creator to get hold of URLs for the XPages
-            // Note this is very delecate: we only try to resolve the XPages *WITHIN* the current channel (editingMount),
-            // hence we use create(Node node, Mount editingMount) : if no link can be found, we just skip (for now?)
-            // the XPage!
-
-            final HstLink hstLink = requestContext.getHstLinkCreator().create(handle, editingMount);
-            if (hstLink.isNotFound()) {
-                log.info("Skipping XPage '{}' since cannot be represented in channel '{}'", handle.getPath(),
-                        editingMount.getChannel().getName());
-                continue;
-            }
-
-            final SiteMapPageRepresentation xPageRepresentation = new SiteMapPageRepresentation().represent(hstLink, handle);
-
-            xpages.add(xPageRepresentation);
+            // we do not know whether expandable or not, but we just mark it as expandable: the FE does not yet use it
+            getSiteMapPageRepresentation(requestContext, unpublishedVariant.getParent(), true).ifPresent(
+                    page -> xpages.add(page)
+            );
 
         }
 
         return xpages;
+    }
+
+    private Optional<SiteMapPageRepresentation> getSiteMapPageRepresentation(final HstRequestContext requestContext, final Node handle,
+                                                                             final boolean expandable)
+            throws RepositoryException {
+
+        if (!handle.isNodeType(NT_HANDLE)) {
+            log.info("Skipping unexpected node '{}' with mixin '{}' : only document are expected",
+                    MIXINTYPE_HST_XPAGE_MIXIN, handle.getPath());
+            return Optional.empty();
+        }
+
+        // use the link creator to get hold of URLs for the XPages
+        // Note this is very delicate: we only try to resolve the XPages *WITHIN* the current channel (editingMount),
+        // hence we use create(Node node, Mount editingMount) : if no link can be found, we just skip (for now?)
+        // the XPage!
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
+        final HstLink hstLink = requestContext.getHstLinkCreator().create(handle, editingMount);
+        if (hstLink.isNotFound()) {
+            log.info("Skipping XPage '{}' since cannot be represented in channel '{}'", handle.getPath(),
+                    editingMount.getChannel().getName());
+            return Optional.empty();
+        }
+
+        final SiteMapPageRepresentation represent = new SiteMapPageRepresentation().represent(hstLink, handle);
+        represent.setExpandable(expandable);
+        return Optional.of(represent);
     }
 
     @GET
@@ -338,7 +757,7 @@ public class SiteMapResource extends AbstractConfigResource {
             item = siteMap.getSiteMapItemById(siteMapItemRefIdOrPath);
         }
 
-        if (item == null){
+        if (item == null) {
             item = siteMap.getSiteMapItemByRefId(siteMapItemRefIdOrPath);
         }
         return item;
@@ -366,7 +785,7 @@ public class SiteMapResource extends AbstractConfigResource {
             // if parent item is different than current parent, then the parent item is not allowed to be same as or a descendant of siteMapItem
             final HstSiteMapItem existingParent = siteMapHelper.getConfigObject(siteMapItem.getId()).getParentItem();
             if (existingParent == null || ((existingParent instanceof CanonicalInfo)
-                    && !((CanonicalInfo)existingParent).getCanonicalIdentifier().equals(siteMapItem.getParentId()))) {
+                    && !((CanonicalInfo) existingParent).getCanonicalIdentifier().equals(siteMapItem.getParentId()))) {
                 // update also involves a move!
                 preValidatorBuilder.add(validatorFactory.getItemNotSameOrDescendantOfValidator(siteMapItem.getParentId(), siteMapItem.getId()));
             }
@@ -443,11 +862,11 @@ public class SiteMapResource extends AbstractConfigResource {
     @Path("/copy")
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response copy(
-            @HeaderParam("mountId")final String mountId,
+            @HeaderParam("mountId") final String mountId,
             @HeaderParam("siteMapItemUUID") final String siteMapItemUUID,
-            @HeaderParam("targetSiteMapItemUUID")final String targetSiteMapItemUUID,
-            @HeaderParam("targetName")final String targetName
-            ) {
+            @HeaderParam("targetSiteMapItemUUID") final String targetSiteMapItemUUID,
+            @HeaderParam("targetName") final String targetName
+    ) {
 
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
                 .add(validatorFactory.getNotNullValidator(targetName,
@@ -463,15 +882,15 @@ public class SiteMapResource extends AbstractConfigResource {
         if (StringUtils.isNotBlank(targetSiteMapItemUUID)) {
             if (StringUtils.isBlank(mountId) || getPageComposerContextService().getEditingMount().getIdentifier().equals(mountId)) {
                 preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
-                                         targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
-                             .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, siteMapHelper));
+                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                        .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, siteMapHelper));
             } else {
                 // validate targetSiteMapItemUUID is located in preview workspace sitemap
                 preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(mountId),
-                                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
-                           // validate that the 'targetSiteMapItemUUID' is currently part of the hst model
-                           .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper))
-                           .add(validatorFactory.getTargetMountIsPartOfEditingMountHstModel(getMount(mountId), getPageComposerContextService().getEditingMount()));
+                        targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
+                        // validate that the 'targetSiteMapItemUUID' is currently part of the hst model
+                        .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper))
+                        .add(validatorFactory.getTargetMountIsPartOfEditingMountHstModel(getMount(mountId), getPageComposerContextService().getEditingMount()));
             }
         }
 
@@ -563,7 +982,7 @@ public class SiteMapResource extends AbstractConfigResource {
         siteMapPageRepresentation.setId(siteMapItemUUID);
         // siteMapPathInfo without starting /
         Node siteMapItem = getPageComposerContextService().getRequestContext().getSession().getNodeByIdentifier(siteMapItemUUID);
-        String siteMapPathInfo = StringUtils.substringAfter(siteMapItem.getPath(), NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP );
+        String siteMapPathInfo = StringUtils.substringAfter(siteMapItem.getPath(), NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_SITEMAP);
         siteMapPageRepresentation.setPathInfo(siteMapPathInfo.substring(1));
         siteMapPageRepresentation.setRenderPathInfo(target.getMountPath() + siteMapPathInfo);
         siteMapPageRepresentation.setParentId(parentId);
