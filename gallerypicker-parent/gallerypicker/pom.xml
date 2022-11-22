@@ -135,7 +135,7 @@
     <resources>
       <resource>
         <filtering>false</filtering>
-        <directory>gallerypicker-cms/src/main/java</directory>
+        <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.properties</include>
           <include>**/*.html</include>
@@ -145,7 +145,7 @@
       </resource>
       <resource>
         <filtering>false</filtering>
-        <directory>gallerypicker-cms/src/main/resources</directory>
+        <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.css</include>
           <include>**/*.cnd</include>
