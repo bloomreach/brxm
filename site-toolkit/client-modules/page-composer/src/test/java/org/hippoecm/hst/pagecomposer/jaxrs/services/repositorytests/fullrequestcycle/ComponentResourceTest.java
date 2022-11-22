@@ -104,6 +104,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                 .put(key(PAGE, PAGE_MOVE), false)
                 .put(key(PAGE, PAGE_NEW), true)
                 .put(key(PAGE, PAGE_PROPERTIES), false)
+                .put(key(PAGE, HstAction.PAGE_COPY_PREVIEW_URL), false)
                 .build();
         Assertions.assertThat(actions)
                 .describedAs("A page component request contains all channel and page actions")
@@ -187,6 +188,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                     .put(key(CHANNEL, CHANNEL_PUBLISH), false)
                     .put(key(CHANNEL, CHANNEL_SETTINGS), true)
                     .put(key(XPAGE, XPAGE_COPY), true)
+                    .put(key(XPAGE, HstAction.XPAGE_COPY_PREVIEW_URL), false)
                     .put(key(XPAGE, XPAGE_DELETE), false)
                     .put(key(XPAGE, XPAGE_MOVE), false)
                     .put(key(XPAGE, XPAGE_PUBLISH), false)
@@ -205,6 +207,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
                     .put(key(XPAGE, HstState.XPAGE_BRANCH_ID), BranchConstants.MASTER_BRANCH_ID)
                     .put(key(XPAGE, HstState.XPAGE_ID), handleId)
                     .put(key(XPAGE, HstState.XPAGE_NAME), name)
+                    .put(key(XPAGE, HstState.XPAGE_PREVIEW_URL), "http://localhost/site/experiences/expPage1.html?preview-token=")
                     .put(key(XPAGE, HstState.XPAGE_STATE), "live")
                     .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
                     .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
