@@ -16,6 +16,3 @@
 
 import './index.scss';
 import './app/hippo-cm';
-
-// Uncomment to visualize ui-router state (see https://github.com/ui-router/visualizer)
-// import './visualize-state';
