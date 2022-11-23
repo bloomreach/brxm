@@ -79,6 +79,7 @@
     "@bloomreach/frontend-build": "11.0.0",
     "angular-mocks": "1.8.2",
     "babel-plugin-transform-async-to-promises": "0.8.8",
-    "string-replace-loader": "2.1.1"
+    "string-replace-loader": "2.1.1",
+    "file-loader": "4.3.0"
   }
 }
