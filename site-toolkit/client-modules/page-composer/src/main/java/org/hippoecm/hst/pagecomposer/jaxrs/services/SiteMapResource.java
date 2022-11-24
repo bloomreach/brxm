@@ -173,11 +173,27 @@ public class SiteMapResource extends AbstractConfigResource {
 
             final Session previewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsSessionContext.getRepositoryCredentials(), true);
 
-            SiteMapTreeItem siteMapTreeItem;
+            // MERGE HST sitemap routes
+            // try to get it from the HST routes (sitemap)
+
+            final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
+                    editingPreviewMount, getPreviewConfigurationPath());
+
+            final SiteMapTreeItem routes = SiteMapTreeItem.transform(pages);
+
+            SiteMapTreeItem siteMapTreeItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+
+            final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(normalizedPathInfo, routes);
+
+            if (siteMapTreeItem == null && !routesItem.isPresent()) {
+                throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
+            }
 
             if (ancestry && StringUtils.isNotEmpty(normalizedPathInfo)) {
-                SiteMapTreeItem requestedItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
-                if (requestedItem != null) {
+                if (siteMapTreeItem != null || routesItem.isPresent()) {
+                    // perhaps only a sitemap match, but we need to merge in potential XPage documents (for ancestry siblings)
+                    SiteMapTreeItem requestedItem = siteMapTreeItem;
+
                     siteMapTreeItem = getShallowSiteMapTreeItemForXPages(EMPTY, xPageSiteMapTreeItem, previewSecurityDelegate);
 
                     final String[] split = normalizedPathInfo.split("/");
@@ -207,14 +223,6 @@ public class SiteMapResource extends AbstractConfigResource {
                 siteMapTreeItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
             }
 
-            // MERGE HST sitemap routes
-            // try to get it from the HST routes (sitemap)
-
-            final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(siteMap,
-                    editingPreviewMount, getPreviewConfigurationPath());
-
-            final SiteMapTreeItem routes = SiteMapTreeItem.transform(pages);
-
             // no XPage document matched for normalizedPathInfo, check sitemap
             if (siteMapTreeItem == null) {
 
@@ -223,7 +231,7 @@ public class SiteMapResource extends AbstractConfigResource {
                     siteMapTreeItem = routes.shallowClone();
                 } else {
                     if (ancestry) {
-                        if (!getShallowSiteMapTreeItem(normalizedPathInfo, routes).isPresent()) {
+                        if (!routesItem.isPresent()) {
                             throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
                         }
                         final Optional<SiteMapTreeItem> routesRoot = getShallowSiteMapTreeItem(EMPTY, routes);
@@ -248,10 +256,6 @@ public class SiteMapResource extends AbstractConfigResource {
                             currentLevel = currentLevel.getChild(nextRoutesLevel.get().getId());
                         }
                     } else {
-                        final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(normalizedPathInfo, routes);
-                        if (!routesItem.isPresent()) {
-                            throw new ClientException(format("Cannot find a sitemap item or XPage document for '%s'", normalizedPathInfo), ClientError.ITEM_NOT_FOUND);
-                        }
                         siteMapTreeItem = routesItem.get().shallowClone();
                     }
                 }
@@ -278,18 +282,18 @@ public class SiteMapResource extends AbstractConfigResource {
                                 break;
                             }
                             // merge the next level into currentLevel
-                            if (currentLevel.getChild(nextRoutesLevel.get().getId()) == null) {
+                            final SiteMapTreeItem child = currentLevel.getChild(nextRoutesLevel.get().getId());
+                            if (child == null) {
                                 currentLevel.addOrReplaceChild(nextRoutesLevel.get());
                                 // in case the xpagesBasedItem was not yet expandable, mark it to be so now
                                 currentLevel.setExpandable(true);
                             } else {
-                                mergeChildren(currentLevel, nextRoutesLevel.get());
+                                mergeChildren(child, nextRoutesLevel.get());
                             }
                             currentLevel = currentLevel.getChild(nextRoutesLevel.get().getId());
                         }
                     }
                 } else {
-                    final Optional<SiteMapTreeItem> routesItem = getShallowSiteMapTreeItem(normalizedPathInfo, routes);
                     if (routesItem.isPresent()) {
                         // merge sitemap routes with XPage documents if needed
                         final SiteMapTreeItem xpagesBasedItem = siteMapTreeItem;
@@ -311,14 +315,14 @@ public class SiteMapResource extends AbstractConfigResource {
     }
 
     private void mergeChildren(final SiteMapTreeItem target, final SiteMapTreeItem source) {
-        source.getChildren().stream().forEach(child -> {
-                    if (target.getChild(child.getId()) != null) {
+        source.getChildren().stream().forEach(childSource -> {
+                    if (target.getChild(childSource.getId()) != null) {
                         // already present, only inherit expandable if source is expandable
-                        if (source.isExpandable()) {
-                            target.getChild(child.getId()).setExpandable(true);
+                        if (childSource.isExpandable()) {
+                            target.getChild(childSource.getId()).setExpandable(true);
                         }
                     } else {
-                        target.addOrReplaceChild(child);
+                        target.addOrReplaceChild(childSource);
                     }
                 }
         );
