@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2022 Bloomreach
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>hippo-plugin-gallerypicker-parent</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <version>15.2.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>hippo-plugin-gallerypicker-common</artifactId>
+  <name>Hippo Plugin Gallery Picker Common</name>
+  <description>Hippo Plugin Gallery Picker Common</description>
+
+  <properties>
+    <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
+    <hippo.services.validation.version>${hippo.release.version}</hippo.services.validation.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-validation</artifactId>
+      <version>${hippo.services.validation.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+</project>
