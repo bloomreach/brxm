@@ -35,6 +35,7 @@
 </mat-form-field>
 
 <mat-tree [dataSource]="dataSource"
+          [trackBy]="trackBy"
           [treeControl]="treeControl">
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodePadding
@@ -42,14 +43,13 @@
                  matTooltip="{{node.pageTitle || node.name}}"
                  (click)="selectNode(node)"
                  class="mat-tree-node {{ 'qa-tree-node-name-' + node.name }}"
-                 [class.selected]="isSelected(node)"
-                 [class.hidden]="!isMatched(node) && !isVisible(node)"
-                 [class.disabled]="!isMatched(node)">
+                 [class.selected]="isSelected(node)">
     <!-- Trick to get extra padding equal to other nodes with icons -->
     <mat-icon *ngIf="!node.expandable"></mat-icon>
 
     <mat-icon svgIcon="chevron-right"
               *ngIf="node.expandable"
+              (click)="unfoldNode(node)"
               matTreeNodeToggle
               [class.expanded]="treeControl.isExpanded(node)">
     </mat-icon>

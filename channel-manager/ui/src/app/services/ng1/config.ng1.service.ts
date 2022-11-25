@@ -21,6 +21,7 @@ export interface Ng1ConfigService {
   timeZone: string;
   rootUuid: string;
   variantsUuid: string;
+  cmsUser: string;
   getCmsContextPath(): string;
   getCmsOrigin(): string;
   isDevMode(): boolean;

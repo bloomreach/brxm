@@ -17,6 +17,7 @@
 class PageNewCtrl {
   constructor(
     $scope,
+    $rootScope,
     $translate,
     ChannelService,
     FeedbackService,
@@ -27,6 +28,7 @@ class PageNewCtrl {
     'ngInject';
 
     this.$scope = $scope;
+    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
@@ -78,7 +80,7 @@ class PageNewCtrl {
     this.SiteMapService.create(this.siteMapId, parentSiteMapItemId, page)
       .then((data) => {
         this.HippoIframeService.load(data.renderPathInfo);
-        this.SiteMapService.load(this.siteMapId);
+        this.$rootScope.$emit('load-site-map');
       })
       .then(() => this.ChannelService.checkChanges())
       .then(() => this.onDone())

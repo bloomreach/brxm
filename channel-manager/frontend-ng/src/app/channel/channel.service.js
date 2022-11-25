@@ -61,6 +61,14 @@ class ChannelService {
     this.NavappService.subscribe('navigate', (location, triggeredBy) => this.navigate(location, triggeredBy));
     this.NavappService.subscribe('beforeNavigation', () => this._beforeNavigation());
     this.NavappService.subscribe('beforeLogout', () => this._beforeLogout());
+
+    this.CmsService.subscribe('activate-experience-manager', () => {
+      // Reload the left side-panel contents when the experience-manager perspective is activated.
+      // This ensures possible changes from other perspectives are displayed correctly.
+      if (this.channel && this.channel.id) {
+        this.CatalogService.load(this.getMountId());
+      }
+    });
   }
 
   /**
@@ -132,7 +140,6 @@ class ChannelService {
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
-    this.SiteMapService.load(this.getSiteMapId());
 
     this.updateNavLocation();
   }

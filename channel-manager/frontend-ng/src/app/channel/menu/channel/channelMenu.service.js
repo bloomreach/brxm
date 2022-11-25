@@ -24,6 +24,7 @@ class ChannelMenuService extends MenuService {
     $q,
     $state,
     $translate,
+    $rootScope,
     ChannelService,
     CmsService,
     ConfigService,
@@ -44,6 +45,7 @@ class ChannelMenuService extends MenuService {
     this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
+    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
@@ -255,7 +257,7 @@ class ChannelMenuService extends MenuService {
     return this.ChannelService.discardOwnChanges()
       .then(() => {
         this._onChannelChanged();
-        this.SiteMapService.load(this.ChannelService.getSiteMapId());
+        this.$rootScope.$emit('load-site-map');
       })
       .catch(response => this._handleError('ERROR_CHANGE_DISCARD_FAILED', response));
   }

@@ -22,4 +22,16 @@ export interface SiteMapItem {
   pageTitle: string | null;
   pathInfo: string | null;
   renderPathInfo: string | null;
+  expandable: boolean;
+}
+
+export interface SiteMapState {
+  items: SiteMapItem[];
+  search: SiteMapItem[];
+  renderPathInfo: string;
+  loading: boolean;
+}
+
+export interface SiteMapResponse {
+  data: SiteMapItem;
 }
