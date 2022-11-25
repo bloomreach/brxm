@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,5 +38,10 @@ public class Section extends HippoItem {
     public List<String> getDisallows() {
         final String[] disallows = this.getMultipleProperty("robotstxt:disallow");
         return Arrays.asList(disallows);
+    }
+
+    public List<String> getAllows() {
+        final String[] allows = this.getMultipleProperty("robotstxt:allow");
+        return Arrays.asList(allows);
     }
 }
