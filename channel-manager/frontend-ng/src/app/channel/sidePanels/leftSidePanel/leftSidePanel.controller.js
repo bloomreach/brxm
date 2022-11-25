@@ -90,10 +90,6 @@ class LeftSidePanelCtrl {
     return this.CatalogService.getComponents();
   }
 
-  getSiteMapItems() {
-    return this.SiteMapService.get();
-  }
-
   isSidePanelLifted() {
     return this.SidePanelService.isSidePanelLifted;
   }

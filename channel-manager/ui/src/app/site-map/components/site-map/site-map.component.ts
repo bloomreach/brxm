@@ -1,11 +1,11 @@
-/*!
+/*
  * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *  https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,25 +15,21 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import {
-  Component,
-  ElementRef,
-  Input,
-  NgZone,
-  OnChanges,
-  OnDestroy,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, pluck } from 'rxjs/operators';
+import { combineLatest, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, pluck, map, tap } from 'rxjs/operators';
 
 import { IframeService } from '../../../channels/services/iframe.service';
 import { SiteMapItem } from '../../models/site-map-item.model';
+import { NG1_CHANNEL_SERVICE, Ng1ChannelService } from '../../../services/ng1/channel.ng1.service';
+import { NG1_SITE_MAP_SERVICE, Ng1SiteMapService } from '../../../services/ng1/site-map.ng1.service';
+import { SiteMapService } from '../../services/site-map.service';
+import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.ng1.service';
 
 interface SiteMapItemNode extends SiteMapItem {
-  expandable: boolean;
-  level: number;
+    expandable: boolean;
+    level: number;
 }
 
 @Component({
@@ -41,134 +37,195 @@ interface SiteMapItemNode extends SiteMapItem {
   templateUrl: './site-map.component.html',
   styleUrls: ['./site-map.component.scss'],
 })
-export class SiteMapComponent implements OnChanges, OnDestroy {
-  @Input() siteMap: SiteMapItem[] = [];
-  @Input() renderPathInfo?: string;
+export class SiteMapComponent implements OnInit, OnDestroy {
+    @Input() renderPathInfo?: string;
 
-  private readonly treeFlattener = new MatTreeFlattener(
-    (node: SiteMapItem, level: number) => ({
-      ...node,
-      level,
-      expandable: !!node.children && node.children.length > 0,
-    }),
-    node => node.level,
-    node => node.expandable,
-    node => node.children,
-  );
-  readonly treeControl = new FlatTreeControl<SiteMapItemNode>(node => node.level, node => node.expandable);
-  readonly dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    private readonly treeFlattener = new MatTreeFlattener(
+      (node: SiteMapItem, level: number) => ({
+        ...node,
+        level,
+      }),
+      (node) => node.level,
+      (node) => node.expandable,
+      (node) => node.children,
+    );
 
-  readonly search$ = new Subject<string>();
+    readonly treeControl = new FlatTreeControl<SiteMapItemNode>((node) => node.level, (node) => node.expandable);
+    readonly dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-  private readonly matched = new Set<SiteMapItemNode>();
-  private readonly visible = new Set<SiteMapItemNode>();
+    readonly search$ = new Subject<string>();
 
-  isMatched = this.matched.has.bind(this.matched);
-  isVisible = this.visible.has.bind(this.visible);
+    expandedNodes: SiteMapItemNode[] = [];
+    searchQuery = '';
+    subscriptions = new Subscription();
 
-  constructor(
-    private readonly iframeService: IframeService,
-    private readonly zone: NgZone,
-    private readonly elementRef: ElementRef,
-  ) {
-    this.search$
-      .pipe(
-        debounceTime(500),
-        map<string, [string, SiteMapItemNode[]]>(query => [query, this.treeControl.dataNodes]),
-        distinctUntilChanged(([prevQuery, prevNodes], [query, nodes]) => query === prevQuery && nodes === prevNodes),
-        pluck(0),
-      )
-      .subscribe(this.onSearch.bind(this));
-  }
+    private readonly onLoadSiteMapUnsubscribe: () => void;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.siteMap) {
-      this.dataSource.data = this.siteMap;
-      this.zone.run(() => this.search$.next(''));
-    }
+    constructor(
+        @Inject(NG1_ROOT_SCOPE) private readonly $rootScope: ng.IRootScopeService,
+        @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
+        @Inject(NG1_SITE_MAP_SERVICE) private readonly ng1SiteMapService: Ng1SiteMapService,
+        private readonly iframeService: IframeService,
+        private readonly siteMapService: SiteMapService,
+        private readonly zone: NgZone,
+        private readonly elementRef: ElementRef,
+    ) {
+      this.search$
+        .pipe(
+          debounceTime(1000),
+          tap((value) => {
+            this.searchQuery = value;
+            return value;
+          }),
+          map<string, [string]>((query) => [query]),
+          distinctUntilChanged((prevQuery, query) => query === prevQuery),
+          pluck(0),
+        )
+        .subscribe(this.onSearch.bind(this));
 
-    this.expandSelected();
-    setTimeout(() => this.scrollToSelectedNode(), 500);
-  }
-
-  ngOnDestroy(): void {
-    this.search$.complete();
-  }
-
-  isSelected({ renderPathInfo }: SiteMapItem): boolean {
-    return renderPathInfo === this.renderPathInfo;
-  }
-
-  async selectNode(node: SiteMapItemNode): Promise<void> {
-    if (node.expandable) {
-      this.treeControl.expand(node);
-    }
-
-    if (node.renderPathInfo) {
-      await this.iframeService.load(node.renderPathInfo);
-    }
-  }
-
-  private expandSelected(): void {
-    const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
-
-    if (node) {
-      this.treeControl.expand(node);
-      this.getParents(node).forEach(parent => {
-        this.treeControl.expand(parent);
+      this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', () => {
+        this.zone.run(() => {
+          this.loadSiteMap();
+        });
       });
     }
-  }
 
-  private getParents(child: SiteMapItemNode): SiteMapItemNode[] {
-    const parents = [];
+    ngOnInit(): void {
+      const siteMapSubscription = combineLatest(
+        this.siteMapService.search$,
+        this.siteMapService.items$,
+      ).subscribe(([search, items]) => {
+        if (this.isSearchMode) {
+          this.dataSource.data = search;
+        } else {
+          this.dataSource.data = items;
+        }
+        this.restoreExpandedNodes();
+      });
 
-    for (let i = this.treeControl.dataNodes.indexOf(child), childLevel = this.treeControl.getLevel(child); i >= 0; i--) {
-      const node = this.treeControl.dataNodes[i];
-      const level = this.treeControl.getLevel(node);
-      if (level < childLevel) {
-        parents.push(node);
-        childLevel = level;
+      this.loadSiteMap();
+
+      this.subscriptions.add(siteMapSubscription);
+    }
+
+    ngOnDestroy(): void {
+      this.search$.complete();
+      this.subscriptions.unsubscribe();
+      this.onLoadSiteMapUnsubscribe();
+    }
+
+    get isSearchMode(): boolean {
+      return !!this.searchQuery && this.searchQuery.length > 2;
+    }
+
+    isSelected({ renderPathInfo }: SiteMapItem): boolean {
+      return renderPathInfo === this.renderPathInfo;
+    }
+
+    trackBy = (_: number, node: SiteMapItemNode): string => node.id;
+
+    async selectNode(node: SiteMapItemNode): Promise<void> {
+      if (node.renderPathInfo) {
+        await this.iframeService.load(node.renderPathInfo);
+      }
+
+      this.unfoldNode(node);
+    }
+
+    unfoldNode(node: SiteMapItemNode): void {
+      if (node.expandable && !node.children.length) {
+        this.saveExpandedNodes();
+        this.loadSiteMapItem(node);
       }
     }
 
-    return parents;
-  }
-
-  private onSearch(value: string): void {
-    this.matched.clear();
-    this.visible.clear();
-
-    if (!value) {
-      this.treeControl.dataNodes.forEach(node => {
-        this.matched.add(node);
-        this.visible.add(node);
-      });
-
-      return;
+    private expandSelectedNode(): void {
+      const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
+      this.expandNode(node);
+      setTimeout(() => this.scrollToSelectedNode(), 500);
     }
 
-    this.treeControl.dataNodes
-      .filter(
-        ({ name, pageTitle }) => name.toLowerCase().includes(value.toLowerCase())
-          || pageTitle?.toLowerCase().includes(value.toLowerCase()),
-      )
-      .forEach(node => {
-        this.matched.add(node);
+    private loadSiteMap(): void {
+      const renderPath = '/site/v1/channels/ref/';
+      if (this.renderPathInfo && this.renderPathInfo.includes(renderPath)) {
+        const [, path] = this.renderPathInfo.split(renderPath);
+        this.siteMapService.loadItem(path, false, true);
+      } else {
+        this.siteMapService.load();
+      }
+    }
 
-        this.getParents(node).forEach(parent => {
+    private loadSiteMapItem(node: SiteMapItemNode): void {
+      const parentPath = this.getParentPath(node);
+      this.siteMapService.loadItem(`${parentPath}${node.id}`, this.isSearchMode);
+    }
+
+    private getParentPath(node: SiteMapItemNode): string {
+      const parents = this.getParents(node);
+      const parentsIds = parents.map((parent) => parent.id).filter((path) => path !== '/');
+      return parentsIds.join('/');
+    }
+
+    private expandNode(node?: SiteMapItemNode): void {
+      if (node) {
+        this.treeControl.expand(node);
+        this.getParents(node).forEach((parent) => {
           this.treeControl.expand(parent);
-          this.visible.add(parent);
         });
+      }
+    }
 
-        this.treeControl.getDescendants(node).forEach(child => {
-          this.visible.add(child);
-        });
+    private getParents(child: SiteMapItemNode): SiteMapItemNode[] {
+      const parents = [];
+      const { dataNodes, getLevel } = this.treeControl;
+
+      for (let i = dataNodes.indexOf(child), childLevel = getLevel(child); i >= 0; i--) {
+        const node = this.treeControl.dataNodes[i];
+        const level = this.treeControl.getLevel(node);
+
+        if (level < childLevel) {
+          parents.push(node);
+          childLevel = level;
+        }
+      }
+
+      return parents;
+    }
+
+    private onSearch(value: string): void {
+      if (this.isSearchMode) {
+        this.resetExpandedNodes();
+        this.siteMapService.search(value);
+      } else if (!value) {
+        this.loadSiteMap();
+      }
+    }
+
+    private saveExpandedNodes(): void {
+      this.treeControl.dataNodes.forEach((node) => {
+        if (node.expandable && this.treeControl.isExpanded(node)) {
+          this.expandedNodes.push(node);
+        }
       });
-  }
+    }
 
-  private scrollToSelectedNode(): void {
-    const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
-    selectedNode?.scrollIntoView();
-  }
+    private restoreExpandedNodes(): void {
+      this.expandedNodes.forEach((node) => {
+        const expandedNode = this.treeControl.dataNodes.find((n) => n.id === node.id);
+        if (expandedNode) {
+          this.treeControl.expand(expandedNode);
+        }
+      });
+      this.expandNode(this.treeControl.dataNodes[0]);
+      this.expandSelectedNode();
+    }
+
+    private resetExpandedNodes(): void {
+      this.expandedNodes = [];
+    }
+
+    private scrollToSelectedNode(): void {
+      const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
+      selectedNode?.scrollIntoView();
+    }
 }

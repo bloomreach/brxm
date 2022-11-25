@@ -19,6 +19,7 @@ import MenuService from '../menu.service';
 class PageMenuService extends MenuService {
   constructor(
     $translate,
+    $rootScope,
     ChannelService,
     DialogService,
     FeedbackService,
@@ -34,6 +35,7 @@ class PageMenuService extends MenuService {
     super();
 
     this.$translate = $translate;
+    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
@@ -148,8 +150,7 @@ class PageMenuService extends MenuService {
             const homePage = this.ChannelService.getHomePageRenderPathInfo();
             this.HippoIframeService.load(homePage);
 
-            const siteMapId = this.ChannelService.getSiteMapId();
-            this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
+            this.$rootScope.$emit('load-site-map');
 
             this.SiteMapItemService.clear(); // wipe meta-data of current page
           })

@@ -18,6 +18,7 @@ class PageMoveCtrl {
   constructor(
     $log,
     $translate,
+    $rootScope,
     ChannelService,
     FeedbackService,
     HippoIframeService,
@@ -28,6 +29,7 @@ class PageMoveCtrl {
 
     this.$log = $log;
     this.$translate = $translate;
+    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.SiteMapService = SiteMapService;
     this.SiteMapItemService = SiteMapItemService;
@@ -86,7 +88,7 @@ class PageMoveCtrl {
     this.SiteMapItemService.updateItem(item, this.siteMapId)
       .then((data) => {
         this.HippoIframeService.load(data.renderPathInfo);
-        this.SiteMapService.load(this.siteMapId);
+        this.$rootScope.$emit('load-site-map');
       })
       .then(() => this.ChannelService.checkChanges())
       .then(() => this.onDone())

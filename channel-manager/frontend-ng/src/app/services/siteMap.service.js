@@ -20,23 +20,6 @@ class SiteMapService {
 
     this.HstService = HstService;
     this.FeedbackService = FeedbackService;
-
-    this.siteMap = [];
-  }
-
-  get() {
-    return this.siteMap;
-  }
-
-  load(siteMapId) {
-    return this.HstService.getSiteMapTree(siteMapId)
-      .then((siteMap) => {
-        this.siteMap = [siteMap];
-      })
-      .catch(() => {
-        this.siteMap = [];
-        this.FeedbackService.showError('ERROR_SITEMAP_RETRIEVAL_FAILED');
-      });
   }
 
   create(siteMapId, parentSiteMapItemId, page) {

@@ -25,6 +25,7 @@ export class SiteMapItemMock implements SiteMapItem {
   pageTitle = null;
   pathInfo = '/';
   renderPathInfo = '/';
+  expandable = false;
   children = [];
 
   constructor(initObject: any = {}) {

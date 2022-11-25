@@ -220,7 +220,7 @@ export default class XPageMenuService extends MenuService {
     this._addWorkflowAction(
       'delete',
       id => this.DocumentWorkflowService.delete(id)
-        .then(() => this.SiteMapService.load(this.ChannelService.getSiteMapId()))
+        .then(() => this.$rootScope.$emit('load-site-map'))
         .then(() => {
           const siteMap = this.SiteMapService.get();
           const firstPage = siteMap[0];
@@ -395,8 +395,7 @@ export default class XPageMenuService extends MenuService {
         this.HippoIframeService.load(renderPathInfo);
       }
 
-      const siteMapId = this.ChannelService.getSiteMapId();
-      this.SiteMapService.load(siteMapId); // reload sitemap (left side panel)
+      this.$rootScope.$emit('load-site-map'); // reload sitemap (left side panel)
     } catch (e) {
       this.$log.error(`Failed to navigate to document '${documentId}'`, e);
     }

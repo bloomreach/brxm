@@ -22,6 +22,7 @@ export interface Ng1ChannelService {
   getChannel(): Channel;
   makeRenderPath(path: string): string;
   getHomePageRenderPathInfo(): string;
+  getSiteMapId(): string;
 }
 
 export const NG1_CHANNEL_SERVICE = new InjectionToken<Ng1ChannelService>('NG1_CHANNEL_SERVICE');
