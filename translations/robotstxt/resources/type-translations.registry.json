@@ -28,6 +28,16 @@
     "hippo:types.robotstxt:section/jcr:name" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "hippo:types.robotstxt:section/robotstxt:allow" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
