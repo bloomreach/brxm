@@ -15,17 +15,17 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, Input, NgZone, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { combineLatest, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, pluck, map, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, pluck, tap } from 'rxjs/operators';
 
 import { IframeService } from '../../../channels/services/iframe.service';
-import { SiteMapItem } from '../../models/site-map-item.model';
-import { NG1_CHANNEL_SERVICE, Ng1ChannelService } from '../../../services/ng1/channel.ng1.service';
-import { NG1_SITE_MAP_SERVICE, Ng1SiteMapService } from '../../../services/ng1/site-map.ng1.service';
-import { SiteMapService } from '../../services/site-map.service';
+import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.ng1.service';
+import { Ng1SiteMapService, NG1_SITE_MAP_SERVICE } from '../../../services/ng1/site-map.ng1.service';
+import { SiteMapItem } from '../../models/site-map-item.model';
+import { SiteMapService } from '../../services/site-map.service';
 
 interface SiteMapItemNode extends SiteMapItem {
     expandable: boolean;
@@ -37,20 +37,17 @@ interface SiteMapItemNode extends SiteMapItem {
   templateUrl: './site-map.component.html',
   styleUrls: ['./site-map.component.scss'],
 })
-export class SiteMapComponent implements OnInit, OnDestroy {
+export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     @Input() renderPathInfo?: string;
 
     private readonly treeFlattener = new MatTreeFlattener(
       (node: SiteMapItem, level: number) => ({
         ...node,
         level,
-      }),
-      (node) => node.level,
-      (node) => node.expandable,
-      (node) => node.children,
+      }), node => node.level, node => node.expandable, node => node.children,
     );
 
-    readonly treeControl = new FlatTreeControl<SiteMapItemNode>((node) => node.level, (node) => node.expandable);
+    readonly treeControl = new FlatTreeControl<SiteMapItemNode>(node => node.level, node => node.expandable);
     readonly dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
     readonly search$ = new Subject<string>();
@@ -73,11 +70,11 @@ export class SiteMapComponent implements OnInit, OnDestroy {
       this.search$
         .pipe(
           debounceTime(1000),
-          tap((value) => {
+          tap(value => {
             this.searchQuery = value;
             return value;
           }),
-          map<string, [string]>((query) => [query]),
+          map<string, [string]>(query => [query]),
           distinctUntilChanged((prevQuery, query) => query === prevQuery),
           pluck(0),
         )
@@ -103,9 +100,13 @@ export class SiteMapComponent implements OnInit, OnDestroy {
         this.restoreExpandedNodes();
       });
 
-      this.loadSiteMap();
-
       this.subscriptions.add(siteMapSubscription);
+    }
+
+    ngOnChanges(changes: any): void {
+        if (changes.renderPathInfo.firstChange) {
+            this.loadSiteMap();
+        }
     }
 
     ngOnDestroy(): void {
@@ -146,13 +147,12 @@ export class SiteMapComponent implements OnInit, OnDestroy {
     }
 
     private loadSiteMap(): void {
-      const renderPath = '/site/v1/channels/ref/';
-      if (this.renderPathInfo && this.renderPathInfo.includes(renderPath)) {
-        const [, path] = this.renderPathInfo.split(renderPath);
-        this.siteMapService.loadItem(path, false, true);
-      } else {
-        this.siteMapService.load();
-      }
+        if (this.renderPathInfo) {
+            const [, path] = this.renderPathInfo.split('/');
+            this.siteMapService.loadItem(path, false, true);
+        } else {
+            this.siteMapService.load();
+        }
     }
 
     private loadSiteMapItem(node: SiteMapItemNode): void {
@@ -162,14 +162,14 @@ export class SiteMapComponent implements OnInit, OnDestroy {
 
     private getParentPath(node: SiteMapItemNode): string {
       const parents = this.getParents(node);
-      const parentsIds = parents.map((parent) => parent.id).filter((path) => path !== '/');
+      const parentsIds = parents.map(parent => parent.id).filter(path => path !== '/');
       return parentsIds.join('/');
     }
 
     private expandNode(node?: SiteMapItemNode): void {
       if (node) {
         this.treeControl.expand(node);
-        this.getParents(node).forEach((parent) => {
+        this.getParents(node).forEach(parent => {
           this.treeControl.expand(parent);
         });
       }
@@ -202,7 +202,7 @@ export class SiteMapComponent implements OnInit, OnDestroy {
     }
 
     private saveExpandedNodes(): void {
-      this.treeControl.dataNodes.forEach((node) => {
+      this.treeControl.dataNodes.forEach(node => {
         if (node.expandable && this.treeControl.isExpanded(node)) {
           this.expandedNodes.push(node);
         }
@@ -210,8 +210,8 @@ export class SiteMapComponent implements OnInit, OnDestroy {
     }
 
     private restoreExpandedNodes(): void {
-      this.expandedNodes.forEach((node) => {
-        const expandedNode = this.treeControl.dataNodes.find((n) => n.id === node.id);
+      this.expandedNodes.forEach(node => {
+        const expandedNode = this.treeControl.dataNodes.find(n => n.id === node.id);
         if (expandedNode) {
           this.treeControl.expand(expandedNode);
         }

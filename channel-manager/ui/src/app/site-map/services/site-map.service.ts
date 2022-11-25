@@ -27,7 +27,6 @@ import { SnackBarService } from '../../services/snack-bar.service';
 const initialState: SiteMapState = {
   items: [],
   search: [],
-  renderPathInfo: '',
   loading: false,
 };
 
@@ -37,7 +36,6 @@ const initialState: SiteMapState = {
 export class SiteMapService extends StateService<SiteMapState> {
   items$: Observable<SiteMapItem[]>;
   search$: Observable<SiteMapItem[]>;
-  renderPathInfo$: Observable<string>;
   loading$: Observable<boolean>;
 
   constructor(
@@ -51,7 +49,6 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.items$ = this.select((state) => state.items);
     this.search$ = this.select((state) => state.search);
     this.loading$ = this.select((state) => state.loading);
-    this.renderPathInfo$ = this.select((state) => state.renderPathInfo);
   }
 
   baseUrl = Location.joinWithSlash(
@@ -62,10 +59,6 @@ export class SiteMapService extends StateService<SiteMapState> {
     'CMS-User': this.ng1ConfigService.cmsUser,
     contextPath: this.ng1ChannelService.getChannel().contextPath,
     hostGroup: this.ng1ChannelService.getChannel().hostGroup,
-  }
-
-  set renderPathInfo(path: string) {
-    this.setState({ renderPathInfo: path });
   }
 
   get items(): SiteMapItem[] {

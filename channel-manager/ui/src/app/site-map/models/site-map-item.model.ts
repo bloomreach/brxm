@@ -28,7 +28,6 @@ export interface SiteMapItem {
 export interface SiteMapState {
   items: SiteMapItem[];
   search: SiteMapItem[];
-  renderPathInfo: string;
   loading: boolean;
 }
 
