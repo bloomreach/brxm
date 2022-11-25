@@ -108,9 +108,8 @@ class ChannelCtrl {
     return this.HippoIframeService.isPageLoaded();
   }
 
-  openProjectChannelPreviewUrl(){
-    const token = this.ChannelService.getChannel().externalPreviewToken;
-    window.open(this.ChannelService.getProjectChannelPreviewURL(token),'_blank');
+  openPreviewUrl() {
+    window.open(this.PageService.getPagePreviewUrl(), '_blank');
   }
 
   isExternalPreviewEnabled(){
