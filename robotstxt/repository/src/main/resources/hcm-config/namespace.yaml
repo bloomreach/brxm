@@ -31,11 +31,20 @@ definitions:
               hipposysedit:path: robotstxt:disallow
               hipposysedit:primary: false
               hipposysedit:type: String
+            /allow:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: true
+              hipposysedit:ordered: false
+              hipposysedit:path: robotstxt:allow
+              hipposysedit:primary: false
+              hipposysedit:type: String
         /hipposysedit:prototypes:
           jcr:primaryType: hipposysedit:prototypeset
           /hipposysedit:prototype:
             jcr:primaryType: robotstxt:section
-            robotstxt:disallow: ['']
+            robotstxt:disallow: [ '' ]
+            robotstxt:allow: [ '' ]
             robotstxt:useragent: '*'
         /editor:templates:
           jcr:primaryType: editor:templateset
@@ -76,6 +85,16 @@ definitions:
               jcr:primaryType: frontend:plugin
               engine: ${engine}
               field: disallow
+              mode: ${mode}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.id: ${cluster.id}.right.item
+              wicket.model: ${wicket.model}
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+            /allow:
+              jcr:primaryType: frontend:plugin
+              engine: ${engine}
+              field: allow
               mode: ${mode}
               plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
               wicket.id: ${cluster.id}.right.item
@@ -123,6 +142,7 @@ definitions:
             /robotstxt:section:
               jcr:primaryType: robotstxt:section
               robotstxt:disallow: ['']
+              robotstxt:allow: ['']
               robotstxt:useragent: '*'
         /editor:templates:
           jcr:primaryType: editor:templateset

@@ -11,6 +11,8 @@ definitions:
         \nDisallow: ${path}\r\n          </#list>\r\n        </#if>\r\n        <#if\
         \ disallowedFacNavLinks??>\r\n          <#list disallowedFacNavLinks as facnav>\r\
         \nDisallow: <@hst.link link=facnav/>/\r\n          </#list>\r\n        </#if>\r\
+        \  <#if section.allows??>\r\n          <#list section.allows as path>\r\
+        \nAllow: ${path}\r\n          </#list>\r\n        </#if>\r\n
         \n      </#if>\r\n    </#list>\r\n  </#if>\r\n  <#if document.sitemaps??>\r\
         \n    <#list document.sitemaps as sitemap>\r\nSitemap: ${sitemap}\r\n    </#list>\r\
         \n  </#if>\r\n</#if>"

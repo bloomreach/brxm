@@ -15,4 +15,5 @@ definitions:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Section
         robotstxt:disallow: Disallow
+        robotstxt:allow: Allow
         robotstxt:useragent: User-agent
