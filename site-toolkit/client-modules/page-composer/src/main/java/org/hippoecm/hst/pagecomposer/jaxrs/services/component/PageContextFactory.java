@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2022 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 
 final class PageContextFactory {
@@ -45,10 +47,17 @@ final class PageContextFactory {
         final CanonicalInfo canonicalInfo = (CanonicalInfo) siteMapItem;
         final String lockedBy = ((ConfigurationLockInfo) siteMapItem).getLockedBy();
         final HstSite hstSite = mount.getHstSite();
+
+        final Mount editingMount = contextService.getEditingMount();
+        final HstLink hstLink = contextService.getEditingMountLinkCreator().create(siteMapItem, editingMount);
+        final String pagePreviewUrl = HstConfigurationUtils.getPagePreviewUrl(editingMount.getChannel(), hstLink,
+                editingMount);
+
         return new PageContext()
                 .setHomePage(HstSiteMapUtils.getPath(siteMapItem, null).equals(homePagePathInfo))
                 .setLocked(lockedBy != null && !userId.equals(lockedBy))
                 .setInherited(!canonicalInfo.getCanonicalPath().startsWith(hstSite.getConfigurationPath() + "/"))
-                .setWorkspaceConfigured(canonicalInfo.isWorkspaceConfiguration());
+                .setWorkspaceConfigured(canonicalInfo.isWorkspaceConfiguration())
+                .setPagePreviewUrl(pagePreviewUrl);
     }
 }
