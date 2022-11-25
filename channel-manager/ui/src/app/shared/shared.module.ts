@@ -27,8 +27,12 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { MaterialModule } from './material/material.module';
 import { MomentPipe } from './pipes/moment.pipe';
 import { SnackBarComponent } from './components/snackbar/snack-bar.component';
+import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
+  imports: [
+    MatIconModule,
+  ],
   declarations: [
     MomentPipe,
     AutoFocusDirective,
