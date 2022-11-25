@@ -18,16 +18,16 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TranslationsModule } from '../translations/translations.module';
 
+import { SnackBarComponent } from './components/snackbar/snack-bar.component';
 import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { MaterialModule } from './material/material.module';
 import { MomentPipe } from './pipes/moment.pipe';
-import { SnackBarComponent } from './components/snackbar/snack-bar.component';
-import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
   imports: [

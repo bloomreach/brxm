@@ -30,7 +30,7 @@ export class StateService<T> {
 
   protected select<K>(mapFn: (state: T) => K): Observable<K> {
     return this.state$.asObservable().pipe(
-      map((state: T) => mapFn(state)),
+      map(mapFn),
       distinctUntilChanged(),
     );
   }
