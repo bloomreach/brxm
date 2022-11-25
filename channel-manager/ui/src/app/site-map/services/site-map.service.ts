@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { SiteMapItem, SiteMapResponse, SiteMapState } from '../models/site-map-item.model';
-import { StateService } from '../../services/state.service';
-import { NG1_CHANNEL_SERVICE, Ng1ChannelService } from '../../services/ng1/channel.ng1.service';
-import { NG1_CONFIG_SERVICE, Ng1ConfigService } from '../../services/ng1/config.ng1.service';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../services/ng1/channel.ng1.service';
+import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../../services/ng1/config.ng1.service';
 import { SnackBarService } from '../../services/snack-bar.service';
+import { StateService } from '../../services/state.service';
+import { SiteMapItem, SiteMapResponse, SiteMapState } from '../models/site-map-item.model';
 
 const initialState: SiteMapState = {
   items: [],
@@ -34,22 +35,13 @@ const initialState: SiteMapState = {
   providedIn: 'root',
 })
 export class SiteMapService extends StateService<SiteMapState> {
+
+  get items(): SiteMapItem[] {
+    return this.state.items;
+  }
   items$: Observable<SiteMapItem[]>;
   search$: Observable<SiteMapItem[]>;
   loading$: Observable<boolean>;
-
-  constructor(
-    @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
-    @Inject(NG1_CONFIG_SERVICE) private readonly ng1ConfigService: Ng1ConfigService,
-    private readonly http: HttpClient,
-    private readonly snackBarService: SnackBarService,
-  ) {
-    super(initialState);
-
-    this.items$ = this.select((state) => state.items);
-    this.search$ = this.select((state) => state.search);
-    this.loading$ = this.select((state) => state.loading);
-  }
 
   baseUrl = Location.joinWithSlash(
     this.ng1ConfigService.getCmsContextPath(), `_rp/${this.ng1ChannelService.getSiteMapId()}./`,
@@ -59,10 +51,19 @@ export class SiteMapService extends StateService<SiteMapState> {
     'CMS-User': this.ng1ConfigService.cmsUser,
     contextPath: this.ng1ChannelService.getChannel().contextPath,
     hostGroup: this.ng1ChannelService.getChannel().hostGroup,
-  }
+  };
 
-  get items(): SiteMapItem[] {
-    return this.state.items;
+  constructor(
+    @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
+    @Inject(NG1_CONFIG_SERVICE) private readonly ng1ConfigService: Ng1ConfigService,
+    private readonly http: HttpClient,
+    private readonly snackBarService: SnackBarService,
+  ) {
+    super(initialState);
+
+    this.items$ = this.select(state => state.items);
+    this.search$ = this.select(state => state.search);
+    this.loading$ = this.select(state => state.loading);
   }
 
   search(query: string): void {
@@ -72,7 +73,7 @@ export class SiteMapService extends StateService<SiteMapState> {
       params: {
         fq: query,
       },
-    }).subscribe((res) => {
+    }).subscribe(res => {
       this.setState({ search: [res.data] });
     },
     this.onError.bind(this),
@@ -83,7 +84,7 @@ export class SiteMapService extends StateService<SiteMapState> {
     const url = Location.joinWithSlash(this.baseUrl, 'sitemapitem');
     this.http.get<SiteMapResponse>(url, {
       headers: this.headers,
-    }).subscribe((res) => {
+    }).subscribe(res => {
       this.setState({ items: [res.data] });
     },
     this.onError.bind(this),
@@ -97,7 +98,7 @@ export class SiteMapService extends StateService<SiteMapState> {
       params: {
         ancestry: ancestry.toString(),
       },
-    }).subscribe((res) => {
+    }).subscribe(res => {
       const prop = isSearchMode ? 'search' : 'items';
       if (ancestry) {
         this.setState({ [prop]: [res.data] });
