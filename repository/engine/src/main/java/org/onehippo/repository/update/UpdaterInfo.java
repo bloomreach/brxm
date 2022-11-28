@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2021 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.google.common.base.Strings;
+
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -33,10 +35,9 @@ import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
+import groovy.lang.GroovyRuntimeException;
 
 /**
  * Encapsulates meta data for running an {@link NodeUpdateVisitor}
@@ -97,6 +98,9 @@ class UpdaterInfo {
         final String klass = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_CLASS, null);
         if ((script == null || script.isEmpty()) && (klass == null || klass.isEmpty())) {
             throw new IllegalArgumentException("Either script or class property must be present");
+        }
+        if (script.contains("ASTTest")) {
+            throw new GroovyRuntimeException("Compilation failed : @groovy.transform.ASTTest not allowed");
         }
         if (klass != null && !klass.isEmpty()) {
             updaterClass = (Class<? extends NodeUpdateVisitor>) Class.forName(klass);
