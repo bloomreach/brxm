@@ -144,7 +144,6 @@ class PageService {
       }
       const endpoint = this.getEndpointUrlParameter(baseUrl);
       if (endpoint) {
-        const endpointUrl = new URL(endpoint);
         return baseUrl.replace(endpoint, endpoint.replace(window.location.hostname, window.location.host));
       }
     }

@@ -25,9 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
@@ -195,24 +197,45 @@ public class HstConfigurationUtils {
         return RequestContextProvider.get();
     }
 
-    public static String getPagePreviewUrl(final Channel channel, final HstLink hstLink, final Mount editingMount) {
-        HstRequestContext requestContext = getRequestContext();
+    /**
+     * Generates the page preview url. HstLink is created based on either siteMapItem or handle node. One of them needs 
+     * to be provided.
+     * If the spa url on the channel is not set, the site url is created with the editing mount and the hstlink.
+     * In case the spa url is set on the channel, this is used and the endpoint is created with the editing mount 
+     * and the hstlink. Port is ignored and it is appended on the frontend side if needed.
+     * @param contextService
+     * @param siteMapItem
+     * @param handle
+     * @return
+     */
+    public static String getPagePreviewUrl(final PageComposerContextService contextService, final HstSiteMapItem siteMapItem, final Node handle) {
+        if (siteMapItem == null && handle == null) {
+            throw new IllegalArgumentException("Either siteMapItem or handle is needed for HstLink creator");
+        }
+        final Mount editingMount = contextService.getEditingMount();
+        final Channel channel = editingMount.getChannel();
+        final HstLink hstLink = siteMapItem != null
+                ? contextService.getEditingMountLinkCreator().create(siteMapItem, editingMount)
+                : contextService.getEditingMountLinkCreator().create(handle, editingMount);
+        final HstRequestContext requestContext = getRequestContext();
         if (channel.getSpaUrl() == null) {
+            // spa url on channel is not set, create site url with the mount and hstLnk
             final String siteUrl = HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest(),
                     false) + "/" + hstLink.getPath();
             return siteUrl + "?preview-token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
         } else {
             final String spaHostUrl = channel.getSpaUrl().contains("endpoint=")
-                    ? channel.getSpaUrl().substring(0, channel.getSpaUrl().lastIndexOf('?'))
+                    ? StringUtils.substringBefore(channel.getSpaUrl(), '?')
                     : channel.getSpaUrl();
             final String siteUrlWithToken = spaHostUrl
                     + (StringUtils.isEmpty(hstLink.getPath()) ? ""
-                            : (spaHostUrl.endsWith("/") ? "" : "/") + hstLink.getPath())
+                            : StringUtils.appendIfMissing(hstLink.getPath(), "/"))
                     + "?token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
             return siteUrlWithToken + "&endpoint="
                     + HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest(), false) + "/"
                     + editingMount.getPageModelApi();
         }
     }
+
 
 }
