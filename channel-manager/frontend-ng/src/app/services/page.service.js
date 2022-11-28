@@ -147,6 +147,7 @@ class PageService {
         return baseUrl.replace(endpoint, endpoint.replace(window.location.hostname, window.location.host));
       }
     }
+    return baseUrl;
   }
 
   getPagePreviewUrl() {
