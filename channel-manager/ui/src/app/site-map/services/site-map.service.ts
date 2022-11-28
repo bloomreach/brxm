@@ -44,7 +44,7 @@ export class SiteMapService extends StateService<SiteMapState> {
   loading$: Observable<boolean>;
 
   baseUrl = Location.joinWithSlash(
-    this.ng1ConfigService.getCmsContextPath(), `_rp/${this.ng1ChannelService.getSiteMapId()}./`,
+    this.ng1ConfigService.getCmsContextPath(), `_rp`,
   );
 
   headers = {
@@ -66,8 +66,12 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.loading$ = this.select(state => state.loading);
   }
 
-  search(query: string): void {
-    const url = Location.joinWithSlash(this.baseUrl, 'search');
+  getChannelContext(): void {
+    console.log('test');
+  }
+
+  search(siteMapId: string, query: string): void {
+    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./search`);
     this.http.get<SiteMapResponse>(url, {
       headers: this.headers,
       params: {
@@ -80,8 +84,8 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.onComplete.bind(this));
   }
 
-  load(): void {
-    const url = Location.joinWithSlash(this.baseUrl, 'sitemapitem');
+  load(siteMapId: string): void {
+    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem`);
     this.http.get<SiteMapResponse>(url, {
       headers: this.headers,
     }).subscribe(res => {
@@ -91,8 +95,8 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.onComplete.bind(this));
   }
 
-  loadItem(path: string, isSearchMode: boolean, ancestry = false): void {
-    const url = Location.joinWithSlash(this.baseUrl, `sitemapitem/${path}`);
+  loadItem(siteMapId: string, path: string, isSearchMode: boolean, ancestry = false): void {
+    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem/${path}`);
     this.http.get<SiteMapResponse>(url, {
       headers: this.headers,
       params: {

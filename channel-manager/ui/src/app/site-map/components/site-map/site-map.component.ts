@@ -33,18 +33,18 @@ interface SiteMapItemNode extends SiteMapItem {
 }
 
 @Component({
-  selector: 'em-site-map',
-  templateUrl: './site-map.component.html',
-  styleUrls: ['./site-map.component.scss'],
+    selector: 'em-site-map',
+    templateUrl: './site-map.component.html',
+    styleUrls: ['./site-map.component.scss'],
 })
 export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     @Input() renderPathInfo?: string;
 
     private readonly treeFlattener = new MatTreeFlattener(
-      (node: SiteMapItem, level: number) => ({
-        ...node,
-        level,
-      }), node => node.level, node => node.expandable, node => node.children,
+        (node: SiteMapItem, level: number) => ({
+            ...node,
+            level,
+        }), node => node.level, node => node.expandable, node => node.children,
     );
 
     readonly treeControl = new FlatTreeControl<SiteMapItemNode>(node => node.level, node => node.expandable);
@@ -67,40 +67,41 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
         private readonly zone: NgZone,
         private readonly elementRef: ElementRef,
     ) {
-      this.search$
-        .pipe(
-          debounceTime(1000),
-          tap(value => {
-            this.searchQuery = value;
-            return value;
-          }),
-          map<string, [string]>(query => [query]),
-          distinctUntilChanged((prevQuery, query) => query === prevQuery),
-          pluck(0),
-        )
-        .subscribe(this.onSearch.bind(this));
+        this.search$
+            .pipe(
+                debounceTime(1000),
+                tap(value => {
+                    this.searchQuery = value;
+                    return value;
+                }),
+                map<string, [string]>(query => [query]),
+                distinctUntilChanged((prevQuery, query) => query === prevQuery),
+                pluck(0),
+            )
+            .subscribe(this.onSearch.bind(this));
 
-      this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', () => {
-        this.zone.run(() => {
-          this.loadSiteMap();
+        this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', () => {
+            this.zone.run(() => {
+                this.loadSiteMap();
+            });
         });
-      });
     }
 
     ngOnInit(): void {
-      const siteMapSubscription = combineLatest(
-        this.siteMapService.search$,
-        this.siteMapService.items$,
-      ).subscribe(([search, items]) => {
-        if (this.isSearchMode) {
-          this.dataSource.data = search;
-        } else {
-          this.dataSource.data = items;
-        }
-        this.restoreExpandedNodes();
-      });
+        const siteMapSubscription = combineLatest(
+            this.siteMapService.search$,
+            this.siteMapService.items$,
+        ).subscribe(([search, items]) => {
+            if (this.isSearchMode) {
+                this.dataSource.data = search;
+                this.expandAllNodes();
+            } else {
+                this.dataSource.data = items;
+                this.restoreExpandedNodes();
+            }
+        });
 
-      this.subscriptions.add(siteMapSubscription);
+        this.subscriptions.add(siteMapSubscription);
     }
 
     ngOnChanges(changes: any): void {
@@ -110,122 +111,130 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-      this.search$.complete();
-      this.subscriptions.unsubscribe();
-      this.onLoadSiteMapUnsubscribe();
+        this.search$.complete();
+        this.subscriptions.unsubscribe();
+        this.onLoadSiteMapUnsubscribe();
     }
 
     get isSearchMode(): boolean {
-      return !!this.searchQuery && this.searchQuery.length > 2;
+        return !!this.searchQuery && this.searchQuery.length > 2;
     }
 
     isSelected({ renderPathInfo }: SiteMapItem): boolean {
-      return renderPathInfo === this.renderPathInfo;
+        return renderPathInfo === this.renderPathInfo;
     }
 
     trackBy = (_: number, node: SiteMapItemNode): string => node.id;
 
     async selectNode(node: SiteMapItemNode): Promise<void> {
-      if (node.renderPathInfo) {
-        await this.iframeService.load(node.renderPathInfo);
-      }
+        if (node.renderPathInfo) {
+            await this.iframeService.load(node.renderPathInfo);
+        }
 
-      this.unfoldNode(node);
+        this.unfoldNode(node);
     }
 
     unfoldNode(node: SiteMapItemNode): void {
-      if (node.expandable && !node.children.length) {
-        this.saveExpandedNodes();
-        this.loadSiteMapItem(node);
-      }
+        if (node.expandable && !node.children.length) {
+            if (!this.isSearchMode) {
+                this.saveExpandedNodes();
+            }
+            this.loadSiteMapItem(node);
+        }
     }
 
     private expandSelectedNode(): void {
-      const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
-      this.expandNode(node);
-      setTimeout(() => this.scrollToSelectedNode(), 500);
+        const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
+        this.expandNode(node);
+        setTimeout(() => this.scrollToSelectedNode(), 500);
     }
 
     private loadSiteMap(): void {
+        const siteMapId = this.ng1ChannelService.getSiteMapId();
+        let path = '';
         if (this.renderPathInfo) {
-            const [, path] = this.renderPathInfo.split('/');
-            this.siteMapService.loadItem(path, false, true);
+            const [, rest] = this.renderPathInfo.split('/');
+            path = rest;
+        }
+        if (path) {
+            this.siteMapService.loadItem(siteMapId, path, false, true);
         } else {
-            this.siteMapService.load();
+            this.siteMapService.load(siteMapId);
         }
     }
 
     private loadSiteMapItem(node: SiteMapItemNode): void {
-      const parentPath = this.getParentPath(node);
-      this.siteMapService.loadItem(`${parentPath}${node.id}`, this.isSearchMode);
+        const siteMapId = this.ng1ChannelService.getSiteMapId();
+        const parentPath = this.getParentPath(node);
+        this.siteMapService.loadItem(siteMapId, `${parentPath}${node.id}`, this.isSearchMode);
     }
 
     private getParentPath(node: SiteMapItemNode): string {
-      const parents = this.getParents(node);
-      const parentsIds = parents.map(parent => parent.id).filter(path => path !== '/');
-      return parentsIds.join('/');
+        const parents = this.getParents(node);
+        const parentsIds = parents.map(parent => parent.id).filter(path => path !== '/');
+        return parentsIds.join('/');
     }
 
     private expandNode(node?: SiteMapItemNode): void {
-      if (node) {
-        this.treeControl.expand(node);
-        this.getParents(node).forEach(parent => {
-          this.treeControl.expand(parent);
-        });
-      }
+        if (node) {
+            this.treeControl.expand(node);
+            this.getParents(node).forEach(parent => {
+                this.treeControl.expand(parent);
+            });
+        }
     }
 
     private getParents(child: SiteMapItemNode): SiteMapItemNode[] {
-      const parents = [];
-      const { dataNodes, getLevel } = this.treeControl;
+        const parents = [];
+        const { dataNodes, getLevel } = this.treeControl;
 
-      for (let i = dataNodes.indexOf(child), childLevel = getLevel(child); i >= 0; i--) {
-        const node = this.treeControl.dataNodes[i];
-        const level = this.treeControl.getLevel(node);
+        for (let i = dataNodes.indexOf(child), childLevel = getLevel(child); i >= 0; i--) {
+            const node = this.treeControl.dataNodes[i];
+            const level = this.treeControl.getLevel(node);
 
-        if (level < childLevel) {
-          parents.push(node);
-          childLevel = level;
+            if (level < childLevel) {
+                parents.push(node);
+                childLevel = level;
+            }
         }
-      }
 
-      return parents;
+        return parents;
     }
 
     private onSearch(value: string): void {
-      if (this.isSearchMode) {
-        this.resetExpandedNodes();
-        this.siteMapService.search(value);
-      } else if (!value) {
-        this.loadSiteMap();
-      }
+        const siteMapId = this.ng1ChannelService.getSiteMapId();
+        if (this.isSearchMode) {
+            this.siteMapService.search(siteMapId, value);
+        } else if (!value) {
+            this.loadSiteMap();
+        }
     }
 
     private saveExpandedNodes(): void {
-      this.treeControl.dataNodes.forEach(node => {
-        if (node.expandable && this.treeControl.isExpanded(node)) {
-          this.expandedNodes.push(node);
-        }
-      });
+        this.treeControl.dataNodes.forEach(node => {
+            if (node.expandable && this.treeControl.isExpanded(node)) {
+                this.expandedNodes.push(node);
+            }
+        });
     }
 
     private restoreExpandedNodes(): void {
-      this.expandedNodes.forEach(node => {
-        const expandedNode = this.treeControl.dataNodes.find(n => n.id === node.id);
-        if (expandedNode) {
-          this.treeControl.expand(expandedNode);
-        }
-      });
-      this.expandNode(this.treeControl.dataNodes[0]);
-      this.expandSelectedNode();
+        this.expandedNodes.forEach(node => {
+            const expandedNode = this.treeControl.dataNodes.find(n => n.id === node.id);
+            if (expandedNode) {
+                this.treeControl.expand(expandedNode);
+            }
+        });
+        this.expandNode(this.treeControl.dataNodes[0]);
+        this.expandSelectedNode();
     }
 
-    private resetExpandedNodes(): void {
-      this.expandedNodes = [];
+    private expandAllNodes(): void {
+        this.treeControl.expandAll();
     }
 
     private scrollToSelectedNode(): void {
-      const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
-      selectedNode?.scrollIntoView();
+        const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
+        selectedNode?.scrollIntoView();
     }
 }
