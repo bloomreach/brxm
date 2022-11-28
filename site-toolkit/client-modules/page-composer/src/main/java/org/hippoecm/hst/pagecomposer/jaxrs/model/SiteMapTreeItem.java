@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
@@ -34,6 +36,7 @@ public class SiteMapTreeItem {
     private String renderPathInfo;
     private boolean experiencePage;
     private boolean expandable;
+    private boolean structural;
 
     /**
      * <p>
@@ -115,6 +118,13 @@ public class SiteMapTreeItem {
         return root;
     }
 
+    public static void mergeFieldsFromTo(SiteMapTreeItem source, SiteMapTreeItem target) {
+        target.name = source.name;
+        target.pageTitle = source.pageTitle;
+        target.pathInfo = source.pathInfo;
+        target.renderPathInfo = source.renderPathInfo;
+    }
+
     // structural item only, without pathInfo meaning not a clickable sitemap item
     private SiteMapTreeItem(final String name) {
         this.id = name;
@@ -133,6 +143,7 @@ public class SiteMapTreeItem {
         this.renderPathInfo = siteMapPageRepresentation.getRenderPathInfo();
         this.experiencePage = siteMapPageRepresentation.isExperiencePage();
         this.expandable = siteMapPageRepresentation.isExpandable();
+        this.structural = siteMapPageRepresentation.isStructural();
     }
 
     public SiteMapTreeItem(final String id, final String name, final String pageTitle, final String pathInfo,
@@ -182,6 +193,11 @@ public class SiteMapTreeItem {
 
     public boolean isExpandable() {
         return expandable;
+    }
+
+    @JsonIgnore
+    public boolean isStructural() {
+        return structural;
     }
 
     public Collection<SiteMapTreeItem> getChildren() {
