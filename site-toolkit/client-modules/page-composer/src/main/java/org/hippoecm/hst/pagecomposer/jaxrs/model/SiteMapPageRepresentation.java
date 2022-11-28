@@ -18,6 +18,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -49,14 +51,16 @@ public class SiteMapPageRepresentation {
     // flag to indicate whether this 'sitemap page' (not a real sitemap page) is the result of an experience page or not
     private boolean experiencePage;
     private boolean expandable;
+    private boolean structural;
 
     public static SiteMapPageRepresentation structural(final String pathInfo, final boolean expandable) {
-        final SiteMapPageRepresentation structural = new SiteMapPageRepresentation();
-        structural.pathInfo = pathInfo;
-        structural.id = getIdFromPathInfo(pathInfo);
-        structural.name = structural.id;
-        structural.expandable = expandable;
-        return structural;
+        final SiteMapPageRepresentation structuralRepresentation = new SiteMapPageRepresentation();
+        structuralRepresentation.pathInfo = pathInfo;
+        structuralRepresentation.id = getIdFromPathInfo(pathInfo);
+        structuralRepresentation.name = structuralRepresentation.id;
+        structuralRepresentation.expandable = expandable;
+        structuralRepresentation.structural = true;
+        return structuralRepresentation;
     }
 
     private static String getIdFromPathInfo(final String pathInfo) {
@@ -261,5 +265,10 @@ public class SiteMapPageRepresentation {
 
     public void setExpandable(final boolean expandable) {
         this.expandable = expandable;
+    }
+
+    @JsonIgnore
+    public boolean isStructural() {
+        return structural;
     }
 }

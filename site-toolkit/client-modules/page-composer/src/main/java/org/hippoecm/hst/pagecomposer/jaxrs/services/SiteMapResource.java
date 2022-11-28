@@ -196,29 +196,28 @@ public class SiteMapResource extends AbstractConfigResource {
 
                     siteMapTreeItem = getShallowSiteMapTreeItemForXPages(EMPTY, xPageSiteMapTreeItem, previewSecurityDelegate);
 
-                    final String[] split = normalizedPathInfo.split("/");
-                    SiteMapTreeItem currentLevel = siteMapTreeItem;
-                    String nextPathInfo = null;
-                    for (String pathElement : split) {
-                        nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
-                        final SiteMapTreeItem nextLevel;
-                        if (nextPathInfo == normalizedPathInfo) {
-                            // already loaded
-                            nextLevel = requestedItem;
-                        } else {
-                            nextLevel = getShallowSiteMapTreeItemForXPages(nextPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+                    if (siteMapTreeItem != null) {
+                        final String[] split = normalizedPathInfo.split("/");
+                        SiteMapTreeItem currentLevel = siteMapTreeItem;
+                        String nextPathInfo = null;
+                        for (String pathElement : split) {
+                            nextPathInfo = nextPathInfo == null ? pathElement : nextPathInfo + "/" + pathElement;
+                            final SiteMapTreeItem nextLevel;
+                            if (nextPathInfo == normalizedPathInfo) {
+                                // already loaded
+                                nextLevel = requestedItem;
+                            } else {
+                                nextLevel = getShallowSiteMapTreeItemForXPages(nextPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
+                            }
+                            if (nextLevel == null) {
+                                break;
+                            }
+                            // merge the next level into currentLevel
+                            currentLevel.addOrReplaceChild(nextLevel);
+                            currentLevel = nextLevel;
                         }
-                        if (nextLevel == null) {
-                            break;
-                        }
-                        // merge the next level into currentLevel
-                        currentLevel.addOrReplaceChild(nextLevel);
-                        currentLevel = nextLevel;
                     }
-                } else {
-                    siteMapTreeItem = null;
                 }
-
             } else {
                 siteMapTreeItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
             }
@@ -265,6 +264,7 @@ public class SiteMapResource extends AbstractConfigResource {
                     final Optional<SiteMapTreeItem> routesRoot = getShallowSiteMapTreeItem(EMPTY, routes);
                     if (routesRoot.isPresent()) {
                         // merge routesRoot children into siteMapTreeItem
+                        mergeFields(siteMapTreeItem, routesRoot.get());
                         mergeChildren(siteMapTreeItem, routesRoot.get());
 
                         final String[] split = normalizedPathInfo.split("/");
@@ -297,12 +297,15 @@ public class SiteMapResource extends AbstractConfigResource {
                     if (routesItem.isPresent()) {
                         // merge sitemap routes with XPage documents if needed
                         final SiteMapTreeItem xpagesBasedItem = siteMapTreeItem;
+                        mergeFields(xpagesBasedItem, routesItem.get());
                         routesItem.get().getChildren().stream().forEach(
                                 routeItem -> {
                                     if (xpagesBasedItem.getChild(routeItem.getId()) == null) {
                                         xpagesBasedItem.addOrReplaceChild(routeItem);
                                         // in case the xpagesBasedItem was not yet expandable, mark it to be so now
                                         xpagesBasedItem.setExpandable(true);
+                                    } else {
+                                        mergeFields(xpagesBasedItem.getChild(routeItem.getId()), routeItem);
                                     }
                                 }
                         );
@@ -312,6 +315,14 @@ public class SiteMapResource extends AbstractConfigResource {
 
             return ok(format("Item for pathInfo '%s'", pathInfo), siteMapTreeItem);
         });
+    }
+
+    private void mergeFields(final SiteMapTreeItem xpagesBasedItem, final SiteMapTreeItem routeItem) {
+        if (xpagesBasedItem.isStructural()) {
+            // this is merely a tree item as result of hierarchy of xpages but there is also a real routeItem for it :
+            // merge the fields
+            SiteMapTreeItem.mergeFieldsFromTo(routeItem, xpagesBasedItem);
+        }
     }
 
     private void mergeChildren(final SiteMapTreeItem target, final SiteMapTreeItem source) {
