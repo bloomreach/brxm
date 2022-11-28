@@ -227,15 +227,13 @@ public class HstConfigurationUtils {
             final String spaHostUrl = channel.getSpaUrl().contains("endpoint=")
                     ? StringUtils.substringBefore(channel.getSpaUrl(), '?')
                     : channel.getSpaUrl();
-            final String siteUrlWithToken = spaHostUrl
-                    + (StringUtils.isEmpty(hstLink.getPath()) ? ""
-                            : StringUtils.appendIfMissing(hstLink.getPath(), "/"))
-                    + "?token=" + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
+            final String siteUrlWithToken = StringUtils.appendIfMissing(spaHostUrl, "/")
+                    + StringUtils.defaultIfEmpty(hstLink.getPath(), "") + "?token="
+                    + StringUtils.defaultString(channel.getExternalPreviewToken(), "");
             return siteUrlWithToken + "&endpoint="
                     + HstRequestUtils.createURLForMount(editingMount, requestContext.getServletRequest(), false) + "/"
                     + editingMount.getPageModelApi();
         }
     }
-
 
 }
