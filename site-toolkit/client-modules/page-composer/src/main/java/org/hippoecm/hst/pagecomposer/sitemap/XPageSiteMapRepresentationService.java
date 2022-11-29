@@ -324,6 +324,10 @@ public class XPageSiteMapRepresentationService {
 
     private void place(final XPageSiteMapTreeItem parent, final XPageSiteMapTreeItem toAdd, String[] pathElements, final int position) {
 
+        boolean newChild = false;
+        if (parent.getChildren().containsKey(pathElements[position])) {
+            newChild = true;
+        }
         final XPageSiteMapTreeItem child = parent.getChildren().computeIfAbsent(pathElements[position], key -> new XPageSiteMapTreeItem());
 
         child.setParent(parent);
@@ -345,12 +349,14 @@ public class XPageSiteMapRepresentationService {
                 }
             }
         } else {
-            child.setName(pathElements[position]);
-            // do set the pathInfo as we are dealing with a structural sitemap tree item
-            if (StringUtils.isEmpty(parent.getPathInfo())) {
-                child.setPathInfo(pathElements[position]);
-            } else {
-                child.setPathInfo(parent.getPathInfo() + "/" + pathElements[position]);
+            if (newChild) {
+                child.setName(pathElements[position]);
+                // do set the pathInfo as we are dealing with a structural sitemap tree item
+                if (StringUtils.isEmpty(parent.getPathInfo())) {
+                    child.setPathInfo(pathElements[position]);
+                } else {
+                    child.setPathInfo(parent.getPathInfo() + "/" + pathElements[position]);
+                }
             }
             place(child, toAdd, pathElements, position + 1);
         }
