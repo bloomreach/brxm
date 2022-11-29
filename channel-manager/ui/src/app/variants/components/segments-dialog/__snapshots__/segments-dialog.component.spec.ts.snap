@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SegmentsDialogComponent segments list should render personas list alphabetically 1`] = `
+<mat-selection-list
+  aria-disabled="false"
+  aria-multiselectable="false"
+  class="qa-segments mat-selection-list mat-list-base"
+  color="primary"
+  role="listbox"
+  tabindex="0"
+>
+  
+  <mat-list-option
+    aria-disabled="false"
+    aria-selected="false"
+    class="mat-list-item mat-list-option mat-focus-indicator mat-primary"
+    role="option"
+    tabindex="-1"
+  >
+    <div
+      class="mat-list-item-content mat-list-item-content-reverse"
+    >
+      <div
+        class="mat-list-item-ripple mat-ripple"
+        mat-ripple=""
+      />
+      
+      <div
+        class="mat-list-text"
+      >
+         7eleven 
+      </div>
+    </div>
+  </mat-list-option>
+  <mat-list-option
+    aria-disabled="false"
+    aria-selected="false"
+    class="mat-list-item mat-list-option mat-focus-indicator mat-primary"
+    role="option"
+    tabindex="-1"
+  >
+    <div
+      class="mat-list-item-content mat-list-item-content-reverse"
+    >
+      <div
+        class="mat-list-item-ripple mat-ripple"
+        mat-ripple=""
+      />
+      
+      <div
+        class="mat-list-text"
+      >
+         Cosco 
+      </div>
+    </div>
+  </mat-list-option>
+  <mat-list-option
+    aria-disabled="false"
+    aria-selected="false"
+    class="mat-list-item mat-list-option mat-focus-indicator mat-primary"
+    role="option"
+    tabindex="-1"
+  >
+    <div
+      class="mat-list-item-content mat-list-item-content-reverse"
+    >
+      <div
+        class="mat-list-item-ripple mat-ripple"
+        mat-ripple=""
+      />
+      
+      <div
+        class="mat-list-text"
+      >
+         Vons 
+      </div>
+    </div>
+  </mat-list-option>
+  <mat-list-option
+    aria-disabled="false"
+    aria-selected="false"
+    class="mat-list-item mat-list-option mat-focus-indicator mat-primary"
+    role="option"
+    tabindex="-1"
+  >
+    <div
+      class="mat-list-item-content mat-list-item-content-reverse"
+    >
+      <div
+        class="mat-list-item-ripple mat-ripple"
+        mat-ripple=""
+      />
+      
+      <div
+        class="mat-list-text"
+      >
+         Walmart 
+      </div>
+    </div>
+  </mat-list-option>
+</mat-selection-list>
+`;
