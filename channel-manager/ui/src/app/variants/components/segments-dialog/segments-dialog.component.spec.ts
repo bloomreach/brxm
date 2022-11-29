@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
+import { TargetingApiResponse } from '../../../models/targeting-api-response.model';
+import { Ng1TargetingService, NG1_TARGETING_SERVICE } from '../../../services/ng1/targeting.ng1.service';
+import { Persona } from '../../models/persona.model';
 
 import { SegmentsDialogComponent } from './segments-dialog.component';
 
@@ -27,8 +29,30 @@ describe('SegmentsDialogComponent', () => {
   let component: SegmentsDialogComponent;
   let fixture: ComponentFixture<SegmentsDialogComponent>;
 
+  let targetingService: Ng1TargetingService;
+
+  const personas: Partial<Persona>[] = [
+    { segmentName: 'Walmart' },
+    { segmentName: 'Cosco' },
+    { segmentName: 'Vons' },
+    { segmentName: '7eleven' },
+  ];
+
+  const mockApiResponse: TargetingApiResponse<{ items: Persona[] }> = {
+    success: true,
+    message: 'Some message',
+    errorCode: null,
+    reloadRequired: false,
+    data: {
+      items: personas as Persona[],
+    },
+  };
+
   beforeEach(() => {
-    const targetingServiceMock = {};
+    const targetingServiceMock = {
+      getPersonas: jest.fn(() => Promise.resolve(mockApiResponse)),
+    };
+
     const matDialogRefMock = {};
 
     TestBed.configureTestingModule({
@@ -37,12 +61,14 @@ describe('SegmentsDialogComponent', () => {
         MatListModule,
         TranslateModule.forRoot(),
       ],
-      declarations: [ SegmentsDialogComponent ],
+      declarations: [SegmentsDialogComponent],
       providers: [
         { provide: NG1_TARGETING_SERVICE, useValue: targetingServiceMock },
         { provide: MatDialogRef, useValue: matDialogRefMock },
       ],
     });
+
+    targetingService = TestBed.inject(NG1_TARGETING_SERVICE);
   });
 
   beforeEach(() => {
@@ -53,5 +79,15 @@ describe('SegmentsDialogComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('segments list', () => {
+    it('should render personas list alphabetically', async () => {
+      await component.ngOnInit();
+      fixture.detectChanges();
+
+      const segmentListElement = fixture.nativeElement.querySelector('.qa-segments');
+      expect(segmentListElement).toMatchSnapshot();
+    });
   });
 });
