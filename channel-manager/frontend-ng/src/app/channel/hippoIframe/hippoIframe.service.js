@@ -127,6 +127,12 @@ class HippoIframeService {
     return this.renderPathInfo;
   }
 
+  getCurrentPathInfo() {
+    const page = this.PageStructureService.getPage();
+    const meta = page && page.getMeta();
+    return meta && meta.getPathInfo();
+  }
+
   async reload(force = false) {
     if (!this.isPageLoaded()) {
       this.$log.warn('Trying to reload when a page load is already ongoing. Taking no action.');

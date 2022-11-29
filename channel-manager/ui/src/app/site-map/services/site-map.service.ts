@@ -66,10 +66,6 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.loading$ = this.select(state => state.loading);
   }
 
-  getChannelContext(): void {
-    console.log('test');
-  }
-
   search(siteMapId: string, query: string): void {
     const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./search`);
     this.http.get<SiteMapResponse>(url, {
@@ -78,10 +74,10 @@ export class SiteMapService extends StateService<SiteMapState> {
         fq: query,
       },
     }).subscribe(res => {
-      this.setState({ search: [res.data] });
-    },
-    this.onError.bind(this),
-    this.onComplete.bind(this));
+        this.setState({ search: [res.data] });
+      },
+      this.onError.bind(this),
+      this.onComplete.bind(this));
   }
 
   load(siteMapId: string): void {
@@ -89,40 +85,54 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.http.get<SiteMapResponse>(url, {
       headers: this.headers,
     }).subscribe(res => {
-      this.setState({ items: [res.data] });
-    },
-    this.onError.bind(this),
-    this.onComplete.bind(this));
+        this.setState({ items: [res.data] });
+      },
+      this.onError.bind(this),
+      this.onComplete.bind(this));
   }
 
   loadItem(siteMapId: string, path: string, isSearchMode: boolean, ancestry = false): void {
-    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem/${path}`);
+    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem${path}`);
     this.http.get<SiteMapResponse>(url, {
       headers: this.headers,
       params: {
         ancestry: ancestry.toString(),
       },
     }).subscribe(res => {
-      const prop = isSearchMode ? 'search' : 'items';
-      if (ancestry) {
-        this.setState({ [prop]: [res.data] });
-      } else {
-        const tmp = { ...this.state[prop][0] };
-        this.deepMergeItems(path.split('/'), res.data, tmp);
+        const prop = isSearchMode ? 'search' : 'items';
+        let tmp = { ...this.state[prop][0] };
+        const pathKeys = path.split('/').filter(key => key !== '');
+        if (ancestry) {
+          tmp = this.deepMergeAncestryItems(pathKeys, res.data, tmp) || tmp;
+        } else {
+          this.deepMergeChildrenItems(pathKeys, res.data, tmp);
+        }
         this.setState({ [prop]: [tmp] });
-      }
-    },
-    this.onError.bind(this),
-    this.onComplete.bind(this));
+      },
+      this.onError.bind(this),
+      this.onComplete.bind(this));
   }
 
-  deepMergeItems(keys: string[], item1: SiteMapItem, item2?: SiteMapItem): void {
+  deepMergeChildrenItems(keys: string[], item1: SiteMapItem, item2?: SiteMapItem): void {
     if (keys.length !== 0 && item2) {
       const el = item2.children.find((child: SiteMapItem) => child.id === keys[0]);
-      this.deepMergeItems(keys.slice(1), item1, el);
+      this.deepMergeChildrenItems(keys.slice(1), item1, el);
     } else if (item2) {
       item2.children = [...item1.children];
     }
+  }
+
+  deepMergeAncestryItems(keys: string[], item1: SiteMapItem, item2: SiteMapItem): SiteMapItem | undefined {
+    if (keys.length === 0) { return ; }
+
+    if (Object.keys(item2).length === 0) { return item1; }
+
+    const el = item2.children.find((child: SiteMapItem) => child.id === keys[0]);
+    if (el) {
+        this.deepMergeAncestryItems(keys.slice(1), item1, el);
+      } else {
+        return item1;
+      }
   }
 
   onError({ message, status }: HttpErrorResponse): void {

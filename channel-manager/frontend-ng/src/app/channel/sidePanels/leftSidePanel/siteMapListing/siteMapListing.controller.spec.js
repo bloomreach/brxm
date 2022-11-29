@@ -26,11 +26,11 @@ describe('siteMapListingController', () => {
       HippoIframeService = _HippoIframeService_;
     });
 
-    spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
+    spyOn(HippoIframeService, 'getCurrentPathInfo');
   });
 
   it('returns the currentRenderPathInfo from service', () => {
-    $ctrl.getCurrentRenderPathInfo();
-    expect(HippoIframeService.getCurrentRenderPathInfo).toHaveBeenCalled();
+    $ctrl.getCurrentPathInfo();
+    expect(HippoIframeService.getCurrentPathInfo).toHaveBeenCalled();
   });
 });
