@@ -249,18 +249,11 @@ export default class XPageMenuService extends MenuService {
   }
 
   _onCopyToClipboard() {
-    navigator.clipboard.writeText(this._appendPort(this._getPagePreviewUrl()))
+    navigator.clipboard.writeText(this.PageService.getPagePreviewUrl())
       .then(() => this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_SUCCESSFUL'))
       .catch(() => {
         this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_FAILED')
       });
-  }
-
-  _appendPort(baseUrl) {
-    if (window.location.port) {
-      return baseUrl.replace(window.location.hostname, window.location.host);
-    }
-    return baseUrl;
   }
 
   _addWorkflowAction(id, onClick, config = {}) {
@@ -369,10 +362,6 @@ export default class XPageMenuService extends MenuService {
 
   _getDocumentName() {
     return this.PageService.getState('xpage').name;
-  }
-
-  _getPagePreviewUrl() {
-    return this.PageService.getState('xpage').pagePreviewUrl;
   }
 
   _isEditingCurrentPage() {

@@ -39,6 +39,10 @@ final class HstStateProvider {
             states.put(HstState.REQUESTS, xPageContext.getRequests());
         }
 
+        states.put(HstState.XPAGE_PREVIEW_URL,
+                context.isExperiencePageRequest() ? context.getXPageContext().getPagePreviewUrl()
+                        : context.getPageContext().getPagePreviewUrl());
+
         return states;
     }
 
@@ -48,7 +52,6 @@ final class HstStateProvider {
         states.put(HstState.XPAGE_ID, xPageContext.getXPageId());
         states.put(HstState.XPAGE_NAME, xPageContext.getXPageName());
         states.put(HstState.XPAGE_STATE, xPageContext.getXPageState());
-        states.put(HstState.XPAGE_PREVIEW_URL, xPageContext.getPagePreviewUrl());
 
         if (!StringUtils.isEmpty(xPageContext.getLockedBy())) {
             states.put(HstState.XPAGE_LOCKED_BY, xPageContext.getLockedBy());
