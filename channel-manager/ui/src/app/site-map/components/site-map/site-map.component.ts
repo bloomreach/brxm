@@ -38,7 +38,7 @@ interface SiteMapItemNode extends SiteMapItem {
     styleUrls: ['./site-map.component.scss'],
 })
 export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
-    @Input() renderPathInfo?: string;
+    @Input() pathInfo?: string;
 
     private readonly treeFlattener = new MatTreeFlattener(
         (node: SiteMapItem, level: number) => ({
@@ -105,7 +105,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     ngOnChanges(changes: any): void {
-        if (changes.renderPathInfo.firstChange) {
+        if (changes.pathInfo.firstChange) {
             this.loadSiteMap();
         }
     }
@@ -120,21 +120,21 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
         return !!this.searchQuery && this.searchQuery.length > 2;
     }
 
-    isSelected({ renderPathInfo }: SiteMapItem): boolean {
-        return renderPathInfo === this.renderPathInfo;
+    isSelected({ pathInfo }: SiteMapItem): boolean {
+        return pathInfo === this.pathInfo || `/${pathInfo}` === this.pathInfo;
     }
 
     trackBy = (_: number, node: SiteMapItemNode): string => node.id;
 
     async selectNode(node: SiteMapItemNode): Promise<void> {
-        if (node.renderPathInfo) {
-            await this.iframeService.load(node.renderPathInfo);
+        if (node.pathInfo) {
+            await this.iframeService.load(node.pathInfo);
         }
 
-        this.unfoldNode(node);
+        this.openNode(node);
     }
 
-    unfoldNode(node: SiteMapItemNode): void {
+    openNode(node: SiteMapItemNode): void {
         if (node.expandable && !node.children.length) {
             if (!this.isSearchMode) {
                 this.saveExpandedNodes();
@@ -151,13 +151,8 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
     private loadSiteMap(): void {
         const siteMapId = this.ng1ChannelService.getSiteMapId();
-        let path = '';
-        if (this.renderPathInfo) {
-            const [, rest] = this.renderPathInfo.split('/');
-            path = rest;
-        }
-        if (path) {
-            this.siteMapService.loadItem(siteMapId, path, false, true);
+        if (this.pathInfo && this.pathInfo !== '/') {
+            this.siteMapService.loadItem(siteMapId, this.pathInfo, false, true);
         } else {
             this.siteMapService.load(siteMapId);
         }
@@ -166,7 +161,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     private loadSiteMapItem(node: SiteMapItemNode): void {
         const siteMapId = this.ng1ChannelService.getSiteMapId();
         const parentPath = this.getParentPath(node);
-        this.siteMapService.loadItem(siteMapId, `${parentPath}${node.id}`, this.isSearchMode);
+        this.siteMapService.loadItem(siteMapId, `/${parentPath}${node.id}`, this.isSearchMode);
     }
 
     private getParentPath(node: SiteMapItemNode): string {

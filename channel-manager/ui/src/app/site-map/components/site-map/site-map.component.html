@@ -54,7 +54,7 @@
 
       <mat-icon svgIcon="chevron-right"
                 *ngIf="node.expandable"
-                (click)="unfoldNode(node)"
+                (click)="openNode(node)"
                 matTreeNodeToggle
                 [class.expanded]="treeControl.isExpanded(node)">
       </mat-icon>
