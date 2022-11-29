@@ -38,6 +38,7 @@ class PageMenuService extends MenuService {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.PageService = PageService;
     this.PageStructureService = PageStructureService;
     this.SiteMapItemService = SiteMapItemService;
     this.SiteMapService = SiteMapService;
@@ -108,26 +109,18 @@ class PageMenuService extends MenuService {
       .addAction('copy-preview-url', {
         isEnabled: () => isEnabled('copy-preview-url'),
         isVisible: () => isVisible('copy-preview-url'),
-        onClick: () => this.onCopyToClipboard(),
+        onClick: () => this._onCopyToClipboard(),
         translationKey: 'TOOLBAR_MENU_PAGE_COPY_PREVIEW_URL',
         iconName: 'mdi-share-variant-outline'
       });
   }
 
-  onCopyToClipboard() {
-    const siteMapItem = this.SiteMapItemService.get();
-    navigator.clipboard.writeText(this.appendPort(siteMapItem.pagePreviewUrl))
+  _onCopyToClipboard() {
+    navigator.clipboard.writeText(this.PageService.getPagePreviewUrl())
       .then(() => this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_SUCCESSFUL'))
       .catch(() => {
         this.FeedbackService.showNotification('COPY_TO_CLIPBOARD_FAILED')
       });
-  }
-
-  appendPort(baseUrl) {
-    if (window.location.port) {
-      return baseUrl.replace(window.location.hostname, window.location.host);
-    }
-    return baseUrl;
   }
 
   onOpenMenu() {
