@@ -2284,6 +2284,36 @@
         "zh" : "UNRESOLVED",
         "es" : "UNRESOLVED"
       }
+    },
+    "CHANNEL_SETTINGS_ENABLED_PREVIEW_MESSAGE_WITHOUT_PROJECT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CHANNEL_SETTINGS_PROJECT_PREVIEW_URL_WITHOUT_PROJECT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "CHANNEL_SETTINGS_DISABLED_PREVIEW_MESSAGE_WITHOUT_PROJECT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
