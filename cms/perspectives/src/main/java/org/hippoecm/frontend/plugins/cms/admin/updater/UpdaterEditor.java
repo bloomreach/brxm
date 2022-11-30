@@ -58,6 +58,8 @@ import org.slf4j.event.Level;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import static org.onehippo.repository.update.UpdaterExecutionReport.LOG_FILES_LOG_TARGET;
+import static org.onehippo.repository.update.UpdaterExecutionReport.REPOSITORY_LOG_TARGET;
 
 public class UpdaterEditor extends Panel {
 
@@ -99,7 +101,7 @@ public class UpdaterEditor extends Panel {
     protected String throttle = String.valueOf(DEFAULT_THOTTLE);
     protected boolean dryRun = false;
     protected String logLevel = Level.DEBUG.toString();
-    protected String logTarget = UpdaterExecutionReport.DEFAULT_LOG_TARGET;
+    protected String logTarget = LOG_FILES_LOG_TARGET;
 
     public UpdaterEditor(IModel<?> model, final IPluginContext context, Panel container) {
         super("updater-editor", model);
@@ -467,7 +469,9 @@ public class UpdaterEditor extends Panel {
             method = "custom";
         }
         logLevel = getStringProperty(HippoNodeType.HIPPOSYS_LOGLEVEL, Level.DEBUG.toString());
-        logTarget = getStringProperty(HippoNodeType.HIPPOSYS_LOGTARGET, "LOGS");
+        // in case repository logs are supported, make this the default
+        logTarget = getStringProperty(HippoNodeType.HIPPOSYS_LOGTARGET,
+                UpdaterExecutionReport.isPersistLogsSupported() ? REPOSITORY_LOG_TARGET : LOG_FILES_LOG_TARGET);
         dryRun = getBooleanProperty(HippoNodeType.HIPPOSYS_DRYRUN, false);
     }
 
@@ -582,7 +586,7 @@ public class UpdaterEditor extends Panel {
             node.setProperty(HippoNodeType.HIPPOSYS_DESCRIPTION, StringUtils.defaultString(description));
             node.setProperty(HippoNodeType.HIPPOSYS_PARAMETERS, StringUtils.defaultString(parameters));
             node.setProperty(HippoNodeType.HIPPOSYS_LOGLEVEL, StringUtils.defaultIfBlank(logLevel, Level.DEBUG.toString()));
-            node.setProperty(HippoNodeType.HIPPOSYS_LOGTARGET, StringUtils.defaultIfBlank(logTarget, "LOGS"));
+            node.setProperty(HippoNodeType.HIPPOSYS_LOGTARGET, StringUtils.defaultIfBlank(logTarget, LOG_FILES_LOG_TARGET));
             node.getSession().save();
             return true;
         } catch (RepositoryException e) {

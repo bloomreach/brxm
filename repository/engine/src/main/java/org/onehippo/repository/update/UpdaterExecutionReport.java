@@ -61,11 +61,11 @@ public class UpdaterExecutionReport {
     private final PrintStream skippedStream;
     private final Logger useLogger;
 
-    public static String DEFAULT_LOG_TARGET = "LOG FILES";
+    public static String LOG_FILES_LOG_TARGET = "LOG FILES";
     public static String REPOSITORY_LOG_TARGET = "REPOSITORY";
     public static final Map<String, String> LOG_TARGET_MAP = Collections.unmodifiableMap(new LinkedHashMap() {
         {
-            put(DEFAULT_LOG_TARGET, DEFAULT_LOG_TARGET);
+            put(LOG_FILES_LOG_TARGET, LOG_FILES_LOG_TARGET);
             put(REPOSITORY_LOG_TARGET, REPOSITORY_LOG_TARGET);
         }
     });

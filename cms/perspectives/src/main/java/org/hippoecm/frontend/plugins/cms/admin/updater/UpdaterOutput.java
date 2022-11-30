@@ -32,6 +32,9 @@ import org.apache.wicket.util.time.Duration;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.update.UpdaterExecutionReport;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOG;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LOGTAIL;
+
 public class UpdaterOutput extends Panel {
 
     public UpdaterOutput(final String id, final Component container, final boolean updating) {
@@ -66,11 +69,11 @@ public class UpdaterOutput extends Panel {
 
         final Node node = (Node) o;
         try {
-            final Binary fullLog = JcrUtils.getBinaryProperty(node, "hipposys:log", null);
+            final Binary fullLog = JcrUtils.getBinaryProperty(node, HIPPOSYS_LOG, null);
             if (fullLog != null) {
                 return IOUtils.toString(fullLog.getStream());
             } else {
-                return JcrUtils.getStringProperty(node, "hipposys:logtail", "");
+                return JcrUtils.getStringProperty(node, HIPPOSYS_LOGTAIL, "");
             }
         } catch (RepositoryException | IOException e) {
             return "Cannot read log: " + e.getMessage();
