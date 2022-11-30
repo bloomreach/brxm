@@ -108,13 +108,14 @@ class ComponentEditorService {
       return;
     }
 
-    const pagePath = this.page.getMeta().getPathInfo();
+    const pathInfo = this.page.getMeta().getPathInfo();
+    const renderPathInfo = this.HippoIframeService.getRenderPathByPathInfo(pathInfo);
 
     if (!this.ChannelService.matchesChannel(this.channel.id)) {
       this.ChannelService.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup)
-        .then(() => this.HippoIframeService.initializePath(pagePath));
+        .then(() => this.HippoIframeService.initializePath(renderPathInfo));
     } else {
-      this.HippoIframeService.load(pagePath);
+      this.HippoIframeService.load(renderPathInfo);
     }
   }
 

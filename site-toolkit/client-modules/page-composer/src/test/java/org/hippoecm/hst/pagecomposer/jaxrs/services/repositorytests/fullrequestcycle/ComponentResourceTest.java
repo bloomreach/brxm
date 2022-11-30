@@ -113,6 +113,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
+                .put(key(XPAGE, HstState.XPAGE_PREVIEW_URL), "http://localhost/site/?preview-token=")
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A page component contains only channel states")
@@ -150,6 +151,7 @@ public class ComponentResourceTest extends AbstractComponentResourceTest {
         final Map<String, Object> expectedStates = ImmutableMap.<String, Object>builder()
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_LAYOUTS), Maps.newHashMap("hst:xpages/xpage1", "XPage 1"))
                 .put(key(CHANNEL, HstState.CHANNEL_XPAGE_TEMPLATE_QUERIES), Collections.singletonMap("new-document", "/unittestcontent/documents/unittestproject/experiences"))
+                .put(key(XPAGE, HstState.XPAGE_PREVIEW_URL), "http://localhost/site/?preview-token=")
                 .build();
         Assertions.assertThat(states)
                 .describedAs("A page component contains only channel states")
