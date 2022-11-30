@@ -48,12 +48,6 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.ng1ConfigService.getCmsContextPath(), `_rp`,
   );
 
-  headers = {
-    'CMS-User': this.ng1ConfigService.cmsUser,
-    contextPath: this.ng1ChannelService.getChannel().contextPath,
-    hostGroup: this.ng1ChannelService.getChannel().hostGroup,
-  };
-
   constructor(
     @Inject(NG1_CHANNEL_SERVICE) private readonly ng1ChannelService: Ng1ChannelService,
     @Inject(NG1_CONFIG_SERVICE) private readonly ng1ConfigService: Ng1ConfigService,
@@ -67,10 +61,10 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.loading$ = this.select(state => state.loading);
   }
 
-  search(siteMapId: string, query: string): void {
+  search(siteMapId: string, query: string, headers: Record<string, string>): void {
     const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./search`);
     this.http.get<SiteMapResponse>(url, {
-      headers: this.headers,
+      headers,
       params: {
         fq: query,
       },
@@ -81,10 +75,10 @@ export class SiteMapService extends StateService<SiteMapState> {
       this.onComplete.bind(this));
   }
 
-  load(siteMapId: string): void {
+  load(siteMapId: string, headers: Record<string, string>): void {
     const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem`);
     this.http.get<SiteMapResponse>(url, {
-      headers: this.headers,
+      headers,
     }).subscribe(res => {
         this.setState({ items: [res.data] });
       },
@@ -92,10 +86,16 @@ export class SiteMapService extends StateService<SiteMapState> {
       this.onComplete.bind(this));
   }
 
-  loadItem(siteMapId: string, path: string, isSearchMode: boolean, ancestry = false, noMerge = false): void {
+  loadItem(
+    siteMapId: string,
+    path: string,
+    headers: Record<string, string>,
+    isSearchMode: boolean,
+    ancestry = false,
+    noMerge = false): void {
     const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem${path}`);
     this.http.get<SiteMapResponse>(url, {
-      headers: this.headers,
+      headers,
       params: {
         ancestry: ancestry.toString(),
       },
