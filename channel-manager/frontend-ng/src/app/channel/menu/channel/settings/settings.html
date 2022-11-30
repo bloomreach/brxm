@@ -49,7 +49,7 @@
         class="qa-subpage"
         ng-submit="$ctrl.saveIfValid()"
         novalidate>
-    <div class="project-name">
+    <div class="project-name" ng-if="$ctrl.projectsEnabled">
       <h3 class="md-title">{{ 'CHANNEL_SETTINGS_PROJECT_NAME' | translate}} {{ ::$ctrl.projectName }} </h3>
     </div>
 
@@ -100,16 +100,19 @@
                ng-if="$ctrl.externalPreviewEnabled"></md-icon>
       <md-icon md-font-icon="mdi-eye-off-outline"
                ng-if="!$ctrl.externalPreviewEnabled"></md-icon>
-      {{ $ctrl.externalPreviewEnabled ? 'CHANNEL_SETTINGS_ENABLED_PREVIEW_MESSAGE'
-        : 'CHANNEL_SETTINGS_DISABLED_PREVIEW_MESSAGE' | translate: { projectName: $ctrl.projectName } }}
-    </div>
+      {{ $ctrl.externalPreviewEnabled ? ($ctrl.projectsEnabled ? 'CHANNEL_SETTINGS_ENABLED_PREVIEW_MESSAGE'
+      : 'CHANNEL_SETTINGS_ENABLED_PREVIEW_MESSAGE_WITHOUT_PROJECT' | translate: { projectName: $ctrl.projectName } )
+      : ($ctrl.projectsEnabled ? 'CHANNEL_SETTINGS_DISABLED_PREVIEW_MESSAGE'
+      : 'CHANNEL_SETTINGS_DISABLED_PREVIEW_MESSAGE_WITHOUT_PROJECT' | translate: { projectName: $ctrl.projectName }) }}
+      </div>
 
     <div>
       <md-input-container class="md-block qa-field-string flex"
                           flex
                           ng-class="{ 'url-container': $ctrl.externalPreviewEnabled,
                             'url-container disabled-container': !$ctrl.externalPreviewEnabled}">
-        <label>{{ 'CHANNEL_SETTINGS_PROJECT_PREVIEW_URL' | translate }}</label>
+        <label>{{ $ctrl.projectsEnabled ? 'CHANNEL_SETTINGS_PROJECT_PREVIEW_URL' :
+          'CHANNEL_SETTINGS_PROJECT_PREVIEW_URL_WITHOUT_PROJECT' | translate }}</label>
         <input type="text"
                flex
                ng-class="{ 'url-input': $ctrl.externalPreviewEnabled,

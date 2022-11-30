@@ -128,6 +128,32 @@ class PageService {
       : null;
   }
 
+  getEndpointUrlParameter(baseUrl) {
+    if (baseUrl) {
+      const url = new URL(baseUrl);
+      return url.searchParams.get('endpoint');
+    }
+    return null;
+  }
+
+  appendPort(baseUrl) {
+    if (window.location.port) {
+      const url = new URL(baseUrl);
+      if (!url.port) {
+        return baseUrl.replace(window.location.hostname, window.location.host);
+      }
+      const endpoint = this.getEndpointUrlParameter(baseUrl);
+      if (endpoint) {
+        return baseUrl.replace(endpoint, endpoint.replace(window.location.hostname, window.location.host));
+      }
+    }
+    return baseUrl;
+  }
+
+  getPagePreviewUrl() {
+    return this.appendPort(this.getState('xpage').pagePreviewUrl);
+  }
+
   syncPageEditor() {
     if (this.isXPage) {
       if (!this.EditContentService.isEditing(this.xPageId)) {

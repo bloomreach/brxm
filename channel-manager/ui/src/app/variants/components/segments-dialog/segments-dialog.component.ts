@@ -1,5 +1,5 @@
 /*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ export class SegmentsDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const response = await this.targetingService.getPersonas();
-    this.personas = response.data?.items;
+    this.personas = response.data?.items.sort((p1, p2) => p1.segmentName.localeCompare(p2.segmentName));
   }
 
   selectPersona(): void {
