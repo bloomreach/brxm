@@ -542,30 +542,44 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             final HstSite hstSite = resolvedMount.getMount().getHstSite();
 
-            if (isExternalPreview && hstSite instanceof CompositeHstSite) {
-                final Map<String, HstSite> siteBranches = ((CompositeHstSite) hstSite).getBranches();
-                boolean tokenMatchingFound = false;
-                for (String branchId : siteBranches.keySet()) {
-                    final HstSite branchSite = siteBranches.get(branchId);
-                    final Channel channel = branchSite.getChannel();
-                    if (channel != null) {
-                        // token cannot be null if 'isExternalPreview'
-                        if (channel.isExternalPreviewEnabled() && token.equals(channel.getExternalPreviewToken())) {
-                            tokenMatchingFound = true;
-                            requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, branchId); // use PREFER_RENDER_BRANCH_ID
+            if (isExternalPreview) {
+                if (hstSite instanceof CompositeHstSite) {
+                    final Map<String, HstSite> siteBranches = ((CompositeHstSite) hstSite).getBranches();
+                    boolean tokenMatchingFound = false;
+                    for (String branchId : siteBranches.keySet()) {
+                        final HstSite branchSite = siteBranches.get(branchId);
+                        final Channel channel = branchSite.getChannel();
+                        if (channel != null) {
+                            // token cannot be null if 'isExternalPreview'
+                            if (channel.isExternalPreviewEnabled() && token.equals(channel.getExternalPreviewToken())) {
+                                tokenMatchingFound = true;
+                                // use PREFER_RENDER_BRANCH_ID
+                                requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, branchId); 
+                            }
                         }
                     }
-                }
 
-                //If token is not found in any of the branches, check if it exists in core channel
-                if (!tokenMatchingFound) {
-                    final Channel channel = ((CompositeHstSite) hstSite).getMaster().getChannel();
-                    if (channel.isExternalPreviewEnabled() && token.equals(channel.getExternalPreviewToken())) {
-                        requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, MASTER_BRANCH_ID);
-                    } else {
-                        log.debug("Token {} was not found for either master or branched site", token);
-                        sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                        return;
+                    // If token is not found in any of the branches, check if it exists in core channel
+                    if (!tokenMatchingFound) {
+                        final Channel channel = ((CompositeHstSite) hstSite).getMaster().getChannel();
+                        if (channel.isExternalPreviewEnabled() && token.equals(channel.getExternalPreviewToken())) {
+                            requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, MASTER_BRANCH_ID);
+                        } else {
+                            log.debug("Token {} was not found for either master or branched site", token);
+                            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                            return;
+                        }
+                    }
+                } else {
+                    if (hstSite != null && hstSite.getChannel() != null) {
+                        final Channel channel = hstSite.getChannel();
+                        if (channel.isExternalPreviewEnabled() && token.equals(channel.getExternalPreviewToken())) {
+                            requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, MASTER_BRANCH_ID);
+                        } else {
+                            log.debug("Token {} was not found for either master or branched site", token);
+                            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                            return;
+                        }
                     }
                 }
             }

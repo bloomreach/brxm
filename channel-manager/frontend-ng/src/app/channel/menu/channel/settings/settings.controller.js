@@ -42,6 +42,8 @@ class ChannelSettingsCtrl {
       channelName: this.ChannelService.getName(),
     });
 
+    this.projectsEnabled = this.ConfigService.projectsEnabled;
+
     this.ChannelService.getChannelInfoDescription()
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
