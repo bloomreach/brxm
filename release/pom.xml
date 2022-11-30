@@ -1123,6 +1123,12 @@
           <version>${hippo.cargo-extensions.version}</version>
           <scope>runtime</scope>
         </dependency>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>${h2.version}</version>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
       <build>
         <plugins>
@@ -1161,6 +1167,11 @@
                     <groupId>org.onehippo.cms7.hst</groupId>
                     <artifactId>hst-api</artifactId>
                     <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <classpath>extra</classpath>
                   </dependency>
                 </dependencies>
               </container>
