@@ -329,7 +329,7 @@ public class XPageSiteMapRepresentationService {
     private void place(final XPageSiteMapTreeItem parent, final XPageSiteMapTreeItem toAdd, String[] pathElements, final int position) {
 
         boolean newChild = false;
-        if (parent.getChildren().containsKey(pathElements[position])) {
+        if (!parent.getChildren().containsKey(pathElements[position])) {
             newChild = true;
         }
         final XPageSiteMapTreeItem child = parent.getChildren().computeIfAbsent(pathElements[position], key -> new XPageSiteMapTreeItem());
