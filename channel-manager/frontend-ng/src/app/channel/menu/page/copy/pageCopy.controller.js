@@ -109,7 +109,7 @@ class PageCopyCtrl {
         });
     } else {
       this.HippoIframeService.load(renderPathInfo);
-      this.$rootScope.$emit('load-site-map');
+      this.$rootScope.$emit('load-site-map', `/${pathInfo || ''}`);
       this.ChannelService.checkChanges()
         .then(() => this.onDone());
     }

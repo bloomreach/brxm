@@ -40,7 +40,6 @@
 </div>
 <div *ngIf="!searchQuery || (!!searchQuery && searchQuery.length > 2)">
   <mat-tree [dataSource]="dataSource"
-            [trackBy]="trackBy"
             [treeControl]="treeControl">
     <mat-tree-node *matTreeNodeDef="let node"
                    matTreeNodePadding
@@ -54,7 +53,7 @@
 
       <mat-icon svgIcon="chevron-right"
                 *ngIf="node.expandable"
-                (click)="openNode(node)"
+                (click)="toggleNode(node)"
                 matTreeNodeToggle
                 [class.expanded]="treeControl.isExpanded(node)">
       </mat-icon>

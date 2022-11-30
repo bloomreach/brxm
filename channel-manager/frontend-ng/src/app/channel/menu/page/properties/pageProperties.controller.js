@@ -82,9 +82,9 @@ class PagePropertiesCtrl {
 
     const siteMapId = this.ChannelService.getSiteMapId();
     this.SiteMapItemService.updateItem(item, siteMapId)
-      .then(() => {
+      .then((data) => {
         this.HippoIframeService.reload();
-        this.$rootScope.$emit('load-site-map');
+        this.$rootScope.$emit('load-site-map', `/${data.pathInfo || ''}`);
 
         this.ChannelService.checkChanges()
           .then(() => this.onDone());
