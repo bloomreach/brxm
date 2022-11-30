@@ -55,6 +55,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     expandedNodes: SiteMapItemNode[] = [];
     searchQuery = '';
     subscriptions = new Subscription();
+    hasSelectedNode = false;
 
     private readonly onLoadSiteMapUnsubscribe: () => void;
 
@@ -80,9 +81,10 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
             )
             .subscribe(this.onSearch.bind(this));
 
-        this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', () => {
+        this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', (event, pathInfo) => {
             this.zone.run(() => {
-                this.loadSiteMap();
+                this.hasSelectedNode = true;
+                this.loadSiteMap(pathInfo, true);
             });
         });
     }
@@ -93,11 +95,16 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
             this.siteMapService.items$,
         ).subscribe(([search, items]) => {
             if (this.isSearchMode) {
-                this.dataSource.data = search;
-                this.expandAllNodes();
+                if (search[0].children.length) {
+                  this.dataSource.data = search;
+                } else {
+                  this.dataSource.data = [];
+                }
+                this.expandAllNodesWithChildren(this.treeControl.dataNodes);
             } else {
                 this.dataSource.data = items;
                 this.restoreExpandedNodes();
+                this.saveExpandedNodes();
             }
         });
 
@@ -106,7 +113,11 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
     ngOnChanges(changes: any): void {
         if (changes.pathInfo.firstChange) {
-            this.loadSiteMap();
+            this.hasSelectedNode = true;
+            this.loadSiteMap(changes.pathInfo.currentValue);
+        }
+        if (changes.pathInfo.currentValue) {
+            this.expandSelectedNode();
         }
     }
 
@@ -121,40 +132,40 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     isSelected({ pathInfo }: SiteMapItem): boolean {
-        return pathInfo === this.pathInfo || `/${pathInfo}` === this.pathInfo;
+        return pathInfo === (this.pathInfo || '/') || `/${pathInfo}` === this.pathInfo;
     }
-
-    trackBy = (_: number, node: SiteMapItemNode): string => node.id;
 
     async selectNode(node: SiteMapItemNode): Promise<void> {
         if (node.pathInfo) {
+            this.hasSelectedNode = true;
             await this.iframeService.load(node.pathInfo);
         }
 
-        this.openNode(node);
+        this.toggleNode(node);
     }
 
-    openNode(node: SiteMapItemNode): void {
+    toggleNode(node: SiteMapItemNode): void {
+        this.saveExpandedNodes();
         if (node.expandable && !node.children.length) {
-            if (!this.isSearchMode) {
-                this.saveExpandedNodes();
-            }
             this.loadSiteMapItem(node);
         }
     }
 
     private expandSelectedNode(): void {
-        const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
-        this.expandNode(node);
-        setTimeout(() => this.scrollToSelectedNode(), 500);
+      const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
+      this.expandNode(node);
+      setTimeout(() => {
+          this.scrollToSelectedNode();
+        }, 500);
     }
 
-    private loadSiteMap(): void {
+    private loadSiteMap(pathInfo?: string, noMerge = false): void {
         const siteMapId = this.ng1ChannelService.getSiteMapId();
-        if (this.pathInfo && this.pathInfo !== '/') {
-            this.siteMapService.loadItem(siteMapId, this.pathInfo, false, true);
+        if (pathInfo && pathInfo !== '/') {
+          this.siteMapService.loadItem(siteMapId, pathInfo, false, true, noMerge);
         } else {
-            this.siteMapService.load(siteMapId);
+          this.expandedNodes = [];
+          this.siteMapService.load(siteMapId);
         }
     }
 
@@ -201,31 +212,43 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
         if (this.isSearchMode) {
             this.siteMapService.search(siteMapId, value);
         } else if (!value) {
-            this.loadSiteMap();
+            if (this.pathInfo) {
+              this.hasSelectedNode = true;
+            }
+            this.loadSiteMap(this.pathInfo);
         }
     }
 
     private saveExpandedNodes(): void {
         this.treeControl.dataNodes.forEach(node => {
-            if (node.expandable && this.treeControl.isExpanded(node)) {
-                this.expandedNodes.push(node);
+            if (node.expandable && this.treeControl.isExpanded(node) && !this.expandedNodes.map(n => n.id).includes(node.id)) {
+              this.expandedNodes.push(node);
+            } else {
+              this.expandedNodes = this.expandedNodes.filter(n => n.id !== node.id);
             }
         });
     }
 
     private restoreExpandedNodes(): void {
-        this.expandedNodes.forEach(node => {
+      this.expandedNodes.forEach(node => {
             const expandedNode = this.treeControl.dataNodes.find(n => n.id === node.id);
             if (expandedNode) {
                 this.treeControl.expand(expandedNode);
             }
         });
-        this.expandNode(this.treeControl.dataNodes[0]);
-        this.expandSelectedNode();
+      this.expandNode(this.treeControl.dataNodes[0]);
+      if (this.hasSelectedNode) {
+          this.expandSelectedNode();
+          this.hasSelectedNode = false;
+        }
     }
 
-    private expandAllNodes(): void {
-        this.treeControl.expandAll();
+    private expandAllNodesWithChildren(nodes: SiteMapItemNode[]): void {
+        nodes.forEach(node => {
+            if (node.children.length) {
+                this.treeControl.expand(node);
+            }
+        });
     }
 
     private scrollToSelectedNode(): void {
