@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.codehaus.groovy.ast.expr.ClassExpression;
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression;
@@ -34,63 +37,71 @@ import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer;
 import org.codehaus.groovy.syntax.Types;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import groovy.lang.GroovyClassLoader;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * {@link GroovyClassLoader} that is configured for updaters
  * <p>
  * While this custom Groovy ClassLoader protects against certain obvious and trivial mistakes and misuse of the Groovy
  * language, but is not assumed or even intended to provide a full blown and trusted Groovy execution sandbox.
- * See for more information: {@link #createCompilationCustomizer()}.
+ * See for more information: {@link #createDefaultCompilationCustomizer()}.
  * </p>
  */
 public class GroovyUpdaterClassLoader extends GroovyClassLoader {
 
-    private static final String[] defaultImports = {
-            "org.onehippo.repository.update", "javax.jcr", "javax.jcr.nodetype",
-            "javax.jcr.security", "javax.jcr.version"
-    };
-    private static final String[] importsBlacklist = {
-            "java.io.File", "java.io.FileDescriptor", "java.io.FileInputStream",
-            "java.io.FileOutputStream", "java.io.FileWriter", "java.io.FileReader"
-    };
-    private static final String[] starImportsBlacklist = {
-            "java.nio.file", "java.net", "javax.net", "javax.net.ssl", "java.lang.reflect"
-    };
+    public static final Logger log = LoggerFactory.getLogger(GroovyUpdaterClassLoader.class.getName());
 
-    private static final Set<String> illegalClasses;
+    public static final List<String> defaultStarImports = unmodifiableList(
+            Stream.of("org.onehippo.repository.update", "javax.jcr", "javax.jcr.nodetype",
+                    "javax.jcr.security", "javax.jcr.version", "org.slf4j")
+            .collect(Collectors.toList()));
+
+    public static final List<String> defaultImportsBlocklist = unmodifiableList(
+            Stream.of("java.io.File", "java.io.FileDescriptor", "java.io.FileInputStream",
+            "java.io.FileOutputStream", "java.io.FileWriter", "java.io.FileReader")
+                    .collect(Collectors.toList()));
+
+    public static final List<String> defaultStarImportsBlocklist = unmodifiableList(
+            Stream.of("java.nio.file", "java.net", "javax.net", "javax.net.ssl", "java.lang.reflect")
+                    .collect(Collectors.toList()));
+
+    public static final Set<String> defaultIllegalClasses;
     static {
         final Set<String> s = new HashSet<>();
         s.add("java.lang.Runtime");
         s.add("java.lang.ProcessBuilder");
-        illegalClasses = Collections.unmodifiableSet(s);
+        defaultIllegalClasses = Collections.unmodifiableSet(s);
     }
 
-    private static final Map<String, Collection<String>> illegalMethods;
+    public static final Map<String, Collection<String>> defaultIllegalMethods;
     static {
         final Map<String, Collection<String>> s = new HashMap<>();
         s.put("java.lang.System", new HashSet<>(Arrays.asList("exit")));
         s.put("java.lang.Class", new HashSet<>(Arrays.asList("forName")));
-        illegalMethods = Collections.unmodifiableMap(s);
+        defaultIllegalMethods = Collections.unmodifiableMap(s);
     }
 
-    private static final Set<String> illegalAssignmentClasses;
+    public static final Set<String> defaultIllegalAssignmentClasses;
     static {
         final Set<String> s = new HashSet<>();
         s.add("java.lang.System");
         s.add("java.lang.Runtime");
         s.add("java.lang.ProcessBuilder");
         s.add("java.lang.Class");
-        illegalAssignmentClasses = Collections.unmodifiableSet(s);
+        defaultIllegalAssignmentClasses = Collections.unmodifiableSet(s);
     }
 
-    private static final Map<String, Collection<String>> illegalProperties;
+    public static final Map<String, Collection<String>> defaultIllegalProperties;
     static {
         final Map<String, Collection<String>> m = new HashMap<>();
         Set<String> s = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("java.lang.System", "java.lang.Class")));
         m.put("methods", s);
-        illegalProperties = Collections.unmodifiableMap(m);
+        defaultIllegalProperties = Collections.unmodifiableMap(m);
     }
 
     private GroovyUpdaterClassLoader(final ClassLoader classLoader, final CompilerConfiguration compilerConfiguration) {
@@ -103,13 +114,22 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
 
     private static CompilerConfiguration createCompilerConfiguration() {
         final CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
-        compilerConfiguration.addCompilationCustomizers(createImportCustomizer(), createCompilationCustomizer());
+        compilerConfiguration.addCompilationCustomizers(createCompilationCustomizers());
         return compilerConfiguration;
     }
 
-    private static CompilationCustomizer createImportCustomizer() {
+    private static CompilationCustomizer[] createCompilationCustomizers() {
+        final CompilationCustomizerFactory service = HippoServiceRegistry.getService(CompilationCustomizerFactory.class);
+        if (service != null) {
+            log.debug("Using custom CompilationCustomizerFactory '{}' for creating compilation compiler(s)", service);
+            return service.createCompilationCustomizers();
+        }
+        return new CompilationCustomizer[]{createDefaultImportCustomizer(), createDefaultCompilationCustomizer()};
+    }
+
+    public static CompilationCustomizer createDefaultImportCustomizer() {
         final ImportCustomizer importCustomizer = new ImportCustomizer();
-        importCustomizer.addStarImports(defaultImports);
+        importCustomizer.addStarImports(defaultStarImports.toArray(new String[0]));
         return importCustomizer;
     }
 
@@ -117,7 +137,7 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
      * Creates a CompilationCustomizer which (only) checks and prevents obvious and trivial mistakes and misuse
      * of the full power of Groovy.
      * <p>
-     * Certain typical class and package imports like java.io and java(x).net, java.lang.reflect etc. are blacklisted,
+     * Certain typical class and package imports like java.io and java(x).net, java.lang.reflect etc. are blocked,
      * and direct usage of dangerous classes and methods like System, System.exit(), Runtime or ProcessBuilder are
      * also prevented.
      * <p>
@@ -130,34 +150,34 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
      * @return a custom Groovy CompilationCustomizer which (only) checks and prevents obvious and trivial mistakes and
      * misuse of the full power of Groovy.
      */
-    private static CompilationCustomizer createCompilationCustomizer() {
+    public static CompilationCustomizer createDefaultCompilationCustomizer() {
         final SecureASTCustomizer compilationCustomizer = new SecureASTCustomizer();
-        compilationCustomizer.setImportsBlacklist(Arrays.asList(importsBlacklist));
-        compilationCustomizer.setStarImportsBlacklist(Arrays.asList(starImportsBlacklist));
+        compilationCustomizer.setImportsBlacklist(defaultImportsBlocklist);
+        compilationCustomizer.setStarImportsBlacklist(defaultStarImportsBlocklist);
         compilationCustomizer.setIndirectImportCheckEnabled(true);
-        compilationCustomizer.addExpressionCheckers(new UpdaterExpressionChecker());
+        compilationCustomizer.addExpressionCheckers(new DefaultUpdaterExpressionChecker());
         return compilationCustomizer;
     }
 
-    private static final class UpdaterExpressionChecker implements SecureASTCustomizer.ExpressionChecker {
+    public static final class DefaultUpdaterExpressionChecker implements SecureASTCustomizer.ExpressionChecker {
 
         @Override
         public boolean isAuthorized(final Expression expression) {
             if (expression instanceof MethodCallExpression) {
                 final Expression objectExpression = ((MethodCallExpression) expression).getObjectExpression();
                 if (objectExpression instanceof ClassExpression) {
-                    if (illegalClasses.contains(objectExpression.getType().getName())) {
+                    if (defaultIllegalClasses.contains(objectExpression.getType().getName())) {
                         return false;
                     }
-                    if (illegalMethods.containsKey(objectExpression.getType().getName())) {
-                        if (illegalMethods.get(objectExpression.getType().getName()).contains(((MethodCallExpression) expression).getMethodAsString())) {
+                    if (defaultIllegalMethods.containsKey(objectExpression.getType().getName())) {
+                        if (defaultIllegalMethods.get(objectExpression.getType().getName()).contains(((MethodCallExpression) expression).getMethodAsString())) {
                             return false;
                         }
                     }
                 }
             }
             if (expression instanceof ConstructorCallExpression) {
-                if (illegalClasses.contains(expression.getType().getName())) {
+                if (defaultIllegalClasses.contains(expression.getType().getName())) {
                     return false;
                 }
             }
@@ -166,7 +186,7 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
                 if (declarationExpression.getOperation().getType() == Types.ASSIGN) {
                     Expression rightExpression = declarationExpression.getRightExpression();
                     if (rightExpression instanceof ClassExpression) {
-                        if (illegalAssignmentClasses.contains(rightExpression.getType().getName())) {
+                        if (defaultIllegalAssignmentClasses.contains(rightExpression.getType().getName())) {
                             return false;
                         }
                     }
@@ -174,8 +194,8 @@ public class GroovyUpdaterClassLoader extends GroovyClassLoader {
             }
             if (expression instanceof PropertyExpression) {
                 PropertyExpression propertyExpression = (PropertyExpression) expression;
-                if (illegalProperties.containsKey(propertyExpression.getPropertyAsString())) {
-                    Collection<String> classes = illegalProperties.get(propertyExpression.getPropertyAsString());
+                if (defaultIllegalProperties.containsKey(propertyExpression.getPropertyAsString())) {
+                    Collection<String> classes = defaultIllegalProperties.get(propertyExpression.getPropertyAsString());
                     if (classes.contains(propertyExpression.getObjectExpression().getType().getName())) {
                         return false;
                     }
