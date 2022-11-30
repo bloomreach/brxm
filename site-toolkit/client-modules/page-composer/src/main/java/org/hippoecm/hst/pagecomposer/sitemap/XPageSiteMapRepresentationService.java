@@ -290,6 +290,10 @@ public class XPageSiteMapRepresentationService {
     private void expungeStaleEntries(final InternalHstModel hstModel) {
         configurationToIdentityObjectCache.entrySet().removeIf(entry -> {
             try {
+                if (!entry.getKey().startsWith(hstModel.getConfigurationRootPath())) {
+                    // other webapp / hst configuration, we can skip this
+                    return false;
+                }
                 final Object updatedIdentity = hstModel.getSiteMapConfigurationIdentity(entry.getKey());
                 if (updatedIdentity != entry.getValue()) {
                     // the identity of stored sitemap has changed, purge from cache
