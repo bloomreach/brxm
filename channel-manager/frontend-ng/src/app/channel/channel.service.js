@@ -67,6 +67,7 @@ class ChannelService {
       // This ensures possible changes from other perspectives are displayed correctly.
       if (this.channel && this.channel.id) {
         this.CatalogService.load(this.getMountId());
+        this.$rootScope.$emit('load-site-map');
       }
     });
   }
@@ -140,6 +141,8 @@ class ChannelService {
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
+
+    this.$rootScope.$emit('load-site-map');
 
     this.updateNavLocation();
   }
