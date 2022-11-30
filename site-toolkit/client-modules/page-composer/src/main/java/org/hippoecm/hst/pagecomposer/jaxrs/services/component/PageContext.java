@@ -22,6 +22,7 @@ public class PageContext {
     private boolean locked;
     private boolean inherited;
     private boolean workspaceConfigured;
+    private String pagePreviewUrl;
 
     public boolean isHomePage() {
         return homePage;
@@ -57,6 +58,15 @@ public class PageContext {
     PageContext setWorkspaceConfigured(boolean value) {
         workspaceConfigured = value;
         return this;
+    }
+
+    public PageContext setPagePreviewUrl(String pagePreviewUrl) {
+        this.pagePreviewUrl = pagePreviewUrl;
+        return this;
+    }
+
+    public String getPagePreviewUrl() {
+        return pagePreviewUrl;
     }
 
 }

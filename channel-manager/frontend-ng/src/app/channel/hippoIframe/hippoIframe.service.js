@@ -170,13 +170,9 @@ class HippoIframeService {
 
     this.CmsService.publish('user-activity');
 
-    const mountPath = this.ChannelService.getHomePageRenderPathInfo();
     const pathInfo = this.PageStructureService.getPage().getMeta().getPathInfo();
 
-    let renderPathInfo = `${mountPath}${pathInfo}`;
-    if (renderPathInfo !== '/' && renderPathInfo.endsWith('/')) {
-      renderPathInfo = renderPathInfo.slice(0, renderPathInfo.length - 1);
-    }
+    const renderPathInfo = this.getRenderPathByPathInfo(pathInfo);
 
     if (renderPathInfo !== this.renderPathInfo) {
       this.$rootScope.$evalAsync(() => { this.renderPathInfo = renderPathInfo; });
@@ -220,6 +216,16 @@ class HippoIframeService {
 
   isEditSharedContainers() {
     return this._editSharedContainers;
+  }
+
+  getRenderPathByPathInfo(pathInfo) {
+    const mountPath = this.ChannelService.getHomePageRenderPathInfo();
+
+    let renderPathInfo = `${mountPath}${pathInfo}`;
+    if (renderPathInfo !== '/' && renderPathInfo.endsWith('/')) {
+      renderPathInfo = renderPathInfo.slice(0, renderPathInfo.length - 1);
+    }
+    return renderPathInfo;
   }
 }
 
