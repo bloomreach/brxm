@@ -15,7 +15,7 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, ElementRef, Inject, Input, NgZone, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, Input, NgZone, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { combineLatest, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, pluck, tap } from 'rxjs/operators';
@@ -32,6 +32,8 @@ interface SiteMapItemNode extends SiteMapItem {
   expandable: boolean;
   level: number;
 }
+
+const SEARCH_DEBOUNCE_TIME = 1000;
 
 @Component({
   selector: 'em-site-map',
@@ -72,7 +74,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
   ) {
     this.search$
       .pipe(
-        debounceTime(1000),
+        debounceTime(SEARCH_DEBOUNCE_TIME),
         tap(value => {
           this.searchQuery = value;
           return value;
@@ -85,19 +87,19 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
     this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', (event, pathInfo) => {
       this.zone.run(() => {
-        this.shouldExpandSelectedNode = true;
-        const path = pathInfo ? `/${pathInfo}` : '/';
-        this.loadSiteMap(path, true);
+        this.expandedNodes.clear();
+        this.search$.next('');
+        this.loadSiteMap(pathInfo, true);
       });
     });
   }
 
   ngOnInit(): void {
-    const siteMapSubscription = combineLatest(
+    const siteMapSubscription = combineLatest([
       this.siteMapService.search$,
       this.siteMapService.items$,
-    ).subscribe(([search, items]) => {
-      if (this.isSearchMode) {
+      ]).subscribe(([search, items]) => {
+      if (this.isSearchQueryValid) {
         this.dataSource.data = search[0]?.children?.length ? search : [];
         this.expandNodesWithChildren(this.treeControl.dataNodes);
       } else {
@@ -110,17 +112,15 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     this.subscriptions.add(siteMapSubscription);
   }
 
-  ngOnChanges(changes: any): void {
-    const selectedNode = this.treeControl.dataNodes.find(this.isSelected.bind(this));
-
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.pathInfo.firstChange) {
       this.shouldExpandSelectedNode = true;
       this.loadSiteMap(changes.pathInfo.currentValue);
     }
+    const selectedNode = this.treeControl.dataNodes.find(this.isSelected.bind(this));
     if (changes.pathInfo && selectedNode) {
-      this.expandSelectedNode();
       this.shouldExpandSelectedNode = true;
-      this.toggleNode(selectedNode);
+      this.expandSelectedNode();
     }
   }
 
@@ -130,13 +130,17 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     this.onLoadSiteMapUnsubscribe();
   }
 
-  get isSearchMode(): boolean {
+  get isSearchQueryValid(): boolean {
     return !!this.searchQuery && this.searchQuery.length > 2;
   }
 
+  get shouldReloadSiteMapAfterSearch(): boolean {
+    return !this.isSearchQueryValid && !this.searchQuery;
+  }
+
   isSelected({ pathInfo }: SiteMapItem): boolean {
-    const path = this.pathInfo || '/';
-    return pathInfo === path || `/${pathInfo}` === path;
+    const path = pathInfo ?? '';
+    return path === this.pathInfo || `/${path}` === this.pathInfo;
   }
 
   async selectNode(node: SiteMapItemNode): Promise<void> {
@@ -163,7 +167,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   private loadSiteMap(pathInfo?: string, noMerge = false): void {
     const siteMapId = this.ng1ChannelService.getSiteMapId();
-    const path = pathInfo || '/';
+    const path = pathInfo ?? this.pathInfo ?? '/';
     if (path === '/') {
       this.expandedNodes.clear();
     }
@@ -176,14 +180,15 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
   private loadSiteMapChildren(node: SiteMapItemNode): void {
     const siteMapId = this.ng1ChannelService.getSiteMapId();
     const parentPath = this.getParentPath(node);
-    this.siteMapService.loadItem(siteMapId, `${parentPath}${node.id}`, this.isSearchMode);
+    this.siteMapService.loadItem(siteMapId, `${parentPath}${node.id}`, this.isSearchQueryValid);
   }
 
   private onSearch(value: string): void {
     const siteMapId = this.ng1ChannelService.getSiteMapId();
-    if (this.isSearchMode) {
+    if (this.isSearchQueryValid) {
       this.siteMapService.search(siteMapId, value);
-    } else if (!value) {
+    }
+    if (this.shouldReloadSiteMapAfterSearch) {
       this.shouldExpandSelectedNode = true;
       this.loadSiteMap(this.pathInfo);
     }
@@ -256,8 +261,9 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   private expandSelectedNode(): void {
     const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
-    if (node) {
+    if (node && !this.treeControl.isExpanded(node)) {
       this.expandNode(node);
+      this.toggleNode(node);
     }
     setTimeout(() => {
       this.scrollToSelectedNode();

@@ -48,6 +48,7 @@ class ProjectToggleController {
         this.ChannelService.channel.contextPath,
         this.ChannelService.channel.hostGroup,
         selectedProject.id,
+        false,
       ))
       .then(() => this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch'));
   }

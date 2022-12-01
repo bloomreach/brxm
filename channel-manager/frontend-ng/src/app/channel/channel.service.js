@@ -79,10 +79,12 @@ class ChannelService {
    *
    * @param channelId the ID of the channel to load.
    * @param contextPath the context path of the web application that contains the channel
+   * @param hostGroup the host group of the channel
    * @param branchId the ID of the channel branch to show. Defaults to the active project.
+   * @param shouldLoadSiteMap whether to load the site map after loading the channel. Defaults to true.
    * @returns {*}
    */
-  async initializeChannel(channelId, contextPath, hostGroup, branchId) {
+  async initializeChannel(channelId, contextPath, hostGroup, branchId, shouldLoadSiteMap = true) {
     try {
       await this.SessionService.initializeContext(contextPath);
 
@@ -92,6 +94,10 @@ class ChannelService {
       const previewChannel = await this._ensurePreviewHstConfigExists(channel);
       await this._loadProject(channel, branchId || this.ProjectService.selectedProject.id);
       this._setChannel(previewChannel);
+
+      if (shouldLoadSiteMap) {
+        this.$rootScope.$emit('load-site-map');
+      }
     } catch (error) {
       if (this.hasChannel()) {
         // restore the session for the previous channel, but still reject the promise chain
@@ -141,8 +147,6 @@ class ChannelService {
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
-
-    this.$rootScope.$emit('load-site-map');
 
     this.updateNavLocation();
   }

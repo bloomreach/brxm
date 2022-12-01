@@ -220,7 +220,10 @@ export default class XPageMenuService extends MenuService {
     this._addWorkflowAction(
       'delete',
       id => this.DocumentWorkflowService.delete(id)
-        .then(() => this.$rootScope.$emit('load-site-map'))
+        .then(() => {
+          const homePage = this.ChannelService.getHomePageRenderPathInfo();
+          this.$rootScope.$emit('load-site-map', homePage, false)
+        })
         .then(() => this.HippoIframeService.load('/')),
       { iconName: 'mdi-delete' },
     );
