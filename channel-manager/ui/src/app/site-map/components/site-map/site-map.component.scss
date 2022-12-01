@@ -87,11 +87,10 @@
   }
 }
 
-.empty-state-text {
+.validation-text {
   margin: 1em;
   font-style: italic;
-  font-size: 14px;
+  font-size: $font-normal;
   text-align: center;
-  color: #000000;
-  opacity: 0.6;
+  color: mat-color($text-color, dim);
 }

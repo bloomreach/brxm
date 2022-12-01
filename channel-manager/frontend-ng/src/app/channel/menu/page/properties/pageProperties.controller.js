@@ -84,7 +84,7 @@ class PagePropertiesCtrl {
     this.SiteMapItemService.updateItem(item, siteMapId)
       .then((data) => {
         this.HippoIframeService.reload();
-        this.$rootScope.$emit('load-site-map', `/${data.pathInfo || ''}`);
+        this.$rootScope.$emit('load-site-map', data.pathInfo);
 
         this.ChannelService.checkChanges()
           .then(() => this.onDone());

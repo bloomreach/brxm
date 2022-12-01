@@ -122,7 +122,7 @@ class CreateContentService {
       this.HippoIframeService.load(renderPathInfo);
     }
 
-    this.$rootScope.$emit('load-site-map', `/${pathInfo || ''}`); // reload sitemap (left side panel)
+    this.$rootScope.$emit('load-site-map', pathInfo); // reload sitemap (left side panel)
 
     this.EditContentService.startEditing(documentId, 'hippo-cm.channel.edit-page.content');
   }
