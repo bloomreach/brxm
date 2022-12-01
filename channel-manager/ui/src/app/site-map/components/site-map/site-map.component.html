@@ -34,11 +34,11 @@
   </button>
 </mat-form-field>
 
-<div *ngIf="!!searchQuery && !!searchQuery.length && searchQuery.length < 3"
-     class="empty-state-text">
-  Type at least 3 characters to get search results
+<div *ngIf="shouldDisplayValidationText(searchQuery)"
+     class="validation-text">
+  {{'VALIDATION_SEARCH' | translate }}
 </div>
-<div *ngIf="!searchQuery || (!!searchQuery && searchQuery.length > 2)">
+<div *ngIf="shouldDisplayTree(searchQuery)">
   <mat-tree [dataSource]="dataSource"
             [treeControl]="treeControl">
     <mat-tree-node *matTreeNodeDef="let node"

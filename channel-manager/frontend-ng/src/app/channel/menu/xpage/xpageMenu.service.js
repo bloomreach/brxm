@@ -221,11 +221,7 @@ export default class XPageMenuService extends MenuService {
       'delete',
       id => this.DocumentWorkflowService.delete(id)
         .then(() => this.$rootScope.$emit('load-site-map'))
-        .then(() => {
-          const siteMap = this.SiteMapService.get();
-          const firstPage = siteMap[0];
-          return this.HippoIframeService.load(firstPage.renderPathInfo);
-        }),
+        .then(() => this.HippoIframeService.load('/')),
       { iconName: 'mdi-delete' },
     );
 
@@ -384,7 +380,7 @@ export default class XPageMenuService extends MenuService {
         this.HippoIframeService.load(renderPathInfo);
       }
 
-      this.$rootScope.$emit('load-site-map'); // reload sitemap (left side panel)
+      this.$rootScope.$emit('load-site-map', pageMeta.getPathInfo()); // reload sitemap (left side panel)
     } catch (e) {
       this.$log.error(`Failed to navigate to document '${documentId}'`, e);
     }

@@ -44,7 +44,6 @@ export class SnackBarService {
   warning(message: string): void {
     const config: SnackBarConfig = {
       dismiss: true,
-      duration: undefined,
       warning: true,
     };
 

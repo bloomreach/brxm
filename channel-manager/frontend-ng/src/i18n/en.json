@@ -317,6 +317,7 @@
   "PLACEHOLDER_DOCUMENT_TYPE": "Document Type",
   "PLACEHOLDER_DOCUMENT_URL": "URL",
   "PLACEHOLDER_SEARCH": "Search",
+  "VALIDATION_SEARCH": "Type at least 3 characters to get search results",
   "PLACEHOLDER_XPAGE_LAYOUT": "Page layout",
   "PLACEHOLDER_XPAGE_LOCATION": "Page location",
   "PLACEHOLDER_XPAGE_NAME": "Page name",

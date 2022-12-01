@@ -61,10 +61,18 @@ export class SiteMapService extends StateService<SiteMapState> {
     this.loading$ = this.select(state => state.loading);
   }
 
-  search(siteMapId: string, query: string, headers: Record<string, string>): void {
+  getHeaders(): Record<string, string> {
+    return {
+      'CMS-User': this.ng1ConfigService.cmsUser,
+      contextPath: this.ng1ChannelService.getChannel().contextPath,
+      hostGroup: this.ng1ChannelService.getChannel().hostGroup,
+    };
+  }
+
+  search(siteMapId: string, query: string): void {
     const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./search`);
     this.http.get<SiteMapResponse>(url, {
-      headers,
+      headers: this.getHeaders(),
       params: {
         fq: query,
       },
@@ -75,10 +83,10 @@ export class SiteMapService extends StateService<SiteMapState> {
       this.onComplete.bind(this));
   }
 
-  load(siteMapId: string, headers: Record<string, string>): void {
+  load(siteMapId: string): void {
     const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem`);
     this.http.get<SiteMapResponse>(url, {
-      headers,
+      headers: this.getHeaders(),
     }).subscribe(res => {
         this.setState({ items: [res.data] });
       },
@@ -89,13 +97,12 @@ export class SiteMapService extends StateService<SiteMapState> {
   loadItem(
     siteMapId: string,
     path: string,
-    headers: Record<string, string>,
     isSearchMode: boolean,
     ancestry = false,
     noMerge = false): void {
-    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem${path}`);
+    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem/${path}`);
     this.http.get<SiteMapResponse>(url, {
-      headers,
+      headers: this.getHeaders(),
       params: {
         ancestry: ancestry.toString(),
       },
@@ -106,9 +113,9 @@ export class SiteMapService extends StateService<SiteMapState> {
         if (noMerge) {
           tmp = res.data;
         } else if (ancestry) {
-          tmp = this.deepMergeAncestryItems(pathKeys, res.data, tmp) || tmp;
+          tmp = this.deepMergeAncestryItems(pathKeys, res.data, tmp);
         } else {
-          this.deepMergeChildrenItems(pathKeys, res.data, tmp);
+          tmp = this.deepMergeChildrenItems(pathKeys, res.data, tmp);
         }
         this.setState({ [prop]: [tmp] });
       },
@@ -116,30 +123,28 @@ export class SiteMapService extends StateService<SiteMapState> {
       this.onComplete.bind(this));
   }
 
-  deepMergeChildrenItems(keys: string[], item1: SiteMapItem, item2?: SiteMapItem): void {
-    if (keys.length !== 0 && item2) {
-      const el = item2.children.find((child: SiteMapItem) => child.id === keys[0]);
-      this.deepMergeChildrenItems(keys.slice(1), item1, el);
-    } else if (item2) {
-      item2.children = [...item1.children];
+  deepMergeChildrenItems(keys: string[], apiResponseItem: SiteMapItem, stateItem: SiteMapItem): SiteMapItem {
+    const el = stateItem?.children?.find((child: SiteMapItem) => child.id === keys[0]);
+    if (el) {
+      const foundIndex = stateItem.children.findIndex(x => x.id === keys[0]);
+      const childrenArr = [...stateItem.children];
+      childrenArr[foundIndex] = this.deepMergeChildrenItems(keys.slice(1), apiResponseItem, el);
+      return {...stateItem, children: childrenArr };
+    } else {
+      return apiResponseItem;
     }
   }
 
-  deepMergeAncestryItems(keys: string[], item1: SiteMapItem, item2: SiteMapItem): SiteMapItem | undefined {
-    if (keys.length === 0) {
-      return;
-    }
-
-    if (Object.keys(item2).length === 0) {
-      return item1;
-    }
-
-    const el1 = item1.children.find((child: SiteMapItem) => child.id === keys[0]);
-    const el2 = item2.children.find((child: SiteMapItem) => child.id === keys[0]);
+  deepMergeAncestryItems(keys: string[], apiResponseItem: SiteMapItem, stateItem: SiteMapItem): SiteMapItem {
+    const el1 = apiResponseItem?.children?.find((child: SiteMapItem) => child.id === keys[0]);
+    const el2 = stateItem?.children?.find((child: SiteMapItem) => child.id === keys[0]);
     if (el1 && el2) {
-      this.deepMergeAncestryItems(keys.slice(1), el1, el2);
+      const foundIndex = stateItem.children.findIndex(x => x.id === keys[0]);
+      const childrenArr = [...stateItem.children];
+      childrenArr[foundIndex] = this.deepMergeAncestryItems(keys.slice(1), el1, el2);
+      return {...stateItem, children: childrenArr };
     } else {
-      Object.assign(item2, item1);
+      return apiResponseItem;
     }
   }
 
