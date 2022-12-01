@@ -55,3 +55,4 @@ export const XPAGE_LAYOUT_HIPPO_ID = 'HST-Experience-Page-Layout-Hippo_Identifie
 export const XTYPE = 'HST-XType';
 export const XTYPE_NOMARKUP = 'HST.NoMarkup';
 export const XTYPE_SPAN = 'HST.Span';
+export const PAGE_TITLE = 'HST-Page-Title';

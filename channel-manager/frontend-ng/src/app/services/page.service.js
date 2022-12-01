@@ -162,24 +162,14 @@ class PageService {
       return;
     }
 
-    function findSiteMapItem(queue, val) {
-      while (queue.length > 0) {
-        const currentObj = queue.shift();
-        if (currentObj.renderPathInfo === val) {
-          return currentObj;
-        }
+    const page = this.PageStructureService.getPage();
+    if (page) {
+      const meta = page.getMeta();
+      const pageTitle = meta.getPageTitle();
 
-        queue.push(...currentObj.children);
+      if (pageTitle) {
+        this.$state.go('hippo-cm.channel.edit-page-unavailable', { title: pageTitle });
       }
-
-      return false;
-    }
-
-    const sitemap = this.SiteMapService.get();
-    const currentSitemapItem = findSiteMapItem([...sitemap], this.HippoIframeService.getCurrentRenderPathInfo());
-    if (currentSitemapItem) {
-      const title = currentSitemapItem.pageTitle || currentSitemapItem.name;
-      this.$state.go('hippo-cm.channel.edit-page-unavailable', { title });
     }
   }
 }
