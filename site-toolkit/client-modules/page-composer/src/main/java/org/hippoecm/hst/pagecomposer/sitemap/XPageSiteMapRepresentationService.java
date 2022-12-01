@@ -49,6 +49,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageUtils;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.JcrUtils;
@@ -371,7 +372,7 @@ public class XPageSiteMapRepresentationService {
         final XPageSiteMapTreeItem xPageSiteMapTreeItem = new XPageSiteMapTreeItem();
 
         xPageSiteMapTreeItem.setName(SiteMapPageRepresentation.getName(hstLink, handle));
-        xPageSiteMapTreeItem.setPageTitle(SiteMapPageRepresentation.getPageTitle(hstLink, handle));
+        xPageSiteMapTreeItem.setPageTitle(HstSiteMapUtils.getPageTitle(hstLink, handle));
         xPageSiteMapTreeItem.setPathInfo(hstLink.getPath());
         xPageSiteMapTreeItem.setAbsoluteJcrPath(handle.getPath());
         return xPageSiteMapTreeItem;

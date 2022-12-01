@@ -35,16 +35,21 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.JcrSessionUtils;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_IS_PRIMARYDOCUMENT_VERSION_HISTORY;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_PAGE_TITLE;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
@@ -106,22 +111,38 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
         final HippoBean primaryRequestBean = requestContext.getContentBean();
 
+
+        // provide info for CM that the page is an experience page: The top hst component for experience pages
+        // always has compConfig.isExperiencePageComponent() = true
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+
+        String pageTitle = null;
         if (primaryRequestBean instanceof HippoDocumentBean) {
             // in the channel mgr, in case of a document bean, it will be the unpublished document variant
             pageMetaData.put(ChannelManagerConstants.HST_UNPUBLISHED_VARIANT_ID, primaryRequestBean.getValueProvider().getIdentifier());
+            final HstLink hstLink = requestContext.getHstLinkCreator().create(primaryRequestBean, requestContext);
+
+            try {
+                pageTitle = HstSiteMapUtils.getPageTitle(hstLink, primaryRequestBean.getNode());
+            } catch (RepositoryException e) {
+                pageTitle = JcrUtils.getDisplayNameQuietly(primaryRequestBean.getNode());
+                log.error("Exception happened while trying to get page title for '%s'", JcrUtils.getNodePathQuietly(primaryRequestBean.getNode()));
+            }
+
+        } else if (resolvedSiteMapItem != null) {
+            pageTitle =  resolvedSiteMapItem.getHstSiteMapItem().getPageTitle();
+        }
+
+        if (pageTitle != null) {
+            pageMetaData.put(HST_PAGE_TITLE, resolvedSiteMapItem.getHstSiteMapItem().getPageTitle());
         }
 
         pageMetaData.put(HST_IS_PRIMARYDOCUMENT_VERSION_HISTORY, String.valueOf(requestContext.isRenderingHistory()));
 
         pageMetaData.put(ChannelManagerConstants.HST_BRANCH_ID, HstRequestUtils.getBranchIdFromContext(requestContext));
 
-        // provide info for CM that the page is an experience page: The top hst component for experience pages
-        // always has compConfig.isExperiencePageComponent() = true
-        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-
-        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(resolvedSiteMapItem.isExperiencePage()));
-
         if (resolvedSiteMapItem != null) {
+            pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  String.valueOf(resolvedSiteMapItem.isExperiencePage()));
             final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
             pageMetaData.put(ChannelManagerConstants.HST_SITEMAPITEM_ID, ((CanonicalInfo) hstSiteMapItem).getCanonicalIdentifier());
             final HstSiteMap siteMap = hstSiteMapItem.getHstSiteMap();
