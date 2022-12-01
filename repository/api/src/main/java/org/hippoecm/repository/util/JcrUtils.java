@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2022 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -881,6 +881,23 @@ public class JcrUtils {
     public static String getNodeNameQuietly(final Node node) {
         try {
             return node == null ? null : node.getName();
+        } catch (RepositoryException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * Get the display name of a {@link Node}, or <code>null</code> if the node cannot be retrieved.
+     * <p/>
+     * <p> This method is mainly provided for convenience of usage, so a developer does not have to worry about
+     * exception handling in case it is not of interest. </p>
+     *
+     * @param node - The {@link Node} to get the name of
+     * @return The display name of the {@link Node}, or <code>null</code> if <code>node</code> is null or an exception happens.
+     */
+    public static String getDisplayNameQuietly(final Node node) {
+        try {
+            return node == null ? null :  node instanceof HippoNode ? ((HippoNode)node).getDisplayName() : node.getName();
         } catch (RepositoryException ignored) {
             return null;
         }
