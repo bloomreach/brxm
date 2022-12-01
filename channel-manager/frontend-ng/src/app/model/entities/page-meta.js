@@ -59,4 +59,8 @@ export class PageMeta extends Entity {
   getUnpublishedVariantId() {
     return this._meta[HstConstants.UNPUBLISHED_VARIANT_ID];
   }
+
+  getPageTitle() {
+    return this._meta[HstConstants.PAGE_TITLE];
+  }
 }
