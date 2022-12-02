@@ -130,11 +130,11 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             }
 
         } else if (resolvedSiteMapItem != null) {
-            pageTitle =  resolvedSiteMapItem.getHstSiteMapItem().getPageTitle();
+            pageTitle =  resolvedSiteMapItem.getHstSiteMapItem().getPageTitle() == null ? resolvedSiteMapItem.getHstSiteMapItem().getValue() : resolvedSiteMapItem.getHstSiteMapItem().getPageTitle();
         }
 
         if (pageTitle != null) {
-            pageMetaData.put(HST_PAGE_TITLE, resolvedSiteMapItem.getHstSiteMapItem().getPageTitle());
+            pageMetaData.put(HST_PAGE_TITLE, pageTitle);
         }
 
         pageMetaData.put(HST_IS_PRIMARYDOCUMENT_VERSION_HISTORY, String.valueOf(requestContext.isRenderingHistory()));
