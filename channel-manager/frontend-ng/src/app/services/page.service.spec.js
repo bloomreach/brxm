@@ -23,7 +23,6 @@ describe('PageService', () => {
   let HstService;
   let PageService;
   let PageStructureService;
-  let SiteMapService;
 
   let mockPage;
   let mockPageMeta;
@@ -38,7 +37,6 @@ describe('PageService', () => {
       _HstService_,
       _PageService_,
       _PageStructureService_,
-      _SiteMapService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -48,12 +46,12 @@ describe('PageService', () => {
       HstService = _HstService_;
       PageService = _PageService_;
       PageStructureService = _PageStructureService_;
-      SiteMapService = _SiteMapService_;
     });
 
     mockPageMeta = jasmine.createSpyObj('PageMeta', {
       getPageId: 'pageId',
       getSiteMapItemId: 'siteMapItemId',
+      getPageTitle: 'pageTitle',
     });
 
     mockPage = jasmine.createSpyObj('Page', {
@@ -312,24 +310,12 @@ describe('PageService', () => {
 
     it('should open edit-page-unavailable state if current page is not an experience page', () => {
       PageService.states = {};
-      const sitemap = [
-        {
-          renderPathInfo: '/',
-          children: [
-            {
-              pageTitle: 'My XPage',
-              renderPathInfo: '/xpages/my-xpage',
-            },
-          ],
-        },
-      ];
       spyOn($state, 'go');
-      spyOn(SiteMapService, 'get').and.returnValue(sitemap);
       spyOn(HippoIframeService, 'getCurrentRenderPathInfo').and.returnValue('/xpages/my-xpage');
 
       PageService.syncPageEditor();
 
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page-unavailable', { title: 'My XPage' });
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.edit-page-unavailable', { title: 'pageTitle' });
     });
   });
 });

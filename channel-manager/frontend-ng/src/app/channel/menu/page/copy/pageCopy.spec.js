@@ -130,7 +130,6 @@ describe('PageCopyComponent', () => {
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
     spyOn(SiteMapItemService, 'updateItem');
     spyOn(SiteMapService, 'copy').and.returnValue($q.when({ renderPathInfo: '/destination/path' }));
-    spyOn(SiteMapService, 'load');
 
     $ctrl = $componentController('pageCopy', null, {
       onDone: jasmine.createSpy('onDone'),
@@ -296,10 +295,11 @@ describe('PageCopyComponent', () => {
   });
 
   it('successfully copies the page inside the current channel', () => {
+    spyOn($rootScope, '$emit');
     $ctrl.$onInit();
     $rootScope.$digest();
 
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path', pathInfo: '/path' }));
     $ctrl.lastPathInfoElement = 'test';
     $ctrl.copy();
 
@@ -312,17 +312,18 @@ describe('PageCopyComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 
   it('successfully copies the page inside the current channel - without cross-channel copy support', () => {
+    spyOn($rootScope, '$emit');
     SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
     $ctrl.$onInit();
     $rootScope.$digest();
 
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path', pathInfo: '/path' }));
     $ctrl.lastPathInfoElement = 'test';
     [, $ctrl.location] = pageModel.locations;
     $ctrl.copy();
@@ -336,17 +337,18 @@ describe('PageCopyComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 
   it('successfully copies the page if the page element contains non ISO-8859-1 elements', () => {
+    spyOn($rootScope, '$emit');
     SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
     $ctrl.$onInit();
     $rootScope.$digest();
 
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path', pathInfo: '/path' }));
     $ctrl.lastPathInfoElement = 'a 你 好';
     [, $ctrl.location] = pageModel.locations;
     $ctrl.copy();
@@ -360,7 +362,7 @@ describe('PageCopyComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });

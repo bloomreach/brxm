@@ -27,7 +27,6 @@ describe('PageMoveComponent', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
-  let SiteMapService;
   let SiteMapItemService;
   let pageModel;
   let siteMapItem;
@@ -44,7 +43,6 @@ describe('PageMoveComponent', () => {
       _ChannelService_,
       _FeedbackService_,
       _HippoIframeService_,
-      _SiteMapService_,
       _SiteMapItemService_,
     ) => {
       $compile = _$compile_;
@@ -55,7 +53,6 @@ describe('PageMoveComponent', () => {
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
-      SiteMapService = _SiteMapService_;
       SiteMapItemService = _SiteMapItemService_;
     });
 
@@ -85,6 +82,7 @@ describe('PageMoveComponent', () => {
     };
 
     spyOn($translate, 'instant').and.callFake(key => key);
+    spyOn($rootScope, '$emit');
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
@@ -93,7 +91,6 @@ describe('PageMoveComponent', () => {
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
     spyOn(SiteMapItemService, 'updateItem');
-    spyOn(SiteMapService, 'load');
 
     $ctrl = $componentController('pageMove', null, {
       onDone: jasmine.createSpy('onDone'),
@@ -191,6 +188,7 @@ describe('PageMoveComponent', () => {
     };
     const responseData = {
       renderPathInfo: '/abc/123',
+      pathInfo: '/path'
     };
     SiteMapItemService.updateItem.and.returnValue($q.when(responseData));
     $ctrl.$onInit();
@@ -204,7 +202,7 @@ describe('PageMoveComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/abc/123');
-    expect(SiteMapService.load).toHaveBeenCalled();
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });

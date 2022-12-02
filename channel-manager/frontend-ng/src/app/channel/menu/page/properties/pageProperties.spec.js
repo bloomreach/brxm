@@ -29,7 +29,6 @@ describe('PagePropertiesComponent', () => {
   let FeedbackService;
   let HippoIframeService;
   let SiteMapItemService;
-  let SiteMapService;
   let mockAlert;
   let siteMapItem;
   let pageModel;
@@ -48,7 +47,6 @@ describe('PagePropertiesComponent', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _SiteMapItemService_,
-      _SiteMapService_,
     ) => {
       $compile = _$compile_;
       $componentController = _$componentController_;
@@ -60,7 +58,6 @@ describe('PagePropertiesComponent', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       SiteMapItemService = _SiteMapItemService_;
-      SiteMapService = _SiteMapService_;
     });
 
     pageModel = {
@@ -97,6 +94,7 @@ describe('PagePropertiesComponent', () => {
     mockAlert.ok.and.returnValue(mockAlert);
 
     spyOn($translate, 'instant').and.callFake(key => key);
+    spyOn($rootScope, '$emit').and.callFake(key => key);
     spyOn($mdDialog, 'alert').and.returnValue(mockAlert);
     spyOn($mdDialog, 'show');
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
@@ -107,7 +105,6 @@ describe('PagePropertiesComponent', () => {
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
     spyOn(SiteMapItemService, 'updateItem').and.returnValue($q.when());
-    spyOn(SiteMapService, 'load');
 
     $ctrl = $componentController('pageProperties', null, {
       onDone: jasmine.createSpy('onDone'),
@@ -232,7 +229,7 @@ describe('PagePropertiesComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.reload).toHaveBeenCalled();
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });

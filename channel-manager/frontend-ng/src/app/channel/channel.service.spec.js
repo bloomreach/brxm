@@ -26,7 +26,6 @@ describe('ChannelService', () => {
   let HstService;
   let ProjectService;
   let SessionService;
-  let SiteMapService;
   let channelMock;
   let projectMock;
 
@@ -71,7 +70,6 @@ describe('ChannelService', () => {
       _HstService_,
       _ProjectService_,
       _SessionService_,
-      _SiteMapService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
@@ -83,7 +81,6 @@ describe('ChannelService', () => {
       HstService = _HstService_;
       ProjectService = _ProjectService_;
       SessionService = _SessionService_;
-      SiteMapService = _SiteMapService_;
     });
 
     spyOn(CatalogService, 'load');
@@ -99,7 +96,6 @@ describe('ChannelService', () => {
     spyOn(SessionService, 'initializeContext').and.returnValue($q.when());
     spyOn(SessionService, 'initializeState').and.returnValue($q.when());
     spyOn(SessionService, 'canWriteHstConfig').and.returnValue(true);
-    spyOn(SiteMapService, 'load');
     ProjectService.selectedProject = projectMock;
   });
 
@@ -269,13 +265,15 @@ describe('ChannelService', () => {
   });
 
   it('should save a reference to the channel when load succeeds', () => {
+    spyOn($rootScope, '$emit');
+
     HstService.doGetWithParams.and.returnValue($q.when({ data: { prototypes: ['test'] } }));
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
 
     loadChannel();
 
     expect(ChannelService.getChannel()).toEqual(channelMock);
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map');
   });
 
   describe('matchesChannel', () => {

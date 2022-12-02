@@ -29,7 +29,6 @@ describe('CreateContentService', () => {
   let HstService;
   let PageStructureService;
   let RightSidePanelService;
-  let SiteMapService;
   let Step1Service;
   let Step2Service;
 
@@ -61,7 +60,6 @@ describe('CreateContentService', () => {
       _HippoIframeService_,
       _HstService_,
       _PageStructureService_,
-      _SiteMapService_,
       _Step1Service_,
       _Step2Service_,
     ) => {
@@ -77,7 +75,6 @@ describe('CreateContentService', () => {
       HippoIframeService = _HippoIframeService_;
       HstService = _HstService_;
       PageStructureService = _PageStructureService_;
-      SiteMapService = _SiteMapService_;
       Step1Service = _Step1Service_;
       Step2Service = _Step2Service_;
     });
@@ -205,6 +202,7 @@ describe('CreateContentService', () => {
       representation = {
         experiencePage: false,
         renderPathInfo: 'new-render-path',
+        pathInfo: 'pathInfo',
       };
       spyOn(HstService, 'doGet').and.returnValue($q.resolve({ data: representation }));
     });
@@ -270,12 +268,12 @@ describe('CreateContentService', () => {
 
       it('should reload the sitemap-listing in the left side-panel', () => {
         spyOn(ChannelService, 'getSiteMapId').and.returnValue('current-sitemap');
-        spyOn(SiteMapService, 'load');
+        spyOn($rootScope, '$emit');
 
         CreateContentService.finish('document-id');
         $rootScope.$digest();
 
-        expect(SiteMapService.load).toHaveBeenCalledWith('current-sitemap');
+        expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', 'pathInfo');
       });
 
       it('should switch to state "edit-page"', () => {

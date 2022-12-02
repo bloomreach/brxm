@@ -25,7 +25,6 @@ class PageService {
     HippoIframeService,
     HstService,
     PageStructureService,
-    SiteMapService,
   ) {
     'ngInject';
 
@@ -36,7 +35,6 @@ class PageService {
     this.HippoIframeService = HippoIframeService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
-    this.SiteMapService = SiteMapService;
 
     this.actions = null;
     this.states = null;

@@ -107,6 +107,7 @@ describe('projectToggle component', () => {
         jasmine.anything(),
         jasmine.anything(),
         'test',
+        false,
       );
       expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(projectMock2.id);
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');

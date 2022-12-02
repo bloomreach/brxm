@@ -22,8 +22,7 @@ class PagePropertiesCtrl {
     ChannelService,
     FeedbackService,
     HippoIframeService,
-    SiteMapItemService,
-    SiteMapService,
+    SiteMapItemService
   ) {
     'ngInject';
 
@@ -34,7 +33,6 @@ class PagePropertiesCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SiteMapItemService = SiteMapItemService;
-    this.SiteMapService = SiteMapService;
   }
 
   $onInit() {

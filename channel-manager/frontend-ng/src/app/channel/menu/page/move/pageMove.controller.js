@@ -22,7 +22,6 @@ class PageMoveCtrl {
     ChannelService,
     FeedbackService,
     HippoIframeService,
-    SiteMapService,
     SiteMapItemService,
   ) {
     'ngInject';
@@ -31,7 +30,6 @@ class PageMoveCtrl {
     this.$translate = $translate;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
-    this.SiteMapService = SiteMapService;
     this.SiteMapItemService = SiteMapItemService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
