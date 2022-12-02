@@ -35,7 +35,8 @@ export default class OpenUiService {
     // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
     // - allow-top-navigation
     // - allow-top-navigation-by-user-activation
-    iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
+    iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts '
+        + 'allow-downloads';
     iframe.src = url;
 
     return iframe;
