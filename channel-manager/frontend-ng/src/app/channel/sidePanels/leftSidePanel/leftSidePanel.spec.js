@@ -22,7 +22,6 @@ describe('LeftSidePanel', () => {
   let $rootScope;
   let CatalogService;
   let SidePanelService;
-  let SiteMapService;
 
   let $ctrl;
   let $element;
@@ -35,19 +34,17 @@ describe('LeftSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$rootScope_, _CatalogService_, _SidePanelService_, _SiteMapService_) => {
+    inject((_$componentController_, _$rootScope_, _CatalogService_, _SidePanelService_) => {
       $componentController = _$componentController_;
       $rootScope = _$rootScope_;
       CatalogService = _CatalogService_;
       SidePanelService = _SidePanelService_;
-      SiteMapService = _SiteMapService_;
     });
 
     spyOn(CatalogService, 'getComponents').and.returnValue([]);
     spyOn(CatalogService, 'load');
     spyOn(SidePanelService, 'close');
     spyOn(SidePanelService, 'initialize');
-    spyOn(SiteMapService, 'get').and.returnValue([]);
 
     $element = angular.element('<div></div>');
     sideNavElement = angular.element('<div class="left-side-panel"></div>');
@@ -161,12 +158,5 @@ describe('LeftSidePanel', () => {
 
     $ctrl.componentsVisible = false;
     expect($ctrl.showComponentsTab()).toBe(false);
-  });
-
-  it('retrieves the site map items from the channel siteMap service', () => {
-    const siteMapItems = ['dummy'];
-    SiteMapService.get.and.returnValue(siteMapItems);
-
-    expect($ctrl.getSiteMapItems()).toBe(siteMapItems);
   });
 });

@@ -31,7 +31,6 @@ class CreateContentService {
     PageStructureService,
     ProjectService,
     RightSidePanelService,
-    SiteMapService,
     Step1Service,
     Step2Service,
   ) {
@@ -51,7 +50,6 @@ class CreateContentService {
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
-    this.SiteMapService = SiteMapService;
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
 

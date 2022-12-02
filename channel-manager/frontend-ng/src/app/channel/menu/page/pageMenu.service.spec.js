@@ -31,7 +31,6 @@ describe('PageMenuService', () => {
   let PageToolsService;
   let PageStructureService;
   let SiteMapItemService;
-  let SiteMapService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -62,7 +61,6 @@ describe('PageMenuService', () => {
       _PageMenuService_,
       _PageStructureService_,
       _SiteMapItemService_,
-      _SiteMapService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -74,7 +72,6 @@ describe('PageMenuService', () => {
       PageMenuService = _PageMenuService_;
       PageStructureService = _PageStructureService_;
       SiteMapItemService = _SiteMapItemService_;
-      SiteMapService = _SiteMapService_;
     });
   });
 
@@ -283,13 +280,13 @@ describe('PageMenuService', () => {
       spyOn(HippoIframeService, 'load');
       spyOn(SiteMapItemService, 'clear');
       spyOn(SiteMapItemService, 'deleteItem').and.returnValue($q.when());
-      spyOn(SiteMapService, 'load');
+      spyOn($rootScope, '$emit');
 
       getItem('delete').onClick();
       $rootScope.$digest(); // process confirm action
 
       expect(HippoIframeService.load).toHaveBeenCalledWith('');
-      expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+      expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '', false);
       expect(SiteMapItemService.clear).toHaveBeenCalled();
       expect(ChannelService.checkChanges).toHaveBeenCalled();
     });

@@ -39,45 +39,7 @@ describe('SiteMapService', () => {
 
     spyOn(HstService, 'doPost');
     spyOn(HstService, 'doPostWithHeaders');
-    spyOn(HstService, 'getSiteMapTree');
     spyOn(FeedbackService, 'showError');
-  });
-
-  it('initializes an empty sitemap', () => {
-    expect(SiteMapService.get()).toEqual([]);
-  });
-
-  it('retrieves the sitemap from the HST service', () => {
-    const siteMap = { dummy: 'test' };
-    HstService.getSiteMapTree.and.returnValue($q.when(siteMap));
-    SiteMapService.load('siteMapId');
-    $rootScope.$digest();
-
-    expect(HstService.getSiteMapTree).toHaveBeenCalledWith('siteMapId');
-    expect(SiteMapService.get()).toEqual([siteMap]);
-    expect(FeedbackService.showError).not.toHaveBeenCalled();
-  });
-
-  it('flashes a toast when the sitemap cannot be retrieved', () => {
-    HstService.getSiteMapTree.and.returnValue($q.reject());
-    SiteMapService.load('siteMapId');
-    $rootScope.$digest();
-
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SITEMAP_RETRIEVAL_FAILED');
-    expect(SiteMapService.get()).toEqual([]);
-  });
-
-  it('clears the existing sitemap when the sitemap cannot be retrieved', () => {
-    HstService.getSiteMapTree.and.returnValue($q.when({ dummy: 'test' }));
-    SiteMapService.load('siteMapId');
-    $rootScope.$digest();
-
-    HstService.getSiteMapTree.and.returnValue($q.reject());
-    SiteMapService.load('siteMapId2');
-    $rootScope.$digest();
-
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_SITEMAP_RETRIEVAL_FAILED');
-    expect(SiteMapService.get()).toEqual([]);
   });
 
   it('delegates the creation of a new page to the HST service', (done) => {

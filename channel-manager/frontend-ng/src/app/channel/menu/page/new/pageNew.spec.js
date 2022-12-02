@@ -79,8 +79,10 @@ describe('PageNewComponent', () => {
     spyOn(ChannelService, 'checkChanges').and.returnValue($q.resolve());
     spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'load');
-    spyOn(SiteMapService, 'create').and.returnValue($q.when({ renderPathInfo: 'renderPathInfo' }));
-    spyOn(SiteMapService, 'load');
+    spyOn(SiteMapService, 'create').and.returnValue($q.when({
+      renderPathInfo: 'renderPathInfo', pathInfo: 'pathInfo'
+    }));
+    spyOn($rootScope, '$emit');
 
     $ctrl = $componentController('pageNew', null, {
       onDone: jasmine.createSpy('onDone'),
@@ -177,7 +179,7 @@ describe('PageNewComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('renderPathInfo');
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', 'pathInfo');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });

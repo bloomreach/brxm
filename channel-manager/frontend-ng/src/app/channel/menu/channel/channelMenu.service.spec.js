@@ -34,7 +34,6 @@ describe('ChannelMenuService', () => {
   let PageService;
   let ProjectService;
   let SessionService;
-  let SiteMapService;
 
   let confirmDialog;
 
@@ -63,7 +62,6 @@ describe('ChannelMenuService', () => {
       _FeedbackService_,
       _PageService_,
       _SessionService_,
-      _SiteMapService_,
       _ProjectService_,
     ) => {
       $q = _$q_;
@@ -81,7 +79,6 @@ describe('ChannelMenuService', () => {
       HippoIframeService = _HippoIframeService_;
       PageService = _PageService_;
       SessionService = _SessionService_;
-      SiteMapService = _SiteMapService_;
       ProjectService = _ProjectService_;
     });
   });
@@ -338,7 +335,7 @@ describe('ChannelMenuService', () => {
 
     it('discards changes when "discard changes" option is clicked', () => {
       spyOn(ChannelService, 'discardOwnChanges').and.returnValue($q.resolve());
-      spyOn(SiteMapService, 'load');
+      spyOn($rootScope, '$emit');
 
       expectMenuActionAfterComponentEditorIsClosed(
         'discard-changes',
@@ -346,7 +343,7 @@ describe('ChannelMenuService', () => {
         DialogService.show,
         ChannelService.discardOwnChanges,
         HippoIframeService.reload,
-        SiteMapService.load,
+        $rootScope.$emit,
       );
     });
 
