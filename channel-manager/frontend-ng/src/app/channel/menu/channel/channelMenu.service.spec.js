@@ -335,15 +335,13 @@ describe('ChannelMenuService', () => {
 
     it('discards changes when "discard changes" option is clicked', () => {
       spyOn(ChannelService, 'discardOwnChanges').and.returnValue($q.resolve());
-      spyOn($rootScope, '$emit');
 
       expectMenuActionAfterComponentEditorIsClosed(
         'discard-changes',
         DialogService.confirm,
         DialogService.show,
         ChannelService.discardOwnChanges,
-        HippoIframeService.reload,
-        $rootScope.$emit,
+        HippoIframeService.reload
       );
     });
 

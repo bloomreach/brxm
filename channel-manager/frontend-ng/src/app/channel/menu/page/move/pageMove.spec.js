@@ -188,7 +188,6 @@ describe('PageMoveComponent', () => {
     };
     const responseData = {
       renderPathInfo: '/abc/123',
-      pathInfo: '/path'
     };
     SiteMapItemService.updateItem.and.returnValue($q.when(responseData));
     $ctrl.$onInit();
@@ -202,7 +201,7 @@ describe('PageMoveComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/abc/123');
-    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', responseData.renderPathInfo);
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });

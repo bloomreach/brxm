@@ -94,7 +94,6 @@ describe('PagePropertiesComponent', () => {
     mockAlert.ok.and.returnValue(mockAlert);
 
     spyOn($translate, 'instant').and.callFake(key => key);
-    spyOn($rootScope, '$emit').and.callFake(key => key);
     spyOn($mdDialog, 'alert').and.returnValue(mockAlert);
     spyOn($mdDialog, 'show');
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
@@ -229,7 +228,6 @@ describe('PagePropertiesComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.reload).toHaveBeenCalled();
-    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });

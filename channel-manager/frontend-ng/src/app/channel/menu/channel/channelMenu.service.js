@@ -22,9 +22,9 @@ class ChannelMenuService extends MenuService {
   constructor(
     $log,
     $q,
+    $rootScope,
     $state,
     $translate,
-    $rootScope,
     ChannelService,
     CmsService,
     ConfigService,
@@ -43,9 +43,9 @@ class ChannelMenuService extends MenuService {
 
     this.$log = $log;
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.$state = $state;
     this.$translate = $translate;
-    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
