@@ -18,7 +18,6 @@ class PagePropertiesCtrl {
   constructor(
     $mdDialog,
     $translate,
-    $rootScope,
     ChannelService,
     FeedbackService,
     HippoIframeService,
@@ -28,7 +27,6 @@ class PagePropertiesCtrl {
 
     this.$mdDialog = $mdDialog;
     this.$translate = $translate;
-    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -80,9 +78,8 @@ class PagePropertiesCtrl {
 
     const siteMapId = this.ChannelService.getSiteMapId();
     this.SiteMapItemService.updateItem(item, siteMapId)
-      .then((data) => {
+      .then(() => {
         this.HippoIframeService.reload();
-        this.$rootScope.$emit('load-site-map', data.renderPathInfo);
 
         this.ChannelService.checkChanges()
           .then(() => this.onDone());
