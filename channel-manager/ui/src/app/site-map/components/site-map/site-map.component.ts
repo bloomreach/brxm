@@ -105,17 +105,12 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
       }
     });
 
+    this.loadSiteMap('/');
+
     this.subscriptions.add(siteMapSubscription);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.renderPathInfo.firstChange) {
-      const path = changes.renderPathInfo.currentValue.startsWith('/') ? changes.renderPathInfo.currentValue : '/';
-
-      this.shouldExpandSelectedNode = true;
-      this.loadSiteMap(path);
-    }
-
     const selectedNode = this.treeControl.dataNodes?.find(this.isSelected.bind(this));
     if (changes.renderPathInfo && selectedNode) {
       this.shouldExpandSelectedNode = true;

@@ -41,6 +41,10 @@ describe('SnackBarService', () => {
     snackBarService = TestBed.inject(SnackBarService);
   });
 
+  afterEach(() => {
+    snackBarMock.openFromComponent.mockClear();
+  });
+
   test('should be created', () => {
     expect(snackBarService).toBeTruthy();
   });
@@ -85,7 +89,7 @@ describe('SnackBarService', () => {
         dismiss: true,
         warning: true,
       },
-      duration: undefined,
+      duration: 4000,
     };
 
     snackBarService.warning(config.data.message);
