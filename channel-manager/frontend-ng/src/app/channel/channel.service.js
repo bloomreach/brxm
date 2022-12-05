@@ -95,7 +95,7 @@ class ChannelService {
       await this._loadProject(channel, branchId || this.ProjectService.selectedProject.id);
       this._setChannel(previewChannel);
 
-      if (shouldLoadSiteMap) {
+      if (this.getSiteMapId() === channel.siteMapId && shouldLoadSiteMap) {
         this.$rootScope.$emit('load-site-map');
       }
     } catch (error) {
