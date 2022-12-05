@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -26,7 +26,6 @@ import { Subject } from 'rxjs';
 import { IframeService } from '../../../channels/services/iframe.service';
 import { NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
 import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.ng1.service';
-import { SiteMapItemMock } from '../../models/site-map-item.model.mock';
 import { SiteMapService } from '../../services/site-map.service';
 
 import { SiteMapComponent } from './site-map.component';
@@ -42,38 +41,6 @@ describe('SiteMapComponent', () => {
 
   const scrollIntoViewMock = jest.fn();
   window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
-
-  const mockRenderPathInfo = '/idTest2/idTest3';
-
-  const mockSiteMapTree = [
-    new SiteMapItemMock({
-      children: [
-        new SiteMapItemMock({
-          id : 'idTest2',
-          name : 'nameTest2',
-          pageTitle : null,
-          pathInfo : 'idTest2',
-          renderPathInfo : '/idTest2',
-          children: [
-            new SiteMapItemMock({
-              id : 'idTest3',
-              name : 'nameTest3',
-              pageTitle : 'pageTitleTest3',
-              pathInfo : 'idTest2/idTest3',
-              renderPathInfo : mockRenderPathInfo,
-            }),
-          ],
-        }),
-        new SiteMapItemMock({
-          id : 'idTest4',
-          name : 'nameTest4',
-          pageTitle : 'pageTitleTest',
-          pathInfo : 'idTest4',
-          renderPathInfo : '/idTest4',
-        }),
-      ],
-    }),
-  ];
 
   const siteMapServiceMock = {
     items$: siteMapItemsSubject.asObservable(),
@@ -137,99 +104,5 @@ describe('SiteMapComponent', () => {
 
       expect(componentEl.querySelector('mat-tree')).toMatchSnapshot();
     });
-  });
-
-  describe('tree behavior', () => {
-    beforeEach(() => {
-      siteMapItemsSubject.next(mockSiteMapTree);
-      component.renderPathInfo = mockRenderPathInfo;
-      component.ngOnChanges({
-        renderPathInfo: {  } as SimpleChange,
-      });
-
-      fixture.detectChanges();
-    });
-
-    it('should show the tree when loaded', () => {
-      expect(componentEl.querySelector('mat-tree')).toMatchSnapshot();
-    });
-
-    it('should indicate selected node', () => {
-      component.renderPathInfo = '/idTest4';
-      component.ngOnChanges({
-        renderPathInfo: {  } as SimpleChange,
-      });
-
-      fixture.detectChanges();
-
-      expect(componentEl.querySelector('mat-tree')).toMatchSnapshot();
-    });
-
-    it('should scroll selected node into view', fakeAsync(() => {
-      component.renderPathInfo = '/idTest4';
-      component.ngOnChanges({
-        renderPathInfo: {  } as SimpleChange,
-      });
-      tick(500);
-      fixture.detectChanges();
-
-      expect(scrollIntoViewMock).toHaveBeenCalled();
-    }));
-
-    it('should load page on node click', () => {
-      const rootNode = componentEl.querySelector<HTMLElement>('.qa-tree-node-name-root');
-
-      rootNode?.click();
-
-      expect(iframeService.load).toHaveBeenCalledWith(mockSiteMapTree[0].renderPathInfo);
-    });
-  });
-
-  describe('search', () => {
-    beforeEach(() => {
-      siteMapItemsSubject.next(mockSiteMapTree);
-      component.renderPathInfo = mockRenderPathInfo;
-      component.ngOnChanges({
-        renderPathInfo: {} as SimpleChange,
-      });
-
-      fixture.detectChanges();
-    });
-
-    it('should hide not matching nodes', fakeAsync(() => {
-      component.search$.next('Test4');
-      tick(500);
-      fixture.detectChanges();
-
-      expect(componentEl.querySelector<HTMLElement>('.qa-tree-node-name-nameTest2')?.className).toContain('hidden');
-      expect(componentEl.querySelector<HTMLElement>('.qa-tree-node-name-nameTest4')?.className).not.toContain('hidden');
-    }));
-
-    it('should be case insensitive', fakeAsync(() => {
-      component.search$.next('nametest2');
-      tick(500);
-      fixture.detectChanges();
-
-      expect(componentEl.querySelector<HTMLElement>('.qa-tree-node-name-nameTest2')?.className).not.toContain('hidden');
-    }));
-
-    it('should keep parent nodes', fakeAsync(() => {
-      component.search$.next('Test3');
-      tick(500);
-      fixture.detectChanges();
-
-      const parentNode = componentEl.querySelector<HTMLElement>('.qa-tree-node-name-nameTest2');
-
-      expect(parentNode?.className).not.toContain('hidden');
-      expect(parentNode?.className).toContain('disabled');
-    }));
-
-    it('should keep descendant nodes', fakeAsync(() => {
-      component.search$.next('Test2');
-      tick(500);
-      fixture.detectChanges();
-
-      expect(componentEl.querySelector<HTMLElement>('.qa-tree-node-name-nameTest3')?.className).not.toContain('hidden');
-    }));
   });
 });
