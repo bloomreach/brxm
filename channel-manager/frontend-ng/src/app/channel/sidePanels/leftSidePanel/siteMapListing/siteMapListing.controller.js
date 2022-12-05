@@ -21,8 +21,8 @@ class SiteMapListingController {
     this.HippoIframeService = HippoIframeService;
   }
 
-  getCurrentPathInfo() {
-    return this.HippoIframeService.getCurrentPathInfo();
+  getCurrentRenderPathInfo() {
+    return this.HippoIframeService.getCurrentRenderPathInfo();
   }
 }
 

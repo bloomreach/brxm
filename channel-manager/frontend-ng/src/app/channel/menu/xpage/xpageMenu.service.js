@@ -20,6 +20,7 @@ export default class XPageMenuService extends MenuService {
   constructor(
     $log,
     $translate,
+    $rootScope,
     ChannelService,
     DocumentWorkflowService,
     EditComponentService,
@@ -38,6 +39,7 @@ export default class XPageMenuService extends MenuService {
 
     this.$log = $log;
     this.$translate = $translate;
+    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DocumentWorkflowService = DocumentWorkflowService;
     this.EditComponentService = EditComponentService;
@@ -222,9 +224,9 @@ export default class XPageMenuService extends MenuService {
       id => this.DocumentWorkflowService.delete(id)
         .then(() => {
           const homePage = this.ChannelService.getHomePageRenderPathInfo();
-          this.$rootScope.$emit('load-site-map', homePage, false)
-        })
-        .then(() => this.HippoIframeService.load('/')),
+          this.$rootScope.$emit( 'load-site-map', homePage);
+          this.HippoIframeService.load(homePage);
+        }),
       { iconName: 'mdi-delete' },
     );
 
@@ -383,7 +385,7 @@ export default class XPageMenuService extends MenuService {
         this.HippoIframeService.load(renderPathInfo);
       }
 
-      this.$rootScope.$emit('load-site-map', pageMeta.getPathInfo()); // reload sitemap (left side panel)
+      this.$rootScope.$emit('load-site-map', renderPathInfo); // reload sitemap (left side panel)
     } catch (e) {
       this.$log.error(`Failed to navigate to document '${documentId}'`, e);
     }

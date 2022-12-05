@@ -86,7 +86,7 @@ class PageMoveCtrl {
     this.SiteMapItemService.updateItem(item, this.siteMapId)
       .then((data) => {
         this.HippoIframeService.load(data.renderPathInfo);
-        this.$rootScope.$emit('load-site-map', data.pathInfo);
+        this.$rootScope.$emit('load-site-map', data.renderPathInfo);
       })
       .then(() => this.ChannelService.checkChanges())
       .then(() => this.onDone())

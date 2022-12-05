@@ -21,9 +21,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatTreeModule } from '@angular/material/tree';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 
 import { IframeService } from '../../../channels/services/iframe.service';
+import { NG1_CHANNEL_SERVICE } from '../../../services/ng1/channel.ng1.service';
+import { NG1_ROOT_SCOPE } from '../../../services/ng1/root-scope.ng1.service';
 import { SiteMapItemMock } from '../../models/site-map-item.model.mock';
+import { SiteMapService } from '../../services/site-map.service';
 
 import { SiteMapComponent } from './site-map.component';
 
@@ -32,6 +36,9 @@ describe('SiteMapComponent', () => {
   let componentEl: HTMLElement;
   let fixture: ComponentFixture<SiteMapComponent>;
   let iframeService: IframeService;
+
+  const siteMapItemsSubject = new Subject();
+  const searchItemsSubject = new Subject();
 
   const scrollIntoViewMock = jest.fn();
   window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
@@ -68,11 +75,29 @@ describe('SiteMapComponent', () => {
     }),
   ];
 
-  beforeEach(waitForAsync(() => {
-    const iframeServiceMock = {
-      load: jest.fn(() => Promise.resolve()),
-    };
+  const siteMapServiceMock = {
+    items$: siteMapItemsSubject.asObservable(),
+    search$: searchItemsSubject.asObservable(),
+    search: jest.fn(),
+    load: jest.fn(),
+    loadItem: jest.fn(),
+  };
 
+  const rootScopeMock: Partial<ng.IRootScopeService> = {
+    $on: jest.fn(),
+  };
+
+  const iframeServiceMock = {
+    load: jest.fn(() => Promise.resolve()),
+  };
+
+  const channelServiceMock = {
+    getSiteMapId(): string {
+      return 'siteMapId';
+    },
+  };
+
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         SiteMapComponent,
@@ -86,6 +111,9 @@ describe('SiteMapComponent', () => {
       ],
       providers: [
         { provide: IframeService, useValue: iframeServiceMock },
+        { provide: SiteMapService, useValue: siteMapServiceMock },
+        { provide: NG1_CHANNEL_SERVICE, useValue: channelServiceMock },
+        { provide: NG1_ROOT_SCOPE, useValue: rootScopeMock },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
@@ -97,14 +125,13 @@ describe('SiteMapComponent', () => {
     fixture = TestBed.createComponent(SiteMapComponent);
     component = fixture.componentInstance;
     componentEl = fixture.nativeElement;
+
+    (component as any).onLoadSiteMapUnsubscribe = jest.fn();
   });
 
   describe('no tree items', () => {
     it('should display empty tree', () => {
-      component.siteMap = [];
-      component.ngOnChanges({
-        siteMap: {  } as SimpleChange,
-      });
+      siteMapItemsSubject.next([]);
 
       fixture.detectChanges();
 
@@ -114,11 +141,10 @@ describe('SiteMapComponent', () => {
 
   describe('tree behavior', () => {
     beforeEach(() => {
-      component.siteMap = mockSiteMapTree;
+      siteMapItemsSubject.next(mockSiteMapTree);
       component.renderPathInfo = mockRenderPathInfo;
       component.ngOnChanges({
         renderPathInfo: {  } as SimpleChange,
-        siteMap: {  } as SimpleChange,
       });
 
       fixture.detectChanges();
@@ -161,11 +187,10 @@ describe('SiteMapComponent', () => {
 
   describe('search', () => {
     beforeEach(() => {
-      component.siteMap = mockSiteMapTree;
+      siteMapItemsSubject.next(mockSiteMapTree);
       component.renderPathInfo = mockRenderPathInfo;
       component.ngOnChanges({
         renderPathInfo: {} as SimpleChange,
-        siteMap: {} as SimpleChange,
       });
 
       fixture.detectChanges();
