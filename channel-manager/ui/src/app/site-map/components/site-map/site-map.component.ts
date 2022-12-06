@@ -146,7 +146,8 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   isSelected({ pathInfo }: SiteMapItem): boolean {
-    return pathInfo === this.pathInfo || `/${pathInfo}` === this.pathInfo;
+    const path = this.pathInfo === '' ? '/' : this.pathInfo;
+    return pathInfo === path || `/${pathInfo}` === path;
   }
 
   async selectNode(node: SiteMapItemNode): Promise<void> {
