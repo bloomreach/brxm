@@ -80,7 +80,8 @@ describe('PageNewComponent', () => {
     spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapService, 'create').and.returnValue($q.when({
-      renderPathInfo: 'renderPathInfo'
+      renderPathInfo: 'renderPathInfo',
+      pathInfo: '/path'
     }));
     spyOn($rootScope, '$emit');
 
@@ -179,7 +180,7 @@ describe('PageNewComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('renderPathInfo');
-    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', 'renderPathInfo');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });

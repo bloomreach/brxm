@@ -21,6 +21,7 @@ class LeftSidePanelCtrl {
   constructor(
     $element,
     $scope,
+    $rootScope,
     localStorageService,
     CatalogService,
     LeftSidePanelService,
@@ -31,6 +32,7 @@ class LeftSidePanelCtrl {
 
     this.$element = $element;
     this.$scope = $scope;
+    this.$rootScope = $rootScope;
     this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
     this.LeftSidePanelService = LeftSidePanelService;
@@ -41,6 +43,10 @@ class LeftSidePanelCtrl {
   $onInit() {
     this.sideNavElement = this.$element.find('.left-side-panel');
     this.width = Math.max(this._getStoredWidth(), MIN_WIDTH);
+
+    this.$rootScope.$on('iframe:loading', (e, iframeLoading) => {
+      this._isIframeLoading = iframeLoading;
+    })
   }
 
   _getStoredWidth() {
@@ -92,6 +98,10 @@ class LeftSidePanelCtrl {
 
   isSidePanelLifted() {
     return this.SidePanelService.isSidePanelLifted;
+  }
+
+  get iframeLoading() {
+    return this._isIframeLoading;
   }
 }
 

@@ -201,7 +201,8 @@ describe('CreateContentService', () => {
     beforeEach(() => {
       representation = {
         experiencePage: false,
-        renderPathInfo: 'new-render-path'
+        renderPathInfo: 'new-render-path',
+        pathInfo: '/path'
       };
       spyOn(HstService, 'doGet').and.returnValue($q.resolve({ data: representation }));
     });
@@ -272,7 +273,7 @@ describe('CreateContentService', () => {
         CreateContentService.finish('document-id');
         $rootScope.$digest();
 
-        expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', 'new-render-path');
+        expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
       });
 
       it('should switch to state "edit-page"', () => {

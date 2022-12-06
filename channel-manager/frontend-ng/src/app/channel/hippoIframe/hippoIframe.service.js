@@ -102,6 +102,8 @@ class HippoIframeService {
   }
 
   load(renderPathInfo) {
+    this.$rootScope.$emit('iframe:loading', true);
+
     const targetPath = this.ChannelService.makePath(renderPathInfo);
 
     this._deferredPageLoad = this.$q.defer();

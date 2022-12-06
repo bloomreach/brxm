@@ -15,14 +15,19 @@
  */
 
 class SiteMapListingController {
-  constructor($filter, HippoIframeService) {
+  constructor($filter, PageStructureService) {
     'ngInject';
 
-    this.HippoIframeService = HippoIframeService;
+    this.PageStructureService = PageStructureService;
   }
 
-  getCurrentRenderPathInfo() {
-    return this.HippoIframeService.getCurrentRenderPathInfo();
+  getCurrentPathInfo() {
+    const page = this.PageStructureService.getPage();
+    if (page) {
+      return !this.iframeLoading && page.getMeta().getPathInfo();
+    }
+    return '';
+
   }
 }
 

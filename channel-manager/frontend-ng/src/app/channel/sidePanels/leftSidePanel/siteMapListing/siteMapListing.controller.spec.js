@@ -16,21 +16,21 @@
 
 describe('siteMapListingController', () => {
   let $ctrl;
-  let HippoIframeService;
+  let PageStructureService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.siteMapListing');
 
-    inject(($componentController, _HippoIframeService_) => {
+    inject(($componentController, _PageStructureService_) => {
       $ctrl = $componentController('siteMapListing');
-      HippoIframeService = _HippoIframeService_;
+      PageStructureService = _PageStructureService_;
     });
 
-    spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
+    spyOn(PageStructureService, 'getPage');
   });
 
   it('returns the currentRenderPathInfo from service', () => {
-    $ctrl.getCurrentRenderPathInfo();
-    expect(HippoIframeService.getCurrentRenderPathInfo).toHaveBeenCalled();
+    $ctrl.getCurrentPathInfo();
+    expect(PageStructureService.getPage).toHaveBeenCalled();
   });
 });

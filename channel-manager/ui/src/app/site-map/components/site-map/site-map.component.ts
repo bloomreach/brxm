@@ -15,7 +15,17 @@
  */
 
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, ElementRef, Inject, Input, NgZone, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { combineLatest, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, pluck, tap } from 'rxjs/operators';
@@ -39,7 +49,8 @@ const SEARCH_DEBOUNCE_TIME = 1000;
   styleUrls: ['./site-map.component.scss'],
 })
 export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
-  @Input() renderPathInfo?: string;
+  @Input() pathInfo?: string;
+  @Input() iframeLoading?: boolean;
 
   private readonly treeFlattener = new MatTreeFlattener(
     (node: SiteMapItem, level: number) => ({
@@ -57,6 +68,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
   searchQuery = '';
   subscriptions = new Subscription();
   shouldExpandSelectedNode = false;
+  shouldLoadSiteMapAfterClearSearch = true;
 
   private readonly onLoadSiteMapUnsubscribe: () => void;
 
@@ -81,11 +93,11 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
       )
       .subscribe(this.onSearch.bind(this));
 
-    this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', (event, renderPathInfo) => {
+    this.onLoadSiteMapUnsubscribe = this.$rootScope.$on('load-site-map', (event, pathInfo) => {
       this.zone.run(() => {
         this.expandedNodes.clear();
-        this.search$.next('');
-        this.loadSiteMap(renderPathInfo, true);
+        this.clearSearch();
+        this.loadSiteMap(pathInfo, true);
       });
     });
   }
@@ -94,7 +106,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     const siteMapSubscription = combineLatest([
       this.siteMapService.search$,
       this.siteMapService.items$,
-      ]).subscribe(([search, items]) => {
+    ]).subscribe(([search, items]) => {
       if (this.isSearchQueryValid) {
         this.dataSource.data = search[0]?.children?.length ? search : [];
         this.expandNodesWithChildren(this.treeControl.dataNodes);
@@ -105,14 +117,15 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
       }
     });
 
-    this.loadSiteMap('/');
-
     this.subscriptions.add(siteMapSubscription);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes?.pathInfo.firstChange) {
+      this.loadSiteMap(changes.pathInfo.currentValue);
+    }
     const selectedNode = this.treeControl.dataNodes?.find(this.isSelected.bind(this));
-    if (changes.renderPathInfo && selectedNode) {
+    if (changes.pathInfo && selectedNode) {
       this.shouldExpandSelectedNode = true;
       this.expandSelectedNode();
     }
@@ -129,12 +142,11 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   get shouldReloadSiteMapAfterSearch(): boolean {
-    return !this.isSearchQueryValid && !this.searchQuery;
+    return !this.isSearchQueryValid && !this.searchQuery && this.shouldLoadSiteMapAfterClearSearch;
   }
 
-  isSelected({ renderPathInfo }: SiteMapItem): boolean {
-    const path = renderPathInfo ?? '';
-    return path === this.renderPathInfo || `/${path}` === this.renderPathInfo;
+  isSelected({ pathInfo }: SiteMapItem): boolean {
+    return pathInfo === this.pathInfo || `/${pathInfo}` === this.pathInfo;
   }
 
   async selectNode(node: SiteMapItemNode): Promise<void> {
@@ -161,9 +173,9 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     return !!searchQuery && !!searchQuery.length && searchQuery.length < 3;
   }
 
-  private loadSiteMap(renderPathInfo?: string, noMerge = false): void {
+  private loadSiteMap(pathInfo?: string, noMerge = false): void {
     const siteMapId = this.ng1ChannelService.getSiteMapId();
-    let path = renderPathInfo ?? this.renderPathInfo ?? '/';
+    let path = pathInfo || '/';
     if (path === '/') {
       this.expandedNodes.clear();
     }
@@ -186,8 +198,9 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     }
     if (this.shouldReloadSiteMapAfterSearch) {
       this.shouldExpandSelectedNode = true;
-      this.loadSiteMap(this.renderPathInfo);
+      this.loadSiteMap(this.pathInfo);
     }
+    this.shouldLoadSiteMapAfterClearSearch = true;
   }
 
   private getParentPath(node: SiteMapItemNode): string {
@@ -276,5 +289,10 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
   private scrollToSelectedNode(): void {
     const selectedNode = this.elementRef.nativeElement.querySelector('.selected');
     selectedNode?.scrollIntoView();
+  }
+
+  private clearSearch(): void {
+    this.shouldLoadSiteMapAfterClearSearch = false;
+    this.search$.next('');
   }
 }

@@ -98,9 +98,10 @@ class CreateContentService {
   async finish(documentId) {
     let experiencePage;
     let renderPathInfo;
+    let pathInfo;
 
     try {
-      ({ data: { renderPathInfo, experiencePage } } =
+      ({ data: { pathInfo, renderPathInfo, experiencePage } } =
         await this.HstService.doGet(documentId, 'representation'));
     } catch (ignore) {
       this.FeedbackService.showError(`Failed to retrieve Sitemap representation for document[${documentId}]`);
@@ -119,7 +120,7 @@ class CreateContentService {
       this.HippoIframeService.load(renderPathInfo);
     }
 
-    this.$rootScope.$emit('load-site-map', renderPathInfo); // reload sitemap (left side panel)
+    this.$rootScope.$emit('load-site-map', pathInfo); // reload sitemap (left side panel)
 
     this.EditContentService.startEditing(documentId, 'hippo-cm.channel.edit-page.content');
   }

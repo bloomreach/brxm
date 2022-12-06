@@ -82,6 +82,8 @@ class PageStructureService {
       return;
     }
 
+    this.$rootScope.$emit('iframe:loading', false);
+
     if (channelIdFromService === channelIdFromPage) {
       return;
     }
