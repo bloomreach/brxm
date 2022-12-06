@@ -20,6 +20,8 @@ import { Observable } from 'rxjs';
 export interface Ng1PageStructureService {
   pageParsed$: Observable<void>;
   getPage(): any;
+  setIsProjectToggle(value: boolean): void;
+  isProjectToggle(): boolean;
 }
 
 export const NG1_PAGE_STRUCTURE_SERVICE = new InjectionToken<Ng1PageStructureService>('NG1_PAGE_STRUCTURE_SERVICE');

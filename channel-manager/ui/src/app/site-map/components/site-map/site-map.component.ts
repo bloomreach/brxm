@@ -97,6 +97,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
       this.zone.run(() => {
         this.expandedNodes.clear();
         this.clearSearch();
+        this.shouldExpandSelectedNode = true;
         this.loadSiteMap(pathInfo, true);
       });
     });
@@ -172,6 +173,10 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   shouldDisplayValidationText(searchQuery: string): boolean {
     return !!searchQuery && !!searchQuery.length && searchQuery.length < 3;
+  }
+
+  shouldDisplayNoPagesText(): boolean {
+    return this.isSearchQueryValid && !this.treeControl.dataNodes.length;
   }
 
   private loadSiteMap(pathInfo?: string, noMerge = false): void {
