@@ -193,8 +193,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   private loadSiteMapChildren(node: SiteMapItemNode): void {
     const siteMapId = this.ng1ChannelService.getSiteMapId();
-    const parentPath = this.getParentPath(node);
-    this.siteMapService.loadItem(siteMapId, `${parentPath}${node.id}`, this.isSearchQueryValid);
+    this.siteMapService.loadItem(siteMapId, `${node.pathInfo}`, this.isSearchQueryValid);
   }
 
   private onSearch(value: string): void {
@@ -207,12 +206,6 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
       this.loadSiteMap(this.pathInfo);
     }
     this.shouldLoadSiteMapAfterClearSearch = true;
-  }
-
-  private getParentPath(node: SiteMapItemNode): string {
-    const parents = this.getParents(node);
-    const parentsIds = parents.map(parent => parent.id).filter(path => path !== '/');
-    return parentsIds.join('/');
   }
 
   private getParents(child: SiteMapItemNode): SiteMapItemNode[] {
