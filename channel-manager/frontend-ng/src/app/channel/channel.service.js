@@ -82,9 +82,10 @@ class ChannelService {
    * @param hostGroup the host group of the channel
    * @param branchId the ID of the channel branch to show. Defaults to the active project.
    * @param shouldLoadSiteMap whether to load the site map after loading the channel. Defaults to true.
+   * @param pathInfo the path info to navigate to after loading the channel. Defaults to the root path.
    * @returns {*}
    */
-  async initializeChannel(channelId, contextPath, hostGroup, branchId, shouldLoadSiteMap = true) {
+  async initializeChannel(channelId, contextPath, hostGroup, branchId, shouldLoadSiteMap = true, pathInfo = '/') {
     try {
       await this.SessionService.initializeContext(contextPath);
 
@@ -95,8 +96,8 @@ class ChannelService {
       await this._loadProject(channel, branchId || this.ProjectService.selectedProject.id);
       this._setChannel(previewChannel);
 
-      if (this.getSiteMapId() === channel.siteMapId && shouldLoadSiteMap) {
-        this.$rootScope.$emit('load-site-map');
+      if (shouldLoadSiteMap) {
+        this.$rootScope.$emit('load-site-map', pathInfo);
       }
     } catch (error) {
       if (this.hasChannel()) {
@@ -119,7 +120,7 @@ class ChannelService {
 
       return await this._getPreviewChannel(channel);
     } catch (error) {
-      this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
+      this.$log.error(`Failed to load channel '${ channel.id }'.`, error.message);
       this.FeedbackService.showErrorResponse(error.data, 'ERROR_ENTER_EDIT');
 
       throw error;
@@ -131,7 +132,7 @@ class ChannelService {
       return channel;
     }
 
-    return this.HstService.getChannel(`${channel.id}-preview`, channel.contextPath, channel.hostGroup);
+    return this.HstService.getChannel(`${ channel.id }-preview`, channel.contextPath, channel.hostGroup);
   }
 
   async _loadProject(channel, branchId) { // eslint-disable-line consistent-return
@@ -200,7 +201,7 @@ class ChannelService {
     const path = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
 
     // let the HST know the host name of the rendered page via an internal query parameter
-    return `${path}?org.hippoecm.hst.container.render_host=${this.channel.hostname}`;
+    return `${ path }?org.hippoecm.hst.container.render_host=${ this.channel.hostname }`;
   }
 
   makePath(renderPath) {
@@ -259,8 +260,9 @@ class ChannelService {
       if (changedSet.length > 0) {
         this.recordOwnChange();
       }
-    // eslint-disable-next-line no-empty
-    } catch (ignore) {}
+      // eslint-disable-next-line no-empty
+    } catch (ignore) {
+    }
   }
 
   recordOwnChange() {
@@ -395,7 +397,7 @@ class ChannelService {
 
     return {
       breadcrumbLabel: this.getName(),
-      path: `experience-manager/${this.getId()}`,
+      path: `experience-manager/${ this.getId() }`,
       addHistory: true,
     };
   }
@@ -413,7 +415,7 @@ class ChannelService {
       // eslint-disable-next-line consistent-return
       return origin;
     } catch (error) {
-      this.$log.error(`Invalid url for '${channel.id}'.`, error.message);
+      this.$log.error(`Invalid url for '${ channel.id }'.`, error.message);
     }
   }
 
@@ -455,6 +457,14 @@ class ChannelService {
         .concat('&endpoint=').concat(this.getBaseDeliveryApiURL());
     }
     return this.getUrlWithPort(this.channel.url).concat('?preview-token=').concat(externalPreviewToken);
+  }
+
+  setIsProjectToggle(value) {
+    this._isProjectToggle = value;
+  }
+
+  isProjectToggle() {
+    return this._isProjectToggle;
   }
 }
 

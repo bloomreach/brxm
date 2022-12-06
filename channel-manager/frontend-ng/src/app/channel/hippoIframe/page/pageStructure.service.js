@@ -90,6 +90,7 @@ class PageStructureService {
 
     const contextPathFromPage = this._page.getMeta().getContextPath();
     const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
+    const pathInfoFromPage = this._page.getMeta().getPathInfo();
 
     // Current channel is a branch, but new channel has no branch of that project
     // therefore load master
@@ -102,6 +103,8 @@ class PageStructureService {
       contextPathFromPage,
       hostGroupFromPreviousChannel,
       branchId,
+      true,
+      pathInfoFromPage,
     );
   }
 

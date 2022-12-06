@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -273,7 +273,7 @@ describe('ChannelService', () => {
     loadChannel();
 
     expect(ChannelService.getChannel()).toEqual(channelMock);
-    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/');
   });
 
   describe('matchesChannel', () => {

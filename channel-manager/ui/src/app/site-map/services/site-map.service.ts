@@ -17,7 +17,8 @@
 import { Location } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { Ng1ChannelService, NG1_CHANNEL_SERVICE } from '../../services/ng1/channel.ng1.service';
 import { Ng1ConfigService, NG1_CONFIG_SERVICE } from '../../services/ng1/config.ng1.service';
@@ -94,19 +95,34 @@ export class SiteMapService extends StateService<SiteMapState> {
       this.onComplete.bind(this));
   }
 
+  loadItemRequest(url: string, ancestry: boolean): Observable<SiteMapResponse> {
+    return this.http.get<SiteMapResponse>(url, {
+      headers: this.getHeaders(),
+      params: {
+        ancestry: ancestry.toString(),
+      },
+    });
+  }
+
   loadItem(
     siteMapId: string,
     path: string,
     isSearchMode: boolean,
     ancestry = false,
     noMerge = false): void {
-    const url = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem/${path}`);
-    this.http.get<SiteMapResponse>(url, {
-      headers: this.getHeaders(),
-      params: {
-        ancestry: ancestry.toString(),
-      },
-    }).subscribe(res => {
+    const baseUrl = Location.joinWithSlash(this.baseUrl, `/${siteMapId}./sitemapitem/`);
+    const url = Location.joinWithSlash(baseUrl, path);
+    this.loadItemRequest(url, ancestry).pipe(
+      catchError((error: HttpErrorResponse) => {
+        const isProjectToggle = this.ng1ChannelService.isProjectToggle();
+        if (isProjectToggle && error.status === 400) {
+          this.ng1ChannelService.setIsProjectToggle(false);
+          return this.loadItemRequest(baseUrl, ancestry);
+        } else {
+          return throwError(error);
+        }
+      }),
+    ).subscribe(res => {
         const prop = isSearchMode ? 'search' : 'items';
         let tmp = { ...this.state[prop][0] };
         const pathKeys = path.split('/').filter(key => key !== '');

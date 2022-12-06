@@ -43,6 +43,7 @@ class ProjectToggleController {
     ) || {};
 
     this.ProjectService.updateSelectedProject(selectedProject.id)
+      .then(() => this.ChannelService.setIsProjectToggle(true))
       .then(() => this.ChannelService.initializeChannel(
         projectChannelId,
         this.ChannelService.channel.contextPath,

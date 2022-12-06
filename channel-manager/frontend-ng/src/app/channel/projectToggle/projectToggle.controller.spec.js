@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2021 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ describe('projectToggle component', () => {
     ChannelService = jasmine.createSpyObj('ChannelService', [
       'initializeChannel',
       'getBaseId',
+      'setIsProjectToggle',
     ]);
 
     ChannelService.channel = {
@@ -101,6 +102,8 @@ describe('projectToggle component', () => {
       ProjectService.updateSelectedProject.and.returnValue($q.resolve());
       $ctrl.selectedProject = projectMock2;
       $rootScope.$digest();
+
+      expect(ChannelService.setIsProjectToggle).toHaveBeenCalledWith(true);
 
       expect(ChannelService.initializeChannel).toHaveBeenCalledWith(
         'channel-id-test',
