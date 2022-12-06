@@ -129,7 +129,7 @@ describe('PageCopyComponent', () => {
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
     spyOn(SiteMapItemService, 'updateItem');
-    spyOn(SiteMapService, 'copy').and.returnValue($q.when({ renderPathInfo: '/destination/path' }));
+    spyOn(SiteMapService, 'copy').and.returnValue($q.when({ renderPathInfo: '/destination/path', pathInfo: '/path' }));
 
     $ctrl = $componentController('pageCopy', null, {
       onDone: jasmine.createSpy('onDone'),
@@ -299,7 +299,7 @@ describe('PageCopyComponent', () => {
     $ctrl.$onInit();
     $rootScope.$digest();
 
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path', pathInfo: '/path' }));
     $ctrl.lastPathInfoElement = 'test';
     $ctrl.copy();
 
@@ -312,7 +312,7 @@ describe('PageCopyComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
-    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/render/path');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
@@ -323,7 +323,7 @@ describe('PageCopyComponent', () => {
     $ctrl.$onInit();
     $rootScope.$digest();
 
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path', pathInfo: '/path' }));
     $ctrl.lastPathInfoElement = 'test';
     [, $ctrl.location] = pageModel.locations;
     $ctrl.copy();
@@ -337,7 +337,7 @@ describe('PageCopyComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
-    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/render/path');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
@@ -348,7 +348,7 @@ describe('PageCopyComponent', () => {
     $ctrl.$onInit();
     $rootScope.$digest();
 
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path', pathInfo: '/path' }));
     $ctrl.lastPathInfoElement = 'a 你 好';
     [, $ctrl.location] = pageModel.locations;
     $ctrl.copy();
@@ -362,7 +362,7 @@ describe('PageCopyComponent', () => {
     $rootScope.$digest();
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
-    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/render/path');
+    expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/path');
     expect(ChannelService.checkChanges).toHaveBeenCalled();
     expect($ctrl.onDone).toHaveBeenCalled();
   });
@@ -374,7 +374,7 @@ describe('PageCopyComponent', () => {
     const copyReturn = {
       contextPath: '/another',
       renderPathInfo: '/render/path',
-      pathInfo: 'path',
+      pathInfo: '/path',
     };
 
     SiteMapService.copy.and.returnValue($q.when(copyReturn));

@@ -385,7 +385,7 @@ export default class XPageMenuService extends MenuService {
         this.HippoIframeService.load(renderPathInfo);
       }
 
-      this.$rootScope.$emit('load-site-map', renderPathInfo); // reload sitemap (left side panel)
+      this.$rootScope.$emit('load-site-map', pageMeta.getPathInfo()); // reload sitemap (left side panel)
     } catch (e) {
       this.$log.error(`Failed to navigate to document '${documentId}'`, e);
     }

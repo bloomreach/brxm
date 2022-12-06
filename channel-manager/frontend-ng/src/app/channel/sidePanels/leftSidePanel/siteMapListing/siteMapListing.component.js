@@ -20,7 +20,7 @@ import './siteMapListing.scss';
 
 const siteMapListingComponent = {
   bindings: {
-    items: '<',
+    iframeLoading: '<',
   },
   template,
   controller: siteMapListingController,
