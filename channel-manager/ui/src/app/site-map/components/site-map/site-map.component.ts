@@ -156,6 +156,8 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
     if (node.renderPathInfo) {
       this.shouldExpandSelectedNode = true;
       await this.iframeService.load(node.renderPathInfo);
+    } else {
+      this.expandAndToggleNode(node);
     }
   }
 
@@ -270,13 +272,17 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   private expandSelectedNode(): void {
     const node = this.treeControl.dataNodes.find(this.isSelected.bind(this));
+    this.expandAndToggleNode(node);
+    setTimeout(() => {
+      this.scrollToSelectedNode();
+    }, 500);
+  }
+
+  private expandAndToggleNode(node?: SiteMapItemNode): void {
     if (node && !this.treeControl.isExpanded(node)) {
       this.expandNode(node);
       this.toggleNode(node);
     }
-    setTimeout(() => {
-      this.scrollToSelectedNode();
-    }, 500);
   }
 
   private expandNode(node: SiteMapItemNode): void {
