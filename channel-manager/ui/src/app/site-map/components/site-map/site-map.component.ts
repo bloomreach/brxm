@@ -123,6 +123,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes?.pathInfo.firstChange) {
+      this.shouldExpandSelectedNode = true;
       this.loadSiteMap(changes.pathInfo.currentValue);
     }
     const selectedNode = this.treeControl.dataNodes?.find(this.isSelected.bind(this));

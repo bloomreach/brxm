@@ -286,7 +286,7 @@ describe('PageMenuService', () => {
       $rootScope.$digest(); // process confirm action
 
       expect(HippoIframeService.load).toHaveBeenCalledWith('');
-      expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/', false);
+      expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/');
       expect(SiteMapItemService.clear).toHaveBeenCalled();
       expect(ChannelService.checkChanges).toHaveBeenCalled();
     });

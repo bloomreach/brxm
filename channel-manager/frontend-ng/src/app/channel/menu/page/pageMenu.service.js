@@ -143,7 +143,7 @@ class PageMenuService extends MenuService {
             const homePage = this.ChannelService.getHomePageRenderPathInfo();
             this.HippoIframeService.load(homePage);
 
-            this.$rootScope.$emit('load-site-map', '/', false);
+            this.$rootScope.$emit('load-site-map', '/');
 
             this.SiteMapItemService.clear(); // wipe meta-data of current page
           })

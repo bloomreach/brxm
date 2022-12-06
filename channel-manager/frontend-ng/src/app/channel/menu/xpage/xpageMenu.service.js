@@ -224,8 +224,8 @@ export default class XPageMenuService extends MenuService {
       id => this.DocumentWorkflowService.delete(id)
         .then(() => {
           const homePage = this.ChannelService.getHomePageRenderPathInfo();
-          this.$rootScope.$emit( 'load-site-map', homePage);
           this.HippoIframeService.load(homePage);
+          this.$rootScope.$emit( 'load-site-map', '/');
         }),
       { iconName: 'mdi-delete' },
     );
@@ -379,13 +379,13 @@ export default class XPageMenuService extends MenuService {
 
   async _navigateToDocument(documentId) {
     try {
-      const { data: { renderPathInfo } } = await this.HstService.doGet(documentId, 'representation');
+      const { data: { pathInfo, renderPathInfo } } = await this.HstService.doGet(documentId, 'representation');
       const pageMeta = this.PageStructureService.getPage().getMeta();
       if (pageMeta.getPathInfo() !== renderPathInfo) {
         this.HippoIframeService.load(renderPathInfo);
       }
 
-      this.$rootScope.$emit('load-site-map', pageMeta.getPathInfo()); // reload sitemap (left side panel)
+      this.$rootScope.$emit('load-site-map', pathInfo); // reload sitemap (left side panel)
     } catch (e) {
       this.$log.error(`Failed to navigate to document '${documentId}'`, e);
     }
