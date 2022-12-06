@@ -157,6 +157,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
       this.shouldExpandSelectedNode = true;
       await this.iframeService.load(node.renderPathInfo);
     } else {
+      this.shouldExpandSelectedNode = false;
       this.expandAndToggleNode(node);
     }
   }
