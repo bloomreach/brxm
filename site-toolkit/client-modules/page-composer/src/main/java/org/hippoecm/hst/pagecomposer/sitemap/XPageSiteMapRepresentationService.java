@@ -291,7 +291,7 @@ public class XPageSiteMapRepresentationService {
     private void expungeStaleEntries(final InternalHstModel hstModel) {
         configurationToIdentityObjectCache.entrySet().removeIf(entry -> {
             try {
-                if (!entry.getKey().startsWith(hstModel.getConfigurationRootPath())) {
+                if (!entry.getKey().startsWith(hstModel.getConfigurationRootPath() + "/")) {
                     // other webapp / hst configuration, we can skip this
                     return false;
                 }
