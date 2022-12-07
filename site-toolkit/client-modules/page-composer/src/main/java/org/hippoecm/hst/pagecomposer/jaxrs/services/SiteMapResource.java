@@ -491,7 +491,7 @@ public class SiteMapResource extends AbstractConfigResource {
                                         final String fq,
                                         final List<SiteMapPageRepresentation> populate) {
 
-        if (!route.isExplicitPath()) {
+        if (!route.isExplicitPath() || route.isHiddenInChannelManager()) {
             // skip sitemap items having _default_ or _any_ in the path
             return;
         }
