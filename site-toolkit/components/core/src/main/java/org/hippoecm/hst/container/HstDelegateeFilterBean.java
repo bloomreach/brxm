@@ -37,6 +37,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationConstants;
 import org.hippoecm.hst.configuration.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -542,7 +543,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             final HstSite hstSite = resolvedMount.getMount().getHstSite();
 
-            if (isExternalPreview) {
+            if (isExternalPreview && !isWebFileRequest(requestContext, resolvedMount, hstContainerUrl)) {
                 if (hstSite instanceof CompositeHstSite) {
                     final Map<String, HstSite> siteBranches = ((CompositeHstSite) hstSite).getBranches();
                     boolean tokenMatchingFound = false;
@@ -753,6 +754,22 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 HDC.cleanUp();
             }
         }
+    }
+
+    private boolean isWebFileRequest(final HstMutableRequestContext requestContext, final ResolvedMount resolvedMount,
+            final HstContainerURL hstContainerUrl) {
+        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        if (resolvedSiteMapItem == null) {
+            try {
+                resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerUrl.getPathInfo());
+            } catch (MatchException e) {
+                return false;
+            }
+        }
+        if (resolvedSiteMapItem != null) {
+            return ConfigurationConstants.WEB_FILE_PIPELINE_NAME.equals(resolvedSiteMapItem.getNamedPipeline());
+        }
+        return false;
     }
 
     void doRedirectPreviewURL(final HttpServletRequest req,
