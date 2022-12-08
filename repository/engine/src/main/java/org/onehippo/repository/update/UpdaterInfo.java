@@ -99,7 +99,7 @@ class UpdaterInfo {
         if ((script == null || script.isEmpty()) && (klass == null || klass.isEmpty())) {
             throw new IllegalArgumentException("Either script or class property must be present");
         }
-        if (script.contains("ASTTest")) {
+        if (script != null && script.contains("ASTTest")) {
             throw new GroovyRuntimeException("Compilation failed : @groovy.transform.ASTTest not allowed");
         }
         if (klass != null && !klass.isEmpty()) {
