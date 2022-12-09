@@ -34,14 +34,11 @@
   </button>
 </mat-form-field>
 
-<div *ngIf="shouldDisplayValidationText(searchQuery)"
-     class="info-text qa-sitemap-info-text">
-  {{'SITEMAP_SEARCH_VALIDATION' | translate }}
+<div class="info-text qa-sitemap-info-text">
+  <ng-container *ngIf="shouldDisplayValidationText(searchQuery)">{{'SITEMAP_SEARCH_VALIDATION' | translate }}</ng-container>
+  <ng-container *ngIf="shouldDisplayNoPagesText()">{{'SITEMAP_SEARCH_NO_ITEMS' | translate }}</ng-container>
 </div>
-<div *ngIf="shouldDisplayNoPagesText()"
-     class="info-text qa-sitemap-info-text">
-  {{'SITEMAP_SEARCH_NO_ITEMS' | translate }}
-</div>
+
 <mat-tree *ngIf="shouldDisplayTree(searchQuery)"
           [dataSource]="dataSource"
           [treeControl]="treeControl">
