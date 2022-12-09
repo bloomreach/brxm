@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020-2022 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
           return value;
         }),
         map<string, [string]>(query => [query]),
-        distinctUntilChanged((prevQuery, query) => query === prevQuery),
+        distinctUntilChanged(),
         pluck(0),
       )
       .subscribe(this.onSearch.bind(this));
@@ -185,7 +185,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   private loadSiteMap(pathInfo?: string, noMerge = false): void {
     const siteMapId = this.ng1ChannelService.getSiteMapId();
-    let path = pathInfo || '/';
+    let path = pathInfo?.slice() || '/';
     if (path === '/') {
       this.expandedNodes.clear();
     }
