@@ -80,7 +80,7 @@ describe('OpenUiService', () => {
       const { iframe } = OpenUiService.initialize('test-id', { appendTo: element });
       expect(iframe).toHaveAttr(
         'sandbox',
-        'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
+        'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads',
       );
     });
 
