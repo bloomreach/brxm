@@ -225,7 +225,8 @@ export default class XPageMenuService extends MenuService {
         .then(() => {
           const homePage = this.ChannelService.getHomePageRenderPathInfo();
           this.HippoIframeService.load(homePage);
-          this.$rootScope.$emit( 'load-site-map', '/');
+
+          this.$rootScope.$emit( 'load-site-map');
         }),
       { iconName: 'mdi-delete' },
     );
