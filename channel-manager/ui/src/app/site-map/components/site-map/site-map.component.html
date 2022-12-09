@@ -35,11 +35,11 @@
 </mat-form-field>
 
 <div *ngIf="shouldDisplayValidationText(searchQuery)"
-     class="info-text">
+     class="info-text qa-sitemap-info-text">
   {{'SITEMAP_SEARCH_VALIDATION' | translate }}
 </div>
 <div *ngIf="shouldDisplayNoPagesText()"
-     class="info-text">
+     class="info-text qa-sitemap-info-text">
   {{'SITEMAP_SEARCH_NO_ITEMS' | translate }}
 </div>
 <mat-tree *ngIf="shouldDisplayTree(searchQuery)"
