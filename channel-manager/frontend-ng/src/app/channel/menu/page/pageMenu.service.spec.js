@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2022 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,7 +286,7 @@ describe('PageMenuService', () => {
       $rootScope.$digest(); // process confirm action
 
       expect(HippoIframeService.load).toHaveBeenCalledWith('');
-      expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map', '/');
+      expect($rootScope.$emit).toHaveBeenCalledWith('load-site-map');
       expect(SiteMapItemService.clear).toHaveBeenCalled();
       expect(ChannelService.checkChanges).toHaveBeenCalled();
     });
