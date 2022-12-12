@@ -218,9 +218,9 @@ public class SiteMapResource extends AbstractConfigResource {
                         }
                     }
                 }
-            } else {
-                siteMapTreeItem = getShallowSiteMapTreeItemForXPages(normalizedPathInfo, xPageSiteMapTreeItem, previewSecurityDelegate);
             }
+
+
 
             // no XPage document matched for normalizedPathInfo, check sitemap
             if (siteMapTreeItem == null) {
@@ -288,6 +288,7 @@ public class SiteMapResource extends AbstractConfigResource {
                                 // in case the xpagesBasedItem was not yet expandable, mark it to be so now
                                 currentLevel.setExpandable(true);
                             } else {
+                                mergeFields(child, nextRoutesLevel.get());
                                 mergeChildren(child, nextRoutesLevel.get());
                             }
                             currentLevel = currentLevel.getChild(nextRoutesLevel.get().getId());
@@ -332,6 +333,7 @@ public class SiteMapResource extends AbstractConfigResource {
                         if (childSource.isExpandable()) {
                             target.getChild(childSource.getId()).setExpandable(true);
                         }
+                        mergeFields(target.getChild(childSource.getId()), childSource);
                     } else {
                         target.addOrReplaceChild(childSource);
                     }
