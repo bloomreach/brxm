@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 public class SiteMapTreeItem {
@@ -119,10 +120,18 @@ public class SiteMapTreeItem {
     }
 
     public static void mergeFieldsFromTo(SiteMapTreeItem source, SiteMapTreeItem target) {
-        target.name = source.name;
-        target.pageTitle = source.pageTitle;
-        target.pathInfo = source.pathInfo;
-        target.renderPathInfo = source.renderPathInfo;
+        if (isEmpty(target.name)) {
+            target.name = source.name;
+        }
+        if (isEmpty(target.pageTitle)) {
+            target.pageTitle = source.pageTitle;
+        }
+        if (isEmpty(target.pathInfo)) {
+            target.pathInfo = source.pathInfo;
+        }
+        if (isEmpty(target.renderPathInfo)) {
+            target.renderPathInfo = source.renderPathInfo;
+        }
     }
 
     // structural item only, without pathInfo meaning not a clickable sitemap item
