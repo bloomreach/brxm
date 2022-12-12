@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
 public enum HstState implements NamedCategory {
 
+    CHANNEL_PAGE_PREVIEW_URL("pagePreviewUrl", HstCategory.CHANNEL),
     CHANNEL_XPAGE_LAYOUTS("xPageLayouts", HstCategory.CHANNEL),
     CHANNEL_XPAGE_TEMPLATE_QUERIES("xPageTemplateQueries", HstCategory.CHANNEL),
 
@@ -25,8 +26,8 @@ public enum HstState implements NamedCategory {
     XPAGE_ID("id", HstCategory.XPAGE),
     XPAGE_LOCKED_BY("lockedBy", HstCategory.XPAGE),
     XPAGE_NAME("name", HstCategory.XPAGE),
-    XPAGE_STATE("state", HstCategory.XPAGE),
     XPAGE_PREVIEW_URL("pagePreviewUrl", HstCategory.XPAGE),
+    XPAGE_STATE("state", HstCategory.XPAGE),
 
     REQUESTS("requests", HstCategory.WORKFLOW),
     ;
