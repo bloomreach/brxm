@@ -149,7 +149,8 @@ class PageService {
   }
 
   getPagePreviewUrl() {
-    return this.appendPort(this.getState('xpage').pagePreviewUrl);
+    const { pagePreviewUrl } = this.getState(this.isXPage ? 'xpage' : 'channel');
+    return this.appendPort(pagePreviewUrl);
   }
 
   syncPageEditor() {
