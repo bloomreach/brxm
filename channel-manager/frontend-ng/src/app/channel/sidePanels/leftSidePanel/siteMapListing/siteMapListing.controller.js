@@ -24,10 +24,10 @@ class SiteMapListingController {
   getCurrentPathInfo() {
     const page = this.PageStructureService.getPage();
     if (page) {
-      return !this.iframeLoading && page.getMeta().getPathInfo();
+      const pathInfo = page.getMeta().getPathInfo();
+      return this.iframeLoading ? '' : pathInfo;
     }
     return '';
-
   }
 }
 
