@@ -122,7 +122,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes?.pathInfo.firstChange) {
+    if (changes?.pathInfo?.firstChange) {
       this.shouldExpandSelectedNode = true;
       this.loadSiteMap(changes.pathInfo.currentValue);
     }
@@ -185,7 +185,7 @@ export class SiteMapComponent implements OnChanges, OnInit, OnDestroy {
 
   private loadSiteMap(pathInfo?: string, noMerge = false): void {
     const siteMapId = this.ng1ChannelService.getSiteMapId();
-    let path = pathInfo?.slice() || '/';
+    let path = pathInfo ? pathInfo.slice() : '/';
     if (path === '/') {
       this.expandedNodes.clear();
     }
