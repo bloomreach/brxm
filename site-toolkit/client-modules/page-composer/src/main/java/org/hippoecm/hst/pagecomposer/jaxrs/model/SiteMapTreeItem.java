@@ -120,16 +120,16 @@ public class SiteMapTreeItem {
     }
 
     public static void mergeFieldsFromTo(SiteMapTreeItem source, SiteMapTreeItem target) {
-        if (isEmpty(target.name)) {
+        if (!isEmpty(source.name)) {
             target.name = source.name;
         }
-        if (isEmpty(target.pageTitle)) {
+        if (!isEmpty(source.pageTitle)) {
             target.pageTitle = source.pageTitle;
         }
-        if (isEmpty(target.pathInfo)) {
+        if (!isEmpty(source.pathInfo)) {
             target.pathInfo = source.pathInfo;
         }
-        if (isEmpty(target.renderPathInfo)) {
+        if (!isEmpty(source.renderPathInfo)) {
             target.renderPathInfo = source.renderPathInfo;
         }
     }
