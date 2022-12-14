@@ -217,7 +217,6 @@
   "CHANGE": "更改",
   "OK": "OK",
   "KEEP_DRAFT": "保存为草稿",
-  "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "本文档只能在内容编辑器中进行编辑。",
   "CREATE_DOCUMENT": "创建文档",
   "SAVE_XPAGE_CHANGES_TITLE": "保存页面更改？",
   "FEEDBACK_XPAGE_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "页面正在等待进行发布或取消发布。",
