@@ -230,14 +230,8 @@
       "locales" : null
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_API_DETAILS" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ACCOUNT_OVERVIEW" : {
       "status" : "CLEAN",
@@ -740,14 +734,8 @@
       "locales" : null
     },
     "MENU_ITEM_SETUP_DISCOVERY_USAGE" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

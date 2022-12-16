@@ -2024,6 +2024,36 @@
     "MAX_VALUES_HINT" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "CONFIRM_DISCARD_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE" : {
+      "status": "ADDED",
+      "locales": {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "RESTORE" : {
+      "status": "ADDED",
+      "locales": {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_MENU_XPAGE_CONTENT" : {
+      "status": "ADDED",
+      "locales": {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
