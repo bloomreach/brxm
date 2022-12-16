@@ -47,6 +47,7 @@
   "TOOLBAR_MENU_CHANNEL_DELETE": "Löschen",
   "SEARCH_RESULTS_MULTIPLE": "{{hits}} von {{total}} {{itemsName}}",
   "ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS": "Channel '{{channel}}' kann nicht gelöscht werden, da seine Bereitstellungen untergeordnete Elemente enthalten: '{{childMountList}}'. Ein Channel kann nur gelöscht werden, wenn seine Bereitstellungen keine untergeordneten Elemente enthalten.",
+  "ERROR_MENU_LOCKED_BY": "Menü wird bei '{{lockedBy}}' verwendet",
   "ERROR_ADD_COMPONENT": "'{{component}}' kann nicht hinzugefügt werden",
   "FEEDBACK_HELD_BY_OTHER_USER_MESSAGE": "Das Dokument wurde von {{user}} gesperrt.",
   "FEEDBACK_NO_EDITABLE_COMPONENT_PROPERTIES": "Diese Komponente hat keine editierbaren Eigenschaften",
