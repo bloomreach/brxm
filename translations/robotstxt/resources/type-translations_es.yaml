@@ -10,7 +10,8 @@ definitions:
         robotstxt:section: Sección
     /hippo:configuration/hippo:translations/hippo:types/robotstxt:section:
       /es:
+        jcr:primaryType: hipposys:resourcebundle
+        robotstxt:allow: Permitir
         robotstxt:useragent: Agente de usuario
         robotstxt:disallow: No permitir
-        jcr:primaryType: hipposys:resourcebundle
         jcr:name: Sección

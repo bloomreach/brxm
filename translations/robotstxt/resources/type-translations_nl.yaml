@@ -10,7 +10,8 @@ definitions:
         robotstxt:section: Sectie
     /hippo:configuration/hippo:translations/hippo:types/robotstxt:section:
       /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        robotstxt:allow: Toestaan
         robotstxt:useragent: User-agent
         robotstxt:disallow: Niet toestaan
-        jcr:primaryType: hipposys:resourcebundle
         jcr:name: Sectie
