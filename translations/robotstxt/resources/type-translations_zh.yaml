@@ -9,7 +9,8 @@ definitions:
         robotstxt:section: 章节
     /hippo:configuration/hippo:translations/hippo:types/robotstxt:section:
       /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        robotstxt:allow: 允许
         robotstxt:useragent: 用户代理
         robotstxt:disallow: 不允许
-        jcr:primaryType: hipposys:resourcebundle
         jcr:name: 章节
