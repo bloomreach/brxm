@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@
         ng-submit="$ctrl.saveIfValid()"
         novalidate>
     <div class="project-name" ng-if="$ctrl.projectsEnabled">
-      <h3 class="md-title">{{ 'CHANNEL_SETTINGS_PROJECT_NAME' | translate}} {{ ::$ctrl.projectName }} </h3>
+      <h3 class="md-title">{{ 'CHANNEL_SETTINGS_PROJECT_NAME' | translate }} {{ ::$ctrl.projectName }} </h3>
     </div>
 
     <div ng-repeat="fieldGroup in $ctrl.getFieldGroups() track by fieldGroup.titleKey">
