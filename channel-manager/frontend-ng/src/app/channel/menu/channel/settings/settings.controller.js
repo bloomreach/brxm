@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2022 Bloomreach (https://www.bloomreach.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ class ChannelSettingsCtrl {
         .then(() => this.ChannelService.checkChanges())
         .then(() => this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' }))
         .catch((response) => {
-          if (response != null) {
+          if (response != null && response.errorMessage) {
             this.FeedbackService.showError(response.errorMessage);
           } else {
             this.FeedbackService.showErrorResponse(response, 'ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
@@ -130,7 +130,7 @@ class ChannelSettingsCtrl {
   }
 
   onEnablePreview() {
-    if (this.externalPreviewToken === null || this.externalPreviewToken === '') {
+    if (!this.externalPreviewToken) {
       this.onRegenerate('CHANNEL_SETTINGS_TOKEN_IS_CREATED_FIRST_TIME');
     }
   }
