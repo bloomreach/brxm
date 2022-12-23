@@ -199,7 +199,7 @@ public class CorsSupportValve implements Valve {
 
             setVaryHeaderConditionally(servletResponse, HttpHeaders.ORIGIN);
 
-            if (context.getRequestContext().isChannelManagerPreviewRequest() ||
+            if (context.getRequestContext().isChannelManagerPreviewRequest() || context.getRequestContext().isChannelManagerRestRequest() ||
                     context.getRequestContext().getResolvedMount().getMount().isPreview()) {
                 // regardless whether cache-control headers are set, we override them to now allow caching for
                 // preview responses of Channel Manager preview

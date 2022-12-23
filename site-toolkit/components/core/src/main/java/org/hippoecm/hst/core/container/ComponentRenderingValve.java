@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class ComponentRenderingValve extends AbstractBaseOrderableValve {
         final HstComponentWindow window = context.getRootComponentWindow();
         final HttpServletResponse servletResponse = requestContext.getServletResponse();
 
-        if (requestContext.isChannelManagerPreviewRequest() || requestContext.isPreview()) {
+        if (requestContext.isChannelManagerPreviewRequest() || requestContext.isChannelManagerRestRequest() || requestContext.isPreview()) {
             setNoCacheHeaders(servletResponse);
         }
 
@@ -57,7 +57,7 @@ public class ComponentRenderingValve extends AbstractBaseOrderableValve {
     private static void setNoCacheHeaders(final HttpServletResponse response) {
         response.setDateHeader("Expires", -1);
         response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Cache-Control", "private, max-age=0, no-store");
     }
 
 }
