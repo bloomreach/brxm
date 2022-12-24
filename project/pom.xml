@@ -140,7 +140,7 @@
     <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
     <maven.plugin.flatten.version>1.1.0</maven.plugin.flatten.version>
     <maven.plugin.exec.version>3.0.0</maven.plugin.exec.version>
-    <maven.plugin.failsafe.version>3.0.0-M5</maven.plugin.failsafe.version>
+    <maven.plugin.failsafe.version>3.0.0-M7</maven.plugin.failsafe.version>
     <maven.plugin.frontend.version>1.11.0</maven.plugin.frontend.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.2.0</maven.plugin.jar.version>
@@ -154,8 +154,8 @@
     <maven.plugin.resources.version>3.1.0</maven.plugin.resources.version>
     <maven.plugin.site.version>3.9.1</maven.plugin.site.version>
     <maven.plugin.source.version>3.2.1</maven.plugin.source.version>
-    <maven.plugin.surefire.version>3.0.0-M5</maven.plugin.surefire.version>
-    <maven.plugin.surefire-report.version>3.0.0-M5</maven.plugin.surefire-report.version>
+    <maven.plugin.surefire.version>3.0.0-M7</maven.plugin.surefire.version>
+    <maven.plugin.surefire-report.version>3.0.0-M7</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>3.3.1</maven.plugin.war.version>
     <maven.plugin.enforcer.version>3.0.0-M3</maven.plugin.enforcer.version>
@@ -1053,8 +1053,8 @@
           <inherited>true</inherited>
           <configuration>
             <fork>true</fork>
-            <meminitial>128m</meminitial>
-            <maxmem>256m</maxmem>
+            <meminitial>1024m</meminitial>
+            <maxmem>4096m</maxmem>
             <target>1.8</target>
             <source>1.8</source>
           </configuration>
