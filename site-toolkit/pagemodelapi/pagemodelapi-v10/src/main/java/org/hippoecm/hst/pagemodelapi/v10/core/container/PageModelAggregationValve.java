@@ -325,6 +325,12 @@ public class PageModelAggregationValve extends AggregationValve {
             throws ContainerException {
         final HstRequestContext requestContext = context.getRequestContext();
 
+        boolean uncacheable = requestContext.isPreview() || requestContext.isChannelManagerPreviewRequest() || requestContext.isChannelManagerRestRequest();
+        if (uncacheable) {
+            final HttpServletResponse servletResponse = context.getServletResponse();
+            setNoCacheHeaders(servletResponse);
+        }
+
         final HttpServletResponse response = requestContext.getServletResponse();
         try {
 
