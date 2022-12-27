@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -278,10 +278,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         context.invokeNext();
     }
 
-    private static void setNoCacheHeaders(final HttpServletResponse response) {
+    protected static void setNoCacheHeaders(final HttpServletResponse response) {
         response.setDateHeader("Expires", -1);
         response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Cache-Control", "private, max-age=0, no-store");
     }
 
     private void sendRedirect(final HttpServletResponse servletResponse, final String redirectLocation, final boolean permanent) throws IOException {
@@ -530,9 +530,9 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
         try {
             // add the X-HST-VERSION as a response header if we are in preview:
-            boolean isPreviewOrChannelManagerPreviewRequest = requestContext.isPreview() || requestContext.isChannelManagerPreviewRequest();
+            boolean uncacheable = requestContext.isPreview() || requestContext.isChannelManagerPreviewRequest() || requestContext.isChannelManagerRestRequest();
 
-            if (isPreviewOrChannelManagerPreviewRequest) {
+            if (uncacheable) {
                 final HttpServletResponse servletResponse = context.getServletResponse();
                 setNoCacheHeaders(servletResponse);
 
