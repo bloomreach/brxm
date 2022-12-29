@@ -101,7 +101,7 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev20190807-2.0.0</google-api-services-analytics.version>
-    <cxf.version>3.4.5</cxf.version>
+    <cxf.version>3.5.5</cxf.version>
     <jaxrs.version>2.1.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.13.4</jackson2.version>
@@ -129,7 +129,7 @@
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
     <javassist.version>3.27.0-GA</javassist.version>
 
-    <tika.version>1.28.4</tika.version>
+    <tika.version>1.28.5</tika.version>
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.5.0</maven.required.version>
 
