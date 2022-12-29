@@ -85,7 +85,7 @@
     <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
 
     <!-- Open source JDBC drivers included in docker image -->
-    <mysql.connector.version>8.0.16</mysql.connector.version>
+    <mysql.version>8.0.31</mysql.version>
     <postgres.connector.version>42.2.5</postgres.connector.version>
 
     <!-- DB images used by docker.mysql and docker.postgres profiles -->
@@ -1002,7 +1002,7 @@
       <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.connector.version}</version>
+        <version>${mysql.version}</version>
       </dependency>
       <dependency>
         <groupId>org.postgresql</groupId>
