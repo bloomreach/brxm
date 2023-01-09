@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2023 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ final class ActionStateProviderContextFactory {
                 .setExperiencePageRequest(contextService.isExperiencePageRequest())
                 .setMasterBranchSelected(BranchConstants.MASTER_BRANCH_ID.equals(contextService.getSelectedBranchId()))
                 .setUserId(context.getUserId())
+                .setLocale(context.getLocale())
                 .setBranchId(contextService.getSelectedBranchId())
                 .setChannelContext(channelContextFactory.make(context))
                 .setPageContext(pageContextFactory.make(context))
