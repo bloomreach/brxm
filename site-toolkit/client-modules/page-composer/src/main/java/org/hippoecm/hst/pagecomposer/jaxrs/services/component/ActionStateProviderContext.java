@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Bloomreach
+ * Copyright 2020-2023 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.component;
 
+import java.util.Locale;
+
 public class ActionStateProviderContext {
 
     private boolean experiencePageRequest;
@@ -27,6 +29,7 @@ public class ActionStateProviderContext {
     private ChannelContext channelContext;
     private PageContext pageContext;
     private XPageContext xPageContext;
+    private Locale locale;
 
     public boolean isMasterBranchSelected() {
         return masterBranchSelected;
@@ -38,6 +41,10 @@ public class ActionStateProviderContext {
 
     public String getUserId() {
         return userId;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 
     public String getBranchId() {
@@ -68,6 +75,11 @@ public class ActionStateProviderContext {
 
     ActionStateProviderContext setUserId(final String userId) {
         this.userId = userId;
+        return this;
+    }
+
+    ActionStateProviderContext setLocale(final Locale locale) {
+        this.locale = locale;
         return this;
     }
 
