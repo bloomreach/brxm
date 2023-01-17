@@ -588,8 +588,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             // if there is is not an access token on the request AND if the request is not for the Page Model API
             // and there is a preview URL configured on the Channel, then we should redirect to this URL including
             // a token
-            if (hstSite != null && hstSite.getChannel() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null
-                && !requestContext.isPageModelApiRequest()) {
+            if (channelManagerPreviewRequest && (hstSite != null && hstSite.getChannel() != null
+                                                 && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null
+                                                 && !requestContext.isPageModelApiRequest())) {
 
                 final Channel channel = hstSite.getChannel();
                 if (channel.getSpaUrl() != null) {
