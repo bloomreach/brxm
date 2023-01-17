@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2022 Bloomreach
+  Copyright 2010-2023 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -505,6 +505,13 @@
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
 
