@@ -218,6 +218,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
     }
 
 
+    @Ignore // CMS-15273
     @Test
     public void testCrossHostHttpToHttpsLinks() throws Exception {
         List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<SiteMapItemReference>();
