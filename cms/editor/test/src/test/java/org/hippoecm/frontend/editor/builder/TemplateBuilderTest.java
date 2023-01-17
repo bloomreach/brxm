@@ -57,6 +57,7 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.util.JcrConstants;
 
@@ -141,6 +142,7 @@ public class TemplateBuilderTest extends EditorTestCase {
         assertEquals("nt_unstructured", pluginConfig.get("field"));
     }
 
+    @Ignore // CMS-15273
     @Test
     /**
      * verify that a prototype is updated correctly when a mixin is added

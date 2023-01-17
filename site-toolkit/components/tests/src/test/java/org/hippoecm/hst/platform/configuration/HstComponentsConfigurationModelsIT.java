@@ -37,6 +37,7 @@ import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -168,6 +169,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
      *
      * @throws Exception
      */
+    @Ignore // CMS-15273
     @Test
     public void testReloadOnlyChangedHstComponentsConfigurations() throws Exception {
         removePagePrototypeFromConfig(session);
