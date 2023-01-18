@@ -1,5 +1,5 @@
-/*!
- * Copyright 2020 Bloomreach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2020-2023 Bloomreach
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// Put variable definitions before the import of material 
+// Put variable definitions before the import of material
 // so we override !default variable values
 $mat-tree-node-height: 32px;
 
@@ -35,7 +35,7 @@ $theme: mat-light-theme((
 $custom-typography: mat-typography-config(
   $font-family:   "'Open Sans', Roboto, 'Helvetica Neue', sans-serif",
   // .mat-h1, .mat-headline
-  $headline:      mat-typography-level(20px, 1.3, 400), 
+  $headline:      mat-typography-level(20px, 1.3, 400),
   // .mat-h2, .mat-title
   $title:         mat-typography-level(16px, 1.3, 600),
   // .mat-h3, .subheading-2
