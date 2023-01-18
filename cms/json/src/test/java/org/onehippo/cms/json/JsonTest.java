@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2023 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,12 +84,13 @@ public class JsonTest {
 
     @Test
     public void writeValueAsStringForObject() throws IOException {
-        assertEquals("{\n"
-                        + "  value : 1,\n"
-                        + "  child : {\n"
-                        + "    nestedValue1 : \"text\",\n"
-                        + "    nestedValue2 : true\n"
-                        + "  }\n"
+        final String ls = System.lineSeparator();
+        assertEquals("{" + ls
+                        + "  value : 1," + ls
+                        + "  child : {"  + ls
+                        + "    nestedValue1 : \"text\","  + ls
+                        + "    nestedValue2 : true"  + ls
+                        + "  }"  + ls
                         + "}",
                 Json.getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(Json.object("{ value: 1, child: { nestedValue1: 'text', nestedValue2: true } }"))
         );
