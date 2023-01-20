@@ -1,6 +1,6 @@
 /*
- * Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2009-2023 Bloomreach (https://www.bloomreach.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,6 +84,7 @@ public class StaticDropdownPlugin extends RenderPlugin<String> {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
+                    target.add(StaticDropdownPlugin.this);
                 }
             });
 
