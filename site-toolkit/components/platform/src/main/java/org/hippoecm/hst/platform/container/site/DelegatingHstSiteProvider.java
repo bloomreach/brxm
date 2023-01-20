@@ -68,7 +68,9 @@ public class DelegatingHstSiteProvider  {
         // Note do not cache the CONTEXT_LESS_REQUEST type on 'computedMap' since the 'CONTEXT_LESS_REQUEST' might be
         // a temporal switch within a request which is for the rest of the request processing for example a
         // CHANNEL_MGR_REST type : therefor do not cache on 'computedMap'
-        if (requestContext.getHstRequestType() == CONTEXT_LESS_REQUEST) {
+        final String preferBranch = (String)requestContext.getAttribute(PREFER_RENDER_BRANCH_ID);
+
+        if (requestContext.getHstRequestType() == CONTEXT_LESS_REQUEST && preferBranch == null) {
             log.info("HST Request is a context less request like a management api or Wicket request. Return HST Site " +
                     "by context-less site provider");
             return contextLessHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
@@ -87,7 +89,7 @@ public class DelegatingHstSiteProvider  {
         }
 
         final HstSite hstSite;
-        final String preferBranch = (String)requestContext.getAttribute(PREFER_RENDER_BRANCH_ID);
+
         if (preferBranch != null) {
             hstSite = compositeHstSite.getBranches().getOrDefault(preferBranch, compositeHstSite.getMaster());
         } else if (requestContext.isChannelManagerPreviewRequest()) {
