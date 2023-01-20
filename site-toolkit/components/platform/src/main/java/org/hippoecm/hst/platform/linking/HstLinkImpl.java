@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2022 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2023 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,6 +50,8 @@ import static org.hippoecm.hst.configuration.ConfigurationConstants.CDN_SUPPORTE
 import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
 
 public class HstLinkImpl implements HstLink {
+
+    public static final String PREVIEW_TOKEN_QUERY_PARAM = "preview-token";
 
     private final static Logger log = LoggerFactory.getLogger(HstLinkImpl.class);
 
@@ -394,8 +396,11 @@ public class HstLinkImpl implements HstLink {
             }
         }
 
-        if (!requestContext.isPageModelApiRequest() && requestContext.getServletRequest().getQueryString() != null) {
-            urlString += "?" + requestContext.getServletRequest().getQueryString();
+        if (!requestContext.isPageModelApiRequest()
+            && requestContext.getServletRequest().getParameterMap().containsKey(PREVIEW_TOKEN_QUERY_PARAM)) {
+            final String previewParam = PREVIEW_TOKEN_QUERY_PARAM + "=" + requestContext.getServletRequest()
+                    .getParameter(PREVIEW_TOKEN_QUERY_PARAM);
+            urlString += urlString.contains("?") ? "&" + previewParam : "?" + previewParam;
         }
 
         return urlString;
