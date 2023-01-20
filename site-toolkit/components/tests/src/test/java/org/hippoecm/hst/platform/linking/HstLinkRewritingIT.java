@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2022 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2023 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,10 +18,14 @@ package org.hippoecm.hst.platform.linking;
 
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -32,14 +36,40 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.util.JcrUtils;
+import org.joor.Reflect;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
+
+
+    @Test
+    public void testPreviewUrlPropagation() throws Exception {
+        HstRequestContext requestContext =
+                getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+
+        final HttpServletRequest httpServletRequest = spy(requestContext.getServletRequest());
+        final UUID previewId = UUID.randomUUID();
+
+        when(httpServletRequest.getParameter(HstLinkImpl.PREVIEW_TOKEN_QUERY_PARAM)).thenReturn(previewId.toString());
+        final Map<String, String[]> parameterMap = new HashMap<>();
+        parameterMap.put(HstLinkImpl.PREVIEW_TOKEN_QUERY_PARAM, new String[]{previewId.toString()});
+        parameterMap.put("existingParam", new String[]{"existingParamValue"});
+        when(httpServletRequest.getParameterMap()).thenReturn(parameterMap);
+        Reflect.on(requestContext).set("servletRequest", httpServletRequest);
+
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+        Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
+        HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
+        assertEquals("expect preview-token to be propagated", "/site/?preview-token="+previewId,
+                     homePageLink.toUrlForm(requestContext, false));
+    }
 
     @Test
     public void testSimpleHstLinkForBean() throws Exception {
