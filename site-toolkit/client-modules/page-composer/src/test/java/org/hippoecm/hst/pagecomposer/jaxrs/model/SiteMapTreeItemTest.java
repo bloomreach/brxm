@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020-2022 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020-2023 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -133,13 +133,18 @@ public class SiteMapTreeItemTest {
 
         SiteMapTreeItem siteMapTreeItem = SiteMapTreeItem.transform(pages);
         {
-            // pathInfo for 'news' and 'contact' should be null since no URL for those
+            // renderPathInfo for 'news' and 'contact' should be null since no URL for those,
+            // pathInfo should not be null
 
             List<String> childNames = getChildNames(siteMapTreeItem);
             assertThat(childNames).containsExactly("contact", "news");
 
             List<String> childPathInfos = getChildPathInfos(siteMapTreeItem);
-            assertThat(childPathInfos).containsExactly(null, null);
+            assertThat(childPathInfos).containsExactly("contact", "news");
+            List<String> childRenderPathInfos = getChildRenderPathInfos(siteMapTreeItem);
+            assertThat(childRenderPathInfos)
+                    .as("As structural only and no real pages, no renderPathInfo")
+                    .containsExactly(null, null);
         }
 
         {
@@ -148,7 +153,9 @@ public class SiteMapTreeItemTest {
             assertThat(childNames).containsExactly("2019");
 
             List<String> childPathInfos = getChildPathInfos(newsItem);
-            assertThat(childPathInfos).containsExactly(new String[] {null});
+            assertThat(childPathInfos).containsExactly(new String[] {"news/2019"});
+            List<String> childRenderPathInfos = getChildRenderPathInfos(newsItem);
+            assertThat(childRenderPathInfos).containsExactly(new String[] {null});
 
             SiteMapTreeItem yearItem = findChild(newsItem, "2019");
             SiteMapTreeItem monthItem = findChild(yearItem, "12");
@@ -210,6 +217,7 @@ public class SiteMapTreeItemTest {
                 .map(SiteMapTreeItem::getPathInfo)
                 .collect(Collectors.toList());
     }
+
 
     private static List<String> getChildRenderPathInfos(final SiteMapTreeItem item) {
         return item.getChildren().stream()

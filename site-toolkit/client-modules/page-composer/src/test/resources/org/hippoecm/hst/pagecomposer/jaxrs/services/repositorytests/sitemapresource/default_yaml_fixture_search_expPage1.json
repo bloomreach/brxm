@@ -1,0 +1,28 @@
+{
+  "id" : "/",
+  "name" : "home",
+  "pageTitle" : null,
+  "pathInfo" : "/",
+  "renderPathInfo" : "/",
+  "experiencePage" : false,
+  "expandable" : true,
+  "children" : [ {
+    "id" : "experiences",
+    "name" : "experiences",
+    "pageTitle" : null,
+    "pathInfo" : "experiences",
+    "renderPathInfo" : null,
+    "experiencePage" : false,
+    "expandable" : true,
+    "children" : [ {
+      "id" : "non-null-id",
+      "name" : "expPage1.html",
+      "pageTitle" : "Experience Page Number1",
+      "pathInfo" : "experiences/expPage1.html",
+      "renderPathInfo" : "/experiences/expPage1.html",
+      "experiencePage" : true,
+      "expandable" : false,
+      "children" : [ ]
+    } ]
+  } ]
+}
