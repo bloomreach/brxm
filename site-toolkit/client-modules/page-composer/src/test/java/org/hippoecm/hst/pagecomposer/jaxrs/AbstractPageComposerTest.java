@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2023 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -163,6 +163,7 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
                                                                                         final String queryString) throws Exception {
         HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         HstMutableRequestContext requestContext = rcc.create();
+        requestContext.setChannelManagerRestRequest();
         HstContainerURL containerUrl = createContainerUrl(scheme, hostAndPort, pathInfo, requestContext, queryString);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl, requestContext);
