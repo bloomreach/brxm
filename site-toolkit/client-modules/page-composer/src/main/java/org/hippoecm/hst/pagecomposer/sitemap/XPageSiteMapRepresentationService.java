@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2022-2023 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,8 @@ import com.google.common.cache.CacheBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -202,7 +204,21 @@ public class XPageSiteMapRepresentationService {
                     // there have been an XPage document added / removed / moved : reload the entire XPageSiteMapTreeItem
                     // TODO in the future we can implement more finegrained reloading instead of completely discarding
                     //  but this is not trivial (though doable)
-                    cache.remove(siteMapConfigurationIdentity);
+
+                    // As this 'siteMapConfigurationIdentity' can be for core or a branch, but an added document can
+                    // have impact on all branches, we need to remove the core + all branches its identity
+                    final HstSite hstSite = previewMount.getHstSite();
+                    if (hstSite instanceof CompositeHstSite) {
+                        final CompositeHstSite compositeHstSite = (CompositeHstSite) hstSite;
+                        final String masterConfigPath = compositeHstSite.getMaster().getConfigurationPath();
+                        cache.remove(hstModel.getSiteMapConfigurationIdentity(masterConfigPath));
+                        for (HstSite branch : compositeHstSite.getBranches().values()) {
+                            final String branchConfigPath = branch.getConfigurationPath();
+                            cache.remove(hstModel.getSiteMapConfigurationIdentity(branchConfigPath));
+                        }
+                    } else {
+                        cache.remove(siteMapConfigurationIdentity);
+                    }
                 }
             }
 
@@ -244,11 +260,6 @@ public class XPageSiteMapRepresentationService {
                                 unpublishedVariant.getPath(), MIXINTYPE_HST_XPAGE_MIXIN);
                         continue;
                     }
-
-                    // use the link creator to get hold of URLs for the XPages
-                    // Note this is very delicate: we only try to resolve the XPages *WITHIN* the current channel (editingMount),
-                    // hence we use create(Node node, Mount editingMount) : if no link can be found, we just skip (for now?)
-                    // the XPage!
 
                     final HstLink hstLink = hstLinkCreator.create(handle, previewMount);
                     if (hstLink.isNotFound()) {
