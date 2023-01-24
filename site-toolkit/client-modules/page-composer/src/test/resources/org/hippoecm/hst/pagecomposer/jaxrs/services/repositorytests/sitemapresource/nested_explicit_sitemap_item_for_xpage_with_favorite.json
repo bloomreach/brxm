@@ -1,0 +1,28 @@
+{
+  "id" : "on-null-id",
+  "name" : "home",
+  "pageTitle" : null,
+  "pathInfo" : "/",
+  "renderPathInfo" : "/",
+  "experiencePage" : false,
+  "expandable" : true,
+  "children" : [ {
+    "id" : "on-null-id",
+    "name" : "exp1",
+    "pageTitle" : "Experience Page Number1",
+    "pathInfo" : "exp1",
+    "renderPathInfo" : "/exp1",
+    "experiencePage" : true,
+    "expandable" : true,
+    "children" : [ {
+      "id" : "on-null-id",
+      "name" : "exp2",
+      "pageTitle" : "expPage2",
+      "pathInfo" : "exp1/exp2",
+      "renderPathInfo" : "/exp1/exp2",
+      "experiencePage" : true,
+      "expandable" : false,
+      "children" : [ ]
+    } ]
+  } ]
+}
