@@ -1,4 +1,4 @@
-// Copyright 2014-2022 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2023 Bloomreach
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -343,6 +343,14 @@
 
 .hippo-editor-field > .hippo-editor-field-subfield.collapsed > .hippo-editor-field-title.collapsed {
   margin-bottom: 0;
+}
+
+.hippo-editor-field.readonly {
+  margin-bottom: 16px;
+}
+
+.hippo-editor-field.readonly > .hippo-editor-field-title {
+  margin-bottom: 4px;
 }
 
 .hippo-node-field-multiple > .hippo-editor-field > .hippo-editor-field-subfield > .hippo-editor-field-title.collapsed {
