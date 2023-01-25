@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -29,10 +27,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.skyscreamer.jsonassert.Customization;
@@ -51,6 +47,8 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
 
 
     private SiteMapResource siteMapResource;
+
+    private final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
     @Override
     public void setUp() throws Exception {
@@ -587,7 +585,17 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             HstRequestContext ctx = initContext(session);
             final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest());
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        // with ancestry=true same result expected
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), EMPTY, true);
+
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
 
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
@@ -605,7 +613,6 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             HstRequestContext ctx = initContext(session);
             final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "exp1", true);
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
 
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
@@ -622,7 +629,6 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             HstRequestContext ctx = initContext(session);
             final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "exp1", true);
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
 
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("nested_explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
@@ -649,7 +655,7 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             SiteMapTreeItem result =
                     (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
+
             final String actual = objectWriter.writeValueAsString(result);
 
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("default_yaml_fixture_search_expPage1.json"), StandardCharsets.UTF_8);
@@ -677,13 +683,44 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             HstRequestContext ctx = initContext(session);
             final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "ExpPage1");
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
 
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_not_xpage.json"), StandardCharsets.UTF_8);
             JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
         }
 
+        previewSitemap.getNode("home").setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage1");
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest());
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "expPage1");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "expPage1");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        previewSitemap.getNode("home").getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).remove();
         final Node sitemapItemExp1 = previewSitemap.addNode("exp1", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
         sitemapItemExp1.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage1");
 
@@ -693,7 +730,6 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             HstRequestContext ctx = initContext(session);
             final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp");
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
             JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
@@ -710,7 +746,6 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             // test searching on exp1 which has a child xpage doc exp2
             final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp1");
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
 
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("explicit_sitemap_item_for_xpage_expandable.json"), StandardCharsets.UTF_8);
@@ -722,7 +757,6 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             // hit for exp1 and exp2
             final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp");
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
 
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("nested_explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
@@ -733,7 +767,6 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
             HstRequestContext ctx = initContext(session);
             final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp2");
 
-            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
             final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
             String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("nested_explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
             JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);

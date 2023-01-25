@@ -2,8 +2,8 @@
   "id" : "not-null-id",
   "name" : "expPage1",
   "pageTitle" : "Experience Page Number1",
-  "pathInfo" : "",
-  "renderPathInfo" : "",
+  "pathInfo" : "/",
+  "renderPathInfo" : "/",
   "experiencePage" : true,
   "expandable" : false,
   "children" : [ ]

@@ -5,6 +5,6 @@
   "pathInfo" : "/",
   "renderPathInfo" : "/",
   "experiencePage" : false,
-  "expandable" : true,
+  "expandable" : false,
   "children" : [ ]
 }
