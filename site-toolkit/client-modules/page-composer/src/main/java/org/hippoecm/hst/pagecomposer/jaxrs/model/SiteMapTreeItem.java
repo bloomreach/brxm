@@ -178,7 +178,7 @@ public class SiteMapTreeItem {
     }
 
     private static String getIdFromPathInfo(final String pathInfo) {
-        if (StringUtils.isEmpty(pathInfo)) {
+        if (StringUtils.isEmpty(pathInfo) || pathInfo.equals("/")) {
             return "/";
         }
         if (pathInfo.contains("/")) {
@@ -265,5 +265,9 @@ public class SiteMapTreeItem {
 
     public void setPageTitle(final String pageTitle) {
         this.pageTitle = pageTitle;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 }

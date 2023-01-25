@@ -439,18 +439,16 @@ public class SiteMapResource extends AbstractConfigResource {
 
             pages.represent(new HstNoopSiteMap(mount.getHstSite()), mount, getPreviewConfigurationPath());
 
-            // always include the homepage
+            // always include the homepage, doesn't matter if it is already present, then just add it again
             routes.getSiteMapItems().stream()
                     .filter(item -> item.getValue().equals(mount.getHomePage()))
                     .findAny()
                     .ifPresent(homePage ->
                             {
-                                final SiteMapPageRepresentation homePagePresentation = new SiteMapPageRepresentation();
-                                homePagePresentation.represent(homePage, null, mount.getMountPath(),
-                                        HstSiteMapUtils.getPath(mount, mount.getHomePage()),
-                                        getPreviewConfigurationPath());
-
-                                    routesPages.add(homePagePresentation);
+                                final SiteMapPageRepresentation homeRoutesPages = getHomeRoutesPages(homePage, xPageSiteMapTreeItem, previewSecurityDelegate, mount, getPreviewConfigurationPath());
+                                if (homeRoutesPages != null) {
+                                    routesPages.add(homeRoutesPages);
+                                }
                             }
                     );
 
@@ -494,6 +492,7 @@ public class SiteMapResource extends AbstractConfigResource {
                     } else {
                         final Node handleNode = securityDelegate.getNode(xPageTreeItem.getAbsoluteJcrPath());
 
+                        current.setName(xPageTreeItem.getName());
                         current.setExperiencePage(true);
                         current.setPageTitle(xPageTreeItem.getPageTitle());
 
@@ -576,6 +575,30 @@ public class SiteMapResource extends AbstractConfigResource {
         for (HstSiteMapItem child : route.getChildren()) {
             getFilteredRoutesPages(child, root, userSession, mount, previewConfigurationPath, homePagePathInfo, fq, populate);
         }
+    }
+
+    private SiteMapPageRepresentation getHomeRoutesPages(final HstSiteMapItem homeRoute,
+                                                         final XPageSiteMapTreeItem root,
+                                                         final Session userSession,
+                                                         final Mount mount,
+                                                         final String previewConfigurationPath) {
+
+        if (!homeRoute.isExplicitPath() || homeRoute.isHiddenInChannelManager()) {
+            // skip sitemap items having _default_ or _any_ in the path
+            return null;
+        }
+        final SiteMapPageRepresentation siteMapPageRepresentation = new SiteMapPageRepresentation();
+        final SiteMapPageRepresentation represent = siteMapPageRepresentation.represent(homeRoute, null,
+                mount.getMountPath(), HstSiteMapUtils.getPath(mount, mount.getHomePage()), previewConfigurationPath);
+
+        if (!represent.isExpandable()) {
+            // find out if there will be a readable XPage document matched below a wildcard sitemap item of this item : if so,
+            // it means the item must be expandable
+            represent.setExpandable(XPageSiteMapTreeItemUtils.hasReadableChildren(root, userSession, represent.getPathInfo()));
+        }
+
+        return siteMapPageRepresentation;
+
     }
 
     /**
