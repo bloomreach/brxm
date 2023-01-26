@@ -15,7 +15,7 @@
     "experiencePage" : false,
     "expandable" : true,
     "children" : [ {
-      "id" : "non-null-id",
+      "id" : "expPage1.html",
       "name" : "expPage1.html",
       "pageTitle" : "Experience Page Number1",
       "pathInfo" : "experiences/expPage1.html",
