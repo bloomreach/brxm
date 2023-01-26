@@ -540,11 +540,7 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
     }
 
     private final static JSONComparator JSON_COMPARATOR =
-            new CustomComparator(JSONCompareMode.STRICT, // STRICT_ORDER enforces compatibility constraints
-                    // ignore id as changes every run and as a result also etag
-                    new Customization("**.id", (actual, expected) ->
-                            isEmpty(actual.toString()) ? isEmpty(expected.toString()) : isNotEmpty(expected.toString())
-                    ));
+            new CustomComparator(JSONCompareMode.STRICT);
 
 
     @Test

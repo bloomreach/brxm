@@ -1,5 +1,5 @@
 {
-  "id" : "on-null-id",
+  "id" : "/",
   "name" : "home",
   "pageTitle" : null,
   "pathInfo" : "/",
@@ -7,7 +7,7 @@
   "experiencePage" : false,
   "expandable" : true,
   "children" : [ {
-    "id" : "on-null-id",
+    "id" : "exp1",
     "name" : "exp1",
     "pageTitle" : "Experience Page Number1",
     "pathInfo" : "exp1",
@@ -15,7 +15,7 @@
     "experiencePage" : true,
     "expandable" : true,
     "children" : [ {
-      "id" : "on-null-id",
+      "id" : "exp2",
       "name" : "exp2",
       "pageTitle" : "expPage2",
       "pathInfo" : "exp1/exp2",
