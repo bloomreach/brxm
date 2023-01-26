@@ -24,6 +24,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -38,12 +40,17 @@ import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapRepresentationService;
 import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapShallowItem;
 import org.hippoecm.hst.pagecomposer.sitemap.XPageSiteMapTreeItem;
+import org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 
@@ -645,6 +652,237 @@ public class XPageSiteMapRepresentationServiceTest extends AbstractSiteMapResour
             throw new RuntimeException(failureInFinally);
         }
 
+    }
+
+    /**
+     * Test to assert ENT-6373
+     *
+     */
+    @Test
+    public void assert_invalidation_with_branches_on_site_map_change() throws Exception {
+        // create branch
+        createBranch(session, "unittestproject-branchid-000", "branchid-000");
+
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:channel",
+                "/hst:hst/hst:configurations/unittestproject-branchid-000/hst:workspace/hst:channel");
+
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject-branchid-000",
+                "/hst:hst/hst:configurations/unittestproject-branchid-000-preview");
+
+        session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../branchid-000"});
+        session.save();
+
+        // fetch sitemap for core (populate cache)
+        initContext();
+        XPageSiteMapTreeItem siteMapTreeCore = getSiteMapTree();
+
+        initContext();
+        assertThat(getSiteMapTree())
+                .as("Expected same cached instance")
+                .isSameAs(siteMapTreeCore);
+
+
+        XPageSiteMapTreeItem siteMapTreeBranch = null;
+
+        final DelegatingHstSiteProvider delegatingHstSiteProvider = platformComponentManager.getComponent("org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider", "org.hippoecm.hst.platform");
+        try {
+
+            // Make branch active via setting channel mgr site provider to return branch
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> branches.get("branchid-000"));
+
+            initContext();
+            siteMapTreeBranch = getSiteMapTree();
+            assertThat(siteMapTreeBranch)
+                    .as("Expected different instance for branch!")
+                    .isNotSameAs(siteMapTreeCore);
+
+            // fetch sitemap for branch (populate cache)
+            initContext();
+
+            assertThat(getSiteMapTree())
+                    .as("Expected same instance when fetching again!")
+                    .isSameAs(siteMapTreeBranch);
+
+        } finally {
+            // reset to original
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> master);
+        }
+
+        // NOW CHANGE BRANCH SITEMAP : EXPECTED ONLY BRANCH WILL BE RELOADED
+
+        session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000-preview/hst:workspace/hst:sitemap/news").remove();
+        session.save();
+
+        initContext();
+
+        assertThat(getSiteMapTree())
+                .as("Since branch sitemap changed, core expected to keep same cached instance")
+                .isSameAs(siteMapTreeCore);
+
+        // CONFIRM THE BRANCH IS INVALIDATED
+        try {
+
+            // Make branch active via setting channel mgr site provider to return branch
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> branches.get("branchid-000"));
+
+            initContext();
+
+            assertThat(getSiteMapTree())
+                    .as("Since SiteMap in branch changed, expected new 'siteMapTreeBranch' instance")
+                    .isNotSameAs(siteMapTreeBranch);
+
+            // reset to new instance
+
+            siteMapTreeBranch = getSiteMapTree();
+        } finally {
+            // reset to original
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> master);
+        }
+
+        // NOW CHANGE CORE SITEMAP : EXPECTED ONLY BRANCH WILL BE RELOADED
+
+        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/news").remove();
+        session.save();
+
+        assertThat(getSiteMapTree())
+                .as("Since CORE sitemap changed, core expected to new instance")
+                .isNotSameAs(siteMapTreeCore);
+
+        // CONFIRM THE BRANCH IS INVALIDATED
+        try {
+
+            // Make branch active via setting channel mgr site provider to return branch
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> branches.get("branchid-000"));
+
+            initContext();
+
+            assertThat(getSiteMapTree())
+                    .as("Since SiteMap in branch DID NOT change, expected same 'siteMapTreeBranch' instance")
+                    .isSameAs(siteMapTreeBranch);
+
+        } finally {
+            // reset to original
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> master);
+        }
+
+    }
+
+    /**
+     * Test to assert ENT-6373
+     * <p>
+     *     Before ENT-6373, an added or removed document would not invalidate all branches its SiteMap but only from the
+     *     one that was active at that moment
+     * </p>
+     */
+    @Test
+    public void assert_invalidation_for_BRANCH_on_experience_handle_add_delete_move() throws Exception {
+
+        // create branch
+        createBranch(session, "unittestproject-branchid-000", "branchid-000");
+
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:channel",
+                "/hst:hst/hst:configurations/unittestproject-branchid-000/hst:workspace/hst:channel");
+
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject-branchid-000",
+                "/hst:hst/hst:configurations/unittestproject-branchid-000-preview");
+
+        session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../branchid-000"});
+        session.save();
+
+        // fetch sitemap for core (populate cache)
+        initContext();
+        XPageSiteMapTreeItem siteMapTreeCore = getSiteMapTree();
+
+        initContext();
+        assertThat(getSiteMapTree())
+                .as("Expected same cached instance")
+                .isSameAs(siteMapTreeCore);
+
+
+        XPageSiteMapTreeItem siteMapTreeBranch = null;
+
+        final DelegatingHstSiteProvider delegatingHstSiteProvider = platformComponentManager.getComponent("org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider", "org.hippoecm.hst.platform");
+        try {
+
+            // Make branch active via setting channel mgr site provider to return branch
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> branches.get("branchid-000"));
+
+
+            initContext();
+            siteMapTreeBranch = getSiteMapTree();
+            assertThat(siteMapTreeBranch)
+                    .as("Expected different instance for branch!")
+                    .isNotSameAs(siteMapTreeCore);
+
+            // fetch sitemap for branch (populate cache)
+            initContext();
+
+
+            assertThat(getSiteMapTree())
+                    .as("Expected same instance when fetching again!")
+                    .isSameAs(siteMapTreeBranch);
+
+        } finally {
+            // reset to original
+            delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> master);
+        }
+
+        // NOW ADD A DOCUMENT : EXPECTED BOTH CACHED INSTANCES WILL BE RELOADED
+
+        final Node newXpage = JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/experiences/expPage1",
+                "/unittestcontent/documents/unittestproject/experiences/newExpPage1");
+
+        for (Node variant : new NodeIterable(newXpage.getNodes())) {
+            session.move(variant.getPath(), variant.getParent().getPath() + "/newExpPage1");
+        }
+
+        try {
+
+            // NON XPage document
+            session.save();
+            // give jcr events some time
+            Thread.sleep(300);
+
+            initContext();
+
+            assertThat(getSiteMapTree())
+                    .as("Since an XPage document got added, expected new 'siteMapTreeCore' instance")
+                    .isNotSameAs(siteMapTreeCore);
+
+            // CONFIRM ALSO THE BRANCH IS INVALIDATED
+            try {
+
+                // Make branch active via setting channel mgr site provider to return branch
+                delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> branches.get("branchid-000"));
+
+                initContext();
+
+                assertThat(getSiteMapTree())
+                        .as("Since an XPage document got added, expected new 'siteMapTreeBranch' instance")
+                        .isNotSameAs(siteMapTreeBranch);
+            } finally {
+                // reset to original
+                delegatingHstSiteProvider.setChannelManagerHstSiteProvider((master, branches, requestContext) -> master);
+            }
+
+        } finally {
+            session.refresh(false);
+            newXpage.remove();
+            session.save();
+
+            // give jcr events some time
+            Thread.sleep(300);
+        }
+    }
+
+    private void createBranch(final Session session, final String name, final String branchId) throws RepositoryException {
+        Node branchNode = session.getNode("/hst:hst/hst:configurations").addNode(name);
+        branchNode.addMixin(MIXINTYPE_HST_BRANCH);
+        branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "unittestproject");
+        branchNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
+        branchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestproject"});
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:workspace", "/hst:hst/hst:configurations/" +name + "/hst:workspace");
+        session.save();
     }
 
     @Test
