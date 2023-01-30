@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 public class SiteMapTreeItem {
 
@@ -73,7 +72,7 @@ public class SiteMapTreeItem {
 
             // merge the page into the SiteMapTreeItem and create any none existing parents (which might
             // get filled later on with a pathInfo by a SiteMapPageRepresentation and if not such SiteMapPageRepresentation
-            // it will be a SiteMapTreeItem without pathInfo or renderPathInfo (which means won't be clickable in the CM)
+            // it will be a SiteMapTreeItem without renderPathInfo (which means won't be clickable in the CM)
 
             String[] elements = page.getPathInfo().split("/");
             SiteMapTreeItem current = root;
@@ -94,6 +93,17 @@ public class SiteMapTreeItem {
                     } else {
                         // structural element
                         SiteMapTreeItem siteMapTreeItem = new SiteMapTreeItem(itemId);
+                        if (current.pathInfo == null) {
+                            siteMapTreeItem.pathInfo = current.name + "/" + itemId;
+                        } else if (current.pathInfo.endsWith("/")) {
+                            siteMapTreeItem.pathInfo =  current.pathInfo + itemId;
+                        } else {
+                            siteMapTreeItem.pathInfo = current.pathInfo + "/" + itemId;
+                        }
+                        if (siteMapTreeItem.pathInfo.startsWith("/")) {
+                            siteMapTreeItem.pathInfo = siteMapTreeItem.pathInfo.substring(1);
+                        }
+
                         current.children.put(itemId, siteMapTreeItem);
                         current.expandable = true;
                         current = siteMapTreeItem;
@@ -109,6 +119,7 @@ public class SiteMapTreeItem {
                         next.renderPathInfo = page.getRenderPathInfo();
                         next.experiencePage = page.isExperiencePage();
                         next.expandable = page.isExpandable();
+                        next.structural = false;
                     } else {
                         current = next;
                     }
@@ -119,18 +130,18 @@ public class SiteMapTreeItem {
         return root;
     }
 
-    public static void mergeFieldsFromTo(SiteMapTreeItem source, SiteMapTreeItem target) {
-        if (!isEmpty(source.name)) {
-            target.name = source.name;
+    public static void mergeFieldsFromRouteToXPageItem(SiteMapTreeItem route, SiteMapTreeItem xpage) {
+        if (!isEmpty(route.name)) {
+            xpage.name = route.name;
         }
-        if (!isEmpty(source.pageTitle)) {
-            target.pageTitle = source.pageTitle;
+        if (!isEmpty(route.pageTitle)) {
+            xpage.pageTitle = route.pageTitle;
         }
-        if (!isEmpty(source.pathInfo)) {
-            target.pathInfo = source.pathInfo;
+        if (!isEmpty(route.pathInfo)) {
+            xpage.pathInfo = route.pathInfo;
         }
-        if (!isEmpty(source.renderPathInfo)) {
-            target.renderPathInfo = source.renderPathInfo;
+        if (!isEmpty(route.renderPathInfo)) {
+            xpage.renderPathInfo = route.renderPathInfo;
         }
     }
 
@@ -167,7 +178,7 @@ public class SiteMapTreeItem {
     }
 
     private static String getIdFromPathInfo(final String pathInfo) {
-        if (StringUtils.isEmpty(pathInfo)) {
+        if (StringUtils.isEmpty(pathInfo) || pathInfo.equals("/")) {
             return "/";
         }
         if (pathInfo.contains("/")) {
@@ -242,5 +253,21 @@ public class SiteMapTreeItem {
                         child.renderPathInfo, child.experiencePage, child.expandable))
         );
         return shallowClone;
+    }
+
+    public void setExperiencePage(final boolean experiencePage) {
+        this.experiencePage = experiencePage;
+    }
+
+    public void setRenderPathInfo(final String renderPathInfo) {
+        this.renderPathInfo = renderPathInfo;
+    }
+
+    public void setPageTitle(final String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 }

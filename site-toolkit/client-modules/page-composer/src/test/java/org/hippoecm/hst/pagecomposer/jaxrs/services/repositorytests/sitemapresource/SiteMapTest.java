@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2022-2023 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,19 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+import org.apache.commons.io.IOUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -32,9 +39,19 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.skyscreamer.jsonassert.Customization;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
+import org.skyscreamer.jsonassert.comparator.JSONComparator;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -42,6 +59,8 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
 
 
     private SiteMapResource siteMapResource;
+
+    private final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
     @Override
     public void setUp() throws Exception {
@@ -65,7 +84,7 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
 
 
     @Test
-    public void shallow_tree_item_some_expected_routes_and_xpages_to_be_present() throws Exception {
+    public void shallow_tree_item_some_expected_routes_and_xpages_to_be_present_as_admin() throws Exception {
 
         {
             HstRequestContext ctx = initContext(session);
@@ -231,14 +250,14 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
                     .as("Expected 'experiences' to NOT be an XPage")
                     .isFalse();
 
-            final SiteMapTreeItem articleAsExpPage = experiencesSiteMapTreeItem.getChild("expPage1.html");
-            assertThat(articleAsExpPage)
+            final SiteMapTreeItem expPage1 = experiencesSiteMapTreeItem.getChild("expPage1.html");
+            assertThat(expPage1)
                     .as("Expected expPage1.html")
                     .isNotNull();
-            assertThat(articleAsExpPage.isExpandable())
+            assertThat(expPage1.isExpandable())
                     .as("Expected expPage1 to be NOT an expandable folder")
                     .isFalse();
-            assertThat(articleAsExpPage.isExperiencePage())
+            assertThat(expPage1.isExperiencePage())
                     .as("Expected expPage1 to be an XPage")
                     .isTrue();
         }
@@ -530,6 +549,241 @@ public class SiteMapTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertThat(((ResponseRepresentation) response.getEntity()).getErrorCode())
                 .isEqualTo(ClientError.INVALID_FILTER_QUERY.toString());
+    }
+
+    private final static JSONComparator JSON_COMPARATOR =
+            new CustomComparator(JSONCompareMode.STRICT);
+
+
+    @Test
+    public void assert_json_expectation_nested_XPage_documents() throws Exception {
+
+        final Node previewSitemap = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap");
+
+        // clean all live sitemap entries
+        for (Node siteMapItemNode : new NodeIterable(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").getNodes())) {
+            siteMapItemNode.remove();
+        }
+
+        // to keep simple, only keep 'home'
+        for (Node child : new NodeIterable(previewSitemap.getNodes())) {
+            if (child.getName().equals("home")) {
+                continue;
+            }
+            child.remove();
+        }
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest());
+
+            final ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_not_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+
+        previewSitemap.getNode("home").setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage1");
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest());
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        // with ancestry=true same result expected
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), EMPTY, true);
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        previewSitemap.getNode("home").getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).remove();
+
+        final Node sitemapItemExp1 = previewSitemap.addNode("exp1", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        sitemapItemExp1.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage1");
+
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "exp1", true);
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        // nested explicit sitemap item pointing to xpage docs
+
+        final Node sitemapItemExp2 = sitemapItemExp1.addNode("exp2", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        sitemapItemExp2.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage2");
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest(), "exp1", true);
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("nested_explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+    }
+
+    /**
+     * Specific sitemap setup which has a sitemap item mapping to an XPage doc, and a child siteMap item to another
+     * XPage doc. This resulted for search hits in the child sitemap doc in many subtle complexities (and shitty code)
+     * to deal with. Hence this JSON assertion test to monitor and see when the code breaks somehow these expectations
+     * in the future
+     *
+     * @throws Exception
+     */
+    @Test
+    public void assert_json_expectation_nested_XPage_documents_with_search() throws Exception {
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "ExpPage1");
+
+            SiteMapTreeItem result =
+                    (SiteMapTreeItem) ((ResponseRepresentation) response.getEntity()).getData();
+
+
+            final String actual = objectWriter.writeValueAsString(result);
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("default_yaml_fixture_search_expPage1.json"), StandardCharsets.UTF_8);
+
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        // clean all live sitemap entries
+        for (Node siteMapItemNode : new NodeIterable(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").getNodes())) {
+            siteMapItemNode.remove();
+        }
+
+        final Node previewSitemap = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap");
+
+        // to keep simple, only keep 'home'
+        for (Node child : new NodeIterable(previewSitemap.getNodes())) {
+            if (child.getName().equals("home")) {
+                continue;
+            }
+            child.remove();
+        }
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "ExpPage1");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_not_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        previewSitemap.getNode("home").setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage1");
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.getSiteMapShallowItem(ctx.getServletRequest());
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "expPage1");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "expPage1");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("home_as_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        previewSitemap.getNode("home").getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH).remove();
+        final Node sitemapItemExp1 = previewSitemap.addNode("exp1", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        sitemapItemExp1.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage1");
+
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        // nested explicit sitemap item pointing to xpage docs
+
+        final Node sitemapItemExp2 = sitemapItemExp1.addNode("exp2", HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
+        sitemapItemExp2.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "experiences/expPage2");
+        session.save();
+
+        {
+            HstRequestContext ctx = initContext(session);
+            // test searching on exp1 which has a child xpage doc exp2
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp1");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("explicit_sitemap_item_for_xpage_expandable.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+            // hit for exp1 and exp2
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("nested_explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+        {
+            HstRequestContext ctx = initContext(session);
+            final Response response = siteMapResource.filterSiteMap(ctx.getServletRequest(), "exp2");
+
+            final String actual = objectWriter.writeValueAsString(((ResponseRepresentation) response.getEntity()).getData());
+            String expected = IOUtils.toString(SiteMapTest.class.getResourceAsStream("nested_explicit_sitemap_item_for_xpage.json"), StandardCharsets.UTF_8);
+            JSONAssert.assertEquals(expected, actual, JSON_COMPARATOR);
+        }
+
+
+        final Node xPageHandle = session.getNode("/unittestcontent/documents/unittestproject/experiences/expPage1");
+        final DocumentWorkflow documentWorkflow = (DocumentWorkflow) ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow("default", xPageHandle);
+
     }
 
     /**
