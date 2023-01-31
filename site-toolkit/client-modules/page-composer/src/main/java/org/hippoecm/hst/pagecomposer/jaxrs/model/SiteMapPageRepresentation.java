@@ -111,8 +111,7 @@ public class SiteMapPageRepresentation {
         inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
         relativeContentPath = item.getRelativeContentPath();
 
-        // homepage "/" we make by default expandable
-        expandable = pathInfo.equals("/") ||  item.getChildren().stream()
+        expandable = item.getChildren().stream()
                 .filter(child -> SiteMapPagesRepresentation.isIncludedSitemapItem(child))
                 .findAny()
                 .isPresent();
@@ -132,10 +131,16 @@ public class SiteMapPageRepresentation {
         final Mount mount = hstLink.getMount();
         pathInfo = hstLink.getPath();
         if (StringUtils.isBlank(pathInfo)) {
+            // homepage
+            pathInfo = "/";
             renderPathInfo = mount == null ? "/" : mount.getMountPath();
         } else {
             renderPathInfo = mount == null ? "/" + pathInfo : mount.getMountPath() + "/" + pathInfo;
         }
+        if (StringUtils.isEmpty(renderPathInfo)) {
+            renderPathInfo = "/";
+        }
+
 
         experiencePage = XPageUtils.isXPageDocument(handleNode);
         return this;
