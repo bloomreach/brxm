@@ -94,7 +94,6 @@
     <easymock.version>4.3</easymock.version>
     <powermock.version>2.0.9</powermock.version>
     <decentxml.version>1.4</decentxml.version>
-    <mysql.version>8.0.31</mysql.version>
     <mssql.version>6.2.2.jre8</mssql.version>
     <postgresql.version>42.1.4</postgresql.version>
     <oracle.version>12.2.0.1</oracle.version>
