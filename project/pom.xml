@@ -518,6 +518,10 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
           </exclusion>
+          <exclusion> <!-- This dependency excluded because Tika 1.x series uses a vulnerable version of this dep. -->
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
