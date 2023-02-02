@@ -195,7 +195,7 @@
     <javaagent />
     <!-- the h2 driver version to use for development environments. The h2 driver is bundled with the repository and added to the Tomcat classpath-->
     <h2.database.version>1.4.200</h2.database.version>
-    <mysql.version>8.0.31</mysql.version>
+    <mysql.version>8.0.32</mysql.version>
 
     <javadoc.base.version>14.3</javadoc.base.version>
     <error-prone.version>2.18.0</error-prone.version>
