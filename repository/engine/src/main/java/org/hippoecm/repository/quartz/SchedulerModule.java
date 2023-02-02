@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2023 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.security.SecurityManagerAvailableService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
+import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.onehippo.repository.modules.DaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
@@ -55,6 +58,8 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
     private RepositoryScheduler service;
     private String moduleConfigPath;
 
+    private ProxiedServiceTracker<SecurityManagerAvailableService> securityManagerAvailableTracker;
+
     private static boolean isEnabled() {
         return !Boolean.getBoolean("hippo.scheduler.disabled");
     }
@@ -67,21 +72,51 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
     @Override
     public void initialize(Session session) throws RepositoryException {
         this.session = session;
+
+        // make service available first, other modules will have references on it
+        service = new RepositorySchedulerImpl(session, moduleConfigPath);
+        HippoServiceRegistry.register(service, RepositoryScheduler.class);
+
+        // defer starting the Quartz scheduler:
+        // wait for a ready SecurityManager so session impersonate works when processing existing scheduled items
+        securityManagerAvailableTracker = new ProxiedServiceTracker<>() {
+            @Override
+            public void serviceRegistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder) {
+                startScheduler();
+            }
+
+            @Override
+            public void serviceUnregistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder) {
+                // see #shutdown
+            }
+        };
+        HippoServiceRegistry.addTracker(securityManagerAvailableTracker, SecurityManagerAvailableService.class);
+    }
+
+    private void startScheduler() {
         try {
-            final JcrSchedulerFactory schedFactory = new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
+            final JcrSchedulerFactory schedFactory = createJcrSchedulerFactory();
+            // initialization will already look for and execute existing scheduled items
             scheduler = (JCRScheduler) schedFactory.getScheduler();
+            ((RepositorySchedulerImpl) service).setScheduler(scheduler);
+
             if (isEnabled()) {
+                log.info("Starting scheduler {}", scheduler.getClass().getName());
                 scheduler.start();
             } else {
-                log.info("Hippo scheduler was disabled by hippo.scheduler.disabled property, " +
-                        "scheduled actions will not be executed by this cluster node");
+                log.info("{} was disabled by hippo.scheduler.disabled property, " +
+                        "scheduled actions will not be executed by this cluster node", scheduler.getClass().getSimpleName());
             }
         } catch (SchedulerException e) {
             log.error("Failed to initialize quartz scheduler", e);
-            return;
         }
-        service = new RepositorySchedulerImpl(session, scheduler, moduleConfigPath);
-        HippoServiceRegistry.register(service, RepositoryScheduler.class);
+    }
+
+    /**
+     * Hook to be able to customize properties in a subclass.
+     */
+    protected JcrSchedulerFactory createJcrSchedulerFactory() throws SchedulerException {
+        return new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
     }
 
     @Override
@@ -89,7 +124,12 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
         if (service != null) {
             HippoServiceRegistry.unregister(service, RepositoryScheduler.class);
         }
-        if(scheduler != null) {
+        if (securityManagerAvailableTracker != null) {
+            HippoServiceRegistry.removeTracker(securityManagerAvailableTracker, SecurityManagerAvailableService.class);
+            securityManagerAvailableTracker = null;
+        }
+
+        if (scheduler != null) {
             scheduler.shutdown(true);
         }
         session.logout();
