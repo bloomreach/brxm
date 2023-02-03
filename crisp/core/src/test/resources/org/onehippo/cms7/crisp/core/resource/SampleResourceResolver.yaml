@@ -14,7 +14,7 @@
             crisp:beandefinition: |-
               <?xml version="1.0" encoding="UTF-8"?>
               <!--
-                Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+                Copyright 2019-2023 Bloomreach
               -->
               <beans xmlns="http://www.springframework.org/schema/beans"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
