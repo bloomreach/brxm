@@ -36,7 +36,6 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
@@ -112,7 +111,6 @@ public class JCRJobStore implements JobStore {
 
     private ProxiedServiceTracker<SecurityManagerAvailableService> securityManagerAvailableTracker;
     private boolean securityManagerAvailable;
-
 
     void init(final Session session, final String jobStorePath) {
         if (session == null || jobStorePath == null) {
