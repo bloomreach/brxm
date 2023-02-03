@@ -1,5 +1,5 @@
 <%--
-  Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2023 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,4 +19,4 @@
 <%
 int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 %>
-©1999-<%=currentYear%> Hippo B.V., All Rights Reserved
+©1999-<%=currentYear%> Bloomreach, All Rights Reserved
