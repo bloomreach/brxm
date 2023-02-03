@@ -1,5 +1,5 @@
 <%--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2023 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
       <div class="hippo-login-panel">
         <fmt:message key="label.access.forbidden" />
         <div class="hippo-login-panel-copyright">
-          &copy; 1999-2011 Hippo B.V.
+          &copy; 1999-2023 Bloomreach
         </div>
       </div>
     </div>
