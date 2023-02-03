@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2022 Bloomreach
+  Copyright 2007-2023 Bloomreach
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -85,7 +85,6 @@
     <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
 
     <!-- Open source JDBC drivers included in docker image -->
-    <mysql.version>8.0.31</mysql.version>
     <postgres.connector.version>42.2.5</postgres.connector.version>
 
     <!-- DB images used by docker.mysql and docker.postgres profiles -->
@@ -1000,8 +999,8 @@
 
       <!-- DB connectors -->
       <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
         <version>${mysql.version}</version>
       </dependency>
       <dependency>
@@ -1226,8 +1225,8 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
+          <groupId>com.mysql</groupId>
+          <artifactId>mysql-connector-j</artifactId>
           <scope>provided</scope>
         </dependency>
         <dependency>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2022 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2023 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -254,8 +254,8 @@
       </properties>
       <dependencies>
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
+          <groupId>com.mysql</groupId>
+          <artifactId>mysql-connector-j</artifactId>
           <version>${mysql.version}</version>
           <scope>test</scope>
         </dependency>
@@ -268,8 +268,8 @@
             <version>${sql-maven-plugin.version}</version>
             <dependencies>
               <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
               </dependency>
             </dependencies>
@@ -378,8 +378,8 @@
       </properties>
       <dependencies>
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
+          <groupId>com.mysql</groupId>
+          <artifactId>mysql-connector-j</artifactId>
           <version>${mysql.version}</version>
           <scope>test</scope>
         </dependency>
@@ -398,8 +398,8 @@
       </properties>
       <dependencies>
         <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
+          <groupId>com.mysql</groupId>
+          <artifactId>mysql-connector-j</artifactId>
           <version>${mysql.version}</version>
           <scope>test</scope>
         </dependency>
