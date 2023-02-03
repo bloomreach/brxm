@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" session="false" pageEncoding="UTF-8" %>
 <%--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2023 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
