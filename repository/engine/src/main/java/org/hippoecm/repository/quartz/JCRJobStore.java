@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2023 Bloomreach
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
@@ -40,9 +41,12 @@ import javax.jcr.query.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.api.SynchronousEventListener;
+import org.hippoecm.repository.security.SecurityManagerAvailableService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
+import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.cms7.services.lock.AlreadyLockedException;
 import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManager;
@@ -90,7 +94,6 @@ import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
 import static org.hippoecm.repository.util.JcrUtils.getBooleanProperty;
 import static org.quartz.SimpleTrigger.REPEAT_INDEFINITELY;
 
-
 public class JCRJobStore implements JobStore {
 
     private static final Logger log = LoggerFactory.getLogger(JCRJobStore.class);
@@ -106,6 +109,10 @@ public class JCRJobStore implements JobStore {
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     private EventListener listener;
+
+    private ProxiedServiceTracker<SecurityManagerAvailableService> securityManagerAvailableTracker;
+    private boolean securityManagerAvailable;
+
 
     void init(final Session session, final String jobStorePath) {
         if (session == null || jobStorePath == null) {
@@ -135,6 +142,7 @@ public class JCRJobStore implements JobStore {
         } catch (RepositoryException e) {
             log.error("Failed to register event listener for initializing triggers", e);
         }
+        trackSecurityManager();
     }
 
     /**
@@ -169,12 +177,28 @@ public class JCRJobStore implements JobStore {
         return false;
     }
 
+    private void trackSecurityManager() {
+        // wait for a ready SecurityManager so session impersonate works when processing pending workflow items
+        securityManagerAvailableTracker = new ProxiedServiceTracker<>() {
+            @Override
+            public void serviceRegistered ( final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
+                securityManagerAvailable = true;
+            }
+
+            @Override
+            public void serviceUnregistered ( final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
+                securityManagerAvailable = false;
+            }
+        } ;
+        HippoServiceRegistry.addTracker(securityManagerAvailableTracker,SecurityManagerAvailableService .class);
+    }
+
     /**
      * Find triggers without a nextFireTime property (i.e. that were manually added in the repository)
      * and compute and set the nextFireTime property.
      */
     private void initializeTriggers() {
-        log.debug("Initializing triggers");
+        log.debug("Initializing triggers from {}", jobStorePath);
         try {
             boolean changes = false;
             final Session session = getSession();
@@ -272,6 +296,10 @@ public class JCRJobStore implements JobStore {
         }
         if (executorService != null) {
             executorService.shutdown();
+        }
+        if (securityManagerAvailableTracker != null) {
+            HippoServiceRegistry.removeTracker(securityManagerAvailableTracker, SecurityManagerAvailableService.class);
+            securityManagerAvailableTracker = null;
         }
     }
 
@@ -784,6 +812,11 @@ public class JCRJobStore implements JobStore {
     }
 
     private NodeIterable getPendingTriggers(final Session session, long noLaterThan) {
+        if (!securityManagerAvailable) {
+            log.debug("Waiting for SecurityManager to be available before getting pending triggers");
+            return JcrUtils.emptyNodeIterable();
+        }
+
         try {
             session.refresh(true);
             // make sure the index is up to date
@@ -792,8 +825,9 @@ public class JCRJobStore implements JobStore {
             final Query query = qMgr.createQuery(
                     "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
                             + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
-            final QueryResult result = query.execute();
-            return new NodeIterable(result.getNodes());
+            final NodeIterator nodes = query.execute().getNodes();
+            log.debug("Got {} pending hipposched:trigger nodes", nodes.getSize());
+            return new NodeIterable(nodes);
         } catch (RepositoryException e) {
             log.error("Failed to query for pending triggers", e);
             return JcrUtils.emptyNodeIterable();

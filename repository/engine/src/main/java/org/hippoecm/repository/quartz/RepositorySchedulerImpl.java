@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2023 Bloomreach
+ *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,19 +50,17 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_R
 public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     private final Session session;
+    private final JCRScheduler scheduler;
     private final String moduleConfigPath;
-    private JCRScheduler scheduler;
 
-    RepositorySchedulerImpl(final Session session,  final String moduleConfigPath) {
+    RepositorySchedulerImpl(final Session session, final JCRScheduler scheduler, final String moduleConfigPath) {
         this.session = session;
+        this.scheduler = scheduler;
         this.moduleConfigPath = moduleConfigPath;
     }
 
     @Override
     public void scheduleJob(final RepositoryJobInfo jobInfo, final RepositoryJobTrigger trigger) throws RepositoryException {
-        if (scheduler == null) {
-            throw new IllegalStateException("Cannot schedule job: JCRScheduler not set during initialization.");
-        }
         synchronized (session) {
             try {
                 scheduler.scheduleJob(createQuartzJobDetail(jobInfo), createQuartzTrigger(trigger));
@@ -110,9 +108,6 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     @Override
     public void executeJob(final String jobIdentifier) throws RepositoryException {
-        if (scheduler == null) {
-            throw new IllegalStateException("Cannot execute job: inner JCRScheduler not set during initialization. jobIdentifier = " + jobIdentifier);
-        }
         try {
             final RepositoryJobDetail jobDetail = (RepositoryJobDetail) scheduler.getJobDetail(new JobKey(jobIdentifier));
             final Job job = jobDetail.getJobClass().newInstance();
@@ -203,7 +198,4 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
         return attributeValues;
     }
 
-    public void setScheduler(final JCRScheduler scheduler) {
-        this.scheduler = scheduler;
-    }
 }
