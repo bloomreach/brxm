@@ -179,16 +179,16 @@ public class JCRJobStore implements JobStore {
         // wait for a ready SecurityManager so session impersonate works when processing pending workflow items
         securityManagerAvailableTracker = new ProxiedServiceTracker<>() {
             @Override
-            public void serviceRegistered ( final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
+            public void serviceRegistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
                 securityManagerAvailable = true;
             }
 
             @Override
-            public void serviceUnregistered ( final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
+            public void serviceUnregistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
                 securityManagerAvailable = false;
             }
         } ;
-        HippoServiceRegistry.addTracker(securityManagerAvailableTracker,SecurityManagerAvailableService .class);
+        HippoServiceRegistry.addTracker(securityManagerAvailableTracker, SecurityManagerAvailableService.class);
     }
 
     /**
