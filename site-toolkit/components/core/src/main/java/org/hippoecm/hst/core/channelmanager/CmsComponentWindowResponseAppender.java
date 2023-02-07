@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -168,7 +169,13 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             response.addHeader(entry.getKey(), entry.getValue());
         }
         pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
-        pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
+        // if the request was for example for /root but /root is the homepage, then the HST_PATH_INFO to use is "/" otherwise
+        // the Channel mgr sitemap loading fails as that uses the hst path info but does not work for '/root'
+        if (StringUtils.equals("/" + requestContext.getResolvedMount().getMount().getHomePage(), requestContext.getBaseURL().getPathInfo())) {
+            pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, "/");
+        } else {
+            pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
+        }
 
         if (requestContext.isPageModelApiRequest()) {
             // in case of PageModelApi pipeline, we need the parent mount to get the channel since the page model
