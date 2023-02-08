@@ -39,6 +39,6 @@ or permanently in your project's file
 
 ##Copyright and license
 
-Copyright 2013-2020 Bloomreach
+Copyright 2013-2023 Bloomreach
 Distributed under the [Apache 2.0 license](https://code.onehippo.org/cms-community/hippo-essentials/blob/master/LICENSE).
 

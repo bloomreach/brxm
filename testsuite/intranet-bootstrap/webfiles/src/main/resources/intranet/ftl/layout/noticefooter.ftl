@@ -1,5 +1,5 @@
 <#--
-  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2023 Bloomreach
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,5 +14,5 @@
   limitations under the License.
   -->
 <div align="center">
-  1999-2018 Hippo B.V., All Rights Reserved
+  1999-2023 Bloomreach, All Rights Reserved
 </div>

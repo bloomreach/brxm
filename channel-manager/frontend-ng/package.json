@@ -1,7 +1,7 @@
 {
   "name": "hippo-cm",
   "private": true,
-  "author": "Hippo B.V.",
+  "author": "Bloomreach",
   "license": "Apache-2.0",
   "description": "Manage channels for Bloomreach Experience",
   "repository": {
