@@ -109,8 +109,7 @@ public class JCRJobStore implements JobStore {
 
     private EventListener listener;
 
-    private ProxiedServiceTracker<SecurityManagerAvailableService> securityManagerAvailableTracker;
-    private boolean securityManagerAvailable;
+    private SecurityManagerAvailableTracker securityManagerAvailableTracker;
 
     void init(final Session session, final String jobStorePath) {
         if (session == null || jobStorePath == null) {
@@ -140,7 +139,9 @@ public class JCRJobStore implements JobStore {
         } catch (RepositoryException e) {
             log.error("Failed to register event listener for initializing triggers", e);
         }
-        trackSecurityManager();
+
+        securityManagerAvailableTracker = new SecurityManagerAvailableTracker();
+        HippoServiceRegistry.addTracker(securityManagerAvailableTracker, SecurityManagerAvailableService.class);
     }
 
     /**
@@ -173,22 +174,6 @@ public class JCRJobStore implements JobStore {
                 return true;
         }
         return false;
-    }
-
-    private void trackSecurityManager() {
-        // wait for a ready SecurityManager so session impersonate works when processing pending workflow items
-        securityManagerAvailableTracker = new ProxiedServiceTracker<>() {
-            @Override
-            public void serviceRegistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
-                securityManagerAvailable = true;
-            }
-
-            @Override
-            public void serviceUnregistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
-                securityManagerAvailable = false;
-            }
-        } ;
-        HippoServiceRegistry.addTracker(securityManagerAvailableTracker, SecurityManagerAvailableService.class);
     }
 
     /**
@@ -810,7 +795,7 @@ public class JCRJobStore implements JobStore {
     }
 
     private NodeIterable getPendingTriggers(final Session session, long noLaterThan) {
-        if (!securityManagerAvailable) {
+        if (!securityManagerAvailableTracker.available) {
             log.debug("Waiting for SecurityManager to be available before getting pending triggers");
             return JcrUtils.emptyNodeIterable();
         }
@@ -897,5 +882,19 @@ public class JCRJobStore implements JobStore {
     @Override
     public long getAcquireRetryDelay(int failureCount) {
         return 0;
+    }
+
+    private class SecurityManagerAvailableTracker implements ProxiedServiceTracker<SecurityManagerAvailableService> {
+        private boolean available;
+
+        @Override
+        public void serviceRegistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
+            available = true;
+        }
+
+        @Override
+        public void serviceUnregistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
+            available = false;
+        }
     }
 }
