@@ -114,7 +114,7 @@ export class SiteMapService extends StateService<SiteMapState> {
     const url = Location.joinWithSlash(baseUrl, path);
     this.loadItemRequest(url, ancestry).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.message === 'ITEM_NOT_FOUND') {
+        if (error.error.errorCode === 'ITEM_NOT_FOUND') {
           return this.loadItemRequest(baseUrl, ancestry);
         } else {
           return throwError(error);
