@@ -114,9 +114,7 @@ export class SiteMapService extends StateService<SiteMapState> {
     const url = Location.joinWithSlash(baseUrl, path);
     this.loadItemRequest(url, ancestry).pipe(
       catchError((error: HttpErrorResponse) => {
-        const isProjectToggle = this.ng1ChannelService.isProjectToggle();
-        if (isProjectToggle && error.status === 400) {
-          this.ng1ChannelService.setIsProjectToggle(false);
+        if (error.message === 'ITEM_NOT_FOUND') {
           return this.loadItemRequest(baseUrl, ancestry);
         } else {
           return throwError(error);
