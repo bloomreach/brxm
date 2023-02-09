@@ -795,7 +795,7 @@ public class JCRJobStore implements JobStore {
     }
 
     private NodeIterable getPendingTriggers(final Session session, long noLaterThan) {
-        if (!securityManagerAvailableTracker.available) {
+        if (!securityManagerAvailableTracker.registered) {
             log.debug("Waiting for SecurityManager to be available before getting pending triggers");
             return JcrUtils.emptyNodeIterable();
         }
@@ -885,16 +885,16 @@ public class JCRJobStore implements JobStore {
     }
 
     private class SecurityManagerAvailableTracker implements ProxiedServiceTracker<SecurityManagerAvailableService> {
-        private boolean available;
+        private boolean registered;
 
         @Override
         public void serviceRegistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
-            available = true;
+            registered = true;
         }
 
         @Override
         public void serviceUnregistered(final ProxiedServiceHolder<SecurityManagerAvailableService> serviceHolder){
-            available = false;
+            registered = false;
         }
     }
 }
