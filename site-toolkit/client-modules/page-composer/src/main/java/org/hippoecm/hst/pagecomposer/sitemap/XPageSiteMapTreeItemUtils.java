@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
 
 public class XPageSiteMapTreeItemUtils {
 
@@ -99,7 +99,7 @@ public class XPageSiteMapTreeItemUtils {
         try {
             final AccessControlManager accessControlManager = userSession.getAccessControlManager();
             final Privilege[] requiredPrivilege = new Privilege[]
-                    {accessControlManager.privilegeFromName(HIPPO_AUTHOR)};
+                    {accessControlManager.privilegeFromName(JCR_READ)};
 
             final String absoluteJcrPath = item.getAbsoluteJcrPath();
             if (absoluteJcrPath != null) {
@@ -107,7 +107,7 @@ public class XPageSiteMapTreeItemUtils {
                     xPageSiteMapShallowItem = new XPageSiteMapShallowItem(item);
                 } else {
                     log.info("Skipping '{}' for user '{}' as the user does not have privilege '{}' on '{}'",
-                            absoluteJcrPath, userSession.getUserID(), HIPPO_AUTHOR, absoluteJcrPath);
+                            absoluteJcrPath, userSession.getUserID(), JCR_READ, absoluteJcrPath);
                     return Optional.empty();
                 }
             }
