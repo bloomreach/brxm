@@ -458,14 +458,6 @@ class ChannelService {
     }
     return this.getUrlWithPort(this.channel.url).concat('?preview-token=').concat(externalPreviewToken);
   }
-
-  setIsProjectToggle(value) {
-    this._isProjectToggle = value;
-  }
-
-  isProjectToggle() {
-    return this._isProjectToggle;
-  }
 }
 
 export default ChannelService;

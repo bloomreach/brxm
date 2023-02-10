@@ -37,7 +37,6 @@ describe('projectToggle component', () => {
     ChannelService = jasmine.createSpyObj('ChannelService', [
       'initializeChannel',
       'getBaseId',
-      'setIsProjectToggle',
     ]);
 
     ChannelService.channel = {
@@ -102,8 +101,6 @@ describe('projectToggle component', () => {
       ProjectService.updateSelectedProject.and.returnValue($q.resolve());
       $ctrl.selectedProject = projectMock2;
       $rootScope.$digest();
-
-      expect(ChannelService.setIsProjectToggle).toHaveBeenCalledWith(true);
 
       expect(ChannelService.initializeChannel).toHaveBeenCalledWith(
         'channel-id-test',
