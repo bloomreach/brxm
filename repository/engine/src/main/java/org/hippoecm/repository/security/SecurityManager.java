@@ -84,6 +84,7 @@ import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.hippoecm.repository.security.service.SessionUserImpl;
 import org.hippoecm.repository.security.user.DummyUserManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ import static org.onehippo.repository.security.SecurityConstants.CONFIG_SECURITY
 
 public class SecurityManager implements HippoSecurityManager {
 
-    // TODO: this string is matched as node name in the repository.
+    // note: this string is matched as node name in the repository.
     public static final String INTERNAL_PROVIDER = "internal";
 
     private static final Logger log = LoggerFactory.getLogger(SecurityManager.class);
@@ -114,6 +115,8 @@ public class SecurityManager implements HippoSecurityManager {
     private RepositorySecurityProvidersImpl securityProviders;
 
     private AuthContextProvider authCtxProvider;
+
+    private final SecurityManagerAvailableService securityManagerAvailableService = new SecurityManagerAvailableService() {};
 
     /*
     Cache the set of FacetAuthDomains matching the user for a day as it can be expensive to recreate. The cached data
@@ -139,7 +142,7 @@ public class SecurityManager implements HippoSecurityManager {
             String name;
             try {
                 name = provider.getName();
-                log.debug("Found secutiry provider: '{}'", name);
+                log.debug("Found security provider: '{}'", name);
                 providers.put(name, spf.create(systemSession, name));
                 log.info("Security provider '{}' initialized.", name);
             } catch (ClassNotFoundException e) {
@@ -185,6 +188,8 @@ public class SecurityManager implements HippoSecurityManager {
                         HippoNodeType.NT_ROLE, HippoNodeType.NT_ROLEFOLDER},
                 false);
 
+        // register service as notification
+        HippoServiceRegistry.register(securityManagerAvailableService, SecurityManagerAvailableService.class);
     }
 
     class HippoJAASAuthContext extends JAASAuthContext {
@@ -525,8 +530,8 @@ public class SecurityManager implements HippoSecurityManager {
                             Set<String> privileges = new HashSet<>();
                             resolvedRoles.forEach(role -> privileges.addAll(role.getPrivileges()));
 
-                            log.info("User {} has roles {} for domain {} ", userId, roles, domain.getName());
-                            log.info("User {} has privileges {} for domain {} ", userId, privileges, domain.getName());
+                            log.debug("User {} has roles {} for domain {} ", userId, roles, domain.getName());
+                            log.debug("User {} has privileges {} for domain {} ", userId, privileges, domain.getName());
 
                             if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
                                 // create and add facet auth domain
@@ -601,6 +606,8 @@ public class SecurityManager implements HippoSecurityManager {
             provider.remove();
         }
         providers.clear();
+
+        HippoServiceRegistry.unregister(securityManagerAvailableService, SecurityManagerAvailableService.class);
     }
 
     public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {

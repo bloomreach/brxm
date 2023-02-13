@@ -44,7 +44,6 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_J
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS;
 
-
 /**
  * RepositoryScheduler service implementation.
  */
