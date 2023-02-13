@@ -409,7 +409,7 @@ $doclist-icon-shift-right: 2px;
 
 .yui-layout-collapsed .hippo-list-documents .hippo-list-paging {
   // hide all buttons except the current page indicator
-  .paging-navigator .goto a {
+  .paging-navigator .goto a[href] {
     display: none;
   }
 
