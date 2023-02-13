@@ -68,13 +68,14 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
     public void initialize(Session session) throws RepositoryException {
         this.session = session;
         try {
-            final JcrSchedulerFactory schedFactory = new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
+            final JcrSchedulerFactory schedFactory = createJcrSchedulerFactory();
             scheduler = (JCRScheduler) schedFactory.getScheduler();
             if (isEnabled()) {
+                log.info("Starting {}", scheduler.getClass().getName());
                 scheduler.start();
             } else {
-                log.info("Hippo scheduler was disabled by hippo.scheduler.disabled property, " +
-                        "scheduled actions will not be executed by this cluster node");
+                log.info("{} was disabled by hippo.scheduler.disabled property, " +
+                        "scheduled actions will not be executed by this cluster node", scheduler.getClass().getSimpleName());
             }
         } catch (SchedulerException e) {
             log.error("Failed to initialize quartz scheduler", e);
@@ -82,6 +83,13 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
         }
         service = new RepositorySchedulerImpl(session, scheduler, moduleConfigPath);
         HippoServiceRegistry.register(service, RepositoryScheduler.class);
+    }
+
+    /**
+     * Hook to be able to customize properties in a subclass.
+     */
+    protected JcrSchedulerFactory createJcrSchedulerFactory() throws SchedulerException {
+        return new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
     }
 
     @Override
