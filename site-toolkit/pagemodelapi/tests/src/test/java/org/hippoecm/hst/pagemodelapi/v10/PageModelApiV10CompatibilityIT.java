@@ -650,11 +650,9 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     }
 
     /**
-     * In v0.9, the default in the the HtmlContentRewriter is to remove anchor tags of broken links completely, see
-     * org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter#setRemoveAnchorTagOfBrokenLink(boolean)
-     *
-     * In v1.0, we have flipped the behavior to by default output <a data-type="unknow">foo</a> for broken links such that the
-     * SPA can handle it as desired
+     * In v0.9 (which was removed in 15.0), the default in the HtmlContentRewriter was to remove anchor tags of broken
+     * links completely. In v1.0, the behavior was flipped to by default output <a data-type="unknown">foo</a> for
+     * broken links such that the SPA can handle it as desired.
      */
     @Test
     public void broken_link_in_content_for_homepage_document() throws Exception {
