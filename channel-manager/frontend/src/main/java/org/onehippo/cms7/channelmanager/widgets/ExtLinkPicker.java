@@ -88,6 +88,7 @@ public class ExtLinkPicker extends ExtObservable {
     private static final String[] DEFAULT_PICKER_SELECTABLE_NODE_TYPES = {};
     private static final String DEFAULT_PICKER_INITIAL_PATH = "";
     private static final String DEFAULT_PICKER_ROOT_PATH = "";
+    private static final String DEFAULT_PICKER_DOCUMENT_TYPE_ID = "";
     private static final boolean DEFAULT_PICKER_PATH_IS_RELATIVE = false;
 
     private static final String EVENT_PICK = "pick";
@@ -164,7 +165,14 @@ public class ExtLinkPicker extends ExtObservable {
             }
 
             final String[] selectableNodeTypes = parseSelectableNodeTypes(json.optJSONArray("selectableNodeTypes"));
-            return createPickerConfig(configuration, remembersLastVisited, selectableNodeTypes, initialPath, rootPath);
+            final String documentTypeId = json.optString("documentTypeId");
+            return createPickerConfig(
+                    configuration,
+                    remembersLastVisited,
+                    selectableNodeTypes,
+                    initialPath,
+                    rootPath,
+                    documentTypeId);
         }
 
         return createPickerConfig(
@@ -172,7 +180,8 @@ public class ExtLinkPicker extends ExtObservable {
                 DEFAULT_PICKER_REMEMBERS_LAST_VISITED,
                 DEFAULT_PICKER_SELECTABLE_NODE_TYPES,
                 DEFAULT_PICKER_INITIAL_PATH,
-                DEFAULT_PICKER_ROOT_PATH);
+                DEFAULT_PICKER_ROOT_PATH,
+                DEFAULT_PICKER_DOCUMENT_TYPE_ID);
     }
 
     private String[] parseSelectableNodeTypes(final JSONArray selectableNodeTypesArray) {
@@ -193,10 +202,11 @@ public class ExtLinkPicker extends ExtObservable {
     }
 
     private static JavaPluginConfig createPickerConfig(final String pickerConfigPath,
-                                                               final boolean remembersLastVisited,
-                                                               final String[] selectableNodeTypes,
-                                                               final String initialPath,
-                                                               final String rootPath) {
+                                                       final boolean remembersLastVisited,
+                                                       final String[] selectableNodeTypes,
+                                                       final String initialPath,
+                                                       final String rootPath,
+                                                       final String documentTypeId) {
         final JavaPluginConfig pickerConfig = new JavaPluginConfig();
         pickerConfig.put("cluster.name", pickerConfigPath);
         pickerConfig.put(NodePickerControllerSettings.LAST_VISITED_ENABLED, Boolean.toString(remembersLastVisited));
@@ -221,6 +231,11 @@ public class ExtLinkPicker extends ExtObservable {
             clusterOptions.put("root.path", rootPath);
             pickerConfig.put("cluster.options", clusterOptions);
         }
+
+        if (StringUtils.isNotEmpty(documentTypeId)) {
+            pickerConfig.put("documentTypeId", documentTypeId);
+        }
+
         return pickerConfig;
     }
 
