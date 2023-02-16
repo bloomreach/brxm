@@ -50,6 +50,7 @@ class DocumentLocationFieldController {
 
     this.pickerPath = '/';
     this.pickerConfig = {
+      documentTypeId: this.documentTypeId,
       configuration: 'cms-pickers/documents-folders-only',
       rootPath: this.initialPickerPath,
       selectableNodeTypes: ['hippostd:folder'],
@@ -91,6 +92,7 @@ class DocumentLocationFieldController {
   }
 
   openPicker() {
+    this.pickerConfig.documentTypeId = this.documentTypeId;
     this.PickerService.pickPath(this.pickerPath, this.pickerConfig)
       .then(({ path }) => this.onPathPicked(path))
       .catch(() => this.onPathCanceled());

@@ -77,6 +77,7 @@ describe('DocumentLocationField', () => {
   describe('with root path', () => {
     beforeEach(() => {
       component.rootPath = '/root';
+      component.documentTypeId = 'myproject:bannerdocument';
     });
 
     describe('$onInit', () => {
@@ -103,6 +104,7 @@ describe('DocumentLocationField', () => {
           configuration: 'cms-pickers/documents-folders-only',
           rootPath: '/root',
           selectableNodeTypes: ['hippostd:folder'],
+          documentTypeId: 'myproject:bannerdocument',
         });
       });
 
@@ -253,6 +255,10 @@ describe('DocumentLocationField', () => {
   });
 
   describe('without root path', () => {
+    beforeEach(() => {
+      component.documentTypeId = 'myproject:bannerdocument';
+    });
+
     describe('and without default path', () => {
       describe('$onInit', () => {
         it('sets the initialPickerPath to the channel content root', () => {
@@ -272,6 +278,7 @@ describe('DocumentLocationField', () => {
             configuration: 'cms-pickers/documents-folders-only',
             rootPath: '/channel/content',
             selectableNodeTypes: ['hippostd:folder'],
+            documentTypeId: 'myproject:bannerdocument',
           });
         });
       });
@@ -300,6 +307,7 @@ describe('DocumentLocationField', () => {
             configuration: 'cms-pickers/documents-folders-only',
             rootPath: '/channel/content',
             selectableNodeTypes: ['hippostd:folder'],
+            documentTypeId: 'myproject:bannerdocument',
           });
         });
       });
