@@ -61,6 +61,7 @@
     <document-location-field root-path="$ctrl.rootPath"
                              default-path="$ctrl.defaultPath"
                              locale="$ctrl.locale"
+                             document-type-id="$ctrl.documentType"
                              default-picker-path="$ctrl.defaultPickerPath">
     </document-location-field>
 
@@ -76,7 +77,7 @@
         {{ 'CANCEL' | translate }}
       </md-button>
 
-      <md-button class="qa-create md-accent"
+      <md-button class="qa-next md-accent"
                  type="submit"
                  ng-click="$ctrl.submit()"
                  ng-disabled="$ctrl.form.$invalid">

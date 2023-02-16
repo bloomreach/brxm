@@ -85,6 +85,7 @@ public class ErrorInfo {
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
         CORE_PROJECT,
         CREATE_WITH_UNSUPPORTED_VALIDATOR,
+        DOCUMENT_TYPE_NOT_ALLOWED,
         DOES_NOT_EXIST,
         INVALID_DATA,
         INVALID_TEMPLATE_QUERY,

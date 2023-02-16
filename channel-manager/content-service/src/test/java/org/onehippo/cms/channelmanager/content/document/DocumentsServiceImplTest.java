@@ -1520,8 +1520,11 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createDocumentWithExistingName() {
+    public void createDocumentWithExistingName() throws Exception {
+
         final Node folderNode = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
         expect(FolderUtils.getLocale(folderNode))
@@ -1530,6 +1533,11 @@ public class DocumentsServiceImplTest {
                 .andReturn("Breaking News (encoded)");
         expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
                 .andReturn(true);
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
 
         replayAll();
 
@@ -1544,8 +1552,10 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createDocumentWithExistingSlug() {
+    public void createDocumentWithExistingSlug() throws Exception {
         final Node folderNode = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
         expect(FolderUtils.getLocale(folderNode))
@@ -1558,6 +1568,11 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(true);
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
 
         replayAll();
 
@@ -1575,6 +1590,7 @@ public class DocumentsServiceImplTest {
     public void createDocumentNoWorkflow() throws Exception {
         final Node folderNode = createMock(Node.class);
         final Node documentHandle = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
@@ -1588,6 +1604,11 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
@@ -1627,7 +1648,14 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
+
         final DocumentType docType = provideDocumentType(documentHandle);
+
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
@@ -1674,6 +1702,11 @@ public class DocumentsServiceImplTest {
                 .andReturn(Optional.of(documentDraft));
 
         expect(documentHandle.getIdentifier()).andReturn("uuid");
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
@@ -1754,6 +1787,11 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(DRAFT)))
                 .andReturn(Optional.of(documentDraft));
         expect(documentHandle.getIdentifier()).andReturn("uuid");
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
@@ -1780,7 +1818,6 @@ public class DocumentsServiceImplTest {
                 .andReturn(Optional.of(documentWorkflow));
         expect(documentWorkflow.hints()).andReturn(new HashMap<>());
         replayAll(documentDraft);
-
 
         final Document document = documentsService.createDocument(info, userContext);
 
@@ -1816,6 +1853,12 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
+
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
@@ -1853,7 +1896,14 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
+
         final DocumentType docType = provideDocumentType(documentHandle);
+
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
@@ -1926,6 +1976,11 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(DRAFT)))
                 .andReturn(Optional.of(documentDraft));
         expect(documentHandle.getIdentifier()).andReturn("uuid");
+        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+                .andReturn(Optional.of(folderWorkflow));
+        expect(folderWorkflow.hints())
+                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
+                        "project:newsdocument"))));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);

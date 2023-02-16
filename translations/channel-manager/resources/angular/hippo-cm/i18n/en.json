@@ -126,6 +126,7 @@
   "ERROR_CHANNEL_DELETE_FAILED": "Failed to delete channel",
   "ERROR_FIELD_REORDER": "Failed to move a field value",
   "ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED": "Couldn't select document for '{{componentName}}': the container is locked by '{{lockedBy}}'",
+  "ERROR_DOCUMENT_TYPE_NOT_ALLOWED": "Selected document type is not allowed in the selected folder",
   "VIEWPORT_TABLET": "Tablet",
   "CREATE_XPAGE": "New page",
   "VERSION_TOOLTIP_PUBLISHED_VERSION": "The last published version",
