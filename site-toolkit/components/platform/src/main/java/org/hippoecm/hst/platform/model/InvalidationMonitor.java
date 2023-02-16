@@ -51,6 +51,7 @@ public class InvalidationMonitor {
     private final SynchronousOnEventCounter synchronousOnEventCounter;
     private final HstEventsCollector hstEventsCollector;
     private final HstEventsDispatcher hstEventsDispatcher;
+    private final AtomicLong syncAsyncListenersOutOfSync = new AtomicLong(0);
 
     public InvalidationMonitor(final Session session,
                                final HstNodeLoadingCache hstNodeLoadingCache,
@@ -123,29 +124,37 @@ public class InvalidationMonitor {
         // in the extreme unlikely situation, after getSynchronousOnEventsCounter() is invoked, the async event counter
         // could receive (just like the sync event counter) a new event, hence in the if below => instead of just =
         if (asynchronousOnEventsCounter >= synchronousOnEventsCounter) {
+            syncAsyncListenersOutOfSync.set(0);
             log.debug("asynchronousOnEventsCounter is on par with synchronousOnEventsCounter");
             return;
         }
 
-        int loop = 0;
-        while (getAsynchronousOnEventsCounter() < synchronousOnEventsCounter) {
-            if (System.currentTimeMillis() > waitUntil) {
-                log.warn("Expected within {} ms the async HstConfiguration EventListener to have caught up with the " +
-                                "InvalidationMonitor#SynchronousOnEventCounter listener counter. However async counter is as '{}' " +
-                                "and sync counter at '{}'. Stop waiting longer.", maxWait, getAsynchronousOnEventsCounter(),
-                        synchronousOnEventsCounter);
-                break;
-            }
+        synchronized (this) {
+            int loop = 0;
+            while (getAsynchronousOnEventsCounter() < synchronousOnEventsCounter) {
+                if (System.currentTimeMillis() > waitUntil) {
+                    log.info("Expected within {} ms the async HstConfiguration EventListener to have caught up with the " +
+                                    "InvalidationMonitor#SynchronousOnEventCounter listener counter. However async counter is as '{}' " +
+                                    "and sync counter at '{}'. Stop waiting longer.", maxWait, getAsynchronousOnEventsCounter(),
+                            synchronousOnEventsCounter);
+                    final long previousOutOfSyncTime = syncAsyncListenersOutOfSync.getAndSet(System.currentTimeMillis());
+                    if (previousOutOfSyncTime > 0 && previousOutOfSyncTime < (System.currentTimeMillis() - 60000)) {
+                        log.warn("Async HstConfiguration EventListener has not caught up within 60 seconds with Synchronous " +
+                                "HstConfiguration Listener implying a missed event in async listener for unknown reasons");
+                    }
+                    break;
+                }
 
-            // only log every ~100 ms
-            if (loop++ % 10 == 0) {
-                log.debug("Waiting for async events to arrive. Async counter is at '{}'. Waiting until it is at least '{}'",
-                        getAsynchronousOnEventsCounter(), synchronousOnEventsCounter);
-            }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                log.error("InterruptedException, proceed", e);
+                // only log every ~100 ms
+                if (loop++ % 10 == 0) {
+                    log.debug("Waiting for async events to arrive. Async counter is at '{}'. Waiting until it is at least '{}'",
+                            getAsynchronousOnEventsCounter(), synchronousOnEventsCounter);
+                }
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    log.error("InterruptedException, proceed", e);
+                }
             }
         }
         log.info("asynchronousOnEventsCounter on par with synchronousOnEventsCounter within '{}' ms", System.currentTimeMillis() - start);
