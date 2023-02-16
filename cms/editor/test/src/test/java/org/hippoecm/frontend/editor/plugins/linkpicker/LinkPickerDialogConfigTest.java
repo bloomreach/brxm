@@ -185,4 +185,15 @@ public class LinkPickerDialogConfigTest extends MockPluginTest {
                 null, config.getString("base.uuid"));
     }
 
+    @Test
+    public void configWithDocumentType_usesConfiguredDocumentType() throws RepositoryException {
+        createDutchRootFolder();
+
+        JavaPluginConfig pluginConfig = new JavaPluginConfig();
+        pluginConfig.put("documentTypeId", "myproject:bannerdocument");
+
+        IPluginConfig config = LinkPickerDialogConfig.fromPluginConfig(pluginConfig, docbaseValueModel);
+
+        assertEquals("myproject:bannerdocument", config.getString("documentTypeId"));
+    }
 }

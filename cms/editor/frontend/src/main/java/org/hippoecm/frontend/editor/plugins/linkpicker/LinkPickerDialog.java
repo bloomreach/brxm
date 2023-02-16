@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -25,6 +29,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -35,6 +40,8 @@ import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettin
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.breadcrumb.Breadcrumb;
 import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadcrumbWidget;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +51,9 @@ public class LinkPickerDialog extends Dialog<String> {
     private static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
 
     private static final String EMPTY_FRAGMENT_ID = "empty-fragment";
+    private static final String DEFAULT_FOLDER_WORKFLOW_CATEGORY = "embedded";
+    private static final String CONFIG_KEY_DOCUMENT_TYPE_ID = "documentTypeId";
+    private static final String HINT_KEY_PROTOTYPES = "prototypes";
 
     private final IPluginContext context;
     private final IPluginConfig config;
@@ -88,6 +98,12 @@ public class LinkPickerDialog extends Dialog<String> {
 
             @Override
             protected void onFolderSelected(final IModel<Node> model) {
+
+                final String documentTypeId = LinkPickerDialog.this.config.getString(CONFIG_KEY_DOCUMENT_TYPE_ID);
+
+                // If document type configuration does not exist, the folder will be selectable by default.
+                setOkEnabled(StringUtils.isEmpty(documentTypeId) || isDocumentTypeAllowedInNode(documentTypeId,
+                        model.getObject()));
                 LinkPickerDialog.this.onFolderSelected(model);
             }
         };
@@ -120,6 +136,34 @@ public class LinkPickerDialog extends Dialog<String> {
             }
         });
         breadcrumbs.update(controller.getFolderModel());
+    }
+
+    private boolean isDocumentTypeAllowedInNode(final String documentTypeId, final Node node) {
+
+        try {
+            final Workflow workflow = new WorkflowDescriptorModel(DEFAULT_FOLDER_WORKFLOW_CATEGORY, node)
+                    .getWorkflow();
+
+            if (workflow instanceof FolderWorkflow) {
+                final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) workflow.hints()
+                        .get(HINT_KEY_PROTOTYPES);
+
+                // Squash all configured values into one set
+                final Set<String> allowedTypes = new HashSet<>();
+
+                for (final String key : prototypes.keySet()) {
+                    allowedTypes.addAll(prototypes.get(key));
+                }
+
+                if (!allowedTypes.contains(documentTypeId)) {
+                    return false;
+                }
+            }
+        } catch (final Exception e) {
+            log.warn("An exception occurred while fetching allowed types", e);
+        }
+
+        return true;
     }
 
     @Override

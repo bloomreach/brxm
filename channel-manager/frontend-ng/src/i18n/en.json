@@ -107,6 +107,7 @@
   "ERROR_DOCUMENT_LOCATION_NOT_ALLOWED": "Selected folder {{path}} is not allowed, please select folder {{root}} or any of it's sub-folders",
   "ERROR_DOCUMENT_SELECTED_FOR_COMPONENT": "Couldn't select document for '{{componentName}}'",
   "ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED": "Couldn't select document for '{{componentName}}': the container is locked by '{{lockedBy}}'",
+  "ERROR_DOCUMENT_TYPE_NOT_ALLOWED": "Selected document type is not allowed in the selected folder",
   "ERROR_DOES_NOT_EXIST": "Failed to retrieve document",
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode",
   "ERROR_FIELD_ADD": "Failed to add a field value",
