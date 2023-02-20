@@ -106,9 +106,7 @@ class DocumentLocationFieldController {
     if (!path.startsWith(this.initialPickerPath)) {
       this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.initialPickerPath, path });
     } else {
-      if (!this.rootPath) {
-        this.rootPath = path;
-      }
+      this.rootPath = path;
       this.setPath(path);
     }
   }
