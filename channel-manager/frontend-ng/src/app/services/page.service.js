@@ -149,7 +149,19 @@ class PageService {
   }
 
   getPagePreviewUrl() {
-    const { pagePreviewUrl } = this.getState(this.isXPage ? 'xpage' : 'channel');
+    const page = this.PageStructureService.getPage();
+    const pagePathInfo = page.getMeta().getPathInfo();
+    let { pagePreviewUrl } = this.getState(this.isXPage ? 'xpage' : 'channel');
+    if (!pagePreviewUrl.includes(pagePathInfo)) {
+      // pagePreviewUrl includes site map item path info which is not the same with page path info
+      // appending page path info into pagePreviewUrl
+      const pathSplitted = pagePathInfo.split("/");
+      if (pathSplitted.length > 2) {
+        const startIndex = pagePreviewUrl.indexOf(`/${pathSplitted[1]}`);
+        const replace = pagePreviewUrl.substring(startIndex, pagePreviewUrl.indexOf('?'));
+        pagePreviewUrl = pagePreviewUrl.replace(replace, pagePathInfo);
+      }
+    }
     return this.appendPort(pagePreviewUrl);
   }
 
