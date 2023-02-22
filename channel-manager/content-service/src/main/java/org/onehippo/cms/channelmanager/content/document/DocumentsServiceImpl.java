@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,7 @@ import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
+
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.command.AddNodeFieldCommand;
 import org.onehippo.cms.channelmanager.content.command.RemoveNodeFieldCommand;
@@ -82,6 +82,7 @@ import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +110,6 @@ import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 public class DocumentsServiceImpl implements DocumentsService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
-    private static final String HINT_KEY_PROTOTYPES = "prototypes";
 
     private HintsInspector hintsInspector;
     private BranchingService branchingService;
@@ -539,10 +539,6 @@ public class DocumentsServiceImpl implements DocumentsService {
                 ? rootFolder
                 : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session, folderTemplateQuery);
 
-        if (!isDocumentTypeAllowedInNode(documentTypeId, folder)) {
-            throw new BadRequestException(new ErrorInfo(Reason.DOCUMENT_TYPE_NOT_ALLOWED));
-        }
-
         final String folderLocale = FolderUtils.getLocale(folder);
 
         final String encodedName = DocumentNameUtils.encodeDisplayName(name, folderLocale);
@@ -563,6 +559,17 @@ public class DocumentsServiceImpl implements DocumentsService {
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
         try {
+            final Map<String, Serializable> hints = folderWorkflow.hints();
+
+            if (!hints.containsKey(FolderWorkflow.HINT_ADD)) {
+                throw new ForbiddenException(new ErrorInfo(Reason.ADD_TO_FOLDER_NOT_PERMITTED));
+            }
+
+            final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
+            if (!prototypes.contains(documentTypeId)) {
+                throw new BadRequestException(new ErrorInfo(Reason.DOCUMENT_TYPE_NOT_ALLOWED));
+            }
+
             final JcrTemplateNode xPageLayoutNode = getXPageLayoutTemplateNode(newDocumentInfo.getLayout(), folder);
             final String documentPath = folderWorkflow.add(documentTemplateQuery, documentTypeId, encodedSlug, xPageLayoutNode);
             log.debug("Created document {}", documentPath);
@@ -581,31 +588,6 @@ public class DocumentsServiceImpl implements DocumentsService {
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), documentTemplateQuery, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
-    }
-
-    private boolean isDocumentTypeAllowedInNode(final String documentType, final Node node) {
-
-        try {
-            final FolderWorkflow folderWorkflow = getFolderWorkflow(node);
-
-            final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) folderWorkflow.hints()
-                    .get(HINT_KEY_PROTOTYPES);
-
-            // Squash all configured values into one set
-            final Set<String> allowedTypes = new HashSet<>();
-
-            for (final String key : prototypes.keySet()) {
-                allowedTypes.addAll(prototypes.get(key));
-            }
-
-            if (!allowedTypes.contains(documentType)) {
-                return false;
-            }
-        } catch (final Exception e) {
-            log.warn("An exception occurred while fetching allowed types", e);
-        }
-
-        return true;
     }
 
     private JcrTemplateNode getXPageLayoutTemplateNode(final String layoutId, final Node folder) throws RepositoryException {

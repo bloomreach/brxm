@@ -15,12 +15,13 @@
  */
 package org.hippoecm.repository.util;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
@@ -41,6 +42,8 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +61,7 @@ public final class WorkflowUtils {
      * @param document either a document, a handle or a folder
      * @param session the session to use to get the containing folder for
      * @return  the folder containing this document or the root document
-     * @throws RepositoryException
+     * @throws RepositoryException exception on repository level
      */
     public static Document getContainingFolder(Document document, Session session) throws RepositoryException {
         return new Document(getContainingFolder(document.getNode(session)));
@@ -69,7 +72,7 @@ public final class WorkflowUtils {
      *
      * @param node  either a node representing a document, a handle, or a folder
      * @return  the folder node containing this document node or the root document
-     * @throws RepositoryException
+     * @throws RepositoryException exception on repository level
      */
     public static Node getContainingFolder(Node node) throws RepositoryException {
         final Node parent = node.getParent();
@@ -88,7 +91,7 @@ public final class WorkflowUtils {
     /**
      * Retrieve a workflow of a certain type (class).
      *
-     * @param node     JCR for which the workflow is requested
+     * @param node     JCR node for which the workflow is requested
      * @param category Desired workflow category
      * @param clazz    Desired (super-)class of the workflow
      * @return         Workflow of the desired category and class, or nothing, wrapped in an Optional
@@ -116,6 +119,17 @@ public final class WorkflowUtils {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Retrieve a workflow of the type FolderWorkflow.
+     *
+     * @param node     JCR node for which the workflow is requested, should be a folder type node
+     * @param category Desired workflow category
+     * @return         FolderWorkflow of the desired category, or nothing, wrapped in an Optional
+     */
+    public static Optional<FolderWorkflow> getFolderWorkflow(final Node node, final String category) {
+        return getWorkflow(node, category, FolderWorkflow.class);
     }
 
     /**
@@ -270,6 +284,23 @@ public final class WorkflowUtils {
         }
 
         return entries;
+    }
+
+    /**
+     * Get the prototypes from the hints of a FolderWorkflow.
+     */
+    public static Set<String> getFolderPrototypes(final Map<String, Serializable> hints) {
+        final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get(FolderWorkflow.HINT_PROTOTYPES);
+
+        // squash all configured values into one set
+        final Set<String> allowedTypes = new HashSet<>();
+        if (prototypes != null) {
+            for (final String key : prototypes.keySet()) {
+                allowedTypes.addAll(prototypes.get(key));
+            }
+        }
+
+        return allowedTypes;
     }
 
     public enum Variant {

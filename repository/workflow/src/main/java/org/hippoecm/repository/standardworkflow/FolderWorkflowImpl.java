@@ -167,17 +167,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         final Session subjectSession = workflowContext.getSubjectSession();
         final boolean hasSubjectAuthorPermission = subjectSession.hasPermission(subject.getPath(), HIPPO_AUTHOR);
         if (hasSubjectAuthorPermission) {
-            info.put("add", true);
-            info.put("archive", true);
-            info.put("delete", true);
-            info.put("rename", true);
-            info.put("duplicate", true);
-            info.put("move", true);
+            info.put(HINT_ADD, true);
+            info.put(HINT_ARCHIVE, true);
+            info.put(HINT_DELETE, true);
+            info.put(HINT_RENAME, true);
+            info.put(HINT_DUPLICATE, true);
+            info.put(HINT_MOVE, true);
         }
-        info.put("list", false);
-        info.put("copy", true);
-        info.put("prototypes", (Serializable) prototypes());
-        info.put("edit-display-order", true);
+        info.put(HINT_LIST, false);
+        info.put(HINT_COPY, true);
+        info.put(HINT_PROTOTYPES, (Serializable) prototypes());
+        info.put(HINT_EDIT_DISPLAY_ORDER, true);
 
         if (subject.getPrimaryNodeType().hasOrderableChildNodes()) {
             boolean isEnabled = false;

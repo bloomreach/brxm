@@ -17,8 +17,8 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -52,11 +52,11 @@ import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -387,24 +387,17 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final String documentType = handle.getNode(handle.getName()).getPrimaryNodeType().getName();
 
                 // get allowed folder types from hints() method on folder workflow
-                final Workflow workflow = new WorkflowDescriptorModel(DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject()).getWorkflow();
-                if (workflow instanceof FolderWorkflow) {
-                    final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) workflow.hints().get("prototypes");
-
-                    // squash all configured values into one set
-                    final Set<String> allowedTypes = new HashSet<>();
-                    for (final String key : prototypes.keySet()) {
-                        allowedTypes.addAll(prototypes.get(key));
-                    }
+                final Optional<FolderWorkflow> workflow = WorkflowUtils.getFolderWorkflow(destinationFolder.getObject(), DEFAULT_FOLDERWORKFLOW_CATEGORY);
+                if (workflow.isPresent()) {
+                    final Set<String> allowedTypes = WorkflowUtils.getFolderPrototypes(workflow.get().hints());
 
                     log.debug("Document type {} {} allowed in folder {} by folderTypes {}",
                             documentType, (allowedTypes.contains(documentType) ? "is" : "is NOT"),
                             destinationFolder.getObject().getPath(), allowedTypes);
                     return allowedTypes.contains(documentType);
                 } else {
-                    log.info("Workflow by category {} on subject {} is not a FolderWorkflow but {}",
-                            DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject(),
-                            ((workflow == null) ? "null" : workflow.getClass().getName()));
+                    log.info("Workflow by category {} on subject {} is not a FolderWorkflow",
+                            DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject());
                 }
             } else {
                 log.error("(Supposed) document handle {} does not have same-name subnode", handle.getPath());
