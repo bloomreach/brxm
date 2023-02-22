@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -78,6 +79,7 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.channelmanager.ChannelManagerDocumentUpdateService;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
@@ -142,6 +144,7 @@ public class DocumentsServiceImplTest {
 
     // WORKAROUND CMS-14946 :trigger log4j initialization to avoid power mock triggered deadlock in log4j.
     // After CMS-14948 has been done this workaround can be removed again
+    @SuppressWarnings("unused")
     private static final Logger ignore = LoggerFactory.getLogger(Object.class);
 
     private Session session;
@@ -149,9 +152,7 @@ public class DocumentsServiceImplTest {
     private NewDocumentInfo info;
     private DocumentsServiceImpl documentsService;
     private HintsInspector hintsInspector;
-    private BranchingService branchingService;
     private PlatformServices platformServices;
-    private ChannelManagerDocumentUpdateServiceImpl channelManagerDocumentUpdateService;
     private DocumentValidityService validityService;
 
     @Before
@@ -194,7 +195,7 @@ public class DocumentsServiceImplTest {
 
         };
         documentsService.setHintsInspector(hintsInspector);
-        branchingService = createMock(BranchingService.class);
+        final BranchingService branchingService = createMock(BranchingService.class);
         documentsService.setBranchingService(branchingService);
 
         validityService = createMock(DocumentValidityService.class);
@@ -221,7 +222,7 @@ public class DocumentsServiceImplTest {
         info.setDocumentTemplateQuery("new-news-document");
         info.setDocumentTypeId("project:newsdocument");
         info.setRootPath("/content/documents/channel/news");
-        channelManagerDocumentUpdateService = new ChannelManagerDocumentUpdateServiceImpl();
+        final ChannelManagerDocumentUpdateService channelManagerDocumentUpdateService = new ChannelManagerDocumentUpdateServiceImpl();
         documentsService.setChannelManagerDocumentUpdateService(channelManagerDocumentUpdateService);
     }
 
@@ -523,7 +524,8 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPOSTD_STATE), eq(null))).andReturn(UNPUBLISHED.getState()).anyTimes();
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPO_PROPERTY_BRANCH_ID), eq(null))).andReturn(MASTER_BRANCH_ID).anyTimes();
 
-        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft, unpublished));
+        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft,
+                unpublished));
         expectLastCall();
 
         expect(workflowSession.hasPendingChanges()).andReturn(false);
@@ -595,7 +597,8 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPOSTD_STATE), eq(null))).andReturn(UNPUBLISHED.getState()).anyTimes();
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPO_PROPERTY_BRANCH_ID), eq(null))).andReturn(MASTER_BRANCH_ID).anyTimes();
 
-        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft, unpublished));
+        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft,
+                unpublished));
         expectLastCall();
 
         expect(workflowSession.hasPendingChanges()).andReturn(false);
@@ -619,6 +622,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
     public void obtainDirtyEditableDocument() throws Exception {
         final Node handle = MockNode.root().addNode("document", NT_HANDLE);
         final String handleUuid = handle.getIdentifier();
@@ -667,7 +671,8 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPOSTD_STATE), eq(null))).andReturn(UNPUBLISHED.getState()).anyTimes();
         expect(JcrUtils.getStringProperty(eq(unpublished), eq(HIPPO_PROPERTY_BRANCH_ID), eq(null))).andReturn(MASTER_BRANCH_ID).anyTimes();
 
-        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft, unpublished));
+        validityService.handleDocumentTypeChanges(userContext, workflowSession, docType, Lists.newArrayList(draft,
+         unpublished));
         expectLastCall();
 
         expect(workflowSession.hasPendingChanges()).andReturn(false);
@@ -1331,7 +1336,8 @@ public class DocumentsServiceImplTest {
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
-        expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andThrow(badRequest);
+        expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields),
+         anyObject(CompoundContext.class))).andThrow(badRequest);
 
         replayAll();
 
@@ -1363,7 +1369,8 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
-        expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andReturn(false);
+        expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields),
+anyObject(CompoundContext.class))).andReturn(false);
         session.refresh(false);
         expectLastCall();
         replayAll();
@@ -1520,10 +1527,9 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createDocumentWithExistingName() throws Exception {
+    public void createDocumentWithExistingName() {
 
         final Node folderNode = createMock(Node.class);
-        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
@@ -1533,11 +1539,6 @@ public class DocumentsServiceImplTest {
                 .andReturn("Breaking News (encoded)");
         expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
                 .andReturn(true);
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
-                .andReturn(Optional.of(folderWorkflow));
-        expect(folderWorkflow.hints())
-                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
 
         replayAll();
 
@@ -1552,9 +1553,8 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createDocumentWithExistingSlug() throws Exception {
+    public void createDocumentWithExistingSlug() {
         final Node folderNode = createMock(Node.class);
-        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
@@ -1568,11 +1568,6 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(true);
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
-                .andReturn(Optional.of(folderWorkflow));
-        expect(folderWorkflow.hints())
-                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
 
         replayAll();
 
@@ -1586,11 +1581,99 @@ public class DocumentsServiceImplTest {
         verifyAll();
     }
 
+    /**
+     * Adding a document to a folder that the user does not have "add" permission for leads to ForbiddenException
+     */
     @Test
-    public void createDocumentNoWorkflow() throws Exception {
+    public void createDocumentInReadOnlyFolder() throws Exception {
+        final Node documentHandle = createMock(Node.class);
+        final Node folderNode = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        final String newsType = "myproject:newsdocument";
+
+        expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session))) .andReturn(folderNode);
+        expect(FolderUtils.getLocale(folderNode)) .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+            .andReturn("Breaking News (encoded)");
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+            .andReturn("breaking-news");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+            .andReturn(false);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news"))).andReturn(false);
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
+            .andReturn(Optional.of(folderWorkflow));
+
+        // no "add" hint here!
+        expect(folderWorkflow.hints())
+            .andReturn(Map.of(
+            "prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(newsType))));
+
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
+
+        replayAll();
+
+        try {
+            documentsService.createDocument(info, userContext);
+            fail("No Exception");
+        } catch (final ForbiddenException e) {
+            assertErrorStatusAndReason(e, Status.FORBIDDEN, Reason.ADD_TO_FOLDER_NOT_PERMITTED);
+        }
+
+        verifyAll();
+    }
+
+   /**
+     * Adding a news document to a folder that supports banner should lead to BadRequestException
+     */
+    @Test
+    public void createDocumentInUnsupportedFolder() throws Exception {
+        final Node documentHandle = createMock(Node.class);
+        final Node folderNode = createMock(Node.class);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        final String bannerType = "myproject:banner";
+        final String bannerTemplateQuery = "new-banner";
+        final String bannersFolderPath = "/content/documents/channel/banners";
+
+        expect(FolderUtils.getFolder(eq(bannersFolderPath), eq(session))) .andReturn(folderNode);
+        expect(FolderUtils.getLocale(folderNode)) .andReturn("en_GB");
+        expect(DocumentNameUtils.encodeDisplayName(eq("Breaking News"), eq("en_GB")))
+            .andReturn("Breaking News (encoded)");
+        expect(DocumentNameUtils.encodeUrlName(eq("breaking news"), eq("en_GB")))
+            .andReturn("breaking-news");
+        expect(FolderUtils.nodeWithDisplayNameExists(eq(folderNode), eq("Breaking News (encoded)")))
+            .andReturn(false);
+        expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news"))).andReturn(false);
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
+            .andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderPrototypes(anyObject())).andReturn(Set.of(bannerType));
+        expect(folderWorkflow.hints())
+            .andReturn(Map.of(
+            "prototypes", (Serializable) Map.of(bannerTemplateQuery, (Serializable) List.of(bannerType)),
+            "add", ""));
+
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
+
+        replayAll();
+
+        try {
+            info.setRootPath("/content/documents/channel/banners");
+            documentsService.createDocument(info, userContext);
+            fail("No Exception");
+        } catch (final BadRequestException e) {
+            assertErrorStatusAndReason(e, Status.BAD_REQUEST, Reason.DOCUMENT_TYPE_NOT_ALLOWED);
+        }
+
+        verifyAll();
+    }
+
+    @Test
+    public void createDocumentNoWorkflow() {
         final Node folderNode = createMock(Node.class);
         final Node documentHandle = createMock(Node.class);
-        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
@@ -1604,16 +1687,11 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
-                .andReturn(Optional.of(folderWorkflow));
-        expect(folderWorkflow.hints())
-                .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
+                .andReturn(Optional.empty());
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
-        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
-                .andReturn(Optional.empty());
         expect(DocumentUtils.getDisplayName(folderNode))
                 .andReturn(Optional.of("News"));
 
@@ -1648,17 +1726,16 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
                 .andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderPrototypes(anyObject())).andReturn(Set.of("project:newsdocument"));
         expect(folderWorkflow.hints())
                 .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
+                        "project:newsdocument")), "add", ""));
 
         final DocumentType docType = provideDocumentType(documentHandle);
 
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
-        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
-                .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
                 .andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(folderNode)).andReturn("/content/documents/channel/news");
@@ -1687,8 +1764,6 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
-        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
-                .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
                 .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
@@ -1702,11 +1777,12 @@ public class DocumentsServiceImplTest {
                 .andReturn(Optional.of(documentDraft));
 
         expect(documentHandle.getIdentifier()).andReturn("uuid");
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
                 .andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderPrototypes(anyObject())).andReturn(Set.of("project:newsdocument"));
         expect(folderWorkflow.hints())
                 .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
+                        "project:newsdocument")), "add", ""));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
@@ -1773,8 +1849,6 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
-        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
-                .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(null)))
                 .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
@@ -1787,11 +1861,12 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(DRAFT)))
                 .andReturn(Optional.of(documentDraft));
         expect(documentHandle.getIdentifier()).andReturn("uuid");
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
                 .andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderPrototypes(anyObject())).andReturn(Set.of("project:newsdocument"));
         expect(folderWorkflow.hints())
                 .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
+                        "project:newsdocument")), "add", ""));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
@@ -1853,11 +1928,12 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
                 .andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderPrototypes(anyObject())).andReturn(Set.of("project:newsdocument"));
         expect(folderWorkflow.hints())
                 .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
+                        "project:newsdocument")), "add", ""));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
@@ -1896,11 +1972,12 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
                 .andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderPrototypes(anyObject())).andReturn(Set.of("project:newsdocument"));
         expect(folderWorkflow.hints())
                 .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
+                        "project:newsdocument")), "add", ""));
 
         final DocumentType docType = provideDocumentType(documentHandle);
 
@@ -1911,11 +1988,13 @@ public class DocumentsServiceImplTest {
                 .andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(folderNode)).andReturn("/content/documents/channel/news");
 
-        expect(JcrUtils.getStringProperty(folderNode, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null)).andReturn("channel-id");
+        expect(JcrUtils.getStringProperty(folderNode, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null)).andReturn("channel" +
+                "-id");
 
         final ChannelService channelService = createMock(ChannelService.class);
         expect(platformServices.getChannelService()).andReturn(channelService);
-        expect(channelService.getXPageLayouts(eq("channel-id"))).andReturn(Collections.singletonMap("xpage-layout", null));
+        expect(channelService.getXPageLayouts(eq("channel-id"))).andReturn(Collections.singletonMap("xpage-layout",
+         null));
 
         replayAll();
 
@@ -1953,8 +2032,6 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
-        expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
-                .andReturn(Optional.of(folderWorkflow));
         expect(JcrUtils.getStringProperty(folderNode, HippoStdNodeType.HIPPOSTD_CHANNEL_ID, null))
                 .andReturn("channel-id");
         expect(platformServices.getChannelService())
@@ -1963,7 +2040,8 @@ public class DocumentsServiceImplTest {
                 .andReturn(layoutTemplateNode);
         expect(channelService.getXPageLayouts(eq("channel-id")))
                 .andReturn(Collections.singletonMap("xpage-layout", layout));
-        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"), eq(layoutTemplateNode)))
+        expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news"),
+         eq(layoutTemplateNode)))
                 .andReturn("/content/documents/channel/news/breaking-news/breaking-news");
         expect(session.getNode(eq("/content/documents/channel/news/breaking-news/breaking-news")))
                 .andReturn(documentDraft);
@@ -1976,11 +2054,12 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(eq(documentHandle), eq(DRAFT)))
                 .andReturn(Optional.of(documentDraft));
         expect(documentHandle.getIdentifier()).andReturn("uuid");
-        expect(WorkflowUtils.getWorkflow(folderNode, "internal", FolderWorkflow.class))
+        expect(WorkflowUtils.getFolderWorkflow(folderNode, "internal"))
                 .andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderPrototypes(anyObject())).andReturn(Set.of("project:newsdocument"));
         expect(folderWorkflow.hints())
                 .andReturn(Map.of("prototypes", (Serializable) Map.of("new-news-document", (Serializable) List.of(
-                        "project:newsdocument"))));
+                        "project:newsdocument")), "add", ""));
 
         final DocumentType docType = provideDocumentType(documentHandle);
         expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
@@ -2040,7 +2119,7 @@ public class DocumentsServiceImplTest {
 
     @Test
     public void updateDocumentNamesUrlNameClashes() {
-        final String uuid = "uuid";
+        final String uuid = "uuid1";
         final String urlName = "new name";
         final String encodedUrlName = "new-name";
         final Document document = new Document();
@@ -2385,7 +2464,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
         expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
-        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.empty());
+        expect(WorkflowUtils.getFolderWorkflow(eq(folder), eq("internal"))).andReturn(Optional.empty());
         expect(DocumentUtils.getDisplayName(eq(folder))).andReturn(Optional.empty());
 
         replayAll(workflow);
@@ -2416,7 +2495,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
         expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
-        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderWorkflow(eq(folder), eq("internal"))).andReturn(Optional.of(folderWorkflow));
         expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(false);
         expect(JcrUtils.getNodeNameQuietly(handle)).andReturn("document");
         expect(JcrUtils.getNodePathQuietly(folder)).andReturn("/path/to/folder");
@@ -2446,7 +2525,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
         expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
-        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderWorkflow(eq(folder), eq("internal"))).andReturn(Optional.of(folderWorkflow));
         expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
 
         final String handleName = "document";
@@ -2481,7 +2560,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
         expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
-        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
+        expect(WorkflowUtils.getFolderWorkflow(eq(folder), eq("internal"))).andReturn(Optional.of(folderWorkflow));
         expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
 
         final String handleName = "document";
@@ -2498,7 +2577,8 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void cannotCreateDraftNoHintsFromWorkflow() throws ErrorWithPayloadException, RepositoryException, RemoteException, WorkflowException {
+    public void cannotCreateDraftNoHintsFromWorkflow() throws ErrorWithPayloadException, RepositoryException,
+            RemoteException, WorkflowException {
 
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
@@ -2534,7 +2614,7 @@ public class DocumentsServiceImplTest {
         verifyAll();
     }
 
-    private DocumentType provideDocumentType(final Node handle) throws Exception {
+    private DocumentType provideDocumentType(final Node handle) {
         final String variantType = "project:newsdocument";
         final DocumentType docType = createMock(DocumentType.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);

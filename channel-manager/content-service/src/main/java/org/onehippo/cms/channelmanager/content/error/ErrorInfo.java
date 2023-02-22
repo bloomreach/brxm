@@ -80,6 +80,7 @@ public class ErrorInfo {
     }
 
     public enum Reason {
+        ADD_TO_FOLDER_NOT_PERMITTED,
         ALREADY_DELETED,
         CANCELABLE_PUBLICATION_REQUEST_PENDING,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).

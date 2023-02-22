@@ -55,6 +55,18 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  */
 public interface FolderWorkflow extends Workflow {
 
+    // keys for hints in FolderWorkflow
+    String HINT_ADD = "add";
+    String HINT_ARCHIVE = "archive";
+    String HINT_COPY = "copy";
+    String HINT_DELETE = "delete";
+    String HINT_DUPLICATE = "duplicate";
+    String HINT_EDIT_DISPLAY_ORDER = "edit-display-order";
+    String HINT_LIST = "list";
+    String HINT_MOVE = "move";
+    String HINT_PROTOTYPES = "prototypes";
+    String HINT_RENAME = "rename";
+    
     /**
      * Returns the possible set of documents that may normally be contained within this container document.  Only those
      * document prototypes may be added through a call #FolderWorkflow.add().
