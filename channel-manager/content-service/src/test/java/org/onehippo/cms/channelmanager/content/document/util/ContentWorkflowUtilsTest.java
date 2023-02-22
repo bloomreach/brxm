@@ -133,7 +133,7 @@ public class ContentWorkflowUtilsTest {
     public void getFolderWorkflowSuccess() throws Exception {
         final FolderWorkflow workflow = createMock(FolderWorkflow.class);
 
-        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getFolderWorkflow(eq(folder), eq("internal"))).andReturn(Optional.of(workflow));
         replayAll();
 
         assertThat(ContentWorkflowUtils.getFolderWorkflow(folder), equalTo(workflow));
@@ -142,7 +142,7 @@ public class ContentWorkflowUtilsTest {
 
     @Test
     public void getFolderWorkflowFailure() throws Exception {
-        expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.empty());
+        expect(WorkflowUtils.getFolderWorkflow(eq(folder), eq("internal"))).andReturn(Optional.empty());
         expect(DocumentUtils.getDisplayName(eq(folder))).andReturn(Optional.of("Folder"));
         replayAll();
 
