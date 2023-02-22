@@ -21,6 +21,7 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.WorkflowUtils;
+
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
@@ -53,7 +54,7 @@ public class ContentWorkflowUtils {
     }
 
     public static FolderWorkflow getFolderWorkflow(final Node folder) throws MethodNotAllowed {
-        return WorkflowUtils.getWorkflow(folder, WORKFLOW_CATEGORY_INTERNAL, FolderWorkflow.class)
+        return WorkflowUtils.getFolderWorkflow(folder, WORKFLOW_CATEGORY_INTERNAL)
                 .orElseThrow(() -> new MethodNotAllowed(
                         withDisplayName(new ErrorInfo(Reason.NOT_A_FOLDER), folder)
                 ));

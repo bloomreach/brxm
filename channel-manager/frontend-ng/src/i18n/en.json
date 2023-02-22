@@ -87,6 +87,7 @@
   "END_DATE_TIME": "End date and time",
   "END_NOW": "End now",
   "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot add '{{component}}': the container is locked by '{{lockedBy}}'",
+  "ERROR_ADD_TO_FOLDER_NOT_PERMITTED": "No permission to create content in the selected location",
   "ERROR_ALREADY_DELETED": "Failed to delete. The document was previously deleted",
   "ERROR_CANCEL_REQUEST_PUBLICATION_FAILED": "Publication request not found for '{{documentName}}'",
   "ERROR_CARDINALITY_CHANGE": "Unable to save. The document contains invalid content",
