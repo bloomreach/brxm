@@ -143,9 +143,12 @@ public class LinkPickerDialog extends Dialog<String> {
                     return false;
                 }
 
-                final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
-                if (!prototypes.contains(documentTypeId)) {
-                    return false;
+                // if document type configuration does not exist, the folder will be selectable by default
+                if (StringUtils.isNotEmpty(documentTypeId)) {
+                    final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
+                    if (!prototypes.contains(documentTypeId)) {
+                        return false;
+                    }
                 }
             }
         } catch (final Exception e) {
@@ -224,8 +227,7 @@ public class LinkPickerDialog extends Dialog<String> {
 
         final String documentTypeId = this.config.getString(CONFIG_KEY_DOCUMENT_TYPE_ID);
 
-        // If document type configuration does not exist, the folder will be selectable by default.
-        setOkEnabled(StringUtils.isEmpty(documentTypeId) || isDocumentAllowedInFolder(model.getObject(), documentTypeId));
+        setOkEnabled(isDocumentAllowedInFolder(model.getObject(), documentTypeId));
 
         if (breadcrumbs != null) {
             breadcrumbs.update(model);
