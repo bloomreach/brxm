@@ -132,11 +132,11 @@ public class StringCodecFactory {
             // use Unicode "composed" normal form, so we aren't confused by decomposed accent chars
             char[] chars = Normalizer.normalize(input, Normalizer.Form.NFC).toCharArray();
 
-            StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             boolean lastSpace = true;
             for (int i = 0; i < chars.length; i++) {
                 boolean appendSpace = false;
-                if ((chars[i] >= 0x00 && chars[i] <= 0x1f) || chars[i] == 0x7f || (chars[i] >= 0x80 && chars[i] <= 0x9f)) {
+                if (chars[i] <= 0x1f || chars[i] == 0x7f || (chars[i] >= 0x80 && chars[i] <= 0x9f)) {
                     // control character
                 } else if (chars[i] >= 0x80 && chars[i] <= 0xff) {
                     switch (chars[i]) {
@@ -144,7 +144,7 @@ public class StringCodecFactory {
                         case 0xA1:                         break;
                         case 0xA2: sb.append("ct");        break;
                         case 0xA3: sb.append("gbp");       break;
-                        case 0xA4: sb.append("");          break;
+                        case 0xA4:                         break;
                         case 0xA5: sb.append("yen");       break;
                         case 0xA6: sb.append("-");         break;
                         case 0xA7:                         break;
@@ -244,7 +244,7 @@ public class StringCodecFactory {
                         case 0xFF: sb.append("y");         break;
                         default:
                     }
-                } else if (chars[i] >= 0x00 && chars[i] <= 0x7f) {
+                } else if (chars[i] <= 0x7f) {
                     switch (chars[i]) {
                         case 0x20:
                             appendSpace = true;
@@ -1209,7 +1209,7 @@ public class StringCodecFactory {
                 return name;
             } else {
                 // encode
-                StringBuffer encoded = new StringBuffer();
+                final StringBuilder encoded = new StringBuilder();
                 for (int i = 0; i < name.length(); i++) {
                     if (i == 0) {
                         // first character of name
@@ -1245,7 +1245,7 @@ public class StringCodecFactory {
                 // not encoded
                 return name;
             }
-            StringBuffer decoded = new StringBuffer();
+            final StringBuilder decoded = new StringBuilder();
             Matcher m = ENCODE_PATTERN.matcher(name);
             while (m.find()) {
                 char ch = (char)Integer.parseInt(m.group().substring(2, 6), 16);
@@ -1259,7 +1259,7 @@ public class StringCodecFactory {
             return decoded.toString();
         }
 
-        private static void encode(char c, StringBuffer b) {
+        private static void encode(char c, StringBuilder b) {
             b.append("_x");
             String hex = Integer.toHexString(c);
             b.append(PADDING, 0, 4 - hex.length());
@@ -2044,7 +2044,7 @@ public class StringCodecFactory {
                 // not encoded
                 return name;
             }
-            StringBuffer decoded = new StringBuffer();
+            StringBuilder decoded = new StringBuilder();
             Matcher m = ENCODE_PATTERN.matcher(name);
             while (m.find()) {
                 char ch = (char)Integer.parseInt(m.group().substring(2, 6), 16);
@@ -2058,7 +2058,7 @@ public class StringCodecFactory {
             return decoded.toString();
         }
 
-        private static final String encodeOneCharSimpleName(final char c) {
+        private static String encodeOneCharSimpleName(final char c) {
             if (!isOneCharSimpleName(c)) {
                 return ISO9075Encode(c);
             } else {
@@ -2068,7 +2068,7 @@ public class StringCodecFactory {
             }
         }
 
-        private static final String encodeTwoCharSimpleName(final char first, final char second) {
+        private static String encodeTwoCharSimpleName(final char first, final char second) {
             if (first == '.') {
                 return "." + encodeOneCharSimpleName(second);
             } else if (second == '.') {
@@ -2078,7 +2078,7 @@ public class StringCodecFactory {
             }
         }
 
-        private static final String encodeThreeOrMoreCharName(final String name) {
+        private static String encodeThreeOrMoreCharName(final String name) {
             int last = name.length() - 1;
             StringBuilder sb = new StringBuilder(last + 13); // reserve space
 
@@ -2108,41 +2108,10 @@ public class StringCodecFactory {
             return sb.toString();
         }
 
-        private static final String encodeLocalName(final String localName) {
-            if (localName.length() == 0) {
-                throw new IllegalArgumentException("Local name part cannot be empty.");
-            } else if (localName.length() == 1) {
-                if (isNonSpace(localName.charAt(0))) {
-                    return localName;
-                } else {
-                    return ISO9075Encode(localName.charAt(0));
-                }
-            } else if (localName.length() == 2) {
-                StringBuilder sb = new StringBuilder();
-                // unrolled loop
-                if (isNonSpace(localName.charAt(0))) {
-                    sb.append(localName.charAt(0));
-                } else {
-                    sb.append(ISO9075Encode(localName.charAt(0)));
-                }
-                if (isNonSpace(localName.charAt(1))) {
-                    sb.append(localName.charAt(1));
-                } else {
-                    sb.append(ISO9075Encode(localName.charAt(1)));
-                }
-                return sb.toString();
-            } else {
-                return encodeThreeOrMoreCharName(localName);
-            }
-
-        }
-
         /**
          * Corresponds to the jcr node name definition with the same name.
-         * @param c
-         * @return
          */
-        private static final boolean isOneCharSimpleName(final char c) {
+        private static boolean isOneCharSimpleName(final char c) {
             if (c == '.' || c == '/' || c == ':' || c == '[' || c == ']' || c == '*' || c == '\'' || c == '"' || c == '|') {
                 return false;
             } else if (Character.isWhitespace(c)) {
@@ -2154,10 +2123,8 @@ public class StringCodecFactory {
 
         /**
          * Corresponds to the jcr node name definition with the same name.
-         * @param c
-         * @return
          */
-        private static final boolean isNonSpace(final char c) {
+        private static boolean isNonSpace(final char c) {
             if (c == '/' || c == ':' || c == '[' || c == ']' || c == '*' || c == '\'' || c == '"' || c == '|') {
                 return false;
             } else if (Character.isWhitespace(c)) {
@@ -2167,7 +2134,7 @@ public class StringCodecFactory {
             }
         }
 
-        private static final String ISO9075Encode(final char c) {
+        private static String ISO9075Encode(final char c) {
             StringBuilder b = new StringBuilder();
             b.append("_x");
             String hex = Integer.toHexString(c);
