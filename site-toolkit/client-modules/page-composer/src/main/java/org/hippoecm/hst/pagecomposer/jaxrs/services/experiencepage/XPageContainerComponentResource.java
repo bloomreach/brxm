@@ -298,10 +298,18 @@ public class XPageContainerComponentResource extends AbstractConfigResource impl
         try {
             return action.apply();
         } catch (ClientException e) {
-            log.info("Client Exception {} : {} ", e.getErrorStatus().getError(), e.toString());
+            if (log.isDebugEnabled()) {
+                log.info("Client Exception {}", e.getErrorStatus().getError(), e);
+            } else {
+                log.info("Client Exception {} : {} ", e.getErrorStatus().getError(), e.toString());
+            }
             return clientError(e.getMessage(), e.getErrorStatus());
         } catch (RepositoryException | WorkflowException | IllegalArgumentException e) {
-            log.info("Server error : {} ", e.toString());
+            if (log.isDebugEnabled()) {
+                log.warn("Server error", e);
+            } else {
+                log.warn("Server error : {} ", e.toString());
+            }
             return error(e.getMessage(), ErrorStatus.unknown(e.getMessage()));
         }
     }

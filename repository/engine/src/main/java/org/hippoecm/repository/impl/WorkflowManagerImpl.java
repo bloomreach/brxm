@@ -103,6 +103,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return userSession;
     }
 
+    public Session getInternalWorkflowSession() {
+        return workflowSession;
+    }
+
     private WorkflowDefinition  getWorkflowDefinition(String category, Node item) {
         if (configurationId == null) {
             return null;

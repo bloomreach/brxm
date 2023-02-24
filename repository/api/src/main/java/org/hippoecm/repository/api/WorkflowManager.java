@@ -50,6 +50,9 @@ public interface WorkflowManager {
      */
     public Session getSession() throws RepositoryException;
 
+
+    Session getInternalWorkflowSession();
+
     /**
      * Obtains a reference to the workflow for the document as indicated by the javax.jcr.Node in the specified category.
      * @param category category in which to look for the workflow

@@ -38,6 +38,11 @@ public class MockWorkflowManager implements WorkflowManager {
     }
 
     @Override
+    public Session getInternalWorkflowSession() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public WorkflowDescriptor getWorkflowDescriptor(final String category, final Node item) throws RepositoryException {
         throw new UnsupportedOperationException();
     }
