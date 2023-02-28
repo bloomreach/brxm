@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
@@ -24,32 +25,52 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigatorLab
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 
 public class ListNavigationToolBar extends AbstractToolbar {
-
-    private static final long serialVersionUID = 1L;
 
     public ListNavigationToolBar(DataTable table, IPagingDefinition pagingDefinition) {
         super(table);
 
-        WebMarkupContainer span = new WebMarkupContainer("span");
+        final WebMarkupContainer span = new WebMarkupContainer("span");
         add(span);
         span.add(new AttributeModifier("colspan", Model.of(String.valueOf(table.getColumns().size()))));
 
-        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, pagingDefinition);
+        final PagingNavigator pagingNavigator = newPagingNavigator(table, pagingDefinition);
         span.add(pagingNavigator);
+
         span.add(new NavigatorLabel("navigatorLabel", table));
     }
 
     @Override
     public boolean isVisible() {
+        if (isExpanded()) {
+            return getTable().getItemCount() > 0;
+        }
         return getTable().getPageCount() > 1;
     }
 
-    private PagingNavigator newPagingNavigator(String navigatorId, final DataTable table,
+    private boolean isExpanded() {
+        // go up the Wicket container tree
+        MarkupContainer parent = this.getParent();
+        while (parent != null) {
+            if (parent instanceof IExpandableCollapsable) {
+                return ((IExpandableCollapsable) parent).isExpanded();
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private PagingNavigator newPagingNavigator(final DataTable table,
             IPagingDefinition pagingDefinition) {
-        return new ListPagingNavigator(navigatorId, table, new ListPagingLabelProvider(), pagingDefinition) {
-            private static final long serialVersionUID = 1L;
+
+        return new ListPagingNavigator("navigator", table, new ListPagingLabelProvider(), pagingDefinition) {
+
+            public boolean isVisible() {
+                return getTable().getPageCount() > 1;
+            }
 
             /**
              * Implement our own ajax event handling in order to update the datatable itself, as the
