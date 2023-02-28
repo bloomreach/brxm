@@ -23,5 +23,7 @@ public interface IExpandableCollapsable extends IClusterable {
 
     void expand();
 
+    boolean isExpanded();
+
     void collapse();
 }

@@ -36,10 +36,9 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeM
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
-import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 
-public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlugin<T> implements IExpandableCollapsable {
+public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlugin<T> {
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

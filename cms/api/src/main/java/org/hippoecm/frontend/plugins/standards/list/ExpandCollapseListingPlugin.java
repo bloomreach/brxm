@@ -95,6 +95,10 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         }
     }
 
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
     public boolean isSupported() {
         return getPluginConfig().getAsBoolean("expand.collapse.supported", false);
     }
@@ -120,7 +124,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
                                                          ListDataTable.TableSelectionListener<Node> selectionListener,
                                                          boolean triState,
                                                          ListPagingDefinition pagingDefinition) {
-        ListDataTable<Node> datatable = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
+        final ListDataTable<Node> datatable = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener,
                 triState, pagingDefinition);
 
         if (className != null) {
