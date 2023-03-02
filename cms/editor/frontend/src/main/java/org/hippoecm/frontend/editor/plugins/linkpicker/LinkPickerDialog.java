@@ -93,6 +93,21 @@ public class LinkPickerDialog extends Dialog<String> {
             }
 
             @Override
+            protected boolean isValidSelection(final IModel<Node> targetModel) {
+                boolean validSelection = super.isValidSelection(targetModel);
+
+                if (validSelection) {
+                    // extra check on folder, if a documentTypeId is given, this is about adding a document
+                    final String documentTypeId = LinkPickerDialog.this.config.getString(CONFIG_KEY_DOCUMENT_TYPE_ID);
+                    if (StringUtils.isNotEmpty(documentTypeId)) {
+                        validSelection = isDocumentAllowedInFolder(targetModel.getObject(), documentTypeId);
+                    }
+                }
+
+                return validSelection;
+            }
+
+            @Override
             protected void onSelect(final boolean isValid) {
                 setOkEnabled(isValid);
             }
@@ -100,6 +115,28 @@ public class LinkPickerDialog extends Dialog<String> {
             @Override
             protected void onFolderSelected(final IModel<Node> model) {
                 LinkPickerDialog.this.onFolderSelected(model);
+            }
+
+            private boolean isDocumentAllowedInFolder(final Node folder, final String documentTypeId) {
+
+                try {
+                    final Optional<FolderWorkflow> folderWorkflow = WorkflowUtils.getFolderWorkflow(folder, DEFAULT_FOLDER_WORKFLOW_CATEGORY);
+                    if (folderWorkflow.isPresent()) {
+                        final Map<String, Serializable> hints = folderWorkflow.get().hints();
+                        if (!hints.containsKey(FolderWorkflow.HINT_ADD)) {
+                            return false;
+                        }
+
+                        final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
+                        if (!prototypes.contains(documentTypeId)) {
+                            return false;
+                        }
+                    }
+                } catch (final Exception e) {
+                    log.warn("An exception occurred while checking allowed action in workflow", e);
+                }
+
+                return true;
             }
         };
 
@@ -133,32 +170,7 @@ public class LinkPickerDialog extends Dialog<String> {
         breadcrumbs.update(controller.getFolderModel());
     }
 
-    private boolean isDocumentAllowedInFolder(final Node folder, final String documentTypeId) {
-
-        try {
-            final Optional<FolderWorkflow> folderWorkflow = WorkflowUtils.getFolderWorkflow(folder, DEFAULT_FOLDER_WORKFLOW_CATEGORY);
-            if (folderWorkflow.isPresent()) {
-                final Map<String, Serializable> hints = folderWorkflow.get().hints();
-                if (!hints.containsKey(FolderWorkflow.HINT_ADD)) {
-                    return false;
-                }
-
-                // if document type configuration does not exist, the folder will be selectable by default
-                if (StringUtils.isNotEmpty(documentTypeId)) {
-                    final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
-                    if (!prototypes.contains(documentTypeId)) {
-                        return false;
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            log.warn("An exception occurred while checking allowed action in workflow", e);
-        }
-
-        return true;
-    }
-
-    @Override
+   @Override
     protected void onInitialize() {
         super.onInitialize();
         add(createTopFragment("top-fragment"));
@@ -224,11 +236,6 @@ public class LinkPickerDialog extends Dialog<String> {
     }
 
     protected void onFolderSelected(final IModel<Node> model) {
-
-        final String documentTypeId = this.config.getString(CONFIG_KEY_DOCUMENT_TYPE_ID);
-
-        setOkEnabled(isDocumentAllowedInFolder(model.getObject(), documentTypeId));
-
         if (breadcrumbs != null) {
             breadcrumbs.update(model);
         }
