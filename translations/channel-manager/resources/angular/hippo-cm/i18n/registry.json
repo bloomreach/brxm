@@ -2150,54 +2150,24 @@
       "locales" : null
     },
     "CONFIRM_DISCARD_UNSAVED_RETAINABLE_DRAFT_CHANGES_MESSAGE" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "RESTORE" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "TOOLBAR_MENU_XPAGE_CONTENT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ERROR_DOCUMENT_TYPE_NOT_ALLOWED" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ERROR_ADD_TO_FOLDER_NOT_PERMITTED" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
