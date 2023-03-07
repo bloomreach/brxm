@@ -45,6 +45,11 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
         return session;
     }
 
+    @Override
+    public Session getInternalWorkflowSession() {
+        throw new UnsupportedOperationException();
+    }
+
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
         try {
             RemoteWorkflowDescriptor remoteDescriptor = remote.getWorkflowDescriptor(category, item.getUUID());

@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 
@@ -82,10 +83,18 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
             } finally {
                 if (jcrSession != null) {
                     try {
-                        if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
-                            log.warn("JcrSession '{}' had pending changes at the end of the page composer request. This should never be " +
-                                    "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
-                            jcrSession.refresh(false);
+                        if (jcrSession.isLive()) {
+                            if (jcrSession.hasPendingChanges()) {
+                                log.warn("JcrSession '{}' had pending changes at the end of the page composer request. This should never be " +
+                                        "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
+                                jcrSession.refresh(false);
+                            }
+                            final Session internalWorkflowSession = ((HippoWorkspace) jcrSession.getWorkspace()).getWorkflowManager().getInternalWorkflowSession();
+                            if (internalWorkflowSession.hasPendingChanges()) {
+                                log.warn("InternalWorkflowSession for user '{}' had pending changes at the end of the page composer request. This should never be " +
+                                        "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
+                                internalWorkflowSession.refresh(false);
+                            }
                         }
                     } catch (RepositoryException e) {
                         log.error("RepositoryException while checking / clearing jcr session.", e);
