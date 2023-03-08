@@ -63,6 +63,7 @@ import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.onehippo.cms7.channelmanager.HstUtil.getHostGroup;
 
 /**
@@ -239,10 +240,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         String type = channel.getType();
         object.put("channelType", type);
 
-        final Map<String, String> channelFieldValuesWithType = new HashMap<>();
-        channelFieldValuesWithType.put("type", channel.getType());
+        final Map<String, String> channelFieldValues = getChannelFieldValues(channel);
 
-        String channelIconUrl = getChannelIconUrl(channelFieldValuesWithType, getChannelTypeIconPath());
+        String channelIconUrl = getChannelIconUrl(channelFieldValues, getChannelTypeIconPath());
         if (StringUtils.isEmpty(channelIconUrl)) {
             channelIconUrl = getIconResourceReferenceUrl(type + ".svg");
         }
@@ -256,7 +256,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         if (StringUtils.isNotEmpty(channel.getLocale())) {
             object.put("channelRegion", channel.getLocale());
 
-            final Map<String, String> channelFieldValuesWithRegion = new HashMap<>();
+            final Map<String, String> channelFieldValuesWithRegion = getChannelFieldValues(channel);
             channelFieldValuesWithRegion.put("region", channel.getLocale());
 
             String regionIconUrl = getChannelIconUrl(channelFieldValuesWithRegion, getChannelRegionIconPath());
@@ -270,7 +270,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected String getChannelIconUrl(final Map<String, String> channelFieldValues, final String channelIconPathTemplate) {
-        String channelIconPath = new MapVariableInterpolator(channelIconPathTemplate, channelFieldValues).toString();
+        final String channelIconPath = new MapVariableInterpolator(channelIconPathTemplate, channelFieldValues).toString();
+        log.debug("Populated icon template '{}' into '{}' using parameters {}", channelIconPathTemplate, channelIconPath, channelFieldValues);
         if (StringUtils.isEmpty(channelIconPath)) {
             return null;
         }
@@ -569,4 +570,14 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return new ActionFailedException(getResourceValue("error.cannot.create.channel", newChannel.getName()));
     }
 
+    protected Map<String, String> getChannelFieldValues(final Channel channel) {
+        final Map<String, String> channelFieldValues = new HashMap<>();
+
+        channelFieldValues.put("id", substringBefore(channel.getId(), "-preview"));
+        channelFieldValues.put("name", channel.getName());
+        channelFieldValues.put("type", channel.getType());
+        channelFieldValues.put("locale", channel.getLocale());
+
+        return channelFieldValues;
+    }
 }
