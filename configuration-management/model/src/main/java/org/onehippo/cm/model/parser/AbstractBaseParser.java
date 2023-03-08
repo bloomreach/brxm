@@ -38,6 +38,7 @@ import org.onehippo.cm.model.source.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeId;
@@ -68,7 +69,7 @@ public abstract class AbstractBaseParser {
 
     protected Node composeYamlNode(final InputStream inputStream, final String location) throws ParserException {
         log.debug("Parsing YAML source '{}'", location);
-        final Yaml yamlParser = new Yaml();
+        final Yaml yamlParser = new Yaml(new SafeConstructor());
         try {
             return yamlParser.compose(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         } catch (RuntimeException e) {
