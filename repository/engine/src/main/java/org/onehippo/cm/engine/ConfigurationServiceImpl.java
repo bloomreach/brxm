@@ -92,6 +92,7 @@ import org.onehippo.repository.util.NodeTypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import com.google.common.io.Files;
 
@@ -1149,7 +1150,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 if (hcmSiteIs == null) {
                     throw new FileNotFoundException(HCM_SITE_DESCRIPTOR_LOCATION);
                 }
-                final Yaml yamlReader = new Yaml();
+                final Yaml yamlReader = new Yaml(new SafeConstructor());
                 hcmSiteConfig = (Map<String, String>) yamlReader.load(hcmSiteIs);
             } catch (IOException e) {
                 log.error(String.format("Failed to read %s", HCM_SITE_DESCRIPTOR), e);
