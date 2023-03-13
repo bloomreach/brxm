@@ -43,6 +43,7 @@ definitions:
           script-src: [
             'app.pendo.io',
             'cdn.pendo.io',
+            'cdn.segment.com',
             'data.pendo.io',
             'pendo-io-static.storage.googleapis.com',
             'pendo-static-5285379033268224.storage.googleapis.com',
