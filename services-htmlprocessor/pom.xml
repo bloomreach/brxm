@@ -42,7 +42,6 @@
 
     <!-- test dependencies -->
     <easymock.version>4.3</easymock.version>
-    <junit.version>4.13.1</junit.version>
   </properties>
 
   <repositories>

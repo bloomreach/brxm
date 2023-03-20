@@ -47,7 +47,6 @@
     <jsp-api.version>2.2</jsp-api.version>
 
     <hippo.testutils.version>${hippo.release.version}</hippo.testutils.version>
-    <junit.version>4.13.1</junit.version>
     <easymock.version>4.3</easymock.version>
     <!-- Wicket 9 uses junit5 jupiter assertions -->
     <junit-jupiter.version>5.7.2</junit-jupiter.version>

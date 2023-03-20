@@ -34,7 +34,6 @@
     <json-lib.version>2.4</json-lib.version>
     <apache-poi.version>5.2.2</apache-poi.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
-    <junit.version>4.13.1</junit.version>
   </properties>
 
   <repositories>

@@ -33,7 +33,6 @@
     <maven.plugin.plugin.version>3.6.2</maven.plugin.plugin.version>
     <maven.shared.dependency.tree.version>3.0.1</maven.shared.dependency.tree.version>
     <maven.plugin-annotations.version>3.5.2</maven.plugin-annotations.version>
-    <junit.version>4.13.1</junit.version>
   </properties>
 
   <dependencies>
