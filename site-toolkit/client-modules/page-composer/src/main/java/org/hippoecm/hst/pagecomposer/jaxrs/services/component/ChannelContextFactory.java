@@ -131,7 +131,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
             if (!additionalCmXPageFolderPaths.isEmpty()) {
                 // At the moment only one node per channel in the contentRoot may have this mixin.
                 // This requirement can be removed later if the UI supports multiple CM XPage folders.
-                log.warn("CM XPage folder for channel {} not unique, using '{}'. Additional root XPage folder paths: {}",
+                log.info("CM XPage folder for channel {} not unique, using '{}'. Additional root XPage folder paths: {}",
                         masterLiveChannelId, cmXPageFolder.getPath(), additionalCmXPageFolderPaths);
             }
             return getTemplateQueryMap(cmXPageFolder);
@@ -152,7 +152,7 @@ final class ChannelContextFactory implements ComponentManagerAware {
 
     private NodeIterator queryCmXPageFolders(String channelId, String contentRootPath, Session session) throws RepositoryException {
         final String statement = String.format(
-                "/%s//element(*, %s)[@jcr:mixinTypes='%s', @%s='%s', @%s]",
+                "/%s//element(*, %s)[@jcr:mixinTypes='%s', @%s='%s', @%s] order by @jcr:name ascending",
                 ISO9075.encodePath(contentRootPath), NT_FOLDER, NT_CM_XPAGE_FOLDER, HIPPOSTD_CHANNEL_ID, channelId, HIPPOSTD_FOLDERTYPE);
         log.debug("Query statement for CM XPage folder: {}", statement);
         return session.getWorkspace().getQueryManager()

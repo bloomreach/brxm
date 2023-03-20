@@ -31,9 +31,12 @@ class DocumentLocationFieldController {
     this.FeedbackService = FeedbackService;
     this.PickerService = PickerService;
     this.Step1Service = Step1Service;
+    this.xPage = undefined;
   }
 
   $onInit() {
+    this.xPage = this.Step1Service.isXPage();
+
     if (this.rootPath && !this.rootPath.startsWith('/')) {
       throw new Error(`The rootPath option can only be an absolute path: ${this.rootPath}`);
     }
@@ -46,7 +49,14 @@ class DocumentLocationFieldController {
       this.rootPath = this.ChannelService.getChannel().contentRoot;
     }
 
-    this.initialPickerPath = this.rootPath || this.ChannelService.getChannel().contentRoot;
+    const { contentRoot } = this.ChannelService.getChannel();
+
+    if (this.xPage) {
+      // If it's an xpage selection, it's also possible to have multiple xpage folders. Better to use content root.
+      this.initialPickerPath = contentRoot;
+    } else {
+      this.initialPickerPath = this.rootPath || contentRoot;
+    }
 
     this.pickerPath = '/';
     this.pickerConfig = {
@@ -54,6 +64,8 @@ class DocumentLocationFieldController {
       configuration: 'cms-pickers/documents-folders-only',
       rootPath: this.initialPickerPath,
       selectableNodeTypes: ['hippostd:folder'],
+      xPageSelection: this.xPage,
+      operationType: this.operationType,
     };
 
     if (this.rootPath) {
@@ -63,7 +75,11 @@ class DocumentLocationFieldController {
   }
 
   isXPage() {
-    return this.Step1Service.isXPage();
+    if (this.xPage === undefined) {
+      this.xPage = this.Step1Service.isXPage();
+    }
+
+    return this.xPage;
   }
 
   setPath(path) {
