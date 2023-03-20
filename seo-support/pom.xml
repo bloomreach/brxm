@@ -36,7 +36,6 @@
     <hippo.hst.version>${hippo.release.version}</hippo.hst.version>
     <hippo.commons.version>${hippo.release.version}</hippo.commons.version>
     <hippo.repository.version>${hippo.release.version}</hippo.repository.version>
-    <junit.version>4.13.1</junit.version>
     <easymock.version>4.3</easymock.version>
   </properties>
 

@@ -33,10 +33,6 @@
 
   <inceptionYear>2017</inceptionYear>
 
-  <properties>
-    <junit.version>4.13.1</junit.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

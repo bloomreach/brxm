@@ -43,7 +43,6 @@
     <!-- test dependencies -->
     <easymock.version>4.3</easymock.version>
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
-    <junit.version>4.13.1</junit.version>
   </properties>
 
   <repositories>

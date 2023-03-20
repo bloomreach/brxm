@@ -40,7 +40,6 @@
 
     <jsp-api.version>2.2</jsp-api.version>
     <dom4j.version>2.1.3</dom4j.version>
-    <junit.version>4.13.1</junit.version>
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
