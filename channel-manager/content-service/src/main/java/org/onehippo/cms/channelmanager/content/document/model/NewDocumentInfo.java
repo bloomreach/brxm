@@ -25,6 +25,8 @@ public class NewDocumentInfo {
     private String rootPath;
     private String defaultPath;
     private String layout;
+    private boolean xPageSelection;
+    private String operationType;
 
     public String getName() {
         return name;
@@ -88,5 +90,21 @@ public class NewDocumentInfo {
 
     public void setLayout(final String layout) {
         this.layout = layout;
+    }
+
+    public boolean isxPageSelection() {
+        return xPageSelection;
+    }
+
+    public void setxPageSelection(final boolean xPageSelection) {
+        this.xPageSelection = xPageSelection;
+    }
+
+    public String getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(final String operationType) {
+        this.operationType = operationType;
     }
 }

@@ -69,6 +69,7 @@ describe('DocumentLocationField', () => {
       $element,
     });
     getFolderSpy = spyOn(Step1Service, 'getFolders').and.returnValue($q.resolve());
+    spyOn(Step1Service, 'isXPage').and.returnValue(false);
     spyOn(CmsService, 'reportUsageStatistic');
 
     component.changeLocale = () => angular.noop();
@@ -78,6 +79,7 @@ describe('DocumentLocationField', () => {
     beforeEach(() => {
       component.rootPath = '/root';
       component.documentTypeId = 'myproject:bannerdocument';
+      component.operationType = 'create';
     });
 
     describe('$onInit', () => {
@@ -105,6 +107,8 @@ describe('DocumentLocationField', () => {
           rootPath: '/root',
           selectableNodeTypes: ['hippostd:folder'],
           documentTypeId: 'myproject:bannerdocument',
+          xPageSelection: false,
+          operationType: 'create',
         });
       });
 
@@ -257,6 +261,7 @@ describe('DocumentLocationField', () => {
   describe('without root path', () => {
     beforeEach(() => {
       component.documentTypeId = 'myproject:bannerdocument';
+      component.operationType = 'create';
     });
 
     describe('and without default path', () => {
@@ -279,6 +284,8 @@ describe('DocumentLocationField', () => {
             rootPath: '/channel/content',
             selectableNodeTypes: ['hippostd:folder'],
             documentTypeId: 'myproject:bannerdocument',
+            xPageSelection: false,
+            operationType: 'create',
           });
         });
       });
@@ -308,6 +315,8 @@ describe('DocumentLocationField', () => {
             rootPath: '/channel/content',
             selectableNodeTypes: ['hippostd:folder'],
             documentTypeId: 'myproject:bannerdocument',
+            xPageSelection: false,
+            operationType: 'create'
           });
         });
       });

@@ -238,6 +238,8 @@
   "NOTIFICATION_BAR_XPAGE_LABEL_SCHEDULED_TO_TAKE_OFFLINE_REQUESTED": "Page '{{pageName}}': {{status}}, take offline requested on {{dateTime}}",
   "TOOLBAR_MENU_PAGE_NEW": "New",
   "ERROR_DOCUMENT_TYPE_NOT_ALLOWED": "Selected document type is not allowed in the selected folder",
+  "ERROR_FOLDER_IS_AN_X_PAGE_FOLDER": "Selected document location is a folder for pages with versioning",
+  "ERROR_FOLDER_IS_NOT_AN_X_PAGE_FOLDER": "Selected location is not a folder for pages with versioning",
   "TOOLBAR_MENU_XPAGE_REJECT_REQUEST_SCHEDULEDPUBLISH": "Reject scheduled publication request",
   "REGENERATE_URL_CONFIRM_DIALOG_TITLE": "Regenerate links?",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL": "The selected template does not have any containers. Container items on this page will be removed when this page is saved with this template",

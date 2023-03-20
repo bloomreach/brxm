@@ -212,6 +212,7 @@ describe('Step1Service', () => {
       Step1Service.rootPath = 'test-rootpath';
       Step1Service.defaultPath = 'test-defaultpath';
       Step1Service.layout = 'test-layout';
+      Step1Service.layouts = [{id: 'test-layout'}];
 
       Step1Service.createDocument().then(done);
       expect(ContentService.createDocument).toHaveBeenCalledWith({
@@ -220,6 +221,7 @@ describe('Step1Service', () => {
         documentTemplateQuery: 'test-tpl-query',
         folderTemplateQuery: 'test-fldr-tpl-query',
         documentTypeId: 'test-doctype',
+        xPageSelection: true,
         rootPath: 'test-rootpath',
         defaultPath: 'test-defaultpath',
         layout: 'test-layout',

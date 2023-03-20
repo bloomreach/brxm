@@ -41,6 +41,7 @@ import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettin
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.breadcrumb.Breadcrumb;
 import org.hippoecm.frontend.widgets.breadcrumb.NodeBreadcrumbWidget;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -52,9 +53,12 @@ public class LinkPickerDialog extends Dialog<String> {
 
     private static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
 
+    static final String DEFAULT_FOLDER_WORKFLOW_CATEGORY = "embedded";
     private static final String EMPTY_FRAGMENT_ID = "empty-fragment";
-    private static final String DEFAULT_FOLDER_WORKFLOW_CATEGORY = "embedded";
     private static final String CONFIG_KEY_DOCUMENT_TYPE_ID = "documentTypeId";
+    private static final String CONFIG_KEY_X_PAGE_SELECTION = "xPageSelection";
+    private static final String CONFIG_KEY_OPERATION_TYPE = "operationType";
+    private static final String OPERATION_TYPE_CREATE = "create";
 
     private final IPluginContext context;
     private final IPluginConfig config;
@@ -72,9 +76,44 @@ public class LinkPickerDialog extends Dialog<String> {
         setCssClass("hippo-dialog-picker");
         setResizable(true);
 
+        controller = createController(context, config);
 
-        final NodePickerControllerSettings settings = NodePickerControllerSettings.fromPluginConfig(config);
-        controller = new NodePickerController(context, settings) {
+        add(controller.create("content"));
+        controller.initSelection();
+
+        addOrReplace(breadcrumbs = createBreadcrumbs());
+        breadcrumbs.update(controller.getFolderModel());
+    }
+
+    protected NodeBreadcrumbWidget createBreadcrumbs() {
+        return new NodeBreadcrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
+            @Override
+            protected void onClick(final IModel<Node> nodeModel, final AjaxRequestTarget target) {
+                controller.setSelectedFolder(nodeModel);
+            }
+
+            @Override
+            protected Breadcrumb newLinkOrLabel(final String id, final IModel<String> name, final IModel<Node> model) {
+                if (controller.isStrictRootPath()) {
+                    final Node node = model.getObject();
+                    final String path = JcrUtils.getNodePathQuietly(node);
+                    final String rootPath = controller.getRootPath();
+
+                    // If path or rootPath are null the picker is either misconfigured or an error occurred. To be safe,
+                    // we show a label if that happens.
+                    if (path == null || rootPath == null || !path.startsWith(rootPath)) {
+                        return newLabel(id, name, model);
+                    }
+                }
+                return newLink(id, name, model);
+            }
+        };
+    }
+
+    protected NodePickerController createController(final IPluginContext context,
+                                                    final IPluginConfig config) {
+
+        return new NodePickerController(context, NodePickerControllerSettings.fromPluginConfig(config)) {
 
             @Override
             protected IModel<Node> getInitialModel() {
@@ -99,9 +138,9 @@ public class LinkPickerDialog extends Dialog<String> {
                 if (validSelection) {
                     // extra check on folder, if a documentTypeId is given, this is about adding a document
                     final String documentTypeId = LinkPickerDialog.this.config.getString(CONFIG_KEY_DOCUMENT_TYPE_ID);
-                    if (StringUtils.isNotEmpty(documentTypeId)) {
-                        validSelection = isDocumentAllowedInFolder(targetModel.getObject(), documentTypeId);
-                    }
+                    final boolean xPageSelection = LinkPickerDialog.this.config.getBoolean(CONFIG_KEY_X_PAGE_SELECTION);
+                    final String operationType = LinkPickerDialog.this.config.getString(CONFIG_KEY_OPERATION_TYPE);
+                    validSelection = isDocumentAllowedInFolder(targetModel.getObject(), documentTypeId, xPageSelection, operationType);
                 }
 
                 return validSelection;
@@ -116,61 +155,51 @@ public class LinkPickerDialog extends Dialog<String> {
             protected void onFolderSelected(final IModel<Node> model) {
                 LinkPickerDialog.this.onFolderSelected(model);
             }
-
-            private boolean isDocumentAllowedInFolder(final Node folder, final String documentTypeId) {
-
-                try {
-                    final Optional<FolderWorkflow> folderWorkflow = WorkflowUtils.getFolderWorkflow(folder, DEFAULT_FOLDER_WORKFLOW_CATEGORY);
-                    if (folderWorkflow.isPresent()) {
-                        final Map<String, Serializable> hints = folderWorkflow.get().hints();
-                        if (!hints.containsKey(FolderWorkflow.HINT_ADD)) {
-                            return false;
-                        }
-
-                        final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
-                        if (!prototypes.contains(documentTypeId)) {
-                            return false;
-                        }
-                    }
-                } catch (final Exception e) {
-                    log.warn("An exception occurred while checking allowed action in workflow", e);
-                }
-
-                return true;
-            }
         };
-
-        add(controller.create("content"));
-        controller.initSelection();
-
-        final boolean isStrictRootPath = controller.isStrictRootPath();
-
-        addOrReplace(breadcrumbs = new NodeBreadcrumbWidget(Dialog.BOTTOM_LEFT_ID, null, controller.getRootPaths()) {
-            @Override
-            protected void onClick(final IModel<Node> nodeModel, final AjaxRequestTarget target) {
-                controller.setSelectedFolder(nodeModel);
-            }
-
-            @Override
-            protected Breadcrumb newLinkOrLabel(final String id, final IModel<String> name, final IModel<Node> model) {
-                if (isStrictRootPath) {
-                    final Node node = model.getObject();
-                    final String path = JcrUtils.getNodePathQuietly(node);
-                    final String rootPath = controller.getRootPath();
-
-                    // If path or rootPath are null the picker is either misconfigured or an error occurred. To be safe,
-                    // we show a label if that happens.
-                    if (path == null || rootPath == null || !path.startsWith(rootPath)) {
-                        return newLabel(id, name, model);
-                    }
-                }
-                return newLink(id, name, model);
-            }
-        });
-        breadcrumbs.update(controller.getFolderModel());
     }
 
-   @Override
+    static boolean isDocumentAllowedInFolder(
+            final Node folder,
+            final String documentTypeId,
+            final boolean xPageSelection,
+            final String operationType) {
+
+        try {
+            if (xPageSelection && !folder.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
+                return false;
+            }
+
+            if (!xPageSelection && folder.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
+                return false;
+            }
+
+            final Optional<FolderWorkflow> folderWorkflow = WorkflowUtils.getFolderWorkflow(folder, DEFAULT_FOLDER_WORKFLOW_CATEGORY);
+
+            if (folderWorkflow.isPresent()) {
+                final Map<String, Serializable> hints = folderWorkflow.get().hints();
+
+                if (StringUtils.isNotEmpty(operationType) && OPERATION_TYPE_CREATE.equals(operationType)) {
+                    if (!hints.containsKey(FolderWorkflow.HINT_ADD)) {
+                        return false;
+                    }
+                }
+
+                // if document type configuration does not exist, the folder will be selectable by default
+                if (StringUtils.isNotEmpty(documentTypeId)) {
+                    final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
+                    if (!prototypes.contains(documentTypeId)) {
+                        return false;
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            log.warn("An exception occurred while checking allowed action in workflow", e);
+        }
+
+        return true;
+    }
+
+    @Override
     protected void onInitialize() {
         super.onInitialize();
         add(createTopFragment("top-fragment"));
@@ -236,6 +265,7 @@ public class LinkPickerDialog extends Dialog<String> {
     }
 
     protected void onFolderSelected(final IModel<Node> model) {
+
         if (breadcrumbs != null) {
             breadcrumbs.update(model);
         }
@@ -248,5 +278,4 @@ public class LinkPickerDialog extends Dialog<String> {
     protected IPluginConfig getPluginConfig() {
         return config;
     }
-
 }

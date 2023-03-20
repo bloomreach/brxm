@@ -531,6 +531,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String folderTemplateQuery = newDocumentInfo.getFolderTemplateQuery();
         final String documentTypeId = checkNotBlank("documentTypeId", newDocumentInfo.getDocumentTypeId());
         final String rootPath = checkNotBlank("rootPath", newDocumentInfo.getRootPath());
+        final boolean xPageSelection = newDocumentInfo.isxPageSelection();
         final String defaultPath = newDocumentInfo.getDefaultPath();
 
         final Session session = userContext.getSession();
@@ -559,6 +560,14 @@ public class DocumentsServiceImpl implements DocumentsService {
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
         try {
+            if (xPageSelection && !folder.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
+                throw new BadRequestException(new ErrorInfo(Reason.FOLDER_IS_NOT_AN_X_PAGE_FOLDER));
+            }
+
+            if (!xPageSelection && folder.isNodeType(HippoStdNodeType.NT_XPAGE_FOLDER)) {
+                throw new BadRequestException(new ErrorInfo(Reason.FOLDER_IS_AN_X_PAGE_FOLDER));
+            }
+
             final Map<String, Serializable> hints = folderWorkflow.hints();
 
             if (!hints.containsKey(FolderWorkflow.HINT_ADD)) {
@@ -566,6 +575,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             }
 
             final Set<String> prototypes = WorkflowUtils.getFolderPrototypes(hints);
+
             if (!prototypes.contains(documentTypeId)) {
                 throw new BadRequestException(new ErrorInfo(Reason.DOCUMENT_TYPE_NOT_ALLOWED));
             }

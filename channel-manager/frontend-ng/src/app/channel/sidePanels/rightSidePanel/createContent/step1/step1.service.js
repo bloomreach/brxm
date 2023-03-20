@@ -106,6 +106,7 @@ class Step1Service {
       slug: this.url,
       documentTemplateQuery: this.documentTemplateQuery,
       documentTypeId: this.documentType,
+      xPageSelection: this.isXPage(),
       folderTemplateQuery: this.folderTemplateQuery,
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
