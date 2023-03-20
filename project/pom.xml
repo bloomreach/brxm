@@ -131,7 +131,7 @@
 
     <tika.version>1.28.5</tika.version>
     <!-- END properties versions with dependency management -->
-    <maven.required.version>3.5.0</maven.required.version>
+    <maven.required.version>3.8.7</maven.required.version>
 
     <maven.plugin.antrun.version>3.0.0</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>3.3.0</maven.plugin.assembly.version>

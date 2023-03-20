@@ -29,7 +29,6 @@
   <name>Hippo CMS L10N Maven Plugin</name>
 
   <properties>
-    <maven.version>3.8.2</maven.version>
     <maven.plugin.plugin.version>3.6.2</maven.plugin.plugin.version>
     <maven.shared.dependency.tree.version>3.0.1</maven.shared.dependency.tree.version>
     <maven.plugin-annotations.version>3.5.2</maven.plugin-annotations.version>
@@ -62,26 +61,34 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
+
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <scope>runtime</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>${maven.version}</version>
+      <version>${maven.required.version}</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>${maven.version}</version>
+      <version>${maven.required.version}</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.version}</version>
+      <version>${maven.required.version}</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-dependency-tree</artifactId>

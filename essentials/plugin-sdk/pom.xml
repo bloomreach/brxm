@@ -32,8 +32,6 @@
 
   <properties>
     <javax.inject.version>1</javax.inject.version>
-    <maven-core.version>3.8.2</maven-core.version>
-    <maven-model.version>3.5.4</maven-model.version>
     <maven-archetype.version>3.2.0</maven-archetype.version>
     <core.jdt.version>3.10.0</core.jdt.version>
     <mustache.version>0.8.16</mustache.version>
@@ -87,12 +85,14 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-model</artifactId>
-        <version>${maven-model.version}</version>
+        <version>${maven.required.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-core</artifactId>
-        <version>${maven-core.version}</version>
+        <version>${maven.required.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.archetype</groupId>
