@@ -95,6 +95,7 @@
     <commons-jexl.version>1.1</commons-jexl.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-pool.version>1.6</commons-pool.version>
+    <commons-net.version>3.9.0</commons-net.version>
 
     <!--
         Below are only the defined versions of some dependencies that are used in multiple projects.
@@ -108,8 +109,8 @@
     <jackson2-databind.version>2.13.4.2</jackson2-databind.version>
     <spring.version>5.3.22</spring.version>
     <spring-boot.version>2.6.13</spring-boot.version>
-    <spring-integration-ftp.version>5.5.14</spring-integration-ftp.version>
-    <spring-integration-sftp.version>5.5.14</spring-integration-sftp.version>
+    <spring-integration-ftp.version>5.5.16</spring-integration-ftp.version>
+    <spring-integration-sftp.version>5.5.16</spring-integration-sftp.version>
     <spring-security.version>5.6.9</spring-security.version>
     <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.9.7</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
@@ -122,9 +123,12 @@
     <snakeyaml.version>1.33</snakeyaml.version>
     <nimbus-jose-jwt.version>8.22.1</nimbus-jose-jwt.version>
     <jdom2.version>2.0.6.1</jdom2.version>
+
     <!-- test dependencies -->
     <!-- restassured 4.3.0 and higher requires groovy 3.0 or higher-->
     <restassured.version>4.2.0</restassured.version>
+    <!-- Please update in archetype project as well -->
+    <junit.version>4.13.2</junit.version>
     <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
     <javassist.version>3.27.0-GA</javassist.version>
@@ -199,10 +203,6 @@
 
     <javadoc.base.version>14.3</javadoc.base.version>
     <error-prone.version>2.18.0</error-prone.version>
-
-    <!-- Test dependencies ##################################################################### -->
-    <!-- Please update in archetype project as well -->
-    <junit.version>4.13.2</junit.version>
   </properties>
 
   <licenses>
