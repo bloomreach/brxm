@@ -279,6 +279,10 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
     private String getValueKey(final String value) {
         JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
         JcrPropertyModel propertyModel = propertyValueModel.getJcrPropertymodel();
+        if (propertyModel.getProperty() == null) {
+            return "<unknown>";
+        }
+
         try {
             return propertyModel.getProperty().getName() + "=" + value;
         } catch (RepositoryException e) {
