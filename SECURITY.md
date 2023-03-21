@@ -4,7 +4,8 @@
 
 | Version | Maintained         |
 | ------- | ------------------ |
-| 15.1.x  | :white_check_mark: |
+| 15.2.x  | :white_check_mark: |
+| 15.1.x  | :x:                |
 | 15.0.x  | :x:                |
 | 14.7.x  | :white_check_mark: |
 | < 14.7  | :x:                |
