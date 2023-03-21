@@ -111,7 +111,7 @@
     <spring-boot.version>2.6.13</spring-boot.version>
     <spring-integration-ftp.version>5.5.16</spring-integration-ftp.version>
     <spring-integration-sftp.version>5.5.16</spring-integration-sftp.version>
-    <spring-security.version>5.6.9</spring-security.version>
+    <spring-security.version>5.8.2</spring-security.version>
     <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
     <aspectjweaver.version>1.9.7</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>3.0.9</groovy.version>
@@ -129,7 +129,7 @@
     <restassured.version>4.2.0</restassured.version>
     <!-- Please update in archetype project as well -->
     <junit.version>4.13.2</junit.version>
-    <!-- sling-javsx-activation is used by rest-assured and must be set to test scope -->
+    <!-- sling-javax-activation is used by rest-assured and must be set to test scope -->
     <sling-javax-activation.version>0.1.0</sling-javax-activation.version>
     <javassist.version>3.27.0-GA</javassist.version>
 
