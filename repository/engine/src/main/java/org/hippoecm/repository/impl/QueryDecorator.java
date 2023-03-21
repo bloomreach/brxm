@@ -61,6 +61,8 @@ public class QueryDecorator extends SessionBoundDecorator implements HippoQuery 
 
     private static final String MAGIC_NAMED_START = "MAGIC";
     private static final String MAGIC_NAMED_END = "CIGAM";
+    private long limit;
+    private long offset;
 
     public static Query unwrap(final Query query) {
         if (query instanceof QueryDecorator) {
@@ -99,6 +101,8 @@ public class QueryDecorator extends SessionBoundDecorator implements HippoQuery 
             if (HDC.isStarted()) {
                 queryTask = HDC.getCurrentTask().startSubtask("query");
                 queryTask.setAttribute("statement", getStatement());
+                queryTask.setAttribute("limit", limit);
+                queryTask.setAttribute("offset", offset);
             }
 
             if (arguments != null) {
@@ -198,10 +202,12 @@ public class QueryDecorator extends SessionBoundDecorator implements HippoQuery 
     }
 
     public void setLimit(final long limit) {
+        this.limit = limit;
         query.setLimit(limit);
     }
 
     public void setOffset(final long offset) {
+        this.offset = offset;
         query.setOffset(offset);
     }
 
