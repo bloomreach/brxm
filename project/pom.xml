@@ -135,7 +135,8 @@
 
     <tika.version>1.28.5</tika.version>
     <!-- END properties versions with dependency management -->
-    <maven.required.version>3.8.7</maven.required.version>
+    <maven.min.version>3.5.4</maven.min.version>
+    <maven.internal.version>3.8.7</maven.internal.version>
 
     <maven.plugin.antrun.version>3.0.0</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>3.3.0</maven.plugin.assembly.version>
@@ -248,7 +249,7 @@
 
   <!-- Set the prerequisites to list relevant plugin updates with mvn versions:display-plugin-updates
   <prerequisites>
-    <maven>${maven.required.version}</maven>
+    <maven>${maven.internal.version}</maven>
   </prerequisites>
   -->
 
@@ -1329,7 +1330,7 @@
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <version>${maven.required.version}</version>
+                  <version>${maven.min.version}</version>
                 </requireMavenVersion>
               </rules>
             </configuration>
