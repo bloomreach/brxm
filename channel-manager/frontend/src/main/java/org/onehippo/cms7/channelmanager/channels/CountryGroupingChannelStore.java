@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,18 +51,18 @@ public class CountryGroupingChannelStore extends ChannelStore {
 
     @Override
     protected void populateChannelRegion(final Channel channel, final JSONObject object) throws JSONException {
-        String countryCode = getCountryCode(channel);
-        Map<String, String> channelFieldValues = new HashMap<>();
+        final String countryCode = getCountryCode(channel);
+        final Map<String, String> channelFieldValues = getChannelFieldValues(channel);
         channelFieldValues.put("region", countryCode.toLowerCase());
 
         if (StringUtils.isNotBlank(countryCode)) {
             object.put("channelRegion", countryCode);
         }
 
-        //Try to find the country flag icon in the repository using channel's country information (derived from its locale)
+        // try to find the country flag icon in the repository using channel's country information (derived from its locale)
         String countryIconUrl = getChannelIconUrl(channelFieldValues, getChannelRegionIconPath());
 
-        //else, try finding it in the repository but now using the channel's locale property (for backwards compatibility)
+        // else, try finding it in the repository but now using the channel's locale property (for backwards compatibility)
         if (StringUtils.isEmpty(countryIconUrl)) {
             //Fallback: we now consider the region field to have the same value as the locale
             String locale = channel.getLocale();
@@ -73,17 +72,17 @@ public class CountryGroupingChannelStore extends ChannelStore {
             }
         }
 
-        //else, try finding it as a resource in the filesystem, using again that country property
+        // else, try finding it as a resource in the filesystem, using again that country property
         if (StringUtils.isEmpty(countryIconUrl)) {
             countryIconUrl = getIconResourceReferenceUrl(countryCode + ".png");
         }
 
-        //else, try finding it as a resource in the filesystem, using again channel's locale property (for backwards compatibility)
+        // else, try finding it as a resource in the filesystem, using again channel's locale property (for backwards compatibility)
         if (StringUtils.isEmpty(countryIconUrl)) {
             countryIconUrl = getIconResourceReferenceUrl(channel.getLocale() + ".png");
         }
 
-        //else, show the default "unknown" country icon, this is loaded from filesystem and it always exists
+        // else, show the default "unknown" country icon, this is loaded from filesystem and it always exists
         if (StringUtils.isEmpty(countryIconUrl)) {
             countryIconUrl = getIconResourceReferenceUrl(UNKNOWN_COUNTRYCODE + ".png");
         }
