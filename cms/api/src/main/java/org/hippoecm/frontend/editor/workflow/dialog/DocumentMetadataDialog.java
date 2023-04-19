@@ -71,12 +71,12 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         setCancelLabel(new StringResourceModel("close", this));
         setFocusOnCancel();
 
-        ListView metaDataListView = getMetaDataListView();
+        ListView<DocumentMetadataEntry> metaDataListView = getMetaDataListView();
         add(metaDataListView);
 
         // Show info of live variant if one found with hippostd:state = published and hippostd:stateSummary = live || changed
         List<DocumentMetadataEntry> publicationMetadata = getPublicationMetaData();
-        ListView publicationDataList = new ListView<DocumentMetadataEntry>("publicationmetadatalist", publicationMetadata) {
+        ListView<DocumentMetadataEntry> publicationDataList = new ListView<>("publicationmetadatalist", publicationMetadata) {
             protected void populateItem(ListItem item) {
                 final DocumentMetadataEntry entry = (DocumentMetadataEntry) item.getModelObject();
                 item.add(new Label("key", entry.getKey()));
@@ -95,7 +95,7 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
 
 
 
-    private ListView getMetaDataListView() {
+    private ListView<DocumentMetadataEntry> getMetaDataListView() {
         List<DocumentMetadataEntry> metaDataList = new ArrayList<>();
 
         try {
@@ -124,8 +124,8 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         return getListView(metaDataList);
     }
 
-    private ListView getListView(final List<DocumentMetadataEntry> metaDataList) {
-        return new ListView<DocumentMetadataEntry>("metadatalist", metaDataList) {
+    private ListView<DocumentMetadataEntry> getListView(final List<DocumentMetadataEntry> metaDataList) {
+        return new ListView<>("metadatalist", metaDataList) {
 
             @Override
             protected void populateItem(ListItem item) {
