@@ -20,9 +20,9 @@ import java.io.StringReader;
 
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
+import org.onehippo.cm.model.util.YamlUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.composer.ComposerException;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.scanner.ScannerException;
 
 /**
@@ -32,7 +32,7 @@ import org.yaml.snakeyaml.scanner.ScannerException;
  */
 public class SnakeYamlValidationTest extends AbstractBaseTest {
 
-    final Yaml yamlParser = new Yaml(new SafeConstructor());
+    final Yaml yamlParser = YamlUtils.createYamlParser();
 
     @Test
     public void invalidSyntax() {
