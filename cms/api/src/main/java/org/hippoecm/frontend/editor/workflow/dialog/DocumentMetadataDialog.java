@@ -34,6 +34,8 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.DocumentMetadataEntry;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
@@ -41,8 +43,12 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_XPAGE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.XPAGE_PROPERTY_PAGEREF;
 
 /**
  * A dialog that shows document metadata.
@@ -65,12 +71,12 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         setCancelLabel(new StringResourceModel("close", this));
         setFocusOnCancel();
 
-        ListView metaDataListView = getMetaDataListView();
+        ListView<DocumentMetadataEntry> metaDataListView = getMetaDataListView();
         add(metaDataListView);
 
         // Show info of live variant if one found with hippostd:state = published and hippostd:stateSummary = live || changed
         List<DocumentMetadataEntry> publicationMetadata = getPublicationMetaData();
-        ListView publicationDataList = new ListView<DocumentMetadataEntry>("publicationmetadatalist", publicationMetadata) {
+        ListView<DocumentMetadataEntry> publicationDataList = new ListView<>("publicationmetadatalist", publicationMetadata) {
             protected void populateItem(ListItem item) {
                 final DocumentMetadataEntry entry = (DocumentMetadataEntry) item.getModelObject();
                 item.add(new Label("key", entry.getKey()));
@@ -89,16 +95,27 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
 
 
 
-    private ListView getMetaDataListView() {
+    private ListView<DocumentMetadataEntry> getMetaDataListView() {
         List<DocumentMetadataEntry> metaDataList = new ArrayList<>();
 
         try {
+            metaDataList.add(new DocumentMetadataEntry(getString("document-id"), node.getIdentifier()));
             final Optional<String> displayName = DocumentUtils.getDisplayName(node);
             if (displayName.isPresent() && !displayName.get().isEmpty()) {
                 metaDataList.add(new DocumentMetadataEntry(getString("document-name"), displayName.get()));
             }
             metaDataList.add(new DocumentMetadataEntry(getString("url-name"), node.getName()));
             metaDataList.add(new DocumentMetadataEntry(getString("document-path"), node.getPath()));
+            final String type = node.getNode(node.getName()).getPrimaryNodeType().getName();
+            final String documentType = new TypeTranslator(new JcrNodeTypeModel(type)).getTypeName().getObject();
+            metaDataList.add(new DocumentMetadataEntry(getString("document-type"), documentType));
+
+            Optional<Node> unpublishedNode = WorkflowUtils.getDocumentVariantNode(node, WorkflowUtils.Variant.UNPUBLISHED);
+
+            if( unpublishedNode.isPresent() && unpublishedNode.get().hasNode(NODENAME_HST_XPAGE)) {
+                final String pageLayout = unpublishedNode.get().getNode(NODENAME_HST_XPAGE).getProperty(XPAGE_PROPERTY_PAGEREF).getString();
+                metaDataList.add(new DocumentMetadataEntry(getString("document-page-layout"), pageLayout));
+            }
 
         } catch (RepositoryException e) {
             log.warn("No document node present", e);
@@ -107,8 +124,8 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         return getListView(metaDataList);
     }
 
-    private ListView getListView(final List<DocumentMetadataEntry> metaDataList) {
-        return new ListView<DocumentMetadataEntry>("metadatalist", metaDataList) {
+    private ListView<DocumentMetadataEntry> getListView(final List<DocumentMetadataEntry> metaDataList) {
+        return new ListView<>("metadatalist", metaDataList) {
 
             @Override
             protected void populateItem(ListItem item) {
