@@ -99,6 +99,7 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         List<DocumentMetadataEntry> metaDataList = new ArrayList<>();
 
         try {
+            metaDataList.add(new DocumentMetadataEntry(getString("document-id"), node.getIdentifier()));
             final Optional<String> displayName = DocumentUtils.getDisplayName(node);
             if (displayName.isPresent() && !displayName.get().isEmpty()) {
                 metaDataList.add(new DocumentMetadataEntry(getString("document-name"), displayName.get()));
@@ -108,7 +109,6 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
             final String type = node.getNode(node.getName()).getPrimaryNodeType().getName();
             final String documentType = new TypeTranslator(new JcrNodeTypeModel(type)).getTypeName().getObject();
             metaDataList.add(new DocumentMetadataEntry(getString("document-type"), documentType));
-            metaDataList.add(new DocumentMetadataEntry(getString("document-id"), node.getIdentifier()));
 
             Optional<Node> unpublishedNode = WorkflowUtils.getDocumentVariantNode(node, WorkflowUtils.Variant.UNPUBLISHED);
 
