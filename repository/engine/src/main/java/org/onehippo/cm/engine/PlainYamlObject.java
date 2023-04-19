@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.yaml.snakeyaml.Yaml;
+import org.onehippo.cm.model.util.YamlUtils;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
@@ -51,12 +51,12 @@ public class PlainYamlObject {
     private final Object yamlObject;
 
     public PlainYamlObject(final String yamlString) {
-        yamlObject = new Yaml(new SafeConstructor()).load(yamlString);
+        yamlObject = YamlUtils.createYamlParser().load(yamlString);
     }
 
     public PlainYamlObject(final InputStream io) throws IOException {
         try {
-            yamlObject = new Yaml(new SafeConstructor()).load(io);
+            yamlObject = YamlUtils.createYamlParser().load(io);
         } finally {
             io.close();
         }

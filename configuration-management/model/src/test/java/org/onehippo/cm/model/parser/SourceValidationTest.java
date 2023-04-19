@@ -23,8 +23,8 @@ import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.util.YamlUtils;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -37,7 +37,7 @@ import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SourceValidationTest extends AbstractBaseTest {
 
-    final Yaml yamlParser = new Yaml(new SafeConstructor());
+    final Yaml yamlParser = YamlUtils.createYamlParser();
     final GroupImpl group = new GroupImpl("group");
     final ProjectImpl project = new ProjectImpl("project", group);
     final ModuleImpl module = new ModuleImpl("module", project);
