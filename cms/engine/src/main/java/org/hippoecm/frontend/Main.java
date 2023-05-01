@@ -127,8 +127,6 @@ import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.basjes.parse.useragent.UserAgent;
-import nl.basjes.parse.useragent.UserAgentAnalyzer;
 import static org.apache.wicket.coop.CrossOriginOpenerPolicyConfiguration.CoopMode.SAME_ORIGIN_ALLOW_POPUPS;
 import static org.apache.wicket.csp.CSPDirectiveSrcValue.SELF;
 import static org.apache.wicket.markup.head.filter.FilteringHeaderResponse.DEFAULT_HEADER_FILTER_NAME;
@@ -213,7 +211,6 @@ public class Main extends PluginApplication {
     protected String repositoryFallbackPassword;
     private WicketFaviconService wicketFaviconService;
     private Supplier<IExceptionMapper> exceptionMapperProvider;
-    private UserAgentAnalyzer userAgentAnalyzer;
 
     protected void initializeFallBackCredentials() {
         repositoryFallbackUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
@@ -463,13 +460,6 @@ public class Main extends PluginApplication {
         addHeaderResponseDecorator();
         getApplicationSettings().setAccessDeniedPage(PluginPage.class);
 
-        userAgentAnalyzer = UserAgentAnalyzer
-                .newBuilder()
-                .hideMatcherLoadStats()
-                .withFields(UserAgent.AGENT_NAME, UserAgent.AGENT_VERSION_MAJOR)
-                .withCache(10000)
-                .build();
-
         String applicationName = getPluginApplicationName();
         if (PLUGIN_APPLICATION_VALUE_CMS.equals(applicationName)) {
             initCMS();
@@ -480,10 +470,6 @@ public class Main extends PluginApplication {
         if (log.isInfoEnabled()) {
             log.info("Hippo CMS application {} has started", applicationName);
         }
-    }
-
-    public UserAgentAnalyzer getUserAgentAnalyzer() {
-        return userAgentAnalyzer;
     }
 
     @Override

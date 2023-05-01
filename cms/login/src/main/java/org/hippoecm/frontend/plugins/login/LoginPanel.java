@@ -189,10 +189,6 @@ public class LoginPanel extends Panel {
             browserSupport.setEscapeModelStrings(false);
             addLabelledComponent(browserSupport);
 
-            if (supportedBrowsers != null && supportedBrowsers.length > 0) {
-                browserSupport.add(new BrowserCheckBehavior(supportedBrowsers));
-            }
-
             usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username"));
             usernamePlaceholder = new LoginResourceModel("username-label");
             addAjaxAttributeModifier(usernameTextField, "placeholder", usernamePlaceholder);
