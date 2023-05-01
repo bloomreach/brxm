@@ -107,10 +107,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>nl.basjes.parse.useragent</groupId>
-      <artifactId>yauaa</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>
