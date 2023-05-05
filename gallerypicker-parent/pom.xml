@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>15.2.3-SNAPSHOT</version>
+    <version>15.2.3</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
 
@@ -28,7 +28,7 @@
   <description>Hippo Plugin Gallery Picker Parent</description>
   <artifactId>hippo-plugin-gallerypicker-parent</artifactId>
   <packaging>pom</packaging>
-  <version>15.2.3-SNAPSHOT</version>
+  <version>15.2.3</version>
 
   <modules>
     <module>gallerypicker</module>
